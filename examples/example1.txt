@@ -1,0 +1,28 @@
+Homework 1
+
+# one can write arbitrary comments in this file after hashes
+
+constants of type e : a b-c
+constants of type <e,t> : P-Q
+constants of type <e*e,t> : R
+variables of type e : x-z
+variables of type <et> : X Y
+
+exercise semantic types
+title Semantic Types
+directions Give the semantic type of the following lambda-expressions.
+
+Lx. P(x) & Q(x)
+
+exercise lambda conversion
+title Lambda Conversion
+directions After checking that the type of the function and the type of the
+directions argument(s) match, simplify the following expressions performing
+directions one lambda-conversion at a time.
+
+Lx. P(x) & Q(x) (a)
+LxLy. R(a,y) & Q(x) (a) (b)
+Lx.Ey[R(y,x)] (y)
+Lx.a (b)
+Lx.P(x) -> ExR(x,b) (a)
+LxLx.P(x) -> R(x,c) (a) (b)

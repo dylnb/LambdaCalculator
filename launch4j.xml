@@ -1,0 +1,38 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>0</headerType>
+  <jar>dist/LambdaCalculator.jar</jar>
+  <outfile>Lambda.exe</outfile>
+  <errTitle>Lambda</errTitle>
+  <jarArgs></jarArgs>
+  <chdir></chdir>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <icon>images/logo.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.4.0</minVersion>
+    <maxVersion></maxVersion>
+    <initialHeapSize>0</initialHeapSize>
+    <maxHeapSize>0</maxHeapSize>
+    <args></args>
+  </jre>
+  <splash>
+    <file>images/splash.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
+  <versionInfo>
+    <fileVersion>0.5.0.0</fileVersion>
+    <txtFileVersion>0.5</txtFileVersion>
+    <fileDescription>Lambda: The Semantics Tool</fileDescription>
+    <copyright>Copyright (2006) Lucas Champollion and Joshua Tauberer</copyright>
+    <productVersion>0.5.0.0</productVersion>
+    <txtProductVersion>0.5</txtProductVersion>
+    <productName>Lambda: The Semantics Tool</productName>
+    <companyName>University of Pennsylvania</companyName>
+    <internalName>Lambda</internalName>
+    <originalFilename>Lambda.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>
