@@ -100,6 +100,12 @@ public class ExpressionParser {
         return c;
     }
     
+    /*** 
+     * Parses the prefix expression beginning at position start in expression.
+     * These include parenthesis expressions, negation expressions, binding
+     * expressions, and identifiers. If none of these expressions are present
+     * at position start, a BadCharacterException is thrown.
+     */
     private static ParseResult parsePrefixExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
         char c = getChar(expression, start, context);
@@ -132,8 +138,15 @@ public class ExpressionParser {
                     start++;
                     hadPeriod = true;
                 }
-
-                ParseResult rhs = parseInfixExpression(expression, start, context, "an expression in the scope of the lambda operator");
+                
+                // Brackets immediately following binders should indicate the scope of the binder. OTOH, binders
+                // can immediately outscope conjunctions (Ex.a ^ b), and the first conjunct can be a Parens.
+                // That means we have an ambiguity in the grammar. We need a special case so that
+                // Lx[...] & [...] is treated as (Lx[...]) & ([...]).
+                
+                ParseResult rhs = parsePrefixExpression(expression, start, context, "an expression in the scope of the lambda operator");
+                if (!(rhs.Expression instanceof Parens))
+                    rhs = parseInfixExpression(expression, start, context, "an expression in the scope of the lambda operator", rhs);
                 
                 Binder bin;
                 switch (c) {
@@ -146,10 +159,14 @@ public class ExpressionParser {
                 return new ParseResult(bin, rhs.Next);
             
             default:
+                // Hope that it's an identifier. If not, a BadCharacterException is thrown.
                 return parseIdentifier(expression, start, context, "an expression", false, true);
         }
     }
     
+    /***
+     * Parses an identifier at position start in expression.
+     */
     private static ParseResult parseIdentifier(String expression, int start, ParseOptions context, String whatIsExpected, boolean lookingForVariable, boolean allowPredicate) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
         char c = expression.charAt(start);
@@ -263,8 +280,18 @@ public class ExpressionParser {
         return ident;
     }
     
-    private static  ParseResult parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
-        ParseResult left = parsePrefixExpression(expression, start, context, whatIsExpected);
+    /***
+     * Parse an infix expression at position start in expression.
+     * These are a series of prefix expressions separated by
+     * conjunction, disjunction, implication, and biconditional.
+     * Operator precedence is taken care of here.
+     */
+    private static ParseResult parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, ParseResult left) throws SyntaxException {
+        // We allow our caller to do a parsePrefixExpression before calling us so it can
+        // look ahead and see what type of expression is next. If it didn't do any look-ahead
+        // it passes left as null and we fetch the first conjunct here.
+        if (left == null)
+            left = parsePrefixExpression(expression, start, context, whatIsExpected);
         
         ArrayList operators = new ArrayList();
         ArrayList operands = new ArrayList();
@@ -342,8 +369,14 @@ public class ExpressionParser {
         }
     }
 
+    /***
+     * Parses all sorts of expressions starting at position start in expression.
+     * It looks first for an infix/prefix expression (anything but function application),
+     * and if that's followed by a space and then an identifier or parenthetical expression,
+     * take it as an argument to a function application expression.
+     */
     private static ParseResult parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
-        ParseResult left = parseInfixExpression(expression, start, context, whatIsExpected);
+        ParseResult left = parseInfixExpression(expression, start, context, whatIsExpected, null);
         start = left.Next;
         
         Expr expr = left.Expression;
@@ -359,7 +392,7 @@ public class ExpressionParser {
             // then this is function application.
             if (isLetter(c) || c == '(' || c == '[') {
                 ParseResult right = parsePrefixExpression(expression, start, context, "a variable or parenthesized expression"); // message never used
-                expr = new FunApp(expr, right.Expression);
+                expr = new FunApp(expr, right.Expression); // left associativity
                 start = right.Next;
             } else {
                 break;
