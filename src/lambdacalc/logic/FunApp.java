@@ -212,7 +212,7 @@ public class FunApp extends Binary {
             Lambda lambda = (Lambda)func;
             if (!(lambda.getVariable() instanceof Var))
                 throw new ConstInsteadOfVarException("The bound identifier " + lambda.getVariable() + " must be a variable.");
-            Var var =(Var)lambda.getVariable();
+            Var var = (Var)lambda.getVariable();
             
             // We undo the convention that the argument is often wrapped in parentheses
             Expr arg = getArg();
