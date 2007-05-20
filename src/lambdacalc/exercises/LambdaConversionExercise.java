@@ -54,8 +54,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 steptypes.add("alphavary");
                 e = f.createAlphabeticalVariant();
             } else {
-                steptypes.add("betareduce");
                 e = f.simplify();
+                if (e == f) // some FunApps cannot be reduced X(b)
+                    break;
+                steptypes.add("betareduce");
             }
             steps.add(e);
         }
@@ -197,7 +199,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 
                 // See if the user did everything right but made a mistake in the names of variables.
                 if (!correct_answer.alphaEquivalent(users_answer) && correct_answer.operatorEquivalent(users_answer) && !diagnoses.contains("leftmost-leftmost"))
-                    responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. Remember to substitute the argument for all instances of the bound variable, and for no other variables.");
+                    responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. Remember to substitute the argument for all free instances of the " + Lambda.SYMBOL + " variable, and for no other variables.");
                 
                 // test if the number of removed lambdas doesn't equal the number of removed arguments
                 // (this indicates that the user tried to do a beta reduction but was confused)
