@@ -139,13 +139,19 @@ public class ExpressionParser {
                     hadPeriod = true;
                 }
                 
-                // Brackets immediately following binders should indicate the scope of the binder. OTOH, binders
+                // Brackets immediately following binders (without periods) should indicate the scope of the binder. OTOH, binders
                 // can immediately outscope conjunctions (Ex.a ^ b), and the first conjunct can be a Parens.
                 // That means we have an ambiguity in the grammar. We need a special case so that
                 // Lx[...] & [...] is treated as (Lx[...]) & ([...]).
+                // In addition, lambdas inside lambdas and PropositionalBinders inside PropositionalBinders
+                // should be taken the same way -- as outscoping any infix operators
+                // (i.e. LxLy.a & b  is not  Lx[(Ly.a) & b]).
                 
                 ParseResult rhs = parsePrefixExpression(expression, start, context, "an expression in the scope of the lambda operator");
-                if (!(rhs.Expression instanceof Parens))
+                if (
+                       !(!hadPeriod && rhs.Expression instanceof Parens)
+                    && !(c == Lambda.SYMBOL && rhs.Expression instanceof Lambda)
+                    && !(c != Lambda.SYMBOL && rhs.Expression instanceof PropositionalBinder))
                     rhs = parseInfixExpression(expression, start, context, "an expression in the scope of the lambda operator", rhs);
                 
                 Binder bin;
