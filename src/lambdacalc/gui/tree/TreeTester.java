@@ -88,9 +88,9 @@ public class TreeTester extends javax.swing.JFrame {
             Expr eright = Right.getValue();
             
             if (isFunctionOf(eleft, eright))
-                return new FunApp(eleft, eright).simplify();
+                return applyFunction(eleft, eright);
             if (isFunctionOf(eright, eleft))
-                return new FunApp(eright, eleft).simplify();
+                return applyFunction(eright, eleft);
             throw new RuntimeException();
         }
         
@@ -101,6 +101,14 @@ public class TreeTester extends javax.swing.JFrame {
                 if (((CompositeType)functype).getLeft().equals(argtype))
                     return true;
             return false;
+        }
+        
+        Expr applyFunction(Expr func, Expr arg) throws TypeEvaluationException {
+            Expr e = new FunApp(func, arg);
+            Expr.LambdaConversionResult lcr = e.performLambdaConversion();
+            if (lcr == null)
+                return e;
+            return lcr.Result;
         }
     }
     

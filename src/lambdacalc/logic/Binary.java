@@ -78,11 +78,6 @@ public abstract class Binary extends Expr {
      */
     protected abstract Binary create(Expr left, Expr right);
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, Set accidentalBindings) {
-        return create(getLeft().substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings),
-                getRight().substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings));
-    }
-
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getLeft().createAlphabeticalVariant(bindersToChange, variablesInUse, updates),
                 getRight().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));

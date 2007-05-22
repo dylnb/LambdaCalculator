@@ -129,15 +129,30 @@ public abstract class Binder extends Expr {
             throw new ConstInsteadOfVarException("The symbols " + Lambda.SYMBOL + ", " + Exists.SYMBOL + ", and " + ForAll.SYMBOL + " must be followed by a variable, but '" + getVariable() + "' is a constant.");
     }
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, java.util.Set accidentalBindings) {
+    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're looking for a lambda to convert, but even if this is a lambda, we don't
+        // do anything special here. That's handled in FunApp.
+        // We do, however, have to track that this binder outscopes everything in its scope,
+        // so that we can track accidental binding.
+        
+        Set binders2 = new HashSet(binders);
+        binders2.add(this);
+        
+        Expr inside = getInnerExpr().performLambdaConversion1(binders2, accidentalBinders);
+        
+        if (inside == null) // nothing happened, return null
+            return null;
+        
+        return create(getVariable(), inside);
+    }
+    
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
         if (getVariable().equals(var)) return this; // no binding of var occurs within this scope
         
-        // If this would accidentally bind a free variable in the replacement, then
-        // within this part, substitution is not ok.
-        if (unboundVars.contains(getVariable()))
-            potentialAccidentalBindings.add(this);
+        Set binders2 = new HashSet(binders);
+        binders2.add(this);
         
-        return create(getVariable(), getInnerExpr().substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings));
+        return create(getVariable(), getInnerExpr().performLambdaConversion2(var, replacement, binders2, accidentalBinders));
     }
 
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
@@ -160,22 +175,6 @@ public abstract class Binder extends Expr {
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
     
-    public boolean canSimplify() {
-        return getInnerExpr().canSimplify();
-    }
-    
-    public boolean needsAlphabeticalVariant() throws TypeEvaluationException  {
-        return getInnerExpr().needsAlphabeticalVariant();
-    }
-
-    public Expr createAlphabeticalVariant() throws TypeEvaluationException  {
-        return create(getVariable(), getInnerExpr().createAlphabeticalVariant());
-    }
-    
-    public Expr simplify() throws TypeEvaluationException  {
-        return create(getVariable(), getInnerExpr().simplify());
-    }  
-
     public String toString() {
         String inner = innerExpr.toString();
         if (innerExpr.getOperatorPrecedence() > this.getOperatorPrecedence()) {

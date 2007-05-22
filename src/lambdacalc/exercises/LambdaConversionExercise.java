@@ -47,14 +47,23 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     
     private void initialize() throws TypeEvaluationException {
         Expr e = expr;
-        while (e.canSimplify()) {
-            if (e.needsAlphabeticalVariant()) {
+        while (true) {
+            // Attempt to perform a lambda conversion on the expression.
+            Expr.LambdaConversionResult lcr = e.performLambdaConversion();
+            
+            // If there was nothing to do, we're done.
+            if (lcr == null)
+                break;
+            
+            // If an alphabetical variant was necessary, record that.
+            if (lcr.AlphabeticalVariant != null) {
                 steptypes.add("alphavary");
-                e = e.createAlphabeticalVariant();
+                e = lcr.AlphabeticalVariant;
             } else {
-                e = e.simplify();
                 steptypes.add("betareduce");
+                e = lcr.Result;
             }
+
             steps.add(e);
         }
         
@@ -154,9 +163,11 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 // expression which now no longer needs further alphabetical
                 // variation in order to be beta reduced.
                 try {
+                    Expr.LambdaConversionResult lcr = users_answer.performLambdaConversion();
+                    
                     if (steptypes.get(matched_step).equals("alphavary")
-                        && users_answer instanceof FunApp
-                        && ((FunApp)users_answer).needsAlphabeticalVariant())
+                        && lcr != null
+                        && lcr.AlphabeticalVariant != null)
                         continue; // continue stepping through the future expected answers -
                                 //maybe it matches a future step that is OK (it shouldn't)
                 } catch (TypeEvaluationException tee) {
@@ -464,15 +475,13 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      * alphabetical variant.
      */
     private void didUserSubstituteButNeedingAlphabeticalVariant(Expr expr, Expr answer, ArrayList hints) {
-        if (expr instanceof FunApp) {
-            FunApp f = (FunApp)expr;
-            try {
-                if (!f.needsAlphabeticalVariant()) return;
-                expr = f.simplifyWithoutAlphabeticalVariant();
-                if (expr.alphaEquivalent(answer))
-                    hints.add("Your answer changed the truth conditions of the expression because a free variable was accidentally bound during substitution.");
-            } catch (TypeEvaluationException ex) {
-            }
+        try {
+            Expr.LambdaConversionResult lcr = expr.performLambdaConversion();
+            if (lcr == null) return;
+            if (lcr.AlphabeticalVariant == null) return;
+            if (lcr.SubstitutionWithoutAlphabeticalVariant.alphaEquivalent(answer))
+                hints.add("Your answer changed the truth conditions of the expression because a free variable was accidentally bound during substitution.");
+        } catch (TypeEvaluationException ex) {
         }
     }
 

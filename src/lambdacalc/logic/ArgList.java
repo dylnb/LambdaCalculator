@@ -96,10 +96,31 @@ public class ArgList extends Expr {
         return ret;
     }
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, Set accidentalBindings) {
+    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // Looking for a lambda, but only do conversion in the first arg!
+        Expr[] e = new Expr[exprs.length];
+        boolean didConversion = false;
+        for (int i = 0; i < exprs.length; i++) {
+            if (!didConversion) {
+                e[i] = exprs[i].performLambdaConversion1(binders, accidentalBinders);
+                if (e[i] != null)
+                    didConversion = true;
+                else
+                    e[i] = exprs[i];
+            }
+        }
+        
+        if (!didConversion) // nothing happened
+            return null;
+        
+        return new ArgList(e);
+    }
+
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // In the scope of a lambda. Do substitutions everywhere.
         Expr[] e = new Expr[exprs.length];
         for (int i = 0; i < exprs.length; i++)
-            e[i] = exprs[i].substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings);
+            e[i] = exprs[i].performLambdaConversion2(var, replacement, binders, accidentalBinders);
         return new ArgList(e);
     }
  
@@ -107,52 +128,6 @@ public class ArgList extends Expr {
         Expr[] e = new Expr[exprs.length];
         for (int i = 0; i < exprs.length; i++)
             e[i] = exprs[i].createAlphabeticalVariant(bindersToChange, variablesInUse, updates);
-        return new ArgList(e);
-    }
-
-    public boolean canSimplify() {
-        for (int i = 0; i < exprs.length; i++)
-            if (exprs[i].canSimplify())
-                return true;
-        return false;
-    }
-
-    public boolean needsAlphabeticalVariant() throws TypeEvaluationException  {
-        for (int i = 0; i < exprs.length; i++)
-            if (exprs[i].canSimplify())
-                return exprs[i].needsAlphabeticalVariant();
-        return false;
-    }
-
-    public Expr createAlphabeticalVariant() throws TypeEvaluationException  {
-        // We may only perform a single simplification, so we
-        // have to do it only on one sub-expr. Note that we also
-        Expr[] e = new Expr[exprs.length];
-        boolean didSimp = false;
-        for (int i = 0; i < exprs.length; i++) {
-            if (!didSimp && exprs[i].canSimplify()) {
-                e[i] = exprs[i].createAlphabeticalVariant();
-                didSimp = true;
-            } else {
-                e[i] = exprs[i];
-            }
-        }
-        return new ArgList(e);
-    }
-
-    public Expr simplify() throws TypeEvaluationException {
-        // We may only perform a single simplification, so we
-        // have to do it only on one sub-expr.
-        Expr[] e = new Expr[exprs.length];
-        boolean didSimp = false;
-        for (int i = 0; i < exprs.length; i++) {
-            if (!didSimp && exprs[i].canSimplify()) {
-                e[i] = exprs[i].simplify();
-                didSimp = true;
-            } else {
-                e[i] = exprs[i];
-            }
-        }
         return new ArgList(e);
     }
 

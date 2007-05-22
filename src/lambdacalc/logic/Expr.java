@@ -11,6 +11,7 @@ package lambdacalc.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -190,7 +191,122 @@ public abstract class Expr implements java.io.Serializable {
      * @param unboundOnly true if only the free variables should be returned
      */
     protected abstract Set getVars(boolean unboundOnly);
-
+    
+    public class LambdaConversionResult {
+        public final Expr Result;
+        public final Expr AlphabeticalVariant;
+        public final Expr SubstitutionWithoutAlphabeticalVariant;
+        
+        public LambdaConversionResult(Expr r, Expr a, Expr s) {
+            Result = r;
+            AlphabeticalVariant = a;
+            SubstitutionWithoutAlphabeticalVariant = s;
+        }
+    }
+    
+    /**
+     * Performs one application of lambda conversion if possible. If an
+     * alphabetical variant is necessary, one is created. If no lambda
+     * conversions are possible, it returns null.
+     * The first lambda-within-a-FunApp found in a top-down
+     * left-to-right search is simplified.
+     */
+    public final LambdaConversionResult performLambdaConversion() throws TypeEvaluationException {
+        Set binders = new HashSet();
+        Set accidentalBinders = new HashSet();
+        Expr result = performLambdaConversion1(binders, accidentalBinders);
+        
+        // Check if any lambda conversion took place.
+        if (result == null)
+            return null;
+                
+        // If no accidental binding ocurred, we're set -- return the new expr.
+        if (accidentalBinders.size() == 0)
+            return new LambdaConversionResult(result, null, null); // substitution was possible
+        
+        Expr originalResult = result;
+        
+        // We need to make an alphabetical variant by fixing the binders in the
+        // accidentalBinders set.
+        Set varsInUse = result.getAllVars();
+        Map varMap = new HashMap();
+        Expr alphaVary = createAlphabeticalVariant(accidentalBinders, varsInUse, varMap);
+        
+        // Now try to simplify this.
+        accidentalBinders = new HashSet();
+        result = alphaVary.performLambdaConversion1(binders, accidentalBinders);
+        if (accidentalBinders.size() != 0)
+            throw new RuntimeException("Internal error: An alphabetical variant was still needed after creating one: " + alphaVary.toString());
+         
+        return new LambdaConversionResult(result, alphaVary, originalResult);
+    }
+    
+    /**
+     * Helper method for performLambdaConversion. This method is called recursively
+     * down the tree to perform lambda conversion, looking for the lambda to convert.
+     * The lambda that we are converting may not be at top scope
+     * (e.g. Ax[ Ly.P(y) (x) ].
+     * Once we find the lambda we are converting, performLambdaConversion2 takes
+     * over and goes down the rest of the subtree.
+     *
+     * We have to track which binders have scope over this subexpression as we go
+     * down the tree because of accidental binding, i.e. when a free variable in
+     * the replacement would get accidentally bound when it is put into the main
+     * expression. This occurs in: LxAy[P(x)] (y)
+     * The binders that scope over this expression are in the 'binders' parameter.
+     * The caller sets that.
+     * 
+     * Once we are in the scope of the lambda being converted and we start performing
+     * substitutions we have to track which of the binders that scope over us
+     * cause an accidental binding of a formerly free variable in the replacement
+     * expression.
+     * Those binders that cause accidental binding are put into the 'accidentalBinders'
+     * parameter, which is filled in by the *callee*. It is an out-parameter of sorts.
+     * 
+     * This method only performs a single lambda conversion, so we have to be
+     * careful that in n-ary operators, if a lambda conversion
+     * ocurrs within one operand, we must not do any conversions in the other operands.
+     *
+     * This method returns false to signify that no conversion took place.
+     *
+     * @param binders the binders that have scope over this expression
+     * @param accidentalBinders as we perform substitution, we record here
+     * those binders whose variables must be modified so that they don't accidentally
+     * capture free variable in the replacement
+     * @return null if no lambda conversion took place, otherwise the lambda-converted
+     * expression 
+     */
+    protected abstract Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException;
+       
+    /**
+     * Helper method for performLambdaConversion. This method is called by
+     * performLambdaConversion1 once we enter into the scope of the lambda that
+     * we are converting.
+     *
+     * 'var' is set to its bound variable. If we get to a binder that binds the
+     * same variable, we know that nothing will happen in that scope, and the Expr
+     * is returned immediately.
+     * 
+     * If we arrive at var itself, we check if any free
+     * variables in replacement would be captured by any outscope binders, and if
+     * so we add those binders to the accidentalBinders set. But we proceed
+     * with the substitution anyway, and return 'replacement'.
+     *
+     * This method only performs a single lambda conversion, so we have to be
+     * note that if we hit another lambda expression, we aren't supposed to be
+     * lambda-converting it. We just treat it like any other binder.
+     *
+     * @param var the variable to replace with 'replacement' when we find it, or
+     * null if we haven't yet found the lambda being converted
+     * @param replacement the expression that replaces var
+     * @param binders the binders that have scope over this expression
+     * @param accidentalBinders as we perform substitution, we record here
+     * those binders whose variables must be modified so that they don't accidentally
+     * capture free variable in the replacement
+     * @return the expression with substitutions performed
+     */
+    protected abstract Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException;
+    
     /**
      * Creates a fresh variable based on the given variable and the 
      * set of variables in use.  The new variable has the same
@@ -206,132 +322,6 @@ public abstract class Expr implements java.io.Serializable {
         return v;
     }
 
-    /**
-     * Substitutes free occurrences of a variable with another expression,
-     * provided the substitution does not cause what was a free variable
-     * in the replacement to be incorrectly/"accidentally" bound by
-     * a binder taking scope over an occurance of the variable.  When
-     * this happens, an alphabetical variant is needed in order to
-     * perform the replacement, and null is returned.
-     * @param var the variable to be replaced
-     * @param replacement the expression to replace var with
-     * @return the expression with free occurrences of var
-     * replaced by replacement, or null if the substitution could not be
-     * completed because an alphabetical variant should be created.
-     */
-    public final Expr substitute(Var var, Expr replacement) {
-        Set unboundVars = replacement.getVars(true);
-        Set pab = new HashSet();
-        Set ab = new HashSet();
-        Expr result = substitute(var, replacement, unboundVars, pab, ab);
-        if (ab.size() > 0)
-            return null; // an alphabetical variant is needed
-        else
-            return result; // substitution was possible
-    }
-    
-    /**
-     * Substitutes all free occurrences of a variable with another expression,
-     * not checking if any free variables in replacement would be accidentally
-     * captured by a binder taking scope over a replacement.
-     * @param var the variable to be replaced
-     * @param replacement the expression to replace var with
-     * @return the expression with free occurrences of var
-     * replaced by replacement
-     */
-    public final Expr substituteAll(Var var, Expr replacement) {
-        return substitute(var, replacement, new HashSet(), new HashSet(), null);
-    }
-    
-    /**
-     * Returns whether there are any lambda conversions to simplify() in the expression.
-     * Simplification may still fail because of a type mismatch.
-     */
-    public abstract boolean canSimplify();
-    
-    /**
-     * Returns whether an alphabetical variant is needed in order
-     * to simplify this expression.  See FunApp.needsAlphabeticalVariant.
-     */
-    public abstract boolean needsAlphabeticalVariant() throws TypeEvaluationException;
-    
-    /**
-     * Creates the alphabetical variant needed to simplify the expression.
-     * If no alphabetical variant is needed, returns itself unchanged.
-     * True is returned only if the very next simplification performed
-     * by simplify() needs it, not any future simplifications.
-     */
-    public abstract Expr createAlphabeticalVariant() throws TypeEvaluationException;
-
-    /**
-     * Simplifies the expression by performing at most one lambda conversion
-     * and returns the new Expr. For nested function applications, we do
-     * the innermost (leftmost) first, but if FunApps are embedded in the
-     * expression somewhere, we evaluate the first we find in a top-down,
-     * left-to-right search. If an alphabetical variant is needed, one is
-     * created. If a type incompatibility is found while
-     * lambda-converting, a TypeEvaluationException is thrown.
-     */
-    public abstract Expr simplify() throws TypeEvaluationException;
-
-    // var and replacement are not the variable being altered by 
-    // createAlphabeticalVariant, but rather the variable that
-    // wants to be replaced by replacement but can't because of
-    // 'accidental' binding.  Only call this method when accidental
-    // binding makes creating an alphabetical variant necessary.
-    // (Actually, this method is called from FunApp::createAlphabeticalVariant,
-    // and shouldn't need to be called elsewhere.)
-    final Expr createAlphabeticalVariant(Var var, Expr replacement) {
-        Set unboundVars = replacement.getVars(true);
-        Set pab = new HashSet();
-        Set ab = new HashSet();
-        substitute(var, replacement, unboundVars, pab, ab);
-        
-        if (ab.size() == 0)
-            return this; // no alphabetical variant is needed
-        
-        // The Binder objects in ab will 'accidentally' bind free variables
-        // upon substitution.  Thus, an alphabetical variant must be
-        // created by replacing the variable of each of these binders
-        // with a fresh variable.
-        return createAlphabeticalVariant(ab, getAllVars(), new HashMap());
-    }
-    
-    // This method performs a replacement of free instances of var by replacement,
-    // while checking that in doing so, no free variables in replacement get
-    // accidentally bound by binders scoping over it.  The method is called
-    // recursively down the parse tree, but stops at binders whose variable
-    // is var, since that blocks further replacement.
-    //
-    // The free variables in replacement are expected to be
-    // already put into the unboundVars set argument.  (so that the set of free vars
-    // doesn't need to be recomputed at every node in the parse tree)
-    //
-    // To check that no accidental (i.e. incorrect) binding occurs, when this
-    // method is called on a binder whose variable is free
-    // in replacement (it's in unboundVars) -- meaning that if var occurs
-    // in the binder's scope, the binder would incorrectly capture one of those variables
-    // when the replacement actually occurs
-    // -- the binder pushes itself onto the potentialAccidentalBindings list
-    // (for the sake of the decendents in the parse tree of this binder).
-    // It will not cause accidental binding if var doesn't occur in the
-    // binder's scope, which is why we put it in a 'potential' list.
-    //
-    // When this method is called on a variable equalling var, then the method
-    // returns the replacement, thereby indicating to the caller that var should be
-    // replaced by replacement.  (i.e. it's up to the caller to create a new
-    // version of itself with var replaced by the return of the method).
-    // But, if at this point there are binders in the potentialAccidentalBindings
-    // list, then all of those binders are in fact going to capture free variables
-    // in replacement, and so they are put into the accidentalBindings list,
-    // and the substitution in the end fails (though we go on to get a complete
-    // list of accidentalBinders).
-    //
-    // accidentalBindings is really an "out-parameter", meaning its purpose is to
-    // receive the list of binders that surely will cause problems if not alphabetically
-    // varied.  After the method returns, it contains those binders.
-    protected abstract Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, Set accidentalBindings);
-    
     // This method creates an alphabetical variant by altering the variables used by
     // each of the binders in bindersToChange to a fresh variable.  Binders implement
     // this method, if they are in bindersToChange, by choosing a fresh variable based

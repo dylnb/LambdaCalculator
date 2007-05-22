@@ -130,130 +130,59 @@ public class FunApp extends Binary {
         }
     }
     
-    public boolean canSimplify() {
-        // If the function is not an identifier 
-        // (i.e. a nested FunApp, lambda expression, or something
-        // incoherent), we'll say we can simplify.
-        return !(getFunc().stripAnyParens() instanceof Identifier);
-    }
-    
-    /**
-     * Returns whether an alphabetical variant is needed in order
-     * to simplify this function application.  This is applicable
-     * (and returns true only) when the function is a lambda
-     * expression.  An alphabetical variant is needed precisely
-     * when substituting the argument (as is) for all unbound
-     * instances of the lambda's variable would result in
-     * a free variable in the argument being captured by a binder
-     * scoping over an instance of the variable being substituted for.
-     */
-    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
-        return simplification(0) == null;
-    }
-    
-    /**
-     * Simplifies the function application by replacing the argument for
-     * all free occurrences of the Lambda's variable.  Returns null
-     * if an alphabetical variant is needed first.  Returns itself
-     * unchanged if the function application cannot be simplified because
-     * the function is just a predicate (an Identifier).  Throws a
-     * TypeMismatchException if the function is not of an appropriate
-     * type to accept the argument (which is true if the function is
-     * anything but a Lambda or an Identifier).
-     */
-    public Expr simplify() throws TypeEvaluationException {
-        if (!needsAlphabeticalVariant())
-            return simplification(1);
-        else
-            return createAlphabeticalVariant().simplify();
-    }
-
-    /**
-     * Creates the alphabetical variant needed in order to perform
-     * simplification.
-     */
-    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
-        return simplification(2);
-    }
-
-    /**
-     * This does a simplification without checking whether any
-     * free variables in the replacement would be accidentally
-     * bound.
-     */
-    public Expr simplifyWithoutAlphabeticalVariant() throws TypeEvaluationException {
-        return simplification(3);
-    }
-    
-    /**
-     * This performs a simplification but doesn't actually carry out the substitution
-     * - e.g. Lx.x (a) simplifies to x
-     */
-    public Expr simplifyWithoutSubstitution() throws TypeEvaluationException {
-        return simplification(4);
-    }    
-
-    // Mode is as follows:
-    //  0 : test whether an alphabetical variant is needed
-    //          return null if yes, non-null if no
-    //  1 : perform a simplification
-    //  2 : create alphabetical variant
-    //  3 : simplify without checking for accidental bindings
-    //  4 : perform a simplification but don't actually carry out the substitution
-    //      e.g. Lx.x (a) simplifies to x
-    private Expr simplification(int mode) throws TypeEvaluationException {
-        assert mode >= 0 && mode <= 4;
-        Expr func = getFunc();
-        while (func instanceof Parens)
-            func = ((Parens)func).getInnerExpr();
+    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're looking for a lambda to convert...
+        
+        Expr func = getFunc().stripAnyParens(); // we need to strip parens to see what it really is
+        Expr arg = getArg().stripAnyParens(); // undo the convention of parens around the argument
         
         // In the case of nested function applications, the structurally innermost one gets 
-        // simplified first. 
+        // simplified first, so we just recurse down the tree. 
         // E.g. in Lx.Ly.body (a) (b) 
         // the structurally innermost FA is Lx.Ly.body (a)
         if (func instanceof FunApp) {
-            Expr inside = ((FunApp)func).simplification(mode);
-            if (mode == 0) return inside;
-            return new FunApp(inside, getArg());
+            Expr inside = func.performLambdaConversion1(binders, accidentalBinders);
+            if (inside != null)
+                return new FunApp(inside, getArg());
 
-            
-        // Beta reduction
+        // If the function is in fact a Lambda, then we begin substitutions.
         } else if (func instanceof Lambda) {
             Lambda lambda = (Lambda)func;
             if (!(lambda.getVariable() instanceof Var))
                 throw new ConstInsteadOfVarException("The bound identifier " + lambda.getVariable() + " must be a variable.");
             Var var = (Var)lambda.getVariable();
             
-            // We undo the convention that the argument is often wrapped in parentheses
-            Expr arg = getArg();
-            if (arg instanceof Parens)
-                arg = ((Parens)arg).getInnerExpr();
+            Expr inside = lambda.getInnerExpr().stripAnyParens();
             
-            if (mode == 0 || mode == 1) { // test if ok, or subst
-                Expr result = lambda.getInnerExpr().substitute(var, arg); // returns null iff an alphavariant is needed
-                if (mode == 0) return result;
-                // else mode ==1, we're trying to perform a simplification
-                if (result == null)
-                    throw new RuntimeException("An alphabetical variant is needed.");
-                return result;
-            } else if (mode == 2) { // create variant
-                return new FunApp(
-                        new Lambda(var, lambda.getInnerExpr().createAlphabeticalVariant(var, arg), lambda.hasPeriod()),
-                        getArg());
-            } else if (mode == 3) {
-                return lambda.getInnerExpr().substituteAll(var, arg);
-            } else if (mode == 4) {
-                return lambda.getInnerExpr();
-            } else {
-                throw new RuntimeException();
-            }
+            return inside.performLambdaConversion2(var, arg, binders, accidentalBinders);
             
-        // P(a) -- can't be reduced further
+        // If the function is an identifier, it's OK, but we don't recurse into it.
         } else if (func instanceof Identifier) {
-            return this; // non-null meaning simplification is possible (trivially possible, i.e. alphabetic variant not needed)
 
         } else {
-            throw new TypeMismatchException("The left hand side of a function application must be a lambda expression or an identifier: " + func);
+            throw new TypeMismatchException("The left hand side of a function application must be a lambda expression or a function-typed constant or variable: " + func);
         }
+        
+        // If we've gotten here, then no lambda conversion took place within
+        // our scope. That means that we must see if we can do any lambda conversion
+        // in the argument.
+        Expr arglc = getArg().performLambdaConversion1(binders, accidentalBinders);
+        
+        // If even there no lambda conversions are possible, then return null to
+        // signify that nothing happened.
+        if (arglc == null)
+            return null;
+        
+        // Otherwise, the arg did do a lambda conversion, so we reconstruct ourself.
+        return new FunApp(getFunc(), arglc);
     }
+    
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're in the scope of a lambda. In that case, we keep performing substitutions
+        // in our function and in our argument.
+        return new FunApp(
+                getFunc().performLambdaConversion2(var, replacement, binders, accidentalBinders),
+                getArg().performLambdaConversion2(var, replacement, binders, accidentalBinders));
+    }
+
 }

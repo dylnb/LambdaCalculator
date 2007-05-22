@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.util.Set;
+
 /**
  * Abstract base class of the logical binary connectives
  * (and, or, if, iff).
@@ -44,33 +46,23 @@ public abstract class LogicalBinary extends Binary {
         return Type.T;
     }
     
-    public boolean canSimplify() {
-        return getLeft().canSimplify() || getRight().canSimplify();
-    }
+    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're looking for a lambda to convert. If we can do a conversion on the left,
+        // don't do a conversion on the right!
+        Expr a = getLeft().performLambdaConversion1(binders, accidentalBinders);
+        if (a != null)
+            return create(a, getRight());
+        
+        Expr b = getRight().performLambdaConversion1(binders, accidentalBinders);
+        if (b != null)
+            return create(getLeft(), b);
+        
+        return null;
+    }    
 
-    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
-        if (getLeft().canSimplify())
-            return getLeft().needsAlphabeticalVariant();
-        return getRight().needsAlphabeticalVariant();
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're in the scope of a lambda conversion. Just recurse.
+        return create(getLeft().performLambdaConversion2(var, replacement, binders, accidentalBinders),
+                getRight().performLambdaConversion2(var, replacement, binders, accidentalBinders));
     }
-
-    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
-        // We may only perform a single simplification, so we
-        // have to do it only on the left or on the right. And
-        // we create the variant only on that side.
-        if (getLeft().canSimplify())
-            return create(getLeft().createAlphabeticalVariant(), getRight());
-        else
-            return create(getLeft(), getRight().createAlphabeticalVariant());
-    }
-    
-    public Expr simplify() throws TypeEvaluationException {
-        // We may only perform a single simplification, so we
-        // have to do it only on the left or on the right.
-        if (getLeft().canSimplify())
-            return create(getLeft().simplify(), getRight());
-        else
-            return create(getLeft(), getRight().simplify());
-    }
-    
 }

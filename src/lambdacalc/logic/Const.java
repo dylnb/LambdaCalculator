@@ -30,18 +30,8 @@ public class Const extends Identifier {
         return ret;
     }
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, java.util.Set accidentalBindings) {
-        return this;
-    }
-    
-    protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
-        return this;
-    }
-
     protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap) {
-        
         // ignore maps in all cases, since it only applies to variables
-        
         if (i instanceof Const)
             return this.getType().equals(i.getType()) 
                 && this.getSymbol().equals(i.getSymbol());
@@ -49,4 +39,12 @@ public class Const extends Identifier {
             return false;
     }
     
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're doing substitutions. Clearly, not applicable to a constant.
+        return this;
+    }
+
+    protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
+        return this;
+    }
 }

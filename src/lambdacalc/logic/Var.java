@@ -6,6 +6,7 @@
 
 package lambdacalc.logic;
 
+import java.awt.ItemSelectable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,22 +30,7 @@ public class Var extends Identifier {
         return ret;
     }
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, java.util.Set accidentalBindings) {
-        if (!this.equals(var)) return this;
-        for (Iterator i = potentialAccidentalBindings.iterator(); i.hasNext(); )
-             accidentalBindings.add(i.next());
-        return replacement;
-    }
-    
-    protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
-        if (updates.containsKey(this))
-            return (Expr)updates.get(this);
-        return this;
-    }
-
     protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap) {
- 
-        
         // we use the map here...
         if (i instanceof Var) {
             if (!this.getType().equals(i.getType())) {
@@ -69,5 +55,40 @@ public class Var extends Identifier {
             return false;
     }
         
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're doing substitutions in a lambda conversion. If this is the variable
+        // we're doing substitutions on, we have to think carefully.
+        if (!this.equals(var))
+            return this;
+        
+        // In any case, we'll just return our replacement. However, we must check
+        // if any free variables in the replacement would be accidentally bound
+        // by any of the binders that scope over this variable. We'll do this
+        // inefficiently because expressions ought to be fairly small.
+        for (Iterator bi = binders.iterator(); bi.hasNext(); ) {
+            Binder b = (Binder)bi.next();
+            Identifier bvi = b.getVariable();
+            if (!(bvi instanceof Var))
+                continue;
+            
+            Var bv = (Var)bvi;
+            
+            for (Iterator fvs = replacement.getFreeVars().iterator(); fvs.hasNext(); ) {
+                Var fv = (Var)fvs.next();
+                
+                // If this free variable matches the bound variable, mark the binder
+                // as an accidental binder that will elsewhere have to get fixed up.
+                if (fv.equals(bv))
+                    accidentalBinders.add(b);
+            }   
+        }
+        
+        return replacement;
+    }
     
+    protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
+        if (updates.containsKey(this))
+            return (Expr)updates.get(this);
+        return this;
+    }
 }

@@ -53,30 +53,23 @@ public abstract class Unary extends Expr {
         return innerExpr;
     }
 
-    public boolean canSimplify() {
-        return getInnerExpr().canSimplify();
-    }
-    
-    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
-        return getInnerExpr().needsAlphabeticalVariant();
-    }
-
-    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
-        return create(getInnerExpr().createAlphabeticalVariant());
-    }
-    
-    public Expr simplify() throws TypeEvaluationException {
-        return create(getInnerExpr().simplify());
-    }
-    
-
     protected Set getVars(boolean unboundOnly) {
         return getInnerExpr().getVars(unboundOnly);
     }
 
-    protected Expr substitute(Var var, Expr replacement, Set unboundVars, Set potentialAccidentalBindings, java.util.Set accidentalBindings) {
-        return create(getInnerExpr().substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings));
+    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // Looking for a lambda...
+        Expr inner = getInnerExpr().performLambdaConversion1(binders, accidentalBinders);
+        if (inner == null) // nothing happened
+            return null;
+        return create(inner);
     }
+
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // In the scope of a lambda...
+        return create(getInnerExpr().performLambdaConversion2(var, replacement, binders, accidentalBinders));
+    }
+
 
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
