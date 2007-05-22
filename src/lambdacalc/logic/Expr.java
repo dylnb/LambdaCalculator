@@ -40,7 +40,7 @@ public abstract class Expr implements java.io.Serializable {
      * This returns to toString() on nestedExpr, except when nestedExpr
      * has a higher or equal operator precedence, it is wrapped with parens.
      */
-    protected String nestedToString(Expr nestedExpr) {
+    protected final String nestedToString(Expr nestedExpr) {
         if (nestedExpr.getOperatorPrecedence() >= this.getOperatorPrecedence())
             return "(" + nestedExpr.toString() + ")";
         return nestedExpr.toString();
@@ -60,7 +60,7 @@ public abstract class Expr implements java.io.Serializable {
      * @param obj the other expression to compare
      * @return true if the types are equivalent
      */
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (obj instanceof Expr)
             // call equals and specify not to collapse bound variables
             // (useMap=false)
@@ -76,7 +76,7 @@ public abstract class Expr implements java.io.Serializable {
      * @param obj the other expression to compare
      * @return true if the types are equivalent
      */
-    public boolean alphaEquivalent(Expr obj) {
+    public final boolean alphaEquivalent(Expr obj) {
         // call equals and specify to collapse bound variables
         // (useMap=true)
         return equals(obj, true, null, null, false); // null maps
@@ -90,7 +90,7 @@ public abstract class Expr implements java.io.Serializable {
      * @param obj the other expression to compare
      * @return true if the types are equivalent
      */
-    public boolean operatorEquivalent(Expr obj) {
+    public final boolean operatorEquivalent(Expr obj) {
         return equals(obj, false, null, null, true);
     }
 
@@ -99,7 +99,9 @@ public abstract class Expr implements java.io.Serializable {
      * That is, Parens are equal to the Expr they contain.
      * This method is overwritten in the Parens method and only there.
      */
-    public Expr stripAnyParens() {
+    public final Expr stripAnyParens() {
+        if (this instanceof Parens)
+            return ((Parens)this).getInnerExpr().stripAnyParens();
         return this;
     }
     
@@ -172,14 +174,14 @@ public abstract class Expr implements java.io.Serializable {
     /**
      * Gets a set of all of the variables used within this expression.
      */
-    public Set getAllVars() {
+    public final Set getAllVars() {
         return getVars(false);
     }
     
     /**
      * Gets a set of all of the free (unbound) variables used within this expression.
      */
-    public Set getFreeVars() {
+    public final Set getFreeVars() {
         return getVars(true);
     }
 
@@ -217,7 +219,7 @@ public abstract class Expr implements java.io.Serializable {
      * replaced by replacement, or null if the substitution could not be
      * completed because an alphabetical variant should be created.
      */
-    public Expr substitute(Var var, Expr replacement) {
+    public final Expr substitute(Var var, Expr replacement) {
         Set unboundVars = replacement.getVars(true);
         Set pab = new HashSet();
         Set ab = new HashSet();
@@ -237,7 +239,7 @@ public abstract class Expr implements java.io.Serializable {
      * @return the expression with free occurrences of var
      * replaced by replacement
      */
-    public Expr substituteAll(Var var, Expr replacement) {
+    public final Expr substituteAll(Var var, Expr replacement) {
         return substitute(var, replacement, new HashSet(), new HashSet(), null);
     }
     
@@ -279,7 +281,7 @@ public abstract class Expr implements java.io.Serializable {
     // binding makes creating an alphabetical variant necessary.
     // (Actually, this method is called from FunApp::createAlphabeticalVariant,
     // and shouldn't need to be called elsewhere.)
-    Expr createAlphabeticalVariant(Var var, Expr replacement) {
+    final Expr createAlphabeticalVariant(Var var, Expr replacement) {
         Set unboundVars = replacement.getVars(true);
         Set pab = new HashSet();
         Set ab = new HashSet();

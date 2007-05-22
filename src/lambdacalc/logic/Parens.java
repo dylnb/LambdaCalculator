@@ -56,14 +56,6 @@ public class Parens extends Unary {
         return getInnerExpr().getType();
     }
     
-    public Expr stripAnyParens() {
-        Expr result = this;
-        while (result instanceof Parens) {
-            result = ((Parens)result).getInnerExpr();
-        }
-        return result;
-    }
-    
     protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
         
         // ignore parentheses for equality test
