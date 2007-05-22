@@ -46,14 +46,14 @@ public abstract class LogicalBinary extends Binary {
         return Type.T;
     }
     
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda to convert. If we can do a conversion on the left,
         // don't do a conversion on the right!
-        Expr a = getLeft().performLambdaConversion1(binders, accidentalBinders);
+        Expr a = getLeft().performLambdaConversion1(accidentalBinders);
         if (a != null)
             return create(a, getRight());
         
-        Expr b = getRight().performLambdaConversion1(binders, accidentalBinders);
+        Expr b = getRight().performLambdaConversion1(accidentalBinders);
         if (b != null)
             return create(getLeft(), b);
         

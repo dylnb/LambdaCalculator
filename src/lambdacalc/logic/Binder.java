@@ -129,16 +129,11 @@ public abstract class Binder extends Expr {
             throw new ConstInsteadOfVarException("The symbols " + Lambda.SYMBOL + ", " + Exists.SYMBOL + ", and " + ForAll.SYMBOL + " must be followed by a variable, but '" + getVariable() + "' is a constant.");
     }
 
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda to convert, but even if this is a lambda, we don't
         // do anything special here. That's handled in FunApp.
-        // We do, however, have to track that this binder outscopes everything in its scope,
-        // so that we can track accidental binding.
         
-        Set binders2 = new HashSet(binders);
-        binders2.add(this);
-        
-        Expr inside = getInnerExpr().performLambdaConversion1(binders2, accidentalBinders);
+        Expr inside = getInnerExpr().performLambdaConversion1(accidentalBinders);
         
         if (inside == null) // nothing happened, return null
             return null;
@@ -149,6 +144,9 @@ public abstract class Binder extends Expr {
     protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
         if (getVariable().equals(var)) return this; // no binding of var occurs within this scope
         
+        // Mark that this binder outscopes things in its scope, so that when we
+        // get to a replacement, we know what variables would be accidentally
+        // bound.
         Set binders2 = new HashSet(binders);
         binders2.add(this);
         

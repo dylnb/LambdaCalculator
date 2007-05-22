@@ -96,13 +96,13 @@ public class ArgList extends Expr {
         return ret;
     }
 
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // Looking for a lambda, but only do conversion in the first arg!
         Expr[] e = new Expr[exprs.length];
         boolean didConversion = false;
         for (int i = 0; i < exprs.length; i++) {
             if (!didConversion) {
-                e[i] = exprs[i].performLambdaConversion1(binders, accidentalBinders);
+                e[i] = exprs[i].performLambdaConversion1(accidentalBinders);
                 if (e[i] != null)
                     didConversion = true;
                 else

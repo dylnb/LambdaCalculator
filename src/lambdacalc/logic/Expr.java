@@ -212,9 +212,8 @@ public abstract class Expr implements java.io.Serializable {
      * left-to-right search is simplified.
      */
     public final LambdaConversionResult performLambdaConversion() throws TypeEvaluationException {
-        Set binders = new HashSet();
         Set accidentalBinders = new HashSet();
-        Expr result = performLambdaConversion1(binders, accidentalBinders);
+        Expr result = performLambdaConversion1(accidentalBinders);
         
         // Check if any lambda conversion took place.
         if (result == null)
@@ -234,7 +233,7 @@ public abstract class Expr implements java.io.Serializable {
         
         // Now try to simplify this.
         accidentalBinders = new HashSet();
-        result = alphaVary.performLambdaConversion1(binders, accidentalBinders);
+        result = alphaVary.performLambdaConversion1(accidentalBinders);
         if (accidentalBinders.size() != 0)
             throw new RuntimeException("Internal error: An alphabetical variant was still needed after creating one: " + alphaVary.toString());
          
@@ -249,13 +248,6 @@ public abstract class Expr implements java.io.Serializable {
      * Once we find the lambda we are converting, performLambdaConversion2 takes
      * over and goes down the rest of the subtree.
      *
-     * We have to track which binders have scope over this subexpression as we go
-     * down the tree because of accidental binding, i.e. when a free variable in
-     * the replacement would get accidentally bound when it is put into the main
-     * expression. This occurs in: LxAy[P(x)] (y)
-     * The binders that scope over this expression are in the 'binders' parameter.
-     * The caller sets that.
-     * 
      * Once we are in the scope of the lambda being converted and we start performing
      * substitutions we have to track which of the binders that scope over us
      * cause an accidental binding of a formerly free variable in the replacement
@@ -267,22 +259,28 @@ public abstract class Expr implements java.io.Serializable {
      * careful that in n-ary operators, if a lambda conversion
      * ocurrs within one operand, we must not do any conversions in the other operands.
      *
-     * This method returns false to signify that no conversion took place.
+     * This method returns null to signify that no conversion took place.
      *
-     * @param binders the binders that have scope over this expression
      * @param accidentalBinders as we perform substitution, we record here
      * those binders whose variables must be modified so that they don't accidentally
      * capture free variable in the replacement
      * @return null if no lambda conversion took place, otherwise the lambda-converted
      * expression 
      */
-    protected abstract Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException;
+    protected abstract Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException;
        
     /**
      * Helper method for performLambdaConversion. This method is called by
      * performLambdaConversion1 once we enter into the scope of the lambda that
      * we are converting.
      *
+     * We have to track which binders have scope over this subexpression as we go
+     * down the tree because of accidental binding, i.e. when a free variable in
+     * the replacement would get accidentally bound when it is put into the main
+     * expression. This occurs in: LxAy[P(x)] (y)
+     * The binders that scope over this expression are in the 'binders' parameter.
+     * The caller sets that.
+     * 
      * 'var' is set to its bound variable. If we get to a binder that binds the
      * same variable, we know that nothing will happen in that scope, and the Expr
      * is returned immediately.

@@ -53,7 +53,7 @@ public abstract class Identifier extends Expr {
     
     protected abstract boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap);
     
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda. None here.
         return null;
     }

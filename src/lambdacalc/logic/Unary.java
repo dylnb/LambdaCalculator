@@ -57,9 +57,9 @@ public abstract class Unary extends Expr {
         return getInnerExpr().getVars(unboundOnly);
     }
 
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // Looking for a lambda...
-        Expr inner = getInnerExpr().performLambdaConversion1(binders, accidentalBinders);
+        Expr inner = getInnerExpr().performLambdaConversion1(accidentalBinders);
         if (inner == null) // nothing happened
             return null;
         return create(inner);

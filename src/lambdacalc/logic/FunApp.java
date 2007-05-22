@@ -130,7 +130,7 @@ public class FunApp extends Binary {
         }
     }
     
-    protected Expr performLambdaConversion1(Set binders, Set accidentalBinders) throws TypeEvaluationException {
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda to convert...
         
         Expr func = getFunc().stripAnyParens(); // we need to strip parens to see what it really is
@@ -141,7 +141,7 @@ public class FunApp extends Binary {
         // E.g. in Lx.Ly.body (a) (b) 
         // the structurally innermost FA is Lx.Ly.body (a)
         if (func instanceof FunApp) {
-            Expr inside = func.performLambdaConversion1(binders, accidentalBinders);
+            Expr inside = func.performLambdaConversion1(accidentalBinders);
             if (inside != null)
                 return new FunApp(inside, getArg());
 
@@ -154,6 +154,7 @@ public class FunApp extends Binary {
             
             Expr inside = lambda.getInnerExpr().stripAnyParens();
             
+            Set binders = new HashSet(); // initialize for use down below
             return inside.performLambdaConversion2(var, arg, binders, accidentalBinders);
             
         // If the function is an identifier, it's OK, but we don't recurse into it.
@@ -166,7 +167,7 @@ public class FunApp extends Binary {
         // If we've gotten here, then no lambda conversion took place within
         // our scope. That means that we must see if we can do any lambda conversion
         // in the argument.
-        Expr arglc = getArg().performLambdaConversion1(binders, accidentalBinders);
+        Expr arglc = getArg().performLambdaConversion1(accidentalBinders);
         
         // If even there no lambda conversions are possible, then return null to
         // signify that nothing happened.
