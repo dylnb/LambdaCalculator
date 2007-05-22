@@ -169,7 +169,6 @@ public abstract class Expr implements java.io.Serializable {
      * same Object marker -- although the variables themselves may be different.
      */
     
-    
     /**
      * Gets a set of all of the variables used within this expression.
      */

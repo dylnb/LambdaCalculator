@@ -238,7 +238,7 @@ public class ExpressionParser {
                 }
                 first = false;
 
-                ParseResult arg = parseExpression(expression, start, context, "the next  argument to the predicate " + ident.toString());
+                ParseResult arg = parseExpression(expression, start, context, "the next argument to the predicate " + ident.toString());
                 arguments.add(arg.Expression);
                 start = arg.Next;
             } else {
