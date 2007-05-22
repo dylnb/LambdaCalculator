@@ -25,11 +25,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     Expr expr;
     IdentifierTyper types;
     
-    Expr last_answer;
-    
     ArrayList steps = new ArrayList();
     ArrayList steptypes = new ArrayList();
     
+    Expr last_answer;
     int cur_step = 0;
     
     public boolean NotSoFast = false; // one step at a time
@@ -85,6 +84,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     
     public String getShortDirective() {
         return "Simplify the expression";
+    }
+
+    public void reset() {
+        super.reset();
+        this.last_answer = null;
+        this.cur_step = 0;
     }
 
     

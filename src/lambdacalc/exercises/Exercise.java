@@ -92,6 +92,13 @@ public abstract class Exercise implements java.io.Serializable {
     }
     
     /**
+     * Resets an exercise to its pristine unanswered state.
+     */
+    public void reset() {
+        this.done = false;
+    }
+    
+    /**
      * If the exercise has been started, get's the last correct answer
      * given by the user.  If the exercise is finished, this is the
      * correct final answer.  Otherwise it is the last correct

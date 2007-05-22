@@ -95,8 +95,9 @@ public class MainWindow extends javax.swing.JFrame {
         lblDirections.setText("Open an exercise file from your instructor by using the File menu above.");
         btnPrev.setEnabled(false);
         btnNext.setEnabled(false);
+        btnDoAgain.setVisible(false);
         
-        TitledBorder tb = (TitledBorder)lblQuestion.getBorder();
+        TitledBorder tb = (TitledBorder)txtQuestion.getBorder();
         tb.setTitle("Current Problem");
         
         txtUserAnswer.setBackground(UIManager.getColor("TextField.inactiveBackground"));
@@ -231,7 +232,7 @@ public class MainWindow extends javax.swing.JFrame {
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);
         btnNext.setEnabled(currentEx+1 < exFile.getGroup(currentGroup).size() || currentGroup+1 < exFile.size() );
         
-        TitledBorder tb = (TitledBorder)lblQuestion.getBorder();
+        TitledBorder tb = (TitledBorder)txtQuestion.getBorder();
         tb.setTitle("Current Problem: " + ex.getShortDirective());
         
         setAnswerEnabledState();
@@ -263,11 +264,11 @@ public class MainWindow extends javax.swing.JFrame {
         if (!ex.isDone()) {
             String lastAnswer = ex.getLastAnswer();
             if (lastAnswer == null) {
-                lblQuestion.setText(ex.getExerciseText());
+                txtQuestion.setText(ex.getExerciseText());
                 txtUserAnswer.setTemporaryText(ex.getTipForTextField());
                 txtFeedback.setText("You have not yet started this exercise.");
             } else {
-                lblQuestion.setText(lastAnswer);
+                txtQuestion.setText(lastAnswer);
                 txtUserAnswer.setText(lastAnswer);
                 txtFeedback.setText("You have started this exercise but have not completed it yet.");
             }
@@ -287,6 +288,7 @@ public class MainWindow extends javax.swing.JFrame {
             txtUserAnswer.setEnabled(false);
             btnCheckAnswer.setEnabled(false);
         }
+        btnDoAgain.setVisible(ex.hasBeenStarted());
     }
     
     private static void initLookAndFeel() {
@@ -324,7 +326,6 @@ public class MainWindow extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        lblQuestion = new javax.swing.JLabel();
         btnCheckAnswer = new javax.swing.JButton();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -334,6 +335,8 @@ public class MainWindow extends javax.swing.JFrame {
         lblDirections = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         lblIdentifierTypes = new javax.swing.JTextArea();
+        txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
+        btnDoAgain = new javax.swing.JButton();
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         treeExerciseFile = new javax.swing.JTree();
@@ -368,10 +371,6 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        lblQuestion.setFont(new java.awt.Font("Serif", 0, 18));
-        lblQuestion.setText("No problem selected.");
-        lblQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
-
         btnCheckAnswer.setText("Check My Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -433,34 +432,41 @@ public class MainWindow extends javax.swing.JFrame {
         lblIdentifierTypes.setWrapStyleWord(true);
         lblIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Conventions about letters"));
 
+        txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
+        txtQuestion.setEditable(false);
+        txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
+
+        btnDoAgain.setText("Do Problem Again");
+        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoAgainActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(lblIdentifierTypes))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(13, 13, 13)
-                        .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
-                            .add(lblQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(scrollFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .add(btnPrev)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 280, Short.MAX_VALUE)
-                                .add(btnNext)))))
+            .add(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lblIdentifierTypes)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .add(1, 1, 1)
+                        .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
+                    .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .add(scrollFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .add(btnPrev)
+                        .add(70, 70, 70)
+                        .add(btnDoAgain)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 178, Short.MAX_VALUE)
+                        .add(btnNext))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -469,7 +475,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(lblQuestion)
+                .add(txtQuestion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -479,10 +485,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnNext)
-                    .add(btnPrev))
+                    .add(btnPrev)
+                    .add(btnDoAgain))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                .addContainerGap())
+                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .add(32, 32, 32))
         );
         jPanel1.add(jPanel3);
 
@@ -560,7 +567,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .add(lblHelpNot)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(lblHelpConditionals)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
         jSplitPane2.setRightComponent(jPanel2);
 
@@ -638,6 +645,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
+        ex.reset();
+        flagChangeMade();
+        treeExerciseFile.repaint();
+        showExercise();
+    }//GEN-LAST:event_btnDoAgainActionPerformed
 
     private void menuItemShowTeacherToolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemShowTeacherToolActionPerformed
         TeacherToolWindow.showWindow();
@@ -848,11 +862,9 @@ public class MainWindow extends javax.swing.JFrame {
                 else
                     response += "Congratulations! You've solved all the problems in this exercise file. Now save your work for submission.";
                 txtFeedback.setText(response);
-                treeExerciseFile.repaint();
-                setAnswerEnabledState(); // update enabled state of controls
             } else if (status.isCorrect()) {
                 txtFeedback.setText(status.getMessage());
-                lblQuestion.setText(ex.getLastAnswer());
+                txtQuestion.setText(ex.getLastAnswer());
             } else {
                 String message = status.getMessage();
 
@@ -864,11 +876,12 @@ public class MainWindow extends javax.swing.JFrame {
                 txtFeedback.setText(message);
             }
             
-            if (status.isCorrect()) {
-                hasUnsavedWork = true;
-                if (hasUserSaved)
-                    menuItemSave.setEnabled(true);
-            }
+            treeExerciseFile.repaint();
+
+            setAnswerEnabledState(); // update enabled state of controls
+            
+            if (status.isCorrect())
+                flagChangeMade();
                     
         } catch (SyntaxException s) {
             txtFeedback.setText(s.getMessage());
@@ -878,9 +891,15 @@ public class MainWindow extends javax.swing.JFrame {
         txtUserAnswer.requestFocus();
     }//GEN-LAST:event_onCheckAnswer
     
+    private void flagChangeMade() {
+        hasUnsavedWork = true;
+        if (hasUserSaved)
+            menuItemSave.setEnabled(true);
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheckAnswer;
+    private javax.swing.JButton btnDoAgain;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JFileChooser jFileChooser1;
@@ -902,7 +921,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblHelpLambda;
     private javax.swing.JLabel lblHelpNot;
     private javax.swing.JTextArea lblIdentifierTypes;
-    private javax.swing.JLabel lblQuestion;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenuItem menuItemOpen;
     private javax.swing.JMenuItem menuItemQuit;
@@ -912,6 +930,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollFeedback;
     private javax.swing.JTree treeExerciseFile;
     private javax.swing.JTextArea txtFeedback;
+    private lambdacalc.gui.LambdaEnabledTextField txtQuestion;
     private lambdacalc.gui.LambdaEnabledTextField txtUserAnswer;
     // End of variables declaration//GEN-END:variables
     

@@ -94,16 +94,21 @@ variables of type &lt;et&gt; : U-Z
 </dd>
 
 <dt><tt>points per exercise ___</tt><dt>
-<dd><p>This directive specified a numeric point value assigned to each exercise that follows the directive, or just until another <tt>points per exercise ___</tt> directive is found. The points value can be any rational number. It is up to the instructor to ensure that the total points add up to 100 if that is desired.</p></dd>
+<dd><p>This directive specified a numeric point value assigned to each exercise that follows the directive, or just until another <tt>points per exercise ___</tt> directive is found. The points value can be any rational number. It is up to the instructor to ensure that the total points add up to 100 if that is desired. Example:</p>
+<pre>points per exercise 15</pre></dd>
 
 <dt><tt>exercise ___</tt></dt>
-<dd><p>This directive begins a group of exercises and specifies the type of exercise in the group. The exercise type must be either <tt>semantic types</tt> or <tt>lambda conversion</tt>. These exercises are described below. The <tt>exercise ___</tt> directive <i>must</i> be followed by <tt>title ___</tt> and <tt>directions ___</tt> directives before any exercises are entered.</p></dd>
+<dd><p>This directive begins a group of exercises and specifies the type of exercise in the group. The exercise type must be either <tt>semantic types</tt> or <tt>lambda conversion</tt>. These exercises are described below. The <tt>exercise ___</tt> directive <i>must</i> be followed by <tt>title ___</tt> and <tt>directions ___</tt> directives before any exercises are entered. Examples:</p><pre>exercise lambda conversion
+exercise semantic types</pre></dd>
 
 <dt><tt>title ___</tt></dt>
-<dd><p>Specifies the title for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises.</dd>
+<dd><p>Specifies the title for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Example:</p><pre>title Lambda Conversion</pre></dd>
 
 <dt><tt>directions ___</tt></dt>
-<dd><p>Specifies the directions to provide to the student for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Directions can be split across multiple lines by repeating the <tt>directions ___</tt> directive.</dd>
+<dd><p>Specifies the directions to provide to the student for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Directions can be split across multiple lines by repeating the <tt>directions ___</tt> directive. Example:</p>
+<pre>directions After checking that the type of the function and the type of the
+directions argument(s) match, simplify the following expressions performing
+directions one lambda-conversion at a time.</pre></dd>
 
 </dl>
 

@@ -22,6 +22,7 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
     IdentifierTyper types;
     
     Type type;
+    
     Type last_answer;
     
     public TypeExercise(Expr expression, int index, IdentifierTyper types) throws TypeEvaluationException {
@@ -45,6 +46,11 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
     
     public String getShortDirective() {
         return "Give the semantic type";
+    }
+
+    public void reset() {
+        super.reset();
+        this.last_answer = null;
     }
 
     public AnswerStatus checkAnswer(String answer) throws SyntaxException  {
