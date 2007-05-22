@@ -12,7 +12,7 @@ package lambdacalc.logic;
 import java.util.HashMap;
 
 /**
- * Assignment function from variables to values.
+ * Assignment function from variables to values. This is a type-safe HashMap.
  * @author lucas
  */
 public class AssignmentFn extends HashMap {

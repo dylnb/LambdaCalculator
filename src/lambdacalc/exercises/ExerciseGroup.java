@@ -64,7 +64,7 @@ public class ExerciseGroup {
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(0); // just some versioning for future use
+        output.writeShort(1); // just some versioning for future use
         output.writeUTF(title);
         output.writeUTF(directions);
         output.writeShort(size());
@@ -78,11 +78,13 @@ public class ExerciseGroup {
                 throw new RuntimeException("Exercise type not recognized in ExerciseGroup::WriteToStream.");
             e.writeToStream(output);
             output.writeBoolean(e.isDone());
+            output.writeUTF(e.getPoints().toString());
         }
     }
     
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
-        if (input.readShort() != 0) throw new ExerciseFileFormatException();
+        if (input.readShort() != 1) throw new ExerciseFileVersionException();
+        
         title = input.readUTF();
         directions = input.readUTF();
         int nEx = input.readShort();
@@ -101,6 +103,8 @@ public class ExerciseGroup {
             
             if (input.readBoolean())
                 ex.setDone();
+            
+            ex.setPoints(new java.math.BigDecimal(input.readUTF()));
         }
     }
 }

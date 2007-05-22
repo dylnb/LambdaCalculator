@@ -10,6 +10,7 @@ import java.util.*;
 import lambdacalc.exercises.Exercise;
 import lambdacalc.exercises.ExerciseFile;
 import lambdacalc.exercises.ExerciseFileFormatException;
+import lambdacalc.exercises.ExerciseFileVersionException;
 
 /**
  * Says whether an Identifier is a variable or a constant
@@ -258,7 +259,7 @@ public class IdentifierTyper {
     }
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
         
-        if (input.readShort() != 0) throw new ExerciseFileFormatException();
+        if (input.readShort() != 0) throw new ExerciseFileVersionException();
         
         int nEntries = input.readShort();
         for (int i = 0; i < nEntries; i++) {

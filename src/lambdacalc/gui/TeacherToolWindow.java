@@ -190,17 +190,6 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     
     
-    private static int numberCorrect(List exercises) {
-        Iterator iter = exercises.iterator();
-        int count = 0;
-        while (iter.hasNext()) {
-            Exercise e = (Exercise) iter.next();
-            if (e.isDone()) {
-                count++;
-            }
-        }
-        return count;
-    }
     
     Vector fileList = new Vector();
     
@@ -213,8 +202,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         model.addColumn("Student");   // 1
         model.addColumn("Assignment");// 2
         model.addColumn("# of Exercises");//3
-        model.addColumn("# Correct"); // 4
-        model.addColumn("Solved?");   // 5
+        model.addColumn("Points"); // 4
         
         fileList.clear();
         
@@ -231,13 +219,11 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                     row[1] = ex.getStudentName();
                     row[2] = ex.getTitle();
                     row[3] = new Integer(ex.exercises().size());
-                    row[4] = new Integer(numberCorrect(ex.exercises()));
-                    row[5] = new Boolean(ex.exercises().size()==numberCorrect(ex.exercises()));
+                    row[4] = ex.getPointsCorrect() + "/" + ex.getTotalPointsAvailable();
+                    //row[5] = new Boolean(ex.exercises().size()==numberCorrect(ex.exercises()));
                     
-                    // This of course changes when we have new grading possibilities.
-                    double score = 100.0 * (double)numberCorrect(ex.exercises()) / (double)ex.exercises().size();
+                    scores.add(ex.getPointsCorrect());
                     
-                    scores.add(new Double(score));
                 } catch (Exception e) {
                     System.err.println(e.getStackTrace());
                     row[1] = "Error: " + e.getMessage();
@@ -266,7 +252,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     double mean(ArrayList scores) {
         double total = 0;
         for (Iterator i = scores.iterator(); i.hasNext(); )
-            total += ((Double)i.next()).doubleValue();
+            total += ((java.math.BigDecimal)i.next()).doubleValue();
         return total / (double)scores.size();
     }
     
@@ -275,7 +261,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         
         double total = 0;
         for (Iterator i = scores.iterator(); i.hasNext(); ) {
-            double v = ((Double)i.next()).doubleValue() - mean;
+            double v = ((java.math.BigDecimal)i.next()).doubleValue() - mean;
             total += v*v;
         }
         return Math.sqrt(total / ((double)scores.size()-1));
@@ -285,9 +271,9 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         ArrayList sortedScores = (ArrayList)scores.clone();
         Collections.sort(sortedScores);
         if (scores.size() % 2 == 1) {
-            return ((Double)sortedScores.get((scores.size()-1) / 2)).doubleValue();
+            return ((java.math.BigDecimal)sortedScores.get((scores.size()-1) / 2)).doubleValue();
         } else {
-            return (((Double)sortedScores.get(scores.size() / 2 - 1)).doubleValue() + ((Double)sortedScores.get(scores.size() / 2)).doubleValue())/2.0;
+            return (((java.math.BigDecimal)sortedScores.get(scores.size() / 2 - 1)).doubleValue() + ((java.math.BigDecimal)sortedScores.get(scores.size() / 2)).doubleValue())/2.0;
         }
     }
 
@@ -308,7 +294,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             text += "Student: " + exfile.getStudentName() + "\n";
             text += "\n";
             
-            text += numberCorrect(exfile.exercises()) + "/" + exfile.exercises().size() + " correct (" + (100 * numberCorrect(exfile.exercises()) / exfile.exercises().size()) + "%)\n";
+            text += exfile.getPointsCorrect() + "/" + exfile.getTotalPointsAvailable() + "\n";
 
             text += "\n";
             

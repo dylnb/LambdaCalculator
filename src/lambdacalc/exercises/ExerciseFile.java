@@ -99,6 +99,49 @@ public class ExerciseFile implements Serializable {
         return l;
     }
    
+    /**
+     * Returns the total number of exercises completed correctly.
+     */
+    public int getNumberCorrect() {
+        Iterator iter = exercises().iterator();
+        int count = 0;
+        while (iter.hasNext()) {
+            Exercise e = (Exercise) iter.next();
+            if (e.isDone())
+                count++;
+        }
+        return count;
+    }
+    
+    /**
+     * Returns the total amount of points that could be awarded
+     * in this problem set (i.e. 100, if the points add up).
+     */
+    public java.math.BigDecimal getTotalPointsAvailable() {
+        Iterator iter = exercises().iterator();
+        java.math.BigDecimal ret = java.math.BigDecimal.valueOf(0);
+        while (iter.hasNext()) {
+            Exercise e = (Exercise) iter.next();
+            ret = ret.add(e.getPoints());
+        }
+        return ret;
+    }
+
+    /**
+     * Returns the amount of points the student has achieved
+     * in his correct answers.
+     */
+    public java.math.BigDecimal getPointsCorrect() {
+        Iterator iter = exercises().iterator();
+        java.math.BigDecimal ret = java.math.BigDecimal.valueOf(0);
+        while (iter.hasNext()) {
+            Exercise e = (Exercise) iter.next();
+            if (e.isDone())
+                ret = ret.add(e.getPoints());
+        }
+        return ret;
+    }
+
     public void saveTo(File target) throws IOException {
         OutputStream stream = new FileOutputStream(target);
         

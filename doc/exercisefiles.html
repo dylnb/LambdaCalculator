@@ -1,0 +1,184 @@
+<html>
+	<head>
+		<title>Lambda Calculator - Exercise File Format</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<style>
+			pre {
+				border: 1px solid #CCCCCC;
+				background-color: #EEEEEE;
+				padding: .5em;
+			}
+		</style>
+	</head>
+	<body>
+
+<h1>Lambda Calculator - Exercise File Format</h1>
+		
+<p>Exercise files created by the instructor are saved as plain-text files, usually with a <tt>.txt</tt> file extension. You can edit this files with, for instance, the Notepad program on Windows. When using Microsoft Word or another office suite, be sure to save the file as a Text Only-formatted file. When using special or international (non-ASCII) characters, files should be saved in the UTF-8 character encoding.</p>
+
+<p>An example exercise file is given below.</p>
+
+<pre>
+# Lines that begin with a hash are ignored.
+
+Homework 1
+
+constants of type e : a b-c
+constants of type &lt;e,t&gt; : P-Q
+variables of type e : x-z
+variables of type &lt;et&gt; : X Y
+
+exercise semantic types
+points per exercise 10
+title Semantic Types
+directions Give the semantic type of the following lambda-expressions.
+
+c
+P(c)
+Q(x) | ~Q(x)
+Lx. P(x) &amp; Q(x)
+
+exercise lambda conversion
+points per exercise 15
+title Lambda Conversion
+directions After checking that the type of the function and the type of the
+directions argument(s) match, simplify the following expressions performing
+directions one lambda-conversion at a time.
+
+Lx. P(x) &amp; Q(x) (a)
+LxLy. R(a,y) &amp; Q(x) (a) (b)
+Lx.a (b)
+LxLx.P(x) -> R(x,c) (a) (b)
+</pre>
+
+<h2>File Format Basics</h2>
+
+<p>Blank lines in execise files are ignored, and lines that begin with a hash (#) are also ignored. You can use hashes to store notes in the file that won't be read by the Lambda program, but of course keep in mind that students can view such notes if they open the exercise file in a text editor themselves.</p>
+
+<p>The first (non-ignored) line of every exercise file is the title of the exercise to be shown to the student, and for the instructor's use later when reviewing the students' work. In the example above, this is <tt>Homework 1</tt>.</p>
+
+<p>Following this line, a line is either a <i>directive</i> to the Lambda program, or it is an <i>exercise</i>.</p>
+
+<h2>Directives</h2>
+
+<p>Directives are lines that begin with specially recognized commands. These are explained below.</p>
+
+<dl>
+
+<dt><tt>constants of type ___ : ___</tt></dt>
+<dt><tt>variables of type ___ : ___</tt></dt>
+<dd>
+<p>These directives specify the typing convention for variables and constants found in the exercises. If none of these directives are present in an exercise file, the default type assignments shown below are used. The first time this directive is used in an exercise file, the defaults are cleared, and the new type assignments apply for all exercises following the directive.</p>
+<p>A type can be either:</p>
+<p>an atomic type, which can be any single letter,</p>
+<p>a complex (function) type specified as &lt;T<sub>1</sub>,T<sub>2</sub>&gt;, for types T<sub><i>i</i></sub>, or</p>
+<p>a cartesian-product type, specified as T<sub>1</sub>*T<sub>2</sub>*T<sub>3</sub>....</p>
+<p>One-place predicates are typed as complex types. Two-place (or more) predicates are typed as functions from a cartesian-product type to another type, i.e. as <tt>&lt;T<sub>1</sub>*T<sub>2</sub>*T<sub>3</sub>,T<sub>4</sub></tt>&gt;. Commas may be omitted from complex types when the types on either side are both atomic.</p>
+<p>Examples:</p>
+<pre>
+constants of type e : a b-c
+constants of type &lt;e,t&gt; : P-Q
+constants of type &lt;e*e,t&gt; : R S T
+variables of type e : x-z
+variables of type &lt;et&gt; : X Y
+</pre>
+<p>These directives will always override previous uses of the directives, so you can change the typing conventions throughout the exercise file by issuing this directive again.</p>
+<p>The default typing conventions are:</p>
+<pre>
+constants of type e : a-e
+constants of type &lt;e,t&gt; : P-Q
+constants of type &lt;e*e,t&gt; : R-S
+variables of type e : u-z
+variables of type &lt;et&gt; : U-Z
+</pre>
+</dd>
+
+<dt><tt>points per exercise ___</tt><dt>
+<dd><p>This directive specified a numeric point value assigned to each exercise that follows the directive, or just until another <tt>points per exercise ___</tt> directive is found. The points value can be any rational number. It is up to the instructor to ensure that the total points add up to 100 if that is desired.</p></dd>
+
+<dt><tt>exercise ___</tt></dt>
+<dd><p>This directive begins a group of exercises and specifies the type of exercise in the group. The exercise type must be either <tt>semantic types</tt> or <tt>lambda conversion</tt>. These exercises are described below. The <tt>exercise ___</tt> directive <i>must</i> be followed by <tt>title ___</tt> and <tt>directions ___</tt> directives before any exercises are entered.</p></dd>
+
+<dt><tt>title ___</tt></dt>
+<dd><p>Specifies the title for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises.</dd>
+
+<dt><tt>directions ___</tt></dt>
+<dd><p>Specifies the directions to provide to the student for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Directions can be split across multiple lines by repeating the <tt>directions ___</tt> directive.</dd>
+
+</dl>
+
+<h2>Exercises</h2>
+
+<p>Lines that are not recognized as directives are assumed to be exercises, of the type specified in a preceding <tt>exercise ___</tt> directive.</p>
+
+<h3>Semantic Types Exercises</h3>
+
+<p>For this exercise type, the instructor enters an expression in predicate logic. The student's task is to provide the semantic type of the expression. For example, if the exercise is:</p>
+
+<pre>λx.P(x) ∧ Q(x)</pre>
+
+<p>The student is expected to answer:</p>
+
+<pre>&lt;e,t&gt;</pre>
+
+<p>Or in an equivalent way, such as abbreviated as <tt>et</tt>.</p>
+
+<p>Predicate logic expressions can be entered in exercise files without needing to insert special characters like lambdas and wedges. This is described in more detail below. For the example above, the instructor enters into the exercise file:</p>
+
+<pre>Lx. P(x) &amp; Q(x)</pre>
+
+<p>The correct answer, i.e. the type of this expression, does not need to be entered into the exercise file. The Lambda program will compute the correct answer itself.</p>
+
+<h3>Lambda Conversion Exercises</h3>
+
+<p>For this exercise type, the instructor enters an expression in predicate logic. The student's task is to simplify the expression by performing lambda conversions, one at a time. For example, if the exercise is:</p>
+
+<pre>λxλy.R(a,y) ∧ Q(x) (a) (b)</pre>
+
+<p>The student is expected first to answer:</p>
+
+<pre>λy.R(a,y) ∧ Q(a) (b)</pre>
+
+<p>The Lambda program will check this intermediate answer and then allow the student to proceed to the next step:</p>
+
+<pre>R(a,b) ∧ Q(a)</pre>
+
+<p>It is possible to lambda-convert over higher types. This proceeds as follows:</p>
+
+<pre>
+λX. X(b) (λx. R(a,x)) 
+(λx. R(a,x)) (b) 
+R(a,b)
+</pre>
+
+<p>In addition, non-reducible predicate logic expressions may also be provided in the exercise file, such as the expression <tt>P(x)</tt>. In this case, the student is expected to respond with the same expression.</p>
+
+<p>Sometimes creating an alphabetical variant is needed before proceeding to lambda conversion. In these cases, the Lambda program will realize that an alphabetical variant is necessary, and it will require that the student enters it before preceeding with simplification. An example of this is shown below:</p>
+
+<pre>
+Exercise: λx.∃y[R(y,x)] (y)
+Student's responses:
+1) λx.∃yʹ[R(yʹ,x)] (y)
+2) ∃yʹ[R(yʹ,y)]
+</pre>
+
+<p>The correct answers to lambda conversion exercises, i.e. the simplifications of the expressions, do not need to be entered into the exercise file. The Lambda program will compute the correct answer (including the steps needed to reach it) itself.</p>
+
+<h3>How to enter predicate logic expressions</h3>
+
+<p>The Lambda program will read predicate logic expressions from exercise files. Predicate logic expressions may include:</p>
+
+<p>constants and variables, which must be single letters,</p>
+<p>predicates, entered as P(a), P(a,b,c), or in abbreviated form Pabc,</p>
+<p>the logical connectives ¬, ∧, ∨, →, and ↔, which can be entered as ~, &amp;, | (the pipe character), -&gt;, and &lt;-&gt;,</p>
+<p>parenthesized expressions, using parens () or brackets [],</p>
+<p>the quantifiers ∀ and ∃, which can be abbreviated as the capital letters A and E, entered for example as Ax.P(x), ExP(x), or AxEy[P(x) &amp; Q(y)],</p>
+<p>lambda binders, λ, or abbreviated as the captital letter L, entered as Lx.P(x), LxP(x), or LxLy[P(x,y)], and</p>
+<p>function application, which is an expression, <i>followed by a mandatory space</i>, followed by another expression, such as Lx.P(x) (b).</p>
+
+<p>Because the capital letters A, E, and L are used for special symbols, they cannot serve as constants or variables.</p>
+
+<p>Care must be taken that the operator precedence assumed by the instructor agrees with that used by the Lambda program. When in doubt, add parenthesis. Importantly, expressions involving binders and the logical infix connectives are often ambiguously written in print, but the Lambda program will not warn the instructor of potential ambiguity. For instance, Lx.P(x) &amp; Q(x) will be interpreted by the lambda program as Lx.[P(x) &amp; Q(x)]. Likewise, Lx.P(x) &amp; Ly.Q(y) will be interpreted as Lx.[P(x) &amp; Ly.Q(y)], which is perhaps counterintuitive.</p>
+
+	</body>
+</html>

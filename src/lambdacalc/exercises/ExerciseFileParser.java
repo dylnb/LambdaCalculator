@@ -31,17 +31,18 @@ import java.io.*;
 import lambdacalc.logic.*;
 
 /**
- * A parser for teacher-specified exercise files in text format.
- * @author tauberer
+ * A parser for teacher-written exercise files in text format.
  */
 public class ExerciseFileParser {
     
-    /** Creates a new instance of ExerciseFileParser */
+    /**
+     * Creates a new instance of ExerciseFileParser.
+     */
     public ExerciseFileParser() {
     }
     
     /**
-     * Parses one exercise file from the given Reader.
+     * Parses an exercise file from the given Reader.
      */
     public ExerciseFile parse(Reader reader) 
         throws IOException, ExerciseFileFormatException {
@@ -65,6 +66,7 @@ public class ExerciseFileParser {
         String title = null;
         String directions = "";
         ExerciseGroup group = null;
+        java.math.BigDecimal pointage = java.math.BigDecimal.valueOf(1);
         
         int linectr = 0;
         int exindex = 0;
@@ -99,6 +101,9 @@ public class ExerciseFileParser {
                     parseTypeLine("variable of type ".length(), true, line, typer, linectr);
                 }
 
+            } else if (line.startsWith("points per exercise ")) {
+                pointage = new java.math.BigDecimal(line.substring("points per exercise ".length()));
+                
             } else if (line.startsWith("exercise ")) {
                 extype = line.substring("exercise ".length());
                 if (!(extype.equals("semantic types") || extype.equals("lambda conversion")))
@@ -142,6 +147,7 @@ public class ExerciseFileParser {
                     if (group == null) {
                         if (title == null)
                             throw new ExerciseFileFormatException("Specify the title of the exercise group with the 'title' keyword before giving any exercises", linectr, line);
+                        
                         group = new ExerciseGroup(grindex++);
                         group.setTitle(title);
                         group.setDirections(directions);
@@ -151,6 +157,8 @@ public class ExerciseFileParser {
                     }
                     
                     group.addItem(ex);
+                    
+                    ex.setPoints(pointage);
                 }
             }
         }
@@ -158,6 +166,9 @@ public class ExerciseFileParser {
         return file;
     }
     
+    /**
+     * Parses a line that indicates the semantic type of an identifier.
+     */
     private void parseTypeLine(int chop, boolean variable, String line, IdentifierTyper typer, 
             int linenum) throws ExerciseFileFormatException {
         int colon = line.indexOf(':');

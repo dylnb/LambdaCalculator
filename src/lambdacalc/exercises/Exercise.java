@@ -15,6 +15,7 @@ import lambdacalc.logic.*;
 public abstract class Exercise implements java.io.Serializable {
     int index;
     boolean done;
+    java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
     
     /**
      * Creates an Exercise with the given index in its ExerciseGroup.
@@ -34,6 +35,21 @@ public abstract class Exercise implements java.io.Serializable {
         return getExerciseText();
     }
     
+    /**
+     * Gets the number of points associated with the exercise.
+     */
+    public java.math.BigDecimal getPoints() {
+        return this.points;
+    }
+    
+    /**
+     * Sets the number of points associated with the exercise.
+     * @param points the number of points awarded for a correct answer on this problem
+     */
+    public void setPoints(java.math.BigDecimal points) {
+        this.points = points;
+    }
+
     /**
      * Gets the text associated with the exercise.
      */

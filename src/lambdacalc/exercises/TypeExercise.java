@@ -102,7 +102,7 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
     public TypeExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
         super(index);
         
-        if (input.readShort() != 0) throw new ExerciseFileFormatException();
+        if (input.readShort() != 0) throw new ExerciseFileVersionException();
         
         String saved_expr = input.readUTF();
         

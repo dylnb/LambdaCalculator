@@ -14,7 +14,7 @@ package lambdacalc.logic;
  */
 public class ProductType extends Type {
     /**
-     * The unicode cross characte.r
+     * The unicode cross character.
      */
     public static final char SYMBOL = '\u00D7';
     
