@@ -159,6 +159,22 @@ public abstract class Binder extends Expr {
         // Recurse
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
+    
+    public boolean canSimplify() {
+        return getInnerExpr().canSimplify();
+    }
+    
+    public boolean needsAlphabeticalVariant() throws TypeEvaluationException  {
+        return getInnerExpr().needsAlphabeticalVariant();
+    }
+
+    public Expr createAlphabeticalVariant() throws TypeEvaluationException  {
+        return create(getVariable(), getInnerExpr().createAlphabeticalVariant());
+    }
+    
+    public Expr simplify() throws TypeEvaluationException  {
+        return create(getVariable(), getInnerExpr().simplify());
+    }  
 
     public String toString() {
         String inner = innerExpr.toString();

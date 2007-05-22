@@ -130,6 +130,13 @@ public class FunApp extends Binary {
         }
     }
     
+    public boolean canSimplify() {
+        // If the function is not an identifier 
+        // (i.e. a nested FunApp, lambda expression, or something
+        // incoherent), we'll say we can simplify.
+        return !(getFunc().stripAnyParens() instanceof Identifier);
+    }
+    
     /**
      * Returns whether an alphabetical variant is needed in order
      * to simplify this function application.  This is applicable
@@ -155,7 +162,10 @@ public class FunApp extends Binary {
      * anything but a Lambda or an Identifier).
      */
     public Expr simplify() throws TypeEvaluationException {
-        return simplification(1);
+        if (!needsAlphabeticalVariant())
+            return simplification(1);
+        else
+            return createAlphabeticalVariant().simplify();
     }
 
     /**

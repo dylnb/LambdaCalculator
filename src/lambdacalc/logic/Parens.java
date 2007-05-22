@@ -73,7 +73,6 @@ public class Parens extends Unary {
         return this.stripAnyParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars);
     }
         
-
     protected Unary create(Expr inner) {
         return new Parens(inner, shape);
     }

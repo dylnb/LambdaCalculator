@@ -43,4 +43,34 @@ public abstract class LogicalBinary extends Binary {
             throw new TypeMismatchException("The parts of a logical connective must be of type t, but " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }
+    
+    public boolean canSimplify() {
+        return getLeft().canSimplify() || getRight().canSimplify();
+    }
+
+    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
+        if (getLeft().canSimplify())
+            return getLeft().needsAlphabeticalVariant();
+        return getRight().needsAlphabeticalVariant();
+    }
+
+    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
+        // We may only perform a single simplification, so we
+        // have to do it only on the left or on the right. And
+        // we create the variant only on that side.
+        if (getLeft().canSimplify())
+            return create(getLeft().createAlphabeticalVariant(), getRight());
+        else
+            return create(getLeft(), getRight().createAlphabeticalVariant());
+    }
+    
+    public Expr simplify() throws TypeEvaluationException {
+        // We may only perform a single simplification, so we
+        // have to do it only on the left or on the right.
+        if (getLeft().canSimplify())
+            return create(getLeft().simplify(), getRight());
+        else
+            return create(getLeft(), getRight().simplify());
+    }
+    
 }

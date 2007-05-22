@@ -240,6 +240,37 @@ public abstract class Expr implements java.io.Serializable {
     public Expr substituteAll(Var var, Expr replacement) {
         return substitute(var, replacement, new HashSet(), new HashSet(), null);
     }
+    
+    /**
+     * Returns whether there are any lambda conversions to simplify() in the expression.
+     * Simplification may still fail because of a type mismatch.
+     */
+    public abstract boolean canSimplify();
+    
+    /**
+     * Returns whether an alphabetical variant is needed in order
+     * to simplify this expression.  See FunApp.needsAlphabeticalVariant.
+     */
+    public abstract boolean needsAlphabeticalVariant() throws TypeEvaluationException;
+    
+    /**
+     * Creates the alphabetical variant needed to simplify the expression.
+     * If no alphabetical variant is needed, returns itself unchanged.
+     * True is returned only if the very next simplification performed
+     * by simplify() needs it, not any future simplifications.
+     */
+    public abstract Expr createAlphabeticalVariant() throws TypeEvaluationException;
+
+    /**
+     * Simplifies the expression by performing at most one lambda conversion
+     * and returns the new Expr. For nested function applications, we do
+     * the innermost (leftmost) first, but if FunApps are embedded in the
+     * expression somewhere, we evaluate the first we find in a top-down,
+     * left-to-right search. If an alphabetical variant is needed, one is
+     * created. If a type incompatibility is found while
+     * lambda-converting, a TypeEvaluationException is thrown.
+     */
+    public abstract Expr simplify() throws TypeEvaluationException;
 
     // var and replacement are not the variable being altered by 
     // createAlphabeticalVariant, but rather the variable that

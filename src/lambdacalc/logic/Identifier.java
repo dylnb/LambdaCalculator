@@ -52,6 +52,22 @@ public abstract class Identifier extends Expr {
     
     protected abstract boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap);
     
+    public boolean canSimplify() {
+        return false;
+    }
+    
+    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
+        return false;
+    }
+
+    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
+        return this;
+    }
+
+    public Expr simplify() throws TypeEvaluationException {
+        return this;
+    }
+
     public int hashCode() {
         return symbol.hashCode();
     }

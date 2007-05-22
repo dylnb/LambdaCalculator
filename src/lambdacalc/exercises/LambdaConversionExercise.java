@@ -47,15 +47,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     
     private void initialize() throws TypeEvaluationException {
         Expr e = expr;
-        while (e instanceof FunApp) {
-            FunApp f = (FunApp)e;
-            if (f.needsAlphabeticalVariant()) {
+        while (e.canSimplify()) {
+            if (e.needsAlphabeticalVariant()) {
                 steptypes.add("alphavary");
-                e = f.createAlphabeticalVariant();
+                e = e.createAlphabeticalVariant();
             } else {
-                e = f.simplify();
-                if (e == f) // some FunApps cannot be reduced X(b)
-                    break;
+                e = e.simplify();
                 steptypes.add("betareduce");
             }
             steps.add(e);

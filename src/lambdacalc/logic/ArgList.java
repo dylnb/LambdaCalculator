@@ -110,4 +110,50 @@ public class ArgList extends Expr {
         return new ArgList(e);
     }
 
+    public boolean canSimplify() {
+        for (int i = 0; i < exprs.length; i++)
+            if (exprs[i].canSimplify())
+                return true;
+        return false;
+    }
+
+    public boolean needsAlphabeticalVariant() throws TypeEvaluationException  {
+        for (int i = 0; i < exprs.length; i++)
+            if (exprs[i].canSimplify())
+                return exprs[i].needsAlphabeticalVariant();
+        return false;
+    }
+
+    public Expr createAlphabeticalVariant() throws TypeEvaluationException  {
+        // We may only perform a single simplification, so we
+        // have to do it only on one sub-expr. Note that we also
+        Expr[] e = new Expr[exprs.length];
+        boolean didSimp = false;
+        for (int i = 0; i < exprs.length; i++) {
+            if (!didSimp && exprs[i].canSimplify()) {
+                e[i] = exprs[i].createAlphabeticalVariant();
+                didSimp = true;
+            } else {
+                e[i] = exprs[i];
+            }
+        }
+        return new ArgList(e);
+    }
+
+    public Expr simplify() throws TypeEvaluationException {
+        // We may only perform a single simplification, so we
+        // have to do it only on one sub-expr.
+        Expr[] e = new Expr[exprs.length];
+        boolean didSimp = false;
+        for (int i = 0; i < exprs.length; i++) {
+            if (!didSimp && exprs[i].canSimplify()) {
+                e[i] = exprs[i].simplify();
+                didSimp = true;
+            } else {
+                e[i] = exprs[i];
+            }
+        }
+        return new ArgList(e);
+    }
+
 }

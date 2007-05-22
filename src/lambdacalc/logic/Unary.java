@@ -53,6 +53,23 @@ public abstract class Unary extends Expr {
         return innerExpr;
     }
 
+    public boolean canSimplify() {
+        return getInnerExpr().canSimplify();
+    }
+    
+    public boolean needsAlphabeticalVariant() throws TypeEvaluationException {
+        return getInnerExpr().needsAlphabeticalVariant();
+    }
+
+    public Expr createAlphabeticalVariant() throws TypeEvaluationException {
+        return create(getInnerExpr().createAlphabeticalVariant());
+    }
+    
+    public Expr simplify() throws TypeEvaluationException {
+        return create(getInnerExpr().simplify());
+    }
+    
+
     protected Set getVars(boolean unboundOnly) {
         return getInnerExpr().getVars(unboundOnly);
     }
