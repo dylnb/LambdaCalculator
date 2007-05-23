@@ -52,4 +52,7 @@ public class Iota extends Binder {
         return getVariable().getType();
     }    
     
+    Iota(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

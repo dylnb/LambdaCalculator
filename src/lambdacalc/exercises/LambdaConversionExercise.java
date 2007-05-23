@@ -489,13 +489,13 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeShort(1); // format version marker
-        output.writeUTF(expr.toString());
+        expr.writeToStream(output);
         types.writeToStream(output);
         if (last_answer == null) {
             output.writeByte(0);
         } else {
             output.writeByte(1);
-            output.writeUTF(last_answer.toString());
+            last_answer.writeToStream(output);
         }
         output.writeShort(cur_step);
         output.writeBoolean(ParseSingleLetterIdentifiers);
@@ -503,37 +503,18 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // TODO: We're outputting a canonicalized version of what the student answered.
     }
     
-    public LambdaConversionExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
+    LambdaConversionExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
         super(index);
         
-        if (input.readShort() != 0) throw new ExerciseFileVersionException();
+        if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
-        String saved_expr = input.readUTF();
+        this.expr = Expr.readFromStream(input);
         
         this.types = new IdentifierTyper();
         this.types.readFromStream(input, fileFormatVersion);
 
-        ExpressionParser.ParseOptions expParserOptions = new ExpressionParser.ParseOptions();
-        expParserOptions.Typer = this.types;
-        
-        try {
-            this.expr = ExpressionParser.parse(saved_expr, expParserOptions);
-        } catch (Exception e) {
-            System.err.println(saved_expr);
-            System.err.println(e);
-            throw new ExerciseFileFormatException();
-        }
-        
-        if (input.readByte() == 1) {
-            String saved_last_answer = input.readUTF();
-            try {
-                this.last_answer = ExpressionParser.parse(saved_last_answer, expParserOptions);
-            } catch (Exception e) {
-                System.err.println(saved_last_answer);
-                System.err.println(e);
-                throw new ExerciseFileFormatException();
-            }
-        }
+        if (input.readByte() == 1)
+            this.last_answer = Expr.readFromStream(input);
         
         this.cur_step = input.readShort();
            

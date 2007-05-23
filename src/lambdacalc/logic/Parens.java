@@ -23,7 +23,6 @@ public class Parens extends Unary {
      */
     public static final boolean SQUARE = false;
     
-    private Expr innerExpr;
     private boolean shape;
     
     /**
@@ -33,7 +32,6 @@ public class Parens extends Unary {
     public Parens(Expr innerExpr, boolean shape) {
         super(innerExpr);
         this.shape=shape;
-        
     }
 
     /**
@@ -67,5 +65,17 @@ public class Parens extends Unary {
         
     protected Unary create(Expr inner) {
         return new Parens(inner, shape);
+    }
+
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        super.writeToStream(output);
+        output.writeShort(0); // data format version
+        output.writeBoolean(shape);
+    }
+    
+    Parens(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        shape = input.readBoolean();
     }
 }

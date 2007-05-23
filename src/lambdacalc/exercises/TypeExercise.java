@@ -93,41 +93,33 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(0); // for future use
-        output.writeUTF(expr.toString());
+        output.writeShort(1); // for future use
+        expr.writeToStream(output);
         types.writeToStream(output);
         if (last_answer == null) {
             output.writeByte(0);
         } else {
             output.writeByte(1);
-            output.writeUTF(last_answer.toString());
+            last_answer.writeToStream(output);
         }
         // TODO: We're outputting a canonicalized version of what the student answered.
     }
     
-    public TypeExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
+    TypeExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
         super(index);
         
-        if (input.readShort() != 0) throw new ExerciseFileVersionException();
+        if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
-        String saved_expr = input.readUTF();
-        
+        this.expr = Expr.readFromStream(input);
+        try {
+            this.type = expr.getType();
+        } catch (TypeEvaluationException e) {
+            throw new ExerciseFileFormatException("Error reading file: " + e.getMessage()); // better not happen
+        }
         this.types = new IdentifierTyper();
         this.types.readFromStream(input, fileFormatVersion);
 
-        ExpressionParser.ParseOptions expParserOptions = new ExpressionParser.ParseOptions();
-        expParserOptions.Typer = this.types;
-        
-        try {
-            this.expr = ExpressionParser.parse(saved_expr, expParserOptions);
-        
-            this.type = expr.getType();
-
-            if (input.readByte() == 1)
-                this.last_answer = TypeParser.parse(input.readUTF());
-        } catch (Exception e) {
-            System.err.println(e);
-            throw new ExerciseFileFormatException();
-        }
+        if (input.readByte() == 1)
+            this.last_answer = Type.readFromStream(input);
     }
 }

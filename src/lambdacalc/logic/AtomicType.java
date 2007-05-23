@@ -41,4 +41,17 @@ public class AtomicType extends Type {
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
     }
+    
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF("AtomicType");
+        output.writeShort(0); // data format version
+        output.writeChar(symbol);
+    }
+    
+    AtomicType(java.io.DataInputStream input) throws java.io.IOException {
+        // the class string has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        symbol = input.readChar();
+    }
+            
 }

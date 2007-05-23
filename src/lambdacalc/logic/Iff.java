@@ -40,4 +40,8 @@ public class Iff extends LogicalBinary {
     protected Binary create(Expr left, Expr right) {
         return new Iff(left, right);
     }
+
+    Iff(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

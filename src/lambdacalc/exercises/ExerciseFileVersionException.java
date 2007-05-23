@@ -14,7 +14,7 @@ public class ExerciseFileVersionException extends ExerciseFileFormatException {
     
     /** Creates a new instance of ExerciseFileVersionException */
     public ExerciseFileVersionException() {
-        super("This exercise file was created in a previous version of Lambda and cannot be opened in this version.");
+        super("This exercise file was created in a previous or later version of Lambda and cannot be opened in this version.");
     }
     
 }

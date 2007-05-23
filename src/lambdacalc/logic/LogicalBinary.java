@@ -65,4 +65,8 @@ public abstract class LogicalBinary extends Binary {
         return create(getLeft().performLambdaConversion2(var, replacement, binders, accidentalBinders),
                 getRight().performLambdaConversion2(var, replacement, binders, accidentalBinders));
     }
+
+    LogicalBinary(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

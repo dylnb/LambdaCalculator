@@ -82,4 +82,19 @@ public abstract class Binary extends Expr {
         return create(getLeft().createAlphabeticalVariant(bindersToChange, variablesInUse, updates),
                 getRight().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
+    
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF(getClass().getName());
+        output.writeShort(0); // data format version
+        left.writeToStream(output);
+        right.writeToStream(output);
+    }
+    
+    Binary(java.io.DataInputStream input) throws java.io.IOException {
+        // the class name has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        left = Expr.readFromStream(input);
+        right = Expr.readFromStream(input);
+    }
+
 }

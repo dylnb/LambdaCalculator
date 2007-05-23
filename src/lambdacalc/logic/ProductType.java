@@ -25,7 +25,7 @@ public class ProductType extends Type {
      */
     public ProductType(Type[] subtypes) {
         this.subtypes = subtypes;
-        if (subtypes.length == 0) throw new IllegalArgumentException();
+        if (subtypes.length <= 1) throw new IllegalArgumentException();
     }
     
     /**
@@ -73,4 +73,22 @@ public class ProductType extends Type {
         return ret;
     }
     
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF("ProductType");
+        output.writeShort(0); // data format version
+        output.writeInt(subtypes.length);
+        for (int i = 0; i < subtypes.length; i++)
+            subtypes[i].writeToStream(output);
+    }
+    
+    ProductType(java.io.DataInputStream input) throws java.io.IOException {
+        // the class string has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        int ntypes = input.readInt();
+        if (ntypes <= 1 || ntypes > 25) // sanity checks
+            throw new java.io.IOException("Invalid data.");
+        subtypes = new Type[ntypes];
+        for (int i = 0; i < ntypes; i++)
+            subtypes[i] = Type.readFromStream(input);
+    }
 }

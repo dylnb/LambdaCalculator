@@ -256,7 +256,7 @@ public class IdentifierTyper {
             output.writeUTF(e.start);
             output.writeUTF(e.end);
             output.writeBoolean(e.var);
-            output.writeUTF(e.type.toString());
+            e.type.writeToStream(output);
         }
     }
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
@@ -268,14 +268,7 @@ public class IdentifierTyper {
             String start = input.readUTF();
             String end = input.readUTF();
             boolean var = input.readBoolean();
-            Type type;
-            
-            try {
-                type = TypeParser.parse(input.readUTF());
-            } catch (Exception e) {
-                System.err.println(e);
-                throw new ExerciseFileFormatException();
-            }
+            Type type = Type.readFromStream(input);
             
             Entry e = new Entry(start, end, var, type);
             entries.add(e);

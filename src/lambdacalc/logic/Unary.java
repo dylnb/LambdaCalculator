@@ -74,4 +74,16 @@ public abstract class Unary extends Expr {
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
+
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF(getClass().getName());
+        output.writeShort(0); // data format version
+        innerExpr.writeToStream(output);
+    }
+    
+    Unary(java.io.DataInputStream input) throws java.io.IOException {
+        // the class name has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        innerExpr = Expr.readFromStream(input);
+    }
 }

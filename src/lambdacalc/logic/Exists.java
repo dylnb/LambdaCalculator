@@ -34,4 +34,8 @@ public class Exists extends PropositionalBinder {
     protected Binder create(Identifier variable, Expr inner) {
         return new Exists(variable, inner, hasPeriod());
     }
+    
+    Exists(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

@@ -97,4 +97,24 @@ public abstract class Type implements Comparable, java.io.Serializable {
         }
         throw new RuntimeException(); // unreachable
     }
+
+    /**
+     * Writes a serialization of the type to a DataOutputStream.
+     * In implementations of this method in subclasses, the first thing written
+     * must be the name of the class as a string (i.e. "AtomicType").
+     */
+    public abstract void writeToStream(java.io.DataOutputStream output) throws java.io.IOException;
+   
+    /**
+     * Reads a serialization of the types from a DataInputStream.
+     */
+    public static Type readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        String exprType = input.readUTF();
+        
+        if (exprType.equals("AtomicType")) return new AtomicType(input);
+        if (exprType.equals("CompositeType")) return new CompositeType(input);
+        if (exprType.equals("ProductType")) return new ProductType(input);
+        
+        throw new java.io.IOException("Invalid data.");
+    }
 }

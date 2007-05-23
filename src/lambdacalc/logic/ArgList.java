@@ -24,7 +24,7 @@ public class ArgList extends Expr {
      */
     public ArgList(Expr[] innerExpressions) {
         if (innerExpressions == null) throw new IllegalArgumentException("null argument");
-        if (innerExpressions.length == 1) throw new IllegalArgumentException("ArgList must have more than one element.");
+        if (innerExpressions.length <= 1) throw new IllegalArgumentException("ArgList must have more than one element.");
         exprs = innerExpressions;
     }
     
@@ -131,4 +131,22 @@ public class ArgList extends Expr {
         return new ArgList(e);
     }
 
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF(getClass().getName());
+        output.writeShort(0); // data format version
+        output.writeInt(exprs.length);
+        for (int i = 0; i < exprs.length; i++)
+            exprs[i].writeToStream(output);
+    }
+    
+    ArgList(java.io.DataInputStream input) throws java.io.IOException {
+        // class name has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        int nexprs = input.readInt();
+        if (nexprs < 2 || nexprs > 25) // sanity checks
+            throw new java.io.IOException("Invalid data.");
+        exprs = new Expr[nexprs];
+        for (int i = 0; i < nexprs; i++)
+            exprs[i] = Expr.readFromStream(input);
+    }
 }

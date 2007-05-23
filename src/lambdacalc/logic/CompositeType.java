@@ -72,4 +72,19 @@ public class CompositeType extends Type {
             + String.valueOf(Type.RIGHTBRACKET);
         }
     }
+    
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF("CompositeType");
+        output.writeShort(0); // data format version
+        left.writeToStream(output);
+        right.writeToStream(output);
+    }
+    
+    CompositeType(java.io.DataInputStream input) throws java.io.IOException {
+        // the class string has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        left = Type.readFromStream(input);
+        right = Type.readFromStream(input);
+    }
+    
 }

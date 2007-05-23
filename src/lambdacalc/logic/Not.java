@@ -48,4 +48,8 @@ public class Not extends Unary {
     protected Unary create(Expr inner) {
         return new Not(inner);
     }
+
+    Not(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

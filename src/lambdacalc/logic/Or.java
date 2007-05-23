@@ -40,4 +40,8 @@ public class Or extends LogicalBinary {
     protected Binary create(Expr left, Expr right) {
         return new Or(left, right);
     }
+
+    Or(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

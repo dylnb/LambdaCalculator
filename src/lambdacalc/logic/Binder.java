@@ -182,4 +182,19 @@ public abstract class Binder extends Expr {
         return getSymbol() + ident.toString() + inner;
     }
     
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF(getClass().getName());
+        output.writeShort(0); // data format version
+        ident.writeToStream(output);
+        innerExpr.writeToStream(output);
+        output.writeBoolean(hasPeriod);
+    }
+    
+    Binder(java.io.DataInputStream input) throws java.io.IOException {
+        // the class name has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        ident = (Identifier)Expr.readFromStream(input);
+        innerExpr = Expr.readFromStream(input);
+        hasPeriod = input.readBoolean();
+    }
 }

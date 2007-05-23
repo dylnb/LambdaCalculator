@@ -23,7 +23,7 @@ public class And extends LogicalBinary {
      */
     public And(Expr left, Expr right) {
        super(left,right);
-    }    
+    }
     
     /**
      * Gets the operator precedence of this operator.
@@ -40,5 +40,9 @@ public class And extends LogicalBinary {
     
     protected Binary create(Expr left, Expr right) {
         return new And(left, right);
+    }
+    
+    And(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
     }
 }

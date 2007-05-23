@@ -34,4 +34,8 @@ public class ForAll extends PropositionalBinder {
     protected Binder create(Identifier variable, Expr inner) {
         return new ForAll(variable, inner, hasPeriod());
     }
+
+    ForAll(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

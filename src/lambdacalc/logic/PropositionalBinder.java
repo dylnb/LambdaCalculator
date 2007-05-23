@@ -35,5 +35,9 @@ public abstract class PropositionalBinder extends Binder {
     public Type getType() throws TypeEvaluationException {
         checkVariable();
         return Type.T;
-    }    
+    }
+    
+    PropositionalBinder(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

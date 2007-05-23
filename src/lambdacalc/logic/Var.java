@@ -91,4 +91,8 @@ public class Var extends Identifier {
             return (Expr)updates.get(this);
         return this;
     }
+
+    Var(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

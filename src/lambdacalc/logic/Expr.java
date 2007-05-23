@@ -328,4 +328,36 @@ public abstract class Expr implements java.io.Serializable {
     // that down as well.  Variables implement this method by replacing themselves with
     // another variable according to updates.
     protected abstract Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates);
+    
+    /**
+     * Writes a serialization of the expression to a DataOutputStream.
+     * In implementations of this method in subclasses, the first thing written
+     * must be the name of the class as a string (i.e. "lambdacalc.logic.And").
+     */
+    public abstract void writeToStream(java.io.DataOutputStream output) throws java.io.IOException;
+   
+    /**
+     * Reads a serialization of the types from a DataInputStream.
+     */
+    public static Expr readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        String exprType = input.readUTF();
+        
+        if (exprType.equals("lambdacalc.logic.And")) return new And(input);
+        if (exprType.equals("lambdacalc.logic.ArgList")) return new ArgList(input);
+        if (exprType.equals("lambdacalc.logic.Const")) return new Const(input);
+        if (exprType.equals("lambdacalc.logic.Exists")) return new Exists(input);
+        if (exprType.equals("lambdacalc.logic.ForAll")) return new ForAll(input);
+        if (exprType.equals("lambdacalc.logic.FunApp")) return new FunApp(input);
+        if (exprType.equals("lambdacalc.logic.If")) return new If(input);
+        if (exprType.equals("lambdacalc.logic.Iff")) return new Iff(input);
+        if (exprType.equals("lambdacalc.logic.Iota")) return new Iota(input);
+        if (exprType.equals("lambdacalc.logic.Lambda")) return new Lambda(input);
+        if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
+        if (exprType.equals("lambdacalc.logic.Or")) return new Or(input);
+        if (exprType.equals("lambdacalc.logic.Parens")) return new Parens(input);
+        if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
+        
+        throw new java.io.IOException("Invalid data.");
+    }
+
 }

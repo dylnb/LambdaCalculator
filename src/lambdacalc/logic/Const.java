@@ -47,4 +47,8 @@ public class Const extends Identifier {
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return this;
     }
+
+    Const(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

@@ -40,4 +40,8 @@ public class If extends LogicalBinary {
     protected Binary create(Expr left, Expr right) {
         return new If(left, right);
     }
+
+    If(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }

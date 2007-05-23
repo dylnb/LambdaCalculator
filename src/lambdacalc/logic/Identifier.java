@@ -77,4 +77,17 @@ public abstract class Identifier extends Expr {
         return type;
     }
     
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeUTF(getClass().getName());
+        output.writeShort(0); // data format version
+        output.writeUTF(symbol);
+        type.writeToStream(output);
+    }
+    
+    Identifier(java.io.DataInputStream input) throws java.io.IOException {
+        // the class name has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        symbol = input.readUTF();
+        type = Type.readFromStream(input);
+    }
 }

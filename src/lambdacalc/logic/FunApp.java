@@ -186,4 +186,7 @@ public class FunApp extends Binary {
                 getArg().performLambdaConversion2(var, replacement, binders, accidentalBinders));
     }
 
+    FunApp(java.io.DataInputStream input) throws java.io.IOException {
+        super(input);
+    }
 }
