@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Abstract base class of the binders, including the 
- * propositional binders For All and Exists, and
- * Lambda.
+ * Abstract base class of the binders, including the propositional binders 
+ * For All and Exists, the Iota operator, and Lambda.
  */
 public abstract class Binder extends Expr {
     

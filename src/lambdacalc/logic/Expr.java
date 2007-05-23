@@ -28,7 +28,7 @@ public abstract class Expr implements java.io.Serializable {
      *   7   Lambda
      *   6   If, Iff
      *   5   And, Or
-     *   4   PropositionalBinder (ForAll, Exists, but not Lambda because they usually have brackets.)
+     *   4   PropositionalBinder (ForAll, Exists), Iota, but not Lambda (because they usually have brackets.)
      *   3   Not
      *   2   FunApp over Predicate
      *   1   Identifier
