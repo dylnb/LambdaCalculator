@@ -200,7 +200,7 @@ public class ExerciseFileParser {
 
             try {
                 Type type = TypeParser.parse(typestr);
-                typer.addEntry(charstart, charend, variable, type);
+                typer.addEntry(String.valueOf(charstart), String.valueOf(charend), variable, type);
             } catch (SyntaxException e) {
                 throw new ExerciseFileFormatException(e.getMessage(), linenum, line);
             }

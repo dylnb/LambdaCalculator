@@ -18,11 +18,11 @@ import lambdacalc.exercises.ExerciseFileVersionException;
  */
 public class IdentifierTyper {
     private class Entry {
-        public char start, end;
+        public String start, end;
         public boolean var;
         public Type type;
         
-        public Entry(char s, char e, boolean v, Type t) {
+        public Entry(String s, String e, boolean v, Type t) {
             start = s;
             end = e;
             var = v;
@@ -49,11 +49,11 @@ public class IdentifierTyper {
      */
     public static IdentifierTyper createDefault() {
         IdentifierTyper typer = new IdentifierTyper();
-        typer.addEntry('a', 'e', false, Type.E);
-        typer.addEntry('P', 'Q', false, Type.ET);
-        typer.addEntry('R', 'S', false, Type.ExET);
-        typer.addEntry('u', 'z', true, Type.E);
-        typer.addEntry('U', 'Z', true, Type.ET);
+        typer.addEntry("a", "e", false, Type.E);
+        typer.addEntry("P", "Q", false, Type.ET);
+        typer.addEntry("R", "S", false, Type.ExET);
+        typer.addEntry("u", "z", true, Type.E);
+        typer.addEntry("U", "Z", true, Type.ET);
         return typer;
     }
     
@@ -68,28 +68,30 @@ public class IdentifierTyper {
      * Sets the type of identifiers starting with the given character,
      * overriding previous settings.
      */
-    public void addEntry(char c, boolean isVariable, Type type) {
-        addEntry(c, c, isVariable, type);
+    public void addEntry(String lex, boolean isVariable, Type type) {
+        addEntry(lex, lex, isVariable, type);
     }
     
     /**
      * Sets the type of identifiers starting a character in the given range,
      * overriding previous settings.
      */
-    public void addEntry(char start, char end, boolean isVariable, Type type) {
-        if (!Character.isLetter(start) || !Character.isLetter(end))
-            throw new IllegalArgumentException("The range must be over letters.");
-        if (Character.isLowerCase(start) != Character.isLowerCase(end))
-            throw new IllegalArgumentException("The start and end of the letter range must be both uppercase or both lowercase.");
+    public void addEntry(String start, String end, boolean isVariable, Type type) {
+        if (start == null || end == null || start.length() == 0 || end.length() == 0)
+            throw new IllegalArgumentException("start or end is null, or a zero-length string.");
+        if (!Character.isLetter(start.charAt(0)) || !Character.isLetter(end.charAt(0)))
+            throw new IllegalArgumentException("Identifiers must start with letters.");
+        if (Character.isLowerCase(start.charAt(0)) != Character.isLowerCase(end.charAt(0)))
+            throw new IllegalArgumentException("In a range, the start and end of the range must be both uppercase or both lowercase.");
             
         entries.add(new Entry(start, end, isVariable, type));
     }
     
     private Entry findEntry(String identifier) throws IdentifierTypeUnknownException {
-        char c = identifier.charAt(0);
         for (int i = entries.size() - 1; i >= 0; i--) {
             Entry e = (Entry)entries.get(i);
-            if (c >= e.start && c <= e.end) return e;
+            if (identifier.compareTo(e.start) >= 0 && identifier.compareTo(e.end) <= 0)
+                return e;
         }
         throw new IdentifierTypeUnknownException(identifier);
     }
@@ -174,7 +176,7 @@ public class IdentifierTyper {
                 Entry e = (Entry)entries.get(j);
                 if (!e.type.equals(ret[i].type) || e.var != ret[i].var) continue;
                 
-                for (int k = e.start; k <= e.end; k++)
+                for (int k = e.start.charAt(0) + (e.start.length() == 1 ? 0 : 1); k <= e.end.charAt(0); k++)
                     if (k >= 0 && k < letters.length)
                         letters[k] = true;
             }
@@ -247,24 +249,24 @@ public class IdentifierTyper {
     }
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(0); // for future use
+        output.writeShort(1); // format version marker
         output.writeShort(entries.size());
         for (int i = 0; i < entries.size(); i++) {
             Entry e = (Entry)entries.get(i);
-            output.writeChar(e.start);
-            output.writeChar(e.end);
+            output.writeUTF(e.start);
+            output.writeUTF(e.end);
             output.writeBoolean(e.var);
             output.writeUTF(e.type.toString());
         }
     }
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
         
-        if (input.readShort() != 0) throw new ExerciseFileVersionException();
+        if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
         int nEntries = input.readShort();
         for (int i = 0; i < nEntries; i++) {
-            char start = input.readChar();
-            char end = input.readChar();
+            String start = input.readUTF();
+            String end = input.readUTF();
             boolean var = input.readBoolean();
             Type type;
             

@@ -20,8 +20,14 @@ public class TreeTester extends javax.swing.JFrame {
     public TreeTester() {
         initComponents();
         
-        TreeCanvas tree = new TreeCanvas();
         getContentPane().setLayout(new java.awt.FlowLayout());
+        
+        CreateTree();
+    }
+
+   TreeCanvas tree = new TreeCanvas();
+
+    void CreateTree() {
         getContentPane().add(tree);
         
         /*tree.getRoot().setLabel("Root");
@@ -33,11 +39,11 @@ public class TreeTester extends javax.swing.JFrame {
         try {
             ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
             opts.ASCII = true;
-            opts.Typer.addEntry('j', false, Type.E);
-            opts.Typer.addEntry('m', false, Type.E);
-            opts.Typer.addEntry('x', true, Type.E);
-            opts.Typer.addEntry('y', true, Type.E);
-            opts.Typer.addEntry('r', false, Type.ExET);
+            opts.Typer.addEntry("j", false, Type.E);
+            opts.Typer.addEntry("m", false, Type.E);
+            opts.Typer.addEntry("x", true, Type.E);
+            opts.Typer.addEntry("y", true, Type.E);
+            opts.Typer.addEntry("r", false, Type.ExET);
 
             LFNode run = new LFNode("run", ExpressionParser.parse("Lx.Ly.run(y,x)", opts));
             LFNode mary = new LFNode("mary", ExpressionParser.parse("m", opts));
@@ -119,21 +125,30 @@ public class TreeTester extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(0, 400, Short.MAX_VALUE)
-                );
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 400, Short.MAX_VALUE)
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(0, 300, Short.MAX_VALUE)
-                );
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 300, Short.MAX_VALUE)
+        );
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        tree.getRoot().addChild().setLabel("Click!");
+    }//GEN-LAST:event_formMouseClicked
     
     /**
      * @param args the command line arguments

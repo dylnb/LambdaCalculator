@@ -16,11 +16,14 @@ import java.util.*;
 public class TreeCanvas extends Container {
     TreeNode root;
     
+    javax.swing.Timer timer;
+    
     /** Creates a new instance of TreeCanvas */
     public TreeCanvas() {
-        root = new TreeNode(this);
+        root = new TreeNode(null, this);
         add(root);
         setLayout(new GridLayout()); // TODO: Size ourself to be the size of the root
+        doLayout();
     }
     
     public TreeNode getRoot() {
@@ -35,10 +38,15 @@ public class TreeCanvas extends Container {
         return root.getSize();
     }
     
+    public void doLayout() {
+        getRoot().layoutControls();
+    }
+    
     public class TreeNode extends Panel implements ComponentListener {
         static final int NODE_VERTICAL_SPACING = 10;
         static final int NODE_HORIZONTAL_SPACING = 10;
         
+        TreeNode parent;
         TreeCanvas container;
         
         Component label = null;
@@ -46,9 +54,12 @@ public class TreeCanvas extends Container {
         
         int rootPosition;
         
-        TreeNode(TreeCanvas container) {
+        boolean invalid_layout;
+        
+        TreeNode(TreeNode parent, TreeCanvas container) {
             this.container = container;
             setLayout(null);
+            invalid_layout = true;
         }
         
         public Component getLabel() {
@@ -63,7 +74,8 @@ public class TreeCanvas extends Container {
             this.label = label;
             add(label);
             label.addComponentListener(this);
-            container.getRoot().layoutControls();
+            invalidate_layout();
+            container.doLayout();
         }
         
         public void setLabel(String label) {
@@ -72,14 +84,27 @@ public class TreeCanvas extends Container {
         }
 
         public TreeNode addChild() {
-            TreeNode n = new TreeNode(container);
+            TreeNode n = new TreeNode(this, container);
             children.add(n);
             add(n); // to our own container layout
-            container.getRoot().layoutControls();
+            invalidate_layout();
+            container.doLayout();
             return n;
         }
         
+        void invalidate_layout() {
+            TreeNode n = this;
+            while (n != null) {
+                n.invalid_layout = true;
+                n = n.parent;
+            }
+        }
+        
         void layoutControls() {
+            if (!invalid_layout)
+                return;
+            invalid_layout = false;
+            
             if (children.size() == 0) {
                 if (getLabel() != null) {
                     getLabel().setLocation(0, 0);
@@ -87,7 +112,7 @@ public class TreeCanvas extends Container {
                     setSize(getLabel().getSize());
                     rootPosition = getWidth() / 2;
                 } else {
-                    setSize(0,0);
+                    setSize(new Dimension(0,0));
                     rootPosition = 0;
                 }
             } else {
@@ -106,7 +131,7 @@ public class TreeCanvas extends Container {
                 for (int i = 0; i < children.size(); i++) {
                     TreeNode c = (TreeNode)children.get(i);
                     c.layoutControls();
-                    c.setLocation(left, tops);
+                    c.setLocation(new Point(left, tops));
                     left = left + c.getWidth() + NODE_HORIZONTAL_SPACING;
                     if (c.getHeight() > maxHeight) maxHeight = c.getHeight();
                 }
@@ -124,15 +149,12 @@ public class TreeCanvas extends Container {
                     if (labelleft < 0)
                         labelleft = 0;
                     getLabel().setLocation(labelleft, 0);
-                    if (getLabel().getLocation().x + getLabel().getWidth() > width)
-                        width = getLabel().getLocation().x + getLabel().getWidth();
+                    if (labelleft + getLabel().getWidth() > width)
+                        width = labelleft + getLabel().getWidth();
                 }
                 
                 setSize(width, tops + maxHeight);
             }
-            
-            if (this == container.getRoot())
-                repaint();
         }
         
         public void paint(Graphics g) {
@@ -154,16 +176,19 @@ public class TreeCanvas extends Container {
         
         // When a change is made to the label, relayout everything.
         public void componentResized(ComponentEvent e) {
-            container.getRoot().layoutControls();
+            invalidate_layout();
+            container.doLayout();
         }
         public void componentMoved(ComponentEvent e) {
             // ignore this--we're responsible for moving controls
         }
         public void componentShown(ComponentEvent e) {
-            container.getRoot().layoutControls();
+            invalidate_layout();
+            container.doLayout();
         }
         public void componentHidden(ComponentEvent e) {
-            container.getRoot().layoutControls();
+            invalidate_layout();
+            container.doLayout();
         }
     }
     

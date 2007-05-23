@@ -19,4 +19,7 @@ public class IdentifierTypeUnknownException extends Exception {
         id = identifier;
     }
     
+    public String getIdentifier() {
+        return id;
+    }
 }
