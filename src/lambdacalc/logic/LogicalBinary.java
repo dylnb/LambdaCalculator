@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Abstract base class of the logical binary connectives
- * (and, or, if, iff).
+ * (and, or, if, iff, equality).
  */
 public abstract class LogicalBinary extends Binary {
     
@@ -39,6 +39,9 @@ public abstract class LogicalBinary extends Binary {
     public abstract String getSymbol();
 
     public Type getType() throws TypeEvaluationException {
+        // Our default implementation checks that the operands are of type t,
+        // but this is overridden in Equality which only checks that the
+        // types of the operands are the same.
         if (!getLeft().getType().equals(Type.T))
             throw new TypeMismatchException("The parts of a logical connective must be of type t, but " + getLeft() + " is of type " + getLeft().getType() + ".");
         if (!getRight().getType().equals(Type.T))

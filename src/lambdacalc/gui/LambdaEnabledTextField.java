@@ -83,11 +83,11 @@ public class LambdaEnabledTextField extends JTextField implements Serializable {
                       case 'L': revised[i] = Lambda.SYMBOL; break;
                       case 'A': revised[i] = ForAll.SYMBOL; break;
                       case 'E': revised[i] = Exists.SYMBOL; break;
+                      case 'I': revised[i] = Iota.SYMBOL; break;
                       case '&': revised[i] = And.SYMBOL; break;
                       case '^': revised[i] = And.SYMBOL; break;
                       case '|': revised[i] = Or.SYMBOL; break;
                       case '~': revised[i] = Not.SYMBOL; break;
-                      case '!': revised[i] = Not.SYMBOL; break;
                       case '\'': revised[i] = Identifier.PRIME; break;
                   }
               }
@@ -116,6 +116,10 @@ public class LambdaEnabledTextField extends JTextField implements Serializable {
                               break;
                           } else if ((c2 == '-' || c2 == '=') && c3 == '>') {
                               replace(i-1, 2, String.valueOf(If.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          } else if (c2 == '!' && c3 == '=') {
+                              replace(i-1, 2, String.valueOf(Equality.NEQ_SYMBOL), null);
                               foundChange = true;
                               break;
                           }

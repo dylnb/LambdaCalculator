@@ -27,7 +27,7 @@ public abstract class Expr implements java.io.Serializable {
      *   8   FunApp over Lambda Expression
      *   7   Lambda
      *   6   If, Iff
-     *   5   And, Or
+     *   5   And, Or, Equality
      *   4   PropositionalBinder (ForAll, Exists), Iota, but not Lambda (because they usually have brackets.)
      *   3   Not
      *   2   FunApp over Predicate
@@ -345,6 +345,7 @@ public abstract class Expr implements java.io.Serializable {
         if (exprType.equals("lambdacalc.logic.And")) return new And(input);
         if (exprType.equals("lambdacalc.logic.ArgList")) return new ArgList(input);
         if (exprType.equals("lambdacalc.logic.Const")) return new Const(input);
+        if (exprType.equals("lambdacalc.logic.Equality")) return new Equality(input);
         if (exprType.equals("lambdacalc.logic.Exists")) return new Exists(input);
         if (exprType.equals("lambdacalc.logic.ForAll")) return new ForAll(input);
         if (exprType.equals("lambdacalc.logic.FunApp")) return new FunApp(input);

@@ -16,7 +16,10 @@ public class Iota extends Binder {
     /**
      * The curly iota operator symbol.
      */
-    public static final char SYMBOL = '\u2373';  // \u0269 would be a regular lower case iota
+    public static final char SYMBOL = '\u03B9';  // small Greek iota
+        // other characters, but missing from Times New Roman
+        // the special curly, Math-style iota is \u2373
+        // Latin small letter iota is \u0269
     
     /**
      * Constructs the binder.

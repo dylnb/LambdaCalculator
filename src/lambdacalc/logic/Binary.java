@@ -59,9 +59,13 @@ public abstract class Binary extends Expr {
     }
     
     private boolean equals(Binary b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
-        return this.getClass() == b.getClass()
+        return equalsHelper(b)
             && this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars)
             && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars);
+    }
+    
+    protected boolean equalsHelper(Binary b) {
+        return this.getClass() == b.getClass();
     }
 
     protected Set getVars(boolean unboundOnly) {

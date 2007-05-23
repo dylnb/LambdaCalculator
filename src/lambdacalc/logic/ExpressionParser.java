@@ -95,6 +95,7 @@ public class ExpressionParser {
                 case 'A': c = ForAll.SYMBOL; break;
                 case 'E': c = Exists.SYMBOL; break;
                 case 'L': c = Lambda.SYMBOL; break;
+                case 'I': c = Iota.SYMBOL; break;
             }
         }
         return c;
@@ -127,6 +128,7 @@ public class ExpressionParser {
             case ForAll.SYMBOL:
             case Exists.SYMBOL:
             case Lambda.SYMBOL:
+            case Iota.SYMBOL:
                 ParseResult var = parseIdentifier(expression, start+1, context, "a variable", true, false);
                 if (!(var.Expression instanceof Identifier))
                     throw new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1);
@@ -159,6 +161,7 @@ public class ExpressionParser {
                     case ForAll.SYMBOL: bin = new ForAll((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
                     case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
                     case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
+                    case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
                     default:
                         throw new RuntimeException(); // unreachable
                 }
@@ -176,6 +179,12 @@ public class ExpressionParser {
     private static ParseResult parseIdentifier(String expression, int start, ParseOptions context, String whatIsExpected, boolean lookingForVariable, boolean allowPredicate) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
         char c = expression.charAt(start);
+        
+        // 0 and 1 are parsed as constants of type t.
+        if (c == '0' || c == '1') {
+            start++;
+            return new ParseResult(new Const(String.valueOf(c), Type.T), start);
+        }
             
         if (!isLetter(c)) {
             if (lookingForVariable)
@@ -351,11 +360,13 @@ public class ExpressionParser {
                     { c = If.SYMBOL; start++; }
                 else if (c == '<' && cnext == '-' && cnextnext == '>')
                     { c = Iff.SYMBOL; start+=2; }
+                else if (c == '!' && cnext == '=')
+                    { c = Equality.NEQ_SYMBOL; start++; }
             }
             
             // If the next operator is and, or, if, or iff, then parse the succeeding
             // expression and return a binary expression.
-            if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL))
+            if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL))
                 break;
             
             ParseResult right = parsePrefixExpression(expression, start+1, context, "another expression after the connective");
@@ -368,8 +379,10 @@ public class ExpressionParser {
         
         if (operands.size() == 1) return left;
         
-        // group operands by operator precedence
+        // group operands by operator precedence, tighter operators first
         
+        groupOperands(operands, operators, Equality.NEQ_SYMBOL);
+        groupOperands(operands, operators, Equality.EQ_SYMBOL);
         groupOperands(operands, operators, If.SYMBOL);
         groupOperands(operands, operators, Iff.SYMBOL);
         groupOperands(operands, operators, And.SYMBOL);
@@ -387,12 +400,17 @@ public class ExpressionParser {
                 if ((op == If.SYMBOL || op == Iff.SYMBOL) && (left instanceof If || left instanceof Iff))
                     throw new SyntaxException("Your expression is ambiguous because it has adjacent conditionals without parenthesis.", -1);
                 
+                if ((op == Equality.EQ_SYMBOL || op == Equality.NEQ_SYMBOL) && (left instanceof Equality))
+                    throw new SyntaxException("Your expression is ambiguous because it has adjacent equality operators without parenthesis.", -1);
+                
                 Expr binary;
                 switch (op) {
                     case And.SYMBOL: binary = new And(left, right); break;
                     case Or.SYMBOL: binary = new Or(left, right); break;
                     case If.SYMBOL: binary = new If(left, right); break;
                     case Iff.SYMBOL: binary = new Iff(left, right); break;
+                    case Equality.EQ_SYMBOL: binary = new Equality(left, right, true); break;
+                    case Equality.NEQ_SYMBOL: binary = new Equality(left, right, false); break;
                     default: throw new RuntimeException(); // unreachable
                 }
                 operands.set(i, binary);
