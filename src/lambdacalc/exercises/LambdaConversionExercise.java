@@ -31,6 +31,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     Expr last_answer;
     int cur_step = 0;
     
+    public boolean ParseSingleLetterIdentifiers = true;
     public boolean NotSoFast = false; // one step at a time
     
     /**
@@ -78,6 +79,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      */
     public LambdaConversionExercise(String expr, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {
         this(ExpressionParser.parse(expr, parseOptions), index, types);
+        ParseSingleLetterIdentifiers = parseOptions.SingleLetterIdentifiers;
     }
     
     public String getExerciseText() {
@@ -105,7 +107,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // in the text box appropriately.
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false;
-        exprParseOpts.SingleLetterIdentifiers = true;
+        exprParseOpts.SingleLetterIdentifiers = ParseSingleLetterIdentifiers;
         exprParseOpts.Typer = types;
         
         Expr users_answer;
@@ -486,7 +488,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     }
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(0); // for future use
+        output.writeShort(1); // format version marker
         output.writeUTF(expr.toString());
         types.writeToStream(output);
         if (last_answer == null) {
@@ -496,6 +498,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             output.writeUTF(last_answer.toString());
         }
         output.writeShort(cur_step);
+        output.writeBoolean(ParseSingleLetterIdentifiers);
+        output.writeBoolean(NotSoFast);
         // TODO: We're outputting a canonicalized version of what the student answered.
     }
     
@@ -533,6 +537,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         
         this.cur_step = input.readShort();
            
+        ParseSingleLetterIdentifiers = input.readBoolean();
+        NotSoFast = input.readBoolean();
+        
         try {
             initialize();
         } catch (Exception e) {

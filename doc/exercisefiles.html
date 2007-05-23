@@ -110,6 +110,17 @@ exercise semantic types</pre></dd>
 directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.</pre></dd>
 
+<dt><tt>multiple letter identifiers</tt></dt>
+<dt><tt>single letter identifiers</tt></dt>
+<dd><p>After this directive, identifiers can be either be words of more than
+one letter, or may only be single letters. When the <tt>single letter identifiers</tt>
+directive is set, certain abbreviations are accepted when reading predicate
+logic expressions. For instance, "Pabc" may be used to abbreviate P(a,b,c).
+Likewise, "Lxpx" abbreviates Lx[p(x)]. When <tt>multiple letter identifiers</tt>
+is used, "Pabc" is treated as a single identifier, and likewise "Lxpx" is
+treated as a lambda binding the variable "xpx". If neither directive is
+specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
+
 </dl>
 
 <h2>Exercises</h2>
@@ -173,12 +184,12 @@ Student's responses:
 
 <p>The Lambda program will read predicate logic expressions from exercise files. Predicate logic expressions may include:</p>
 
-<p>constants and variables, which must be single letters,</p>
-<p>predicates, entered as P(a), P(a,b,c), or in abbreviated form Pabc,</p>
+<p>constants and variables (which must be single letters unless the <tt>multiple letter identifiers</tt> directive is used),</p>
+<p>predicates, entered as P(a) or P(a,b,c) (or in abbreviated form Pabc unless the <tt>multiple letter identifiers</tt> directive is used),</p>
 <p>the logical connectives ¬, ∧, ∨, →, and ↔, which can be entered as ~, &amp;, | (the pipe character), -&gt;, and &lt;-&gt;,</p>
 <p>parenthesized expressions, using parens () or brackets [],</p>
-<p>the quantifiers ∀ and ∃, which can be abbreviated as the capital letters A and E, entered for example as Ax.P(x), ExP(x), or AxEy[P(x) &amp; Q(y)],</p>
-<p>lambda binders, λ, or abbreviated as the captital letter L, entered as Lx.P(x), LxP(x), or LxLy[P(x,y)], and</p>
+<p>the quantifiers ∀ and ∃, which can be abbreviated as the capital letters A and E, entered for example as Ax.P(x) or AxEy[P(x) &amp; Q(y)] (also as ExP(x) unless the <tt>multiple letter identifiers</tt> directive is used)</p>
+<p>lambda binders, λ, or abbreviated as the captital letter L, entered as Lx.P(x) or LxLy[P(x,y)] (or LxP(x) unless the <tt>multiple letter identifiers</tt> directive is used), and</p>
 <p>function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx.P(x) (b).</p>
 
 <p>Because the capital letters A, E, and L are used for special symbols, they cannot serve as constants or variables.</p>

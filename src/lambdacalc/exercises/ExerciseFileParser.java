@@ -123,6 +123,11 @@ public class ExerciseFileParser {
                 group = null;
                 exindex = 0;
 
+            } else if (line.equals("single letter identifiers")) {
+                exprParseOpts.SingleLetterIdentifiers = true;
+            } else if (line.equals("multiple letter identifiers")) {
+                exprParseOpts.SingleLetterIdentifiers = false;
+
             } else {
                 // this is an exercise
                 Exercise ex = null;
