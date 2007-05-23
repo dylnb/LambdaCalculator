@@ -88,9 +88,25 @@ public class IdentifierTyper {
     }
     
     private Entry findEntry(String identifier) throws IdentifierTypeUnknownException {
+        // For single-letter trivial ranges, like x-x, we have to only look at the
+        // first letter of identifier, because if identifier has primes and such,
+        // we want that to still count as x.
         for (int i = entries.size() - 1; i >= 0; i--) {
             Entry e = (Entry)entries.get(i);
-            if (identifier.compareTo(e.start) >= 0 && identifier.compareTo(e.end) <= 0)
+            
+            boolean startOK, endOK;
+
+            if (e.start.length() == 1)
+                startOK = identifier.charAt(0) >= e.start.charAt(0);
+            else
+                startOK = identifier.compareTo(e.start) <= 0;
+
+            if (e.end.length() == 1)
+                endOK = identifier.charAt(0) <= e.end.charAt(0);
+            else
+                endOK = identifier.compareTo(e.end) <= 0;
+
+            if (startOK && endOK)
                 return e;
         }
         throw new IdentifierTypeUnknownException(identifier);
