@@ -244,7 +244,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 }
             } else if (currentThingToDo.equals("betareduce") && steptypes.contains("alphavary"))
                 hint = "Try applying " + Lambda.SYMBOL + "-conversion.";
-            else if (currentThingToDo.equals("betareduce"))
+            else if (currentThingToDo.equals("betareduce") || currentThingToDo.equals("notreducible"))
                 hint = null; // nothing useful to say by default
             else
                 throw new RuntimeException(); // not reachable
