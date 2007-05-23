@@ -196,16 +196,20 @@ public class ExpressionParser {
             id += expression.charAt(start++);
         }
 
-        Identifier ident = loadIdentifier(id, context, start);
-
-        if (start == expression.length() || !allowPredicate)
+        if (start == expression.length() || !allowPredicate) {
+            Identifier ident = loadIdentifier(id, context, start, null);
             return new ParseResult(ident, start);
+        }
 
         // If parens, or another identifier, follow immediately, it is a predicate.
+        // We parse such predicates here. If neither of those conditions holds, then
+        // we return the identifier we found.
         if (!(
                 getChar(expression, start, context) == '('
-                || (context.SingleLetterIdentifiers && isLetter(getChar(expression, start, context)))))
+                || (context.SingleLetterIdentifiers && isLetter(getChar(expression, start, context))))) {
+            Identifier ident = loadIdentifier(id, context, start, null);
             return new ParseResult(ident, start);
+        }
 
         boolean parens = false;
         if (getChar(expression, start, context) == '(') {
@@ -238,21 +242,40 @@ public class ExpressionParser {
                 }
                 first = false;
 
-                ParseResult arg = parseExpression(expression, start, context, "the next argument to the predicate " + ident.toString());
+                ParseResult arg = parseExpression(expression, start, context, "the next argument to the predicate " + id);
                 arguments.add(arg.Expression);
                 start = arg.Next;
             } else {
                 char cc = getChar(expression, start, context);
                 if (!isLetter(cc))
-                    throw new SyntaxException("Invalid identifier as an argument to " + ident + ".", start);
-                arguments.add(loadIdentifier(String.valueOf(cc), context, start));
+                    throw new SyntaxException("Invalid identifier as an argument to " + id + ".", start);
+                arguments.add(loadIdentifier(String.valueOf(cc), context, start, null));
                 start++;
             }
         }
-
+        
         if (arguments.size() == 0) // we treat "P()" as "P"
-            return new ParseResult(ident, start);
-        else if (arguments.size() == 1) // P(a) : a is an identifier; there is no ArgList
+            return new ParseResult(loadIdentifier(id, context, start, null), start);
+
+        // If the type of the identifier is not known to the IdentifierTyper,
+        // we'll infer its type from the types of the arguments, and assume
+        // it is a constant and a function that yields a truth value.
+        Type inferType = null;
+        try {
+            if (arguments.size() == 1) {
+                inferType = new CompositeType(((Expr)arguments.get(0)).getType(), Type.T);
+            } else {
+                Type[] argtypes = new Type[arguments.size()];
+                for (int i = 0; i < arguments.size(); i++)
+                    argtypes[i] = ((Expr)arguments.get(i)).getType();
+                inferType = new CompositeType(new ProductType(argtypes), Type.T);
+            }
+        } catch (TypeEvaluationException e) {
+        }
+
+        Identifier ident = loadIdentifier(id, context, start, inferType);
+
+        if (arguments.size() == 1) // P(a) : a is an identifier; there is no ArgList
             return new ParseResult(new FunApp(ident, (Expr)arguments.get(0)), start);
         else // P(a,b) : (a,b) is an ArgList
             return new ParseResult(new FunApp(ident, new ArgList((Expr[])arguments.toArray(new Expr[0]))), start);
@@ -267,14 +290,18 @@ public class ExpressionParser {
                 || ic == Identifier.PRIME;
     }
     
-    private static Identifier loadIdentifier(String id, ParseOptions context, int start) throws SyntaxException {
+    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferType) throws SyntaxException {
         boolean isvar;
         Type type;
         try {
             isvar = context.Typer.isVariable(id);
             type = context.Typer.getType(id);
         } catch (IdentifierTypeUnknownException e) {
-            throw new SyntaxException(e.getMessage(), start);
+            if (inferType == null)
+                throw new SyntaxException(e.getMessage(), start);
+            
+            isvar = false;
+            type = inferType;
         }
 
         Identifier ident;
