@@ -16,6 +16,9 @@ public abstract class Identifier extends Expr {
     /*
      * The unicode prime character.
      */
+    /**
+     * The prime symbol.
+     */
     public static final char PRIME = '\u02B9'; // 0x2032 is another one
     
     String symbol;

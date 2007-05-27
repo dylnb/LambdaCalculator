@@ -12,7 +12,7 @@ import lambdacalc.logic.*;
  * An Exercise is the abstract base class of all individual exercises.
  * @author tauberer
  */
-public abstract class Exercise implements java.io.Serializable {
+public abstract class Exercise {
     int index;
     boolean done;
     java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
@@ -87,6 +87,12 @@ public abstract class Exercise implements java.io.Serializable {
         this.done = true;
     }
     
+    /**
+     * Returns whether the user has provided a correct answer for this exercise.
+     * For one-step exercises, this returns true just when the exercise has been
+     * correctly completed. For multi-step exercises, this returns just when the user
+     * has given a correct intermediate step.
+     */
     public boolean hasBeenStarted() {
         return getLastAnswer() != null;
     }
@@ -99,7 +105,7 @@ public abstract class Exercise implements java.io.Serializable {
     }
     
     /**
-     * If the exercise has been started, get's the last correct answer
+     * If the exercise has been started, gets the last correct answer
      * given by the user.  If the exercise is finished, this is the
      * correct final answer.  Otherwise it is the last correct
      * intermediate answer given.  If the exercise hasn't been started
@@ -107,5 +113,8 @@ public abstract class Exercise implements java.io.Serializable {
      */
     public abstract String getLastAnswer();
 
+    /**
+     * Serialzies the exercise to a stream.
+     */
     public abstract void writeToStream(java.io.DataOutputStream output) throws java.io.IOException;
 }

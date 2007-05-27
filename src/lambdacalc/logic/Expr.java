@@ -19,7 +19,7 @@ import java.util.Set;
  * An expression in the Lambda calculus.  This is the abstract
  * base class of all expression subclasses.
  */
-public abstract class Expr implements java.io.Serializable {
+public abstract class Expr {
     
     /**
      * Gets an integer representing the expression's operator precedence:
@@ -96,9 +96,8 @@ public abstract class Expr implements java.io.Serializable {
     }
 
     /**
-     * For the purposes of equality tests, (Expr) is equal to Expr. 
-     * That is, Parens are equal to the Expr they contain.
-     * This method is overwritten in the Parens method and only there.
+     * This method returns this Expr, except removing any parenthesis.
+     * This is used by equality tests, which all ignore parenthesis.
      */
     public final Expr stripAnyParens() {
         if (this instanceof Parens)
@@ -192,9 +191,24 @@ public abstract class Expr implements java.io.Serializable {
      */
     protected abstract Set getVars(boolean unboundOnly);
     
+    /**
+     * Holds the result of a lambda conversion operation.
+     */
     public class LambdaConversionResult {
+        /**
+         * The expression resulting from the lambda conversion.
+         */
         public final Expr Result;
+        /**
+         * If an alphabetical variant was needed to perform the lambda conversion, this
+         * holds the alphabetical variant that was chosen before computing Result.
+         */
         public final Expr AlphabeticalVariant;
+        /**
+         * If an alphabetical variant was needed, for pedagogical purposes this field holds
+         * the result of performing the lambda conversion without first creating an
+         * alphabetical variant.
+         */
         public final Expr SubstitutionWithoutAlphabeticalVariant;
         
         public LambdaConversionResult(Expr r, Expr a, Expr s) {

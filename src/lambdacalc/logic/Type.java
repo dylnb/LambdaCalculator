@@ -12,7 +12,7 @@ import java.util.*;
  * Represents a semantic type, an AtomicType like e and t,
  * a CompositeType like &lt;e,t&gt;, or a ProductType like (e x e).
  */
-public abstract class Type implements Comparable, java.io.Serializable {
+public abstract class Type implements Comparable {
     
     public static final char LEFTBRACKET    = '<';
     public static final char RIGHTBRACKET   = '>';

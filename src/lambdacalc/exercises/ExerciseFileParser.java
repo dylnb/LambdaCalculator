@@ -70,7 +70,6 @@ public class ExerciseFileParser {
         
         int linectr = 0;
         int exindex = 0;
-        int grindex = 0;
         
         BufferedReader b = new BufferedReader(reader);
         String line;
@@ -153,10 +152,9 @@ public class ExerciseFileParser {
                         if (title == null)
                             throw new ExerciseFileFormatException("Specify the title of the exercise group with the 'title' keyword before giving any exercises", linectr, line);
                         
-                        group = new ExerciseGroup(grindex++);
+                        group = file.addGroup();
                         group.setTitle(title);
                         group.setDirections(directions);
-                        file.addGroup(group);
                         title = null;
                         directions = "";
                     }

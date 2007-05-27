@@ -19,13 +19,16 @@ import lambdacalc.logic.*;
  * The teacher creates a text file using a text which is read into an ExerciseFile
  * via an ExerciseFileParser.
  */
-public class ExerciseFile implements Serializable {
+public class ExerciseFile {
     
     String title;
     ArrayList groups = new ArrayList();
     
     String studentName;
     
+    /**
+     * Creates a new ExerciseFile.
+     */
     public ExerciseFile() {
         title = "Exercises";
     }
@@ -34,34 +37,67 @@ public class ExerciseFile implements Serializable {
         return getTitle();
     }
 
-    public void addGroup(ExerciseGroup group) {
+    /**
+     * Appends a new ExerciseGroup to the end of this exercise file and returns the group.
+     */
+    public ExerciseGroup addGroup() {
+        ExerciseGroup group = new ExerciseGroup(groups.size());
         groups.add(group);
+        return group;
     }
     
+    /**
+     * Gets the number of ExerciseGroups in the file.
+     */
     public int size() {
         return groups.size();
     }
     
+    /**
+     * Gets the ExerciseGroup at the given index.
+     */
     public ExerciseGroup getGroup(int index) {
         return (ExerciseGroup)groups.get(index);
     }
     
+    /**
+     * Gets the title of the ExerciseFile.
+     */
     public String getTitle() {
         return title;
     }
     
+    /**
+     * Sets the title of the ExerciseFile. The title may not be either
+     * null or the empty string.
+     */
     public void setTitle(String title) {
+        if (title == null || title.equals(""))
+            throw new IllegalArgumentException();
         this.title = title;
     }
     
+    /**
+     * Gets the student name associated with the file. May be null if no
+     * student name is associated with the file.
+     */
     public String getStudentName() {
         return studentName;
     }
     
+    /**
+     * Sets the student name associated with the file.
+     */
     public void setStudentName(String title) {
         this.studentName = title;
     }
 
+    /**
+     * Gets whether any exercise in the file has been started.
+     * (For single-step problems, this would be if any exercise has been completed,
+     * but for multiple-step problems, this is if the user has given any correct
+     * intermediate answers.)
+     */
     public boolean hasBeenStarted() {
         for (int i = 0; i < size(); i++) {
             ExerciseGroup g = getGroup(i);
@@ -74,6 +110,9 @@ public class ExerciseFile implements Serializable {
         return false;
     }
 
+    /**
+     * Gets whether every exercise in the file has been successfully completed.
+     */
     public boolean hasBeenCompleted() {
         for (int i = 0; i < size(); i++) {
             ExerciseGroup g = getGroup(i);
@@ -87,6 +126,9 @@ public class ExerciseFile implements Serializable {
     }
     
     
+    /**
+     * Gets a list of all of the exercises in the file.
+     */
     public List exercises() { 
         List l = new Vector();
         for (int i = 0; i < size(); i++) {
@@ -142,6 +184,9 @@ public class ExerciseFile implements Serializable {
         return ret;
     }
 
+    /**
+     * Saves the exercises in seralized form to the given file.
+     */
     public void saveTo(File target) throws IOException {
         OutputStream stream = new FileOutputStream(target);
         
@@ -170,6 +215,10 @@ public class ExerciseFile implements Serializable {
         output.close();
     }
     
+    /**
+     * Reads the serialized ExerciseFile data from the given file and initializes this
+     * instance with the serialized data.
+     */
     public void readFrom(File source) throws IOException, ExerciseFileFormatException {
         InputStream stream = new FileInputStream(source);
         DataInputStream input = new DataInputStream(stream);
@@ -182,7 +231,7 @@ public class ExerciseFile implements Serializable {
         if (input.readByte() != 'A') throw new ExerciseFileFormatException();
         
         short formatVersion = input.readShort();
-        if (formatVersion != 1) throw new ExerciseFileFormatException("This file was saved with a future version of the Lambda program.");
+        if (formatVersion != 1) throw new ExerciseFileVersionException();
         
         input = new DataInputStream(new java.util.zip.InflaterInputStream(input));
 
@@ -194,9 +243,8 @@ public class ExerciseFile implements Serializable {
         int nGroups = input.readShort();
         
         for (int i = 0; i < nGroups; i++) {
-            ExerciseGroup g = new ExerciseGroup(i);
+            ExerciseGroup g = addGroup();
             g.readFromStream(input, formatVersion);
-            groups.add(g);
         }
         
         input.close();

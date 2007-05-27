@@ -31,7 +31,7 @@ public class ExpressionParser {
          */
         public boolean ASCII;
 
-        /*
+        /**
          * This provides the types for identifiers encountered
          * in the expression.  Every identifier must be
          * identifiable as a constant or variable and with a type.
@@ -290,6 +290,9 @@ public class ExpressionParser {
             return new ParseResult(new FunApp(ident, new ArgList((Expr[])arguments.toArray(new Expr[0]))), start);
     }
     
+    /**
+     * Returns whether the character is one that is used in identifiers.
+     */
     public static boolean isIdentifierChar(char ic) {
         return isLetter(ic) || Character.isDigit(ic)
                 || ic == '\''

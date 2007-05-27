@@ -31,7 +31,13 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     Expr last_answer;
     int cur_step = 0;
     
+    /**
+     * Whether student's answers are parsed with the SingleLetterIdentifiers option set.
+     */
     public boolean ParseSingleLetterIdentifiers = true;
+    /**
+     * Whether students are prohibited from skipping steps in multi-step problems.
+     */
     public boolean NotSoFast = false; // one step at a time
     
     /**

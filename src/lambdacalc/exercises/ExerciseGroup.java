@@ -21,7 +21,7 @@ public class ExerciseGroup {
     ArrayList items = new ArrayList();
     int index;
     
-    public ExerciseGroup(int index) {
+    ExerciseGroup(int index) {
         title = "Exercise Group";
         directions = "";
         this.index = index;
@@ -31,38 +31,68 @@ public class ExerciseGroup {
         return getTitle();
     }
     
+    /**
+     * Gets the title of the exercise group.
+     */
     public String getTitle() {
         return title;
     }
     
+    /**
+     * Sets the title of the ExerciseGroup. The title may not be either
+     * null or the empty string.
+     */
     public void setTitle(String title) {
+        if (title == null || title.equals(""))
+            throw new IllegalArgumentException();
         this.title = title;
     }
     
+    /**
+     * Gets the directions to the student for the group. May be null.
+     */
     public String getDirections() {
         return directions;
     }
     
+    /**
+     * Sets the directions to the student for the group.
+     */
     public void setDirections(String directions) {
         this.directions = directions;
     }
     
+    /**
+     * Gets the index of this group in the ExerciseFile that contains it.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * Adds an Exercise to the end of this group.
+     */
     public void addItem(Exercise item) {
         items.add(item);
     }
     
+    /**
+     * Returns the number of exercises in this group.
+     */
     public int size() {
         return items.size();
     }
     
+    /**
+     * Gets the exercise at the given index in this group.
+     */
     public Exercise getItem(int index) {
         return (Exercise)items.get(index);
     }
     
+    /**
+     * Serializes the group to a stream.
+     */
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeShort(1); // just some versioning for future use
         output.writeUTF(title);
@@ -82,6 +112,9 @@ public class ExerciseGroup {
         }
     }
     
+    /**
+     * Initializes this instance with the serialized group data from a stream.
+     */
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
         if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
