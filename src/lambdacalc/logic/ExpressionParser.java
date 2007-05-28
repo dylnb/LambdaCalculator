@@ -45,17 +45,31 @@ public class ExpressionParser {
         public Expr Expression;
         public int Next;
         
+        /**
+         * 
+         * @param expression 
+         * @param next 
+         */
         public ParseResult(Expr expression, int next) {
             Expression = expression;
             Next = next;
         }
     }
     
+    /**
+     * Private constructor. All the methods in this class are static.
+     */
     private ExpressionParser() {
     }
 
     /**
-     * Parses an expression with the given options.
+     * Parses an expression with the given options. This is the entry point of this class.
+     *
+     * @param expression the expression to be parsed
+     * @param options global options for parsing, e.g. typing conventions
+     * @return an Expr object representing the expression
+     * @throws SyntaxException if a parse error occurs
+     *
      */
     public static Expr parse(String expression, ParseOptions options) throws SyntaxException {
         if (expression.length() == 0)
@@ -68,6 +82,17 @@ public class ExpressionParser {
         return r.Expression;
     }
     
+    /**
+     * Skips any whitespace.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for an identifier
+     * @param expected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @param allowEOS if true, returns -1 if it hits the end of the string. Otherwise,
+     * an exception is raised in that case.
+     * @return a position in the string after any whitespace.
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     */
     private static int skipWhitespace(String expression, int start, String expected, boolean allowEOS) throws SyntaxException {
         while (true) {
             if (start == expression.length()) {
@@ -81,10 +106,25 @@ public class ExpressionParser {
         return start;
     }
     
+    /**
+     * Tests if a character is a letter. Unlike Java, this method does *not* 
+     * treat the lambda symbol as a letter.
+     * @param c the character to be tested
+     * @return whether it is a letter
+     */
     private static boolean isLetter(char c) {
         return Character.isLetter(c) && c != Lambda.SYMBOL;
     }
     
+    /**
+     * Gets a character in the string at the indicated position, but maps
+     * certain capital letters into special symbols if the ASCII parsing option
+     * is turned on (like A to the for-all symbol, etc.).
+     * @param expression the expression string
+     * @param index the index in the expression string to get the character at
+     * @param context global parsing options
+     * @return the letter, mapped to a special character if necessary
+     */
     private static char getChar(String expression, int index, ParseOptions context) {
         char c = expression.charAt(index);
         if (context.ASCII) {
@@ -101,11 +141,22 @@ public class ExpressionParser {
         return c;
     }
     
-    /*** 
+    /**
+     * 
      * Parses the prefix expression beginning at position start in expression.
-     * These include parenthesis expressions, negation expressions, binding
-     * expressions, and identifiers. If none of these expressions are present
+     * Prefix expressions are expressions whose first character permits the 
+     * parser to recognize them. This includes parenthesis expressions, 
+     * negation expressions, binding
+     * expressions, and predicates (which include identifiers). 
+     * If none of these are present
      * at position start, a BadCharacterException is thrown.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for a prefix expression
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @return a prefix expression
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
      */
     private static ParseResult parsePrefixExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
@@ -120,16 +171,23 @@ public class ExpressionParser {
                 if (getChar(expression, start, context) != closeChar)
                     throw new SyntaxException("You need a '" + closeChar + "' here but a '" + getChar(expression, start, context) + "' was found.", start);
                 return new ParseResult(new Parens(parenr.Expression, c == '(' ? Parens.ROUND : Parens.SQUARE), start+1);
-            
+                //break
+                
             case Not.SYMBOL:
                 ParseResult negr = parsePrefixExpression(expression, start+1, context, "an expression after the negation operator");
+                // By parsing a prefix expression as opposed to just any expression here,
+                // we achieve the effect that negation binds more strongly than any other infix operator, 
+                // and more strongly than function application.
+                // E.g. ~A & B is parsed as [~A] & B                
+                
                 return new ParseResult(new Not(negr.Expression), negr.Next);
-            
-            case ForAll.SYMBOL:
-            case Exists.SYMBOL:
-            case Lambda.SYMBOL:
+                //break
+                
+            case ForAll.SYMBOL: //fall through
+            case Exists.SYMBOL: //fall through
+            case Lambda.SYMBOL: //fall through
             case Iota.SYMBOL:
-                ParseResult var = parseIdentifier(expression, start+1, context, "a variable", true, false);
+                ParseResult var = parseIdentifier(expression, start+1, context, "a variable");
                 if (!(var.Expression instanceof Identifier))
                     throw new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1);
                 start = var.Next;
@@ -151,7 +209,7 @@ public class ExpressionParser {
                 
                 ParseResult rhs = parsePrefixExpression(expression, start, context, "an expression in the scope of the lambda operator");
                 if (
-                       !(!hadPeriod && rhs.Expression instanceof Parens)
+                       !(!hadPeriod && rhs.Expression instanceof Parens) // if we have a binder followed by a period, or also if we have a binder not followed by a parenthesis
                     && !(c == Lambda.SYMBOL && rhs.Expression instanceof Lambda)
                     && !(c != Lambda.SYMBOL && rhs.Expression instanceof PropositionalBinder))
                     rhs = parseInfixExpression(expression, start, context, "an expression in the scope of the lambda operator", rhs);
@@ -166,17 +224,48 @@ public class ExpressionParser {
                         throw new RuntimeException(); // unreachable
                 }
                 return new ParseResult(bin, rhs.Next);
-            
+                //break
+                
             default:
-                // Hope that it's an identifier. If not, a BadCharacterException is thrown.
-                return parseIdentifier(expression, start, context, "an expression", false, true);
+                // Hope that it's an identifier or predicate. If not, a BadCharacterException is thrown.
+                return parsePredicate(expression, start, context, "an expression", false, true);
         }
     }
     
-    /***
+    /**
      * Parses an identifier at position start in expression.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for an identifier
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @return an identifier
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
      */
-    private static ParseResult parseIdentifier(String expression, int start, ParseOptions context, String whatIsExpected, boolean lookingForVariable, boolean allowPredicate) throws SyntaxException {
+    private static ParseResult parseIdentifier(String expression, int start,
+            ParseOptions context, String whatIsExpected) throws SyntaxException {
+        return parsePredicate(expression, start, context,
+                whatIsExpected, true, false);
+        
+    }
+    
+    /**
+     * Parses a predicate at position start in expression.
+     * A predicate is an identifier followed by
+     * an argument list. If no argument list follows, as a fallback we try to parse 
+     * an identifier by itself.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for an identifier
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @param lookingForVariable a hint to the feedback module -- indicates whether 
+     * the caller expects a variable at this position, as opposed to a constant or a predicate
+     * @param allowPredicate whether only an identifier or possibly also a predicate can be parsed by this method
+     * @return a predicate
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     */
+    private static ParseResult parsePredicate(String expression, int start, ParseOptions context, String whatIsExpected, boolean lookingForVariable, boolean allowPredicate) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
         char c = expression.charAt(start);
         
@@ -290,8 +379,16 @@ public class ExpressionParser {
             return new ParseResult(new FunApp(ident, new ArgList((Expr[])arguments.toArray(new Expr[0]))), start);
     }
     
+    
+    // TODO write a formal semantic paper about the difference between
+    // "whether the character is used in identifiers" and
+    // "whether the character is one that is used in identifiers"
     /**
-     * Returns whether the character is one that is used in identifiers.
+     * Returns whether the character is one that is used in identifiers, which
+     * includes letters (which must be the start of an identifier), numbers,
+     * underscores, and primes of various sorts.
+     * @param ic the character
+     * @return whether the character can be used in an identifier
      */
     public static boolean isIdentifierChar(char ic) {
         return isLetter(ic) || Character.isDigit(ic)
@@ -302,6 +399,18 @@ public class ExpressionParser {
                 || ic == Identifier.PRIME;
     }
     
+    /**
+     * Creates an instance of Const or Var for an identifier named by id,
+     * using the typing conventions of the global parser options
+     * @param id the name of the identifier
+     * @param context global parsing options
+     * @param start the start position of the identifier, used for error messages
+     * @param inferType if null and the typing conventions cannot provide a type
+     * for the identifier, an exception is thrown; otherwise, if the typing conventions
+     * cannot provide a type for the identifier, inferType is used
+     * @throws lambdacalc.logic.SyntaxException if a parsing error occurs
+     * @return the new Identifier instance
+     */
     private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferType) throws SyntaxException {
         boolean isvar;
         Type type;
@@ -327,23 +436,46 @@ public class ExpressionParser {
     
     /***
      * Parse an infix expression at position start in expression.
-     * These are a series of prefix expressions separated by
+     * An infix expression in the sense of this method is a series of 
+     * prefix expressions in the sense of parsePrefixExpression separated by
      * conjunction, disjunction, implication, and biconditional.
-     * Operator precedence is taken care of here.
+     * If we only find one such prefix expression, we return the result of 
+     * parsePrefixExpression as a fallback.
+     * This includes the case where we have more than two prefix expressions.
+     * Such an expression, e.g. X & Y | Z -> Q, is not parsed recursively,
+     * but rather as a simple list of expressions separated by operators
+     * as in [X, &, Y, |, Z, -> , Q]. Then the operator precedence is taken
+     * care of. The operator precendence is:
+     *   Not Equal -- binds strongest
+     *   Equal
+     *   If
+     *   Iff
+     *   And
+     *   Or -- binds weakest
+     *
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for an infix expression
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @param firstConjunct if null, ignored; otherwise, this is the first conjunct (scanning
+     * the first conjunct is skipped); this is used for look-ahead in parsing quantifiers
+     * @return an infix expression or something lesser as fallback
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
      */
-    private static ParseResult parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, ParseResult left) throws SyntaxException {
+    private static ParseResult parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, ParseResult firstConjunct) throws SyntaxException {
         // We allow our caller to do a parsePrefixExpression before calling us so it can
         // look ahead and see what type of expression is next. If it didn't do any look-ahead
         // it passes left as null and we fetch the first conjunct here.
-        if (left == null)
-            left = parsePrefixExpression(expression, start, context, whatIsExpected);
+        if (firstConjunct == null)
+            firstConjunct = parsePrefixExpression(expression, start, context, whatIsExpected);
         
         ArrayList operators = new ArrayList();
         ArrayList operands = new ArrayList();
         
-        operands.add(left.Expression);
+        operands.add(firstConjunct.Expression);
         
-        start = left.Next;
+        start = firstConjunct.Next;
         
         while (true) {
             int start2 = skipWhitespace(expression, start, null, true);
@@ -380,7 +512,7 @@ public class ExpressionParser {
             start = right.Next;
         }
         
-        if (operands.size() == 1) return left;
+        if (operands.size() == 1) return firstConjunct;
         
         // group operands by operator precedence, tighter operators first
         
@@ -394,6 +526,13 @@ public class ExpressionParser {
         return new ParseResult((Expr)operands.get(0), start);
     }
     
+    /**
+     * 
+     * @param operands 
+     * @param operators 
+     * @param op 
+     * @throws lambdacalc.logic.SyntaxException 
+     */
     private static void groupOperands(ArrayList operands, ArrayList operators, char op) throws SyntaxException {
         for (int i = 0; i+1 < operands.size(); i++) {
             while (i+1 < operands.size() && ((String)operators.get(i)).charAt(0) == op) {
@@ -423,11 +562,31 @@ public class ExpressionParser {
         }
     }
 
-    /***
+    /**
      * Parses all sorts of expressions starting at position start in expression.
-     * It looks first for an infix/prefix expression (anything but function application),
-     * and if that's followed by a space and then an identifier or parenthetical expression,
+     * It looks first for an infix/prefix expression (anything returned by
+     * parseInfixExpression), and if that's followed by an identifier or parenthetical expression,
      * take it as an argument to a function application expression.
+     * Parses an expression at position start in expression.
+     * We first try to parse a function application because it is the operator with the
+     * lowest precedence. This method will fall back appropriately
+     * if no function application is present.
+     * A function application in the sense of this method consists of a list of expressions E1, ..., En, with n>=1.
+     * If n = 1 then we fallback and call parseInfixExpression on E1. (Infix operators
+     * bind least strongly except for function application.)
+     * (If n > 2 then we have a series of function applications, which we associate left-to-right.)
+     * We always parse E1 using parseInfixExpression and any Ei for i>=1 using parsePrefixExpression.
+     * The reason for using the less inclusive method parsePrefixExpression on Ei i>1 is that
+     * we don't allow any of those Ei to be infix expressions. E.g. we disallow
+     * Lx. ~x a & b and require the user to disambiguate thus: Lx. ~x (a & b)
+     * In the former formula, a & b is an infix expression. In the latter one, (a & b) is a prefix expression.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for a function application
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @return a function application expression or something lesser as fallback
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
      */
     private static ParseResult parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
         ParseResult left = parseInfixExpression(expression, start, context, whatIsExpected, null);
@@ -436,26 +595,54 @@ public class ExpressionParser {
         Expr expr = left.Expression;
         
         while (true) {
+            // Skip any white space after the first infix expression we parse
+            // (following the left hand side). If we hit the end of the string
+            // while skipping white space, skipWhitespace returns -1, and we
+            // just break out.
             int start2 = skipWhitespace(expression, start, null, true);
             if (start2 == -1) { break; }
             start = start2;
 
             char c = getChar(expression, start, context);
 
-            // If we find the next thing is a letter, parenthesis, or bracket,
-            // then this is function application.
-            if (isLetter(c) || c == '(' || c == '[') {
-                ParseResult right = parsePrefixExpression(expression, start, context, "a variable or parenthesized expression"); // message never used
-                expr = new FunApp(expr, right.Expression); // left associativity
-                start = right.Next;
-            } else {
+            // We have to know when to terminate parsing a function application
+            // otherwise when parsing an embedded function application, after the
+            // function application is actually finished, we'll try doing a
+            // parsePrefixExpression below, and it'll throw an exception because
+            // what follows isn't a prefix expression. Example:
+            //    [Lx.P(x) (a)] & P(a)
+            // What follows is a close bracket, not a prefix expression, so we
+            // better not parse a prefix expression.
+            // Except at top-level scope, this method is only called when parsing
+            // the inside of a parenthesis expression, so we know that we must be
+            // done just when we encounter a close bracket. (It can't match up
+            // with an open bracket *within* the function application because
+            // those have already been parsed. Thus, it must correspond to the
+            // parenthesis outside.)
+            if (c == ')' || c == ']')
                 break;
-            }
+            
+            ParseResult right = parsePrefixExpression(expression, start, context, "a variable or parenthesized expression"); // message never used
+            expr = new FunApp(expr, right.Expression); // left associativity
+            start = right.Next;
         }
         
         return new ParseResult(expr, start);
     }
 
+    /**
+     * Parses an expression at position start in expression.
+     * We first try to parse a function application because it is the operator with the
+     * lowest precedence. The method parseFunctionApplication will fall back appropriately
+     * if no function application is present.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for an expression
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @return an expression
+     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     */
     private static ParseResult parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
         return parseFunctionApplicationExpression(expression, start, context, whatIsExpected);
     }
