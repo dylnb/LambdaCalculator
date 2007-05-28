@@ -614,12 +614,13 @@ public class ExpressionParser {
             // What follows is a close bracket, not a prefix expression, so we
             // better not parse a prefix expression.
             // Except at top-level scope, this method is only called when parsing
-            // the inside of a parenthesis expression, so we know that we must be
-            // done just when we encounter a close bracket. (It can't match up
+            // the inside of a parenthesis expression or arguments to a predicate,
+            // so we know that we must be done just when we encounter a close bracket
+            // or a comma. (It can't match up
             // with an open bracket *within* the function application because
             // those have already been parsed. Thus, it must correspond to the
             // parenthesis outside.)
-            if (c == ')' || c == ']')
+            if (c == ')' || c == ']' || c == ',')
                 break;
             
             ParseResult right = parsePrefixExpression(expression, start, context, "a variable or parenthesized expression"); // message never used
