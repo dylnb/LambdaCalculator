@@ -275,7 +275,7 @@ public class BinderTest extends TestCase {
         Binder instance = null;
         
         Expr expResult = null;
-        Expr result = instance.substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings);
+        Expr result = null; //instance.substitute(var, replacement, unboundVars, potentialAccidentalBindings, accidentalBindings);
         assertEquals(expResult, result);
         
         // TODO review the generated test code and remove the default call to fail.
@@ -301,57 +301,6 @@ public class BinderTest extends TestCase {
         fail("The test case is a prototype.");
     }
 
-    /**
-     * Generated implementation of abstract class lambdacalc.logic.Binder. Please fill dummy bodies of generated methods.
-     */
-    private class BinderImpl extends Binder {
-
-        BinderImpl(lambdacalc.logic.Identifier ident, lambdacalc.logic.Expr innerExpr, boolean hasPeriod) {
-            super(ident, innerExpr, hasPeriod);
-        }
-
-        public java.lang.String getSymbol() {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-
-        protected lambdacalc.logic.Binder create(lambdacalc.logic.Identifier variable, lambdacalc.logic.Expr innerExpr) {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-
-        public lambdacalc.logic.Type getType() {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-
-        protected boolean equals(lambdacalc.logic.Expr e, java.util.Map map) {
-            // TODO fill the body in order to provide useful implementation
-            
-            return false;
-        }
-
-        protected java.util.Set getVars(boolean unboundOnly) {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-
-        protected lambdacalc.logic.Expr substitute(lambdacalc.logic.Var var, lambdacalc.logic.Expr replacement, java.util.Set unboundVars, java.util.Set potentialAccidentalBindings, java.util.Set accidentalBindings) {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-
-        protected lambdacalc.logic.Expr createAlphabeticalVariant(java.util.Set bindersToChange, java.util.Set variablesInUse, java.util.Map updates) {
-            // TODO fill the body in order to provide useful implementation
-            
-            return null;
-        }
-    }
-
+    
     
 }
