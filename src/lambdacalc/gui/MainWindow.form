@@ -51,16 +51,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItemShowTeacherTool">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Teacher Tool..."/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemShowTeacherToolActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemQuit">
               <Properties>
                 <Property name="mnemonic" type="int" value="120"/>
@@ -68,6 +58,31 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemQuitActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="menuTools">
+          <Properties>
+            <Property name="mnemonic" type="int" value="84"/>
+            <Property name="text" type="java.lang.String" value="Tools"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemTeacherTool">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Teacher Tool..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemTeacherToolActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemScratchPad">
+              <Properties>
+                <Property name="mnemonic" type="int" value="83"/>
+                <Property name="text" type="java.lang.String" value="Scratch Pad..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemScratchPadActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -100,14 +115,14 @@
     <Property name="rows" type="int" value="1"/>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JSplitPane" name="jSplitPane1">
+    <Container class="javax.swing.JSplitPane" name="jSplitPaneMain">
       <Properties>
         <Property name="dividerLocation" type="int" value="300"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="jPanelRightHalf">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -126,12 +141,12 @@
             <Property name="rows" type="int" value="1"/>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="jPanel3">
+            <Container class="javax.swing.JPanel" name="jPanelRightHalf2">
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblIdentifierTypes" alignment="0" max="32767" attributes="0"/>
@@ -140,18 +155,18 @@
                                   <Component id="btnCheckAnswer" pref="605" max="32767" attributes="0"/>
                               </Group>
                               <Component id="txtUserAnswer" alignment="0" pref="606" max="32767" attributes="0"/>
-                              <Component id="scrollFeedback" alignment="0" pref="606" max="32767" attributes="0"/>
+                              <Component id="jScrollPaneFeedback" alignment="0" pref="606" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="btnPrev" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
                                   <Component id="btnDoAgain" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="178" max="32767" attributes="0"/>
+                                  <EmptySpace pref="106" max="32767" attributes="0"/>
                                   <Component id="btnNext" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="txtQuestion" alignment="0" pref="606" max="32767" attributes="0"/>
-                                      <Component id="jScrollPane3" alignment="1" pref="606" max="32767" attributes="0"/>
+                                      <Component id="jScrollPaneDirections" alignment="1" pref="606" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -164,15 +179,15 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" min="-2" pref="142" max="-2" attributes="0"/>
+                          <Component id="jScrollPaneDirections" min="-2" pref="142" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtQuestion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtQuestion" min="-2" max="-2" attributes="1"/>
+                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                           <Component id="txtUserAnswer" min="-2" pref="30" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnCheckAnswer" min="-2" pref="47" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                          <Component id="scrollFeedback" min="-2" pref="127" max="-2" attributes="0"/>
+                          <Component id="jScrollPaneFeedback" min="-2" pref="127" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnNext" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -180,7 +195,7 @@
                               <Component id="btnDoAgain" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblIdentifierTypes" pref="171" max="32767" attributes="0"/>
+                          <Component id="lblIdentifierTypes" pref="151" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -211,7 +226,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNextActionPerformed"/>
                   </Events>
                 </Component>
-                <Container class="javax.swing.JScrollPane" name="scrollFeedback">
+                <Container class="javax.swing.JScrollPane" name="jScrollPaneFeedback">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="c8" green="c8" id="Panel.background" palette="3" red="c8" type="palette"/>
@@ -248,7 +263,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+                <Container class="javax.swing.JScrollPane" name="jScrollPaneDirections">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
@@ -338,7 +353,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JSplitPane" name="jSplitPane2">
+        <Container class="javax.swing.JSplitPane" name="jSplitPaneLeftHalf">
           <Properties>
             <Property name="dividerLocation" type="int" value="300"/>
             <Property name="orientation" type="int" value="0"/>
@@ -351,7 +366,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+            <Container class="javax.swing.JScrollPane" name="jScrollPaneUpperLeft">
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -363,7 +378,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTree" name="treeExerciseFile">
+                <Component class="javax.swing.JTree" name="jTreeExerciseFile">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Serif" size="14" style="0"/>
@@ -375,7 +390,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="jPanel2">
+            <Container class="javax.swing.JPanel" name="jPanelEnterExpressions">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -395,7 +410,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblHelp1" alignment="0" max="32767" attributes="0"/>
+                              <Component id="lblHelpHeader" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -416,7 +431,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblHelp1" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="lblHelpHeader" min="-2" pref="32" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="lblHelpLambda" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -433,7 +448,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="lblHelp1">
+                <Component class="javax.swing.JTextArea" name="lblHelpHeader">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="cc" green="cc" id="Panel.background" palette="3" red="cc" type="palette"/>

@@ -70,7 +70,6 @@ public class MainWindow extends javax.swing.JFrame {
         
         initializeJFileChooser(jFileChooser1, true, true);
         
-        lblHelp1.setFont(lblHelpLambda.getFont());
 
         lblHelpLambda.setText("Type capital L for " + Lambda.SYMBOL);
         lblHelpBinders.setText("Type capital A or E for " + ForAll.SYMBOL + " and " + Exists.SYMBOL);
@@ -83,6 +82,7 @@ public class MainWindow extends javax.swing.JFrame {
         //loadExerciseFile("tests/example1.txt");
     }
     
+    // called by MainWindow constructor
     private void clearAllControls() {
         hasUserSaved = false;
         hasUnsavedWork = false;
@@ -90,7 +90,7 @@ public class MainWindow extends javax.swing.JFrame {
         exFile = null;
         ex = null;
         
-        this.treeExerciseFile.setModel(new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode("No exercise file opened")));
+        this.jTreeExerciseFile.setModel(new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode("No exercise file opened")));
 
         lblDirections.setText("Open an exercise file from your instructor by using the File menu above.");
         btnPrev.setEnabled(false);
@@ -117,11 +117,13 @@ public class MainWindow extends javax.swing.JFrame {
         loadExerciseFile(new File(filename));       
     }
     
+    // used in loadExerciseFile()
     private ExerciseFile parse(File f) throws IOException, ExerciseFileFormatException {
         return new ExerciseFileParser().parse(new FileReader(f));
     }
     
     
+    // used in ExerciseFileView.getIcon()
     /**
      * Returns true if the file contains a completed exercise, and 
      * false if it contains either an uncompleted exercise, or no
@@ -149,7 +151,9 @@ public class MainWindow extends javax.swing.JFrame {
         return result;
     }
     
-    
+    // used in:
+    // loadExerciseFile(String)
+    // menuItemOpenActionPerformed()
     private void loadExerciseFile(File f) {
         boolean isWorkFile = false;
 
@@ -200,15 +204,16 @@ public class MainWindow extends javax.swing.JFrame {
         }
         
         this.treemodel = new ExerciseTreeModel(this.exFile);
-        this.treeExerciseFile.setModel(this.treemodel);
-        //this.treeExerciseFile.setCellRenderer(new ExerciseTreeRenderer());
-        for (int i = 0; i < this.treeExerciseFile.getRowCount(); i++) {
-            this.treeExerciseFile.expandRow(i);
-            this.treeExerciseFile.setRowHeight(this.treeExerciseFile.getFont().getBaselineFor('A'));
+        this.jTreeExerciseFile.setModel(this.treemodel);
+        //this.jTreeExerciseFile.setCellRenderer(new ExerciseTreeRenderer());
+        for (int i = 0; i < this.jTreeExerciseFile.getRowCount(); i++) {
+            this.jTreeExerciseFile.expandRow(i);
+            this.jTreeExerciseFile.setRowHeight(this.jTreeExerciseFile.getFont().getBaselineFor('A'));
         }
 
         showFirstExercise();
     }
+    
     
     private String chopFileSuffix(String s) {
         int dotposition = s.lastIndexOf('.'); // last dot
@@ -219,15 +224,27 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
     
+    // called in loadExerciseFile()
     private void showFirstExercise() {
         currentGroup = 0;
         currentEx = 0;
         showExercise();
     }
     
+    Exercise getCurrentExercise() {
+        if (exFile == null) return null;
+        return exFile.getGroup(currentGroup).getItem(currentEx);
+    }
+    
+    // called in:
+    // showFirstExercise()
+    // btnDoAgainActionPerformed()
+    // onExerciseTreeValueChanged()
+    // btnNextActionPerformed()
+    // btnPrevActionPerformed()
     private void showExercise() {
         lblDirections.setText(exFile.getGroup(currentGroup).getDirections());
-        ex = exFile.getGroup(currentGroup).getItem(currentEx);
+        ex = getCurrentExercise();
 
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);
         btnNext.setEnabled(currentEx+1 < exFile.getGroup(currentGroup).size() || currentGroup+1 < exFile.size() );
@@ -245,7 +262,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             updatingTree = true; // this prevents recursion when the event is
                                  // fired as if the user is clicking on this node
-            treeExerciseFile.setSelectionPath(new TreePath(new Object[] { exFile, new ExerciseTreeModel.ExerciseGroupWrapper(exFile.getGroup(currentGroup)), new ExerciseTreeModel.ExerciseWrapper(ex) } ));
+            jTreeExerciseFile.setSelectionPath(new TreePath(new Object[] { exFile, new ExerciseTreeModel.ExerciseGroupWrapper(exFile.getGroup(currentGroup)), new ExerciseTreeModel.ExerciseWrapper(ex) } ));
         } finally {
             updatingTree = false;
         }
@@ -259,7 +276,8 @@ public class MainWindow extends javax.swing.JFrame {
 
         wrongInARowCount = 0;
     }
-        
+    
+    // called in showExercise()
     private void setQuestionText() {
         if (!ex.isDone()) {
             String lastAnswer = ex.getLastAnswer();
@@ -278,6 +296,9 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
     
+    // called in:
+    // showExercise()
+    // onCheckAnswer()
     private void setAnswerEnabledState() {
         if (!ex.isDone()) {
             txtUserAnswer.setBackground(UIManager.getColor("TextField.background"));
@@ -291,6 +312,7 @@ public class MainWindow extends javax.swing.JFrame {
         btnDoAgain.setVisible(ex.hasBeenStarted());
     }
     
+    // called in MainWindow() constructor
     private static void initLookAndFeel() {
         String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
         
@@ -323,25 +345,25 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jFileChooser1 = new javax.swing.JFileChooser();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        jSplitPaneMain = new javax.swing.JSplitPane();
+        jPanelRightHalf = new javax.swing.JPanel();
+        jPanelRightHalf2 = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
-        scrollFeedback = new javax.swing.JScrollPane();
+        jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        jScrollPaneDirections = new javax.swing.JScrollPane();
         lblDirections = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         lblIdentifierTypes = new javax.swing.JTextArea();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnDoAgain = new javax.swing.JButton();
-        jSplitPane2 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        treeExerciseFile = new javax.swing.JTree();
-        jPanel2 = new javax.swing.JPanel();
-        lblHelp1 = new javax.swing.JTextArea();
+        jSplitPaneLeftHalf = new javax.swing.JSplitPane();
+        jScrollPaneUpperLeft = new javax.swing.JScrollPane();
+        jTreeExerciseFile = new javax.swing.JTree();
+        jPanelEnterExpressions = new javax.swing.JPanel();
+        lblHelpHeader = new javax.swing.JTextArea();
         lblHelpLambda = new javax.swing.JLabel();
         lblHelpBinders = new javax.swing.JLabel();
         lblHelpBinaries = new javax.swing.JLabel();
@@ -353,9 +375,10 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemSave = new javax.swing.JMenuItem();
         menuItemSaveAs = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
-        menuItemShowTeacherTool = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
         menuItemQuit = new javax.swing.JMenuItem();
+        menuTools = new javax.swing.JMenu();
+        menuItemTeacherTool = new javax.swing.JMenuItem();
+        menuItemScratchPad = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -367,10 +390,10 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jSplitPane1.setDividerLocation(300);
-        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
+        jSplitPaneMain.setDividerLocation(300);
+        jPanelRightHalf.setLayout(new java.awt.GridLayout(1, 0));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanelRightHalf.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnCheckAnswer.setText("Check My Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,8 +415,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        scrollFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        scrollFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
+        jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
         txtFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtFeedback.setColumns(20);
         txtFeedback.setEditable(false);
@@ -402,9 +425,9 @@ public class MainWindow extends javax.swing.JFrame {
         txtFeedback.setRows(5);
         txtFeedback.setWrapStyleWord(true);
         txtFeedback.setBorder(null);
-        scrollFeedback.setViewportView(txtFeedback);
+        jScrollPaneFeedback.setViewportView(txtFeedback);
 
-        jScrollPane3.setBorder(null);
+        jScrollPaneDirections.setBorder(null);
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblDirections.setColumns(20);
         lblDirections.setEditable(false);
@@ -413,7 +436,7 @@ public class MainWindow extends javax.swing.JFrame {
         lblDirections.setRows(5);
         lblDirections.setWrapStyleWord(true);
         lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
-        jScrollPane3.setViewportView(lblDirections);
+        jScrollPaneDirections.setViewportView(lblDirections);
 
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
@@ -443,80 +466,80 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout jPanelRightHalf2Layout = new org.jdesktop.layout.GroupLayout(jPanelRightHalf2);
+        jPanelRightHalf2.setLayout(jPanelRightHalf2Layout);
+        jPanelRightHalf2Layout.setHorizontalGroup(
+            jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelRightHalf2Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(lblIdentifierTypes)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
                         .add(1, 1, 1)
                         .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
                     .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                    .add(scrollFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
                         .add(btnPrev)
                         .add(70, 70, 70)
                         .add(btnDoAgain)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 178, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 106, Short.MAX_VALUE)
                         .add(btnNext))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
+                        .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
+                            .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
+        jPanelRightHalf2Layout.setVerticalGroup(
+            jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelRightHalf2Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(txtQuestion, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(7, 7, 7)
                 .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(3, 3, 3)
-                .add(scrollFeedback, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 127, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 127, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnNext)
                     .add(btnPrev)
                     .add(btnDoAgain))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                 .add(32, 32, 32))
         );
-        jPanel1.add(jPanel3);
+        jPanelRightHalf.add(jPanelRightHalf2);
 
-        jSplitPane1.setRightComponent(jPanel1);
+        jSplitPaneMain.setRightComponent(jPanelRightHalf);
 
-        jSplitPane2.setDividerLocation(300);
-        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        treeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14));
-        treeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+        jSplitPaneLeftHalf.setDividerLocation(300);
+        jSplitPaneLeftHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14));
+        jTreeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 onExerciseTreeValueChanged(evt);
             }
         });
 
-        jScrollPane1.setViewportView(treeExerciseFile);
+        jScrollPaneUpperLeft.setViewportView(jTreeExerciseFile);
 
-        jSplitPane2.setTopComponent(jScrollPane1);
+        jSplitPaneLeftHalf.setTopComponent(jScrollPaneUpperLeft);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Expressions"));
-        lblHelp1.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        lblHelp1.setColumns(20);
-        lblHelp1.setEditable(false);
-        lblHelp1.setLineWrap(true);
-        lblHelp1.setRows(5);
-        lblHelp1.setText("When typing lambda expressions, use the following keyboard shortcuts:");
-        lblHelp1.setWrapStyleWord(true);
-        lblHelp1.setBorder(null);
+        jPanelEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Expressions"));
+        lblHelpHeader.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblHelpHeader.setColumns(20);
+        lblHelpHeader.setEditable(false);
+        lblHelpHeader.setLineWrap(true);
+        lblHelpHeader.setRows(5);
+        lblHelpHeader.setText("When typing lambda expressions, use the following keyboard shortcuts:");
+        lblHelpHeader.setWrapStyleWord(true);
+        lblHelpHeader.setBorder(null);
 
         lblHelpLambda.setFont(new java.awt.Font("Dialog", 0, 12));
         lblHelpLambda.setText(" ");
@@ -533,17 +556,17 @@ public class MainWindow extends javax.swing.JFrame {
         lblHelpConditionals.setFont(new java.awt.Font("Dialog", 0, 12));
         lblHelpConditionals.setText(" ");
 
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout jPanelEnterExpressionsLayout = new org.jdesktop.layout.GroupLayout(jPanelEnterExpressions);
+        jPanelEnterExpressions.setLayout(jPanelEnterExpressionsLayout);
+        jPanelEnterExpressionsLayout.setHorizontalGroup(
+            jPanelEnterExpressionsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelEnterExpressionsLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(lblHelp1)
-                    .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanelEnterExpressionsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lblHelpHeader)
+                    .add(jPanelEnterExpressionsLayout.createSequentialGroup()
                         .add(12, 12, 12)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(jPanelEnterExpressionsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(lblHelpBinders, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                             .add(lblHelpBinaries, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -552,11 +575,11 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 22, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
+        jPanelEnterExpressionsLayout.setVerticalGroup(
+            jPanelEnterExpressionsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelEnterExpressionsLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(lblHelp1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(lblHelpHeader, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(lblHelpLambda)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -569,11 +592,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .add(lblHelpConditionals)
                 .addContainerGap(165, Short.MAX_VALUE))
         );
-        jSplitPane2.setRightComponent(jPanel2);
+        jSplitPaneLeftHalf.setRightComponent(jPanelEnterExpressions);
 
-        jSplitPane1.setLeftComponent(jSplitPane2);
+        jSplitPaneMain.setLeftComponent(jSplitPaneLeftHalf);
 
-        getContentPane().add(jSplitPane1);
+        getContentPane().add(jSplitPaneMain);
 
         menuFile.setMnemonic('F');
         menuFile.setText("File");
@@ -618,17 +641,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         menuFile.add(jSeparator1);
 
-        menuItemShowTeacherTool.setText("Teacher Tool...");
-        menuItemShowTeacherTool.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemShowTeacherToolActionPerformed(evt);
-            }
-        });
-
-        menuFile.add(menuItemShowTeacherTool);
-
-        menuFile.add(jSeparator2);
-
         menuItemQuit.setMnemonic('x');
         menuItemQuit.setText("Exit");
         menuItemQuit.addActionListener(new java.awt.event.ActionListener() {
@@ -641,21 +653,48 @@ public class MainWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(menuFile);
 
+        menuTools.setMnemonic('T');
+        menuTools.setText("Tools");
+        menuItemTeacherTool.setText("Teacher Tool...");
+        menuItemTeacherTool.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemTeacherToolActionPerformed(evt);
+            }
+        });
+
+        menuTools.add(menuItemTeacherTool);
+
+        menuItemScratchPad.setMnemonic('S');
+        menuItemScratchPad.setText("Scratch Pad...");
+        menuItemScratchPad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemScratchPadActionPerformed(evt);
+            }
+        });
+
+        menuTools.add(menuItemScratchPad);
+
+        jMenuBar1.add(menuTools);
+
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void menuItemScratchPadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemScratchPadActionPerformed
+        ScratchPadWindow.showWindow(this);
+    }//GEN-LAST:event_menuItemScratchPadActionPerformed
+
     private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
         ex.reset();
         flagChangeMade();
-        treeExerciseFile.repaint();
+        jTreeExerciseFile.repaint();
         showExercise();
     }//GEN-LAST:event_btnDoAgainActionPerformed
 
-    private void menuItemShowTeacherToolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemShowTeacherToolActionPerformed
+    private void menuItemTeacherToolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTeacherToolActionPerformed
         TeacherToolWindow.showWindow();
-    }//GEN-LAST:event_menuItemShowTeacherToolActionPerformed
+    }//GEN-LAST:event_menuItemTeacherToolActionPerformed
 
     private void menuItemSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveAsActionPerformed
         onSaveAs();
@@ -672,7 +711,11 @@ public class MainWindow extends javax.swing.JFrame {
     private void menuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveActionPerformed
         onSave();
     }
-     
+    
+    // called in:
+    // menuItemSaveAsActionPerformed()
+    // menuItemOpenActionPerformed()
+    // onQuit()
     private void onSaveAs() {
 // to use native Mac OS save menu, use something like this:
        
@@ -718,12 +761,18 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuItemSaveActionPerformed
 
+    // called in:
+    // menuItemSaveActionPerformed()
+    // menuItemOpenActionPerformed()
+    // onQuit()
     private void onSave() {
         assert(hasUserSaved);
         writeUsersWorkFile(usersWorkFile);
     }
 
-     
+    // called in:
+    // onSave()
+    // onSaveAs()
     private void writeUsersWorkFile(File newfile) {
         try {
             this.exFile.saveTo(newfile);
@@ -743,6 +792,9 @@ public class MainWindow extends javax.swing.JFrame {
         onQuit();
     }//GEN-LAST:event_menuItemQuitActionPerformed
 
+    // called in:
+    // onWindowClosed()
+    // menuItemQuitActionPerformed()
     private void onQuit() {
         if (this.exFile != null && this.exFile.hasBeenStarted() && hasUnsavedWork) {
             
@@ -777,6 +829,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         this.dispose();
         TeacherToolWindow.disposeWindow();
+        ScratchPadWindow.disposeWindow();
     }
 
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
@@ -812,7 +865,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void onExerciseTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_onExerciseTreeValueChanged
         if (this.updatingTree) return;
-        TreePath path = treeExerciseFile.getSelectionPath();
+        TreePath path = jTreeExerciseFile.getSelectionPath();
         if (path != null && exFile != null) {
             if (path.getPathCount() < 2)
                 currentGroup = 0;
@@ -876,7 +929,7 @@ public class MainWindow extends javax.swing.JFrame {
                 txtFeedback.setText(message);
             }
             
-            treeExerciseFile.repaint();
+            jTreeExerciseFile.repaint();
 
             setAnswerEnabledState(); // update enabled state of controls
             
@@ -891,6 +944,9 @@ public class MainWindow extends javax.swing.JFrame {
         txtUserAnswer.requestFocus();
     }//GEN-LAST:event_onCheckAnswer
     
+    // called in:
+    // btnDoAgainActionPerformed()
+    // onCheckAnswer()
     private void flagChangeMade() {
         hasUnsavedWork = true;
         if (hasUserSaved)
@@ -904,20 +960,21 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnPrev;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPanel jPanelEnterExpressions;
+    private javax.swing.JPanel jPanelRightHalf;
+    private javax.swing.JPanel jPanelRightHalf2;
+    private javax.swing.JScrollPane jScrollPaneDirections;
+    private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JSplitPane jSplitPaneLeftHalf;
+    private javax.swing.JSplitPane jSplitPaneMain;
+    private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
-    private javax.swing.JTextArea lblHelp1;
     private javax.swing.JLabel lblHelpBinaries;
     private javax.swing.JLabel lblHelpBinders;
     private javax.swing.JLabel lblHelpConditionals;
+    private javax.swing.JTextArea lblHelpHeader;
     private javax.swing.JLabel lblHelpLambda;
     private javax.swing.JLabel lblHelpNot;
     private javax.swing.JTextArea lblIdentifierTypes;
@@ -926,9 +983,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemQuit;
     private javax.swing.JMenuItem menuItemSave;
     private javax.swing.JMenuItem menuItemSaveAs;
-    private javax.swing.JMenuItem menuItemShowTeacherTool;
-    private javax.swing.JScrollPane scrollFeedback;
-    private javax.swing.JTree treeExerciseFile;
+    private javax.swing.JMenuItem menuItemScratchPad;
+    private javax.swing.JMenuItem menuItemTeacherTool;
+    private javax.swing.JMenu menuTools;
     private javax.swing.JTextArea txtFeedback;
     private lambdacalc.gui.LambdaEnabledTextField txtQuestion;
     private lambdacalc.gui.LambdaEnabledTextField txtUserAnswer;

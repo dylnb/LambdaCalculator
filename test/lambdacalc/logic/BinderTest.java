@@ -135,9 +135,9 @@ public class BinderTest extends TestCase {
     
     private Expr parseExpr(String expr) {
         ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
-        opts.SingleLetterIdentifiers = true;
+        opts.singleLetterIdentifiers = true;
         opts.ASCII = true;
-        opts.Typer = new IdentifierTyper();
+        opts.typer = new IdentifierTyper();
         try {
             return ExpressionParser.parse(expr, opts);
         } catch (SyntaxException e) {

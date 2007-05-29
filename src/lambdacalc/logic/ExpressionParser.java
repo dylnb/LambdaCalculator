@@ -21,7 +21,7 @@ public class ExpressionParser {
          * Pa is interpreted as P(a), rather than as a single
          * identifier.
          */
-        public boolean SingleLetterIdentifiers;
+        public boolean singleLetterIdentifiers = false;
         
         /**
          * This turns on ASCII mode.  These symbols become special:
@@ -29,7 +29,7 @@ public class ExpressionParser {
          * for
          * for all, exists, lambda, not, and, or, if, iff
          */
-        public boolean ASCII;
+        public boolean ASCII = false;
 
         /**
          * This provides the types for identifiers encountered
@@ -38,7 +38,7 @@ public class ExpressionParser {
          * By default, this field contains an IdentifierTyper
          * with a default setup.
          */
-        public IdentifierTyper Typer = new IdentifierTyper();
+        public IdentifierTyper typer = IdentifierTyper.createDefault();
      }
     
     private static class ParseResult {
@@ -289,7 +289,7 @@ public class ExpressionParser {
         start++;
         while (start < expression.length()) {
             char ic = getChar(expression, start, context);
-            if (!isIdentifierChar(ic) || (context.SingleLetterIdentifiers && isLetter(ic)))
+            if (!isIdentifierChar(ic) || (context.singleLetterIdentifiers && isLetter(ic)))
                 break;
             id += expression.charAt(start++);
         }
@@ -304,7 +304,7 @@ public class ExpressionParser {
         // we return the identifier we found.
         if (!(
                 getChar(expression, start, context) == '('
-                || (context.SingleLetterIdentifiers && isLetter(getChar(expression, start, context))))) {
+                || (context.singleLetterIdentifiers && isLetter(getChar(expression, start, context))))) {
             Identifier ident = loadIdentifier(id, context, start, null);
             return new ParseResult(ident, start);
         }
@@ -415,8 +415,8 @@ public class ExpressionParser {
         boolean isvar;
         Type type;
         try {
-            isvar = context.Typer.isVariable(id);
-            type = context.Typer.getType(id);
+            isvar = context.typer.isVariable(id);
+            type = context.typer.getType(id);
         } catch (IdentifierTypeUnknownException e) {
             if (inferType == null)
                 throw new SyntaxException(e.getMessage(), start);

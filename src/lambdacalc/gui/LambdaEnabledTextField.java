@@ -7,6 +7,8 @@
  * and open the template in the editor.
  */
 
+//TODO add acknowledgment to whoever was the original author
+
 package lambdacalc.gui;
 
 import java.awt.*;

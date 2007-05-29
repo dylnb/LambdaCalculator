@@ -39,11 +39,11 @@ public class TreeTester extends javax.swing.JFrame {
         try {
             ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
             opts.ASCII = true;
-            opts.Typer.addEntry("j", false, Type.E);
-            opts.Typer.addEntry("m", false, Type.E);
-            opts.Typer.addEntry("x", true, Type.E);
-            opts.Typer.addEntry("y", true, Type.E);
-            opts.Typer.addEntry("r", false, Type.ExET);
+            opts.typer.addEntry("j", false, Type.E);
+            opts.typer.addEntry("m", false, Type.E);
+            opts.typer.addEntry("x", true, Type.E);
+            opts.typer.addEntry("y", true, Type.E);
+            opts.typer.addEntry("r", false, Type.ExET);
 
             LFNode run = new LFNode("run", ExpressionParser.parse("Lx.Ly.run(y,x)", opts));
             LFNode mary = new LFNode("mary", ExpressionParser.parse("m", opts));

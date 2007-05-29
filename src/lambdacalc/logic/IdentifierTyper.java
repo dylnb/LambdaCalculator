@@ -14,7 +14,8 @@ import lambdacalc.exercises.ExerciseFileVersionException;
 
 /**
  * Says whether an Identifier is a variable or a constant
- * and provides the semantic type of the Identifier.
+ * and provides the semantic type of the Identifier. This class encapsulates
+ * the conventions about which letters stand for which types of things.
  */
 public class IdentifierTyper {
     private class Entry {
@@ -35,6 +36,7 @@ public class IdentifierTyper {
     /**
      * Creates a new IdentifierTyper with no type mappings.
      */
+    // TODO make private?
     public IdentifierTyper() {
     }
     

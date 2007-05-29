@@ -54,8 +54,8 @@ public class ExerciseFileParser {
         // options for parsing lambda expressions
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = true;
-        exprParseOpts.SingleLetterIdentifiers = true;
-        exprParseOpts.Typer = typer;
+        exprParseOpts.singleLetterIdentifiers = true;
+        exprParseOpts.typer = typer;
         
         // the file of exercises to be returned
         ExerciseFile file = new ExerciseFile();
@@ -123,9 +123,9 @@ public class ExerciseFileParser {
                 exindex = 0;
 
             } else if (line.equals("single letter identifiers")) {
-                exprParseOpts.SingleLetterIdentifiers = true;
+                exprParseOpts.singleLetterIdentifiers = true;
             } else if (line.equals("multiple letter identifiers")) {
-                exprParseOpts.SingleLetterIdentifiers = false;
+                exprParseOpts.singleLetterIdentifiers = false;
 
             } else {
                 // this is an exercise

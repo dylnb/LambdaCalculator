@@ -32,7 +32,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     int cur_step = 0;
     
     /**
-     * Whether student's answers are parsed with the SingleLetterIdentifiers option set.
+     * Whether student's answers are parsed with the singleLetterIdentifiers option set.
      */
     public boolean ParseSingleLetterIdentifiers = true;
     /**
@@ -85,7 +85,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      */
     public LambdaConversionExercise(String expr, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {
         this(ExpressionParser.parse(expr, parseOptions), index, types);
-        ParseSingleLetterIdentifiers = parseOptions.SingleLetterIdentifiers;
+        ParseSingleLetterIdentifiers = parseOptions.singleLetterIdentifiers;
     }
     
     public String getExerciseText() {
@@ -113,8 +113,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // in the text box appropriately.
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false;
-        exprParseOpts.SingleLetterIdentifiers = ParseSingleLetterIdentifiers;
-        exprParseOpts.Typer = types;
+        exprParseOpts.singleLetterIdentifiers = ParseSingleLetterIdentifiers;
+        exprParseOpts.typer = types;
         
         Expr users_answer;
         
