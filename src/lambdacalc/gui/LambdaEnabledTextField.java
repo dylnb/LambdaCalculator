@@ -29,6 +29,7 @@ public class LambdaEnabledTextField extends JTextField implements Serializable {
      boolean isTempText = false;
     
      public LambdaEnabledTextField() {
+     	setFont(Util.getUnicodeFont(16));
      }
      
      public void setText(String text) {

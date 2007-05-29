@@ -26,6 +26,8 @@ public class ExerciseFile {
     
     String studentName;
     
+    String teacherComments;
+    
     /**
      * Creates a new ExerciseFile.
      */
@@ -87,9 +89,30 @@ public class ExerciseFile {
     
     /**
      * Sets the student name associated with the file.
+     * May be null to clear the name associated with the file.
+     * @throws IllegalArgumentException if name is an empty
+     * string or contains only spaces.
      */
-    public void setStudentName(String title) {
-        this.studentName = title;
+    public void setStudentName(String name) {
+        if (name != null && name.trim().length() == 0)
+            throw new IllegalArgumentException();
+        this.studentName = name;
+    }
+
+    /**
+     * Gets teacher-written comments in the file. May be null
+     * if no comments have been entered
+     */
+    public String getTeacherComments() {
+        return teacherComments;
+    }
+    
+    /**
+     * Sets teacher comments into the file. May be null to
+     * clear the comments.
+     */
+    public void setTeacherComments(String comments) {
+        this.teacherComments = comments;
     }
 
     /**
@@ -205,6 +228,13 @@ public class ExerciseFile {
             output.writeUTF(studentName);
         }
         
+        if (teacherComments == null) {
+            output.writeByte(0);
+        } else {
+            output.writeByte(1);
+            output.writeUTF(teacherComments);
+        }
+
         output.writeShort(groups.size());
 
         for (int i = 0; i < size(); i++) {
@@ -219,7 +249,7 @@ public class ExerciseFile {
      * Reads the serialized ExerciseFile data from the given file and initializes this
      * instance with the serialized data.
      */
-    public void readFrom(File source) throws IOException, ExerciseFileFormatException {
+    public ExerciseFile(File source) throws IOException, ExerciseFileFormatException {
         InputStream stream = new FileInputStream(source);
         DataInputStream input = new DataInputStream(stream);
         
@@ -237,9 +267,12 @@ public class ExerciseFile {
 
         title = input.readUTF();
         
-        if (input.readByte() == 1)
+        if (input.readByte() == 1) // otherwise the byte is zero an studentName is null
             studentName = input.readUTF();
         
+        if (input.readByte() == 1) // otherwise the byte is zero an studentName is null
+            teacherComments = input.readUTF();
+ 
         int nGroups = input.readShort();
         
         for (int i = 0; i < nGroups; i++) {

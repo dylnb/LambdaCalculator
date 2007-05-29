@@ -22,9 +22,9 @@ import java.util.Set;
 public abstract class Expr {
     
     /**
-     * Gets an integer representing the expression's operator precedence:
+     * Gets an integer representing the (outermost) expression's operator precedence:
      *
-     *   8   FunApp over Lambda Expression
+     *   8   FunApp over Lambda Expression -- weakest
      *   7   Lambda
      *   6   If, Iff
      *   5   And, Or, Equality
@@ -32,14 +32,16 @@ public abstract class Expr {
      *   3   Not
      *   2   FunApp over Predicate
      *   1   Identifier
-     *   0   Parens, ArgList (because ArgList is always parenthesized)
-     *
+     *   0   Parens, ArgList (because ArgList is always parenthesized) -- strongest
+     * 
+     * @return an integr which represents the expression's operator precedence
      */
     public abstract int getOperatorPrecedence();
     
     /**
-     * This returns to toString() on nestedExpr, except when nestedExpr
-     * has a higher or equal operator precedence, it is wrapped with parens.
+     * This is a helper method for toString() implementations.
+     * @returns the result of toString() on nestedExpr, except that when nestedExpr
+     * has a higher or equal operator precedence than this, it is wrapped with parens.
      */
     protected final String nestedToString(Expr nestedExpr) {
         if (nestedExpr.getOperatorPrecedence() >= this.getOperatorPrecedence())
@@ -59,7 +61,7 @@ public abstract class Expr {
      * Thus, Lx.P(x) equals Lx.[P(x)], but does not equal Ly.P(y).
      *
      * @param obj the other expression to compare
-     * @return true if the types are equivalent
+     * @return true iff the expressions are equal up to parens
      */
     public final boolean equals(Object obj) {
         if (obj instanceof Expr)
@@ -73,9 +75,10 @@ public abstract class Expr {
     /**
      * Tests if two expressions are equal, modulo parens and the consistent
      * renaming of bound variables.
+     * Thus, Lx.P(x) equals Lx.[P(x)] equals Ly.P(y).
      *
      * @param obj the other expression to compare
-     * @return true if the types are equivalent
+     * @return true iff the expressions are equivalent up to parens and bound variables
      */
     public final boolean alphaEquivalent(Expr obj) {
         // call equals and specify to collapse bound variables
@@ -86,18 +89,25 @@ public abstract class Expr {
     /**
      * Tests if two expressions are equal, modulo parens and the identity
      * of identifiers.  That is, any identifier matches any other
-     * identifier.
+     * identifier. In other words, no distinction is made between free variables,
+     * bound variables, and constants.
+     * Thus, the following expressions are all equivalent:
+     * Lx.P(x,y)
+     * Lx.[P(x,y)]
+     * Ly.P(y,y)
+     * Ly.P(a,b)
      *
      * @param obj the other expression to compare
-     * @return true if the types are equivalent
+     * @return true iff the expressions are equivalent modulo parens and identifiers
      */
     public final boolean operatorEquivalent(Expr obj) {
         return equals(obj, false, null, null, true);
     }
 
     /**
-     * This method returns this Expr, except removing any parenthesis.
+     * This method returns this Expr with any parentheses removed.
      * This is used by equality tests, which all ignore parenthesis.
+     * @return this expression, or the next-outermost non-paren expression if this expression is enclosed in parens
      */
     public final Expr stripAnyParens() {
         if (this instanceof Parens)
@@ -172,38 +182,50 @@ public abstract class Expr {
      */
     
     /**
-     * Gets a set of all of the variables used within this expression.
+     * Gets the variables of this expression.
+     * @return a set of all of the variables used within this expression
      */
     public final Set getAllVars() {
         return getVars(false);
     }
     
     /**
-     * Gets a set of all of the free (unbound) variables used within this expression.
+     * Gets the free variables of this expression. If this expression is a subexpression of a 
+     * larger expression, then any variables that are not bound by any binders in this
+     * subexpression are returned.
+     * @returns a set of all of the free (unbound) variables within this expression
      */
     public final Set getFreeVars() {
         return getVars(true);
     }
 
     /**
-     * Returns the variables used in the expression.
+     * Returns the variables used in the expression, possibly only the free ones.
      * @param unboundOnly true if only the free variables should be returned
+     * @see getAllVars()
+     * @see getFreeVars()
+     * @return a set of either all variables or all free variables used in this expression
      */
     protected abstract Set getVars(boolean unboundOnly);
     
     /**
-     * Holds the result of a lambda conversion operation.
+     * Holds the result of a lambda conversion operation. In addition to the converted expression
+     * itself, this class records any alphabetical variants chosen during the conversion.
+     * It also records the incorrect result we would have obtained if we hadn't performed any
+     * alphabetical variants.
      */
     public class LambdaConversionResult {
         /**
          * The expression resulting from the lambda conversion.
          */
         public final Expr Result;
+ 	//TODO uncapitalize fields
         /**
          * If an alphabetical variant was needed to perform the lambda conversion, this
          * holds the alphabetical variant that was chosen before computing Result.
          */
         public final Expr AlphabeticalVariant;
+ 
         /**
          * If an alphabetical variant was needed, for pedagogical purposes this field holds
          * the result of performing the lambda conversion without first creating an
@@ -211,6 +233,13 @@ public abstract class Expr {
          */
         public final Expr SubstitutionWithoutAlphabeticalVariant;
         
+        /*
+         * Creates a new instance of LambdaConversionResult.
+         * @param r the result of the lambda conversion
+         * @param a the alphabetical variant used during the conversion, or null if none was needed
+         * @param the result of performing the conversion without creating an alphabetical variant,
+         * or null if o variant was needed
+         */
         public LambdaConversionResult(Expr r, Expr a, Expr s) {
             Result = r;
             AlphabeticalVariant = a;
@@ -224,8 +253,20 @@ public abstract class Expr {
      * conversions are possible, it returns null.
      * The first lambda-within-a-FunApp found in a top-down
      * left-to-right search is simplified.
+     * @return null if no lambda conversion took place, otherwise the lambda-converted
+     * expression 
      */
     public final LambdaConversionResult performLambdaConversion() throws TypeEvaluationException {
+    	// performLambdaConversion1 carries out one beta reduction, irrespective
+    	// of accidental binding that may occur. In that case, it does an incorrect
+    	// conversion in the sense that free variables in the argument expression
+    	// got 'accidentally' bound by a binder that outscoped some instance of
+    	// the lambda variable being replaced.
+    	// However, in the process it does check if accidental binding
+    	// is ocurring, and it fills accidentalBinders in with all Binder
+    	// instances that caused accidental binding in the incorrectly converted
+    	// expression. If therse was no accidental binding, the set remains
+    	// empty.
         Set accidentalBinders = new HashSet();
         Expr result = performLambdaConversion1(accidentalBinders);
         
@@ -235,17 +276,20 @@ public abstract class Expr {
                 
         // If no accidental binding ocurred, we're set -- return the new expr.
         if (accidentalBinders.size() == 0)
-            return new LambdaConversionResult(result, null, null); // substitution was possible
+            return new LambdaConversionResult(result, null, null);
         
         Expr originalResult = result;
         
         // We need to make an alphabetical variant by fixing the binders in the
-        // accidentalBinders set.
+        // accidentalBinders set. We rename these binders' variables so they do
+        // not bind anything accidentally after lambda conversion.
         Set varsInUse = result.getAllVars();
-        Map varMap = new HashMap();
+        Map varMap = new HashMap(); // scratch space for createAlphabeticalVariant
         Expr alphaVary = createAlphabeticalVariant(accidentalBinders, varsInUse, varMap);
         
-        // Now try to simplify this.
+        // Now try to lambda convert the alphabetical variant. Clear out
+        // accidentalBinders and let it be filled in again. If it gets
+        // filled in with anything, this program has made a mistake.
         accidentalBinders = new HashSet();
         result = alphaVary.performLambdaConversion1(accidentalBinders);
         if (accidentalBinders.size() != 0)
@@ -258,7 +302,7 @@ public abstract class Expr {
      * Helper method for performLambdaConversion. This method is called recursively
      * down the tree to perform lambda conversion, looking for the lambda to convert.
      * The lambda that we are converting may not be at top scope
-     * (e.g. Ax[ Ly.P(y) (x) ].
+     * (it may be embedded as in e.g. Ax[ Ly.P(y) (x) ].)
      * Once we find the lambda we are converting, performLambdaConversion2 takes
      * over and goes down the rest of the subtree.
      *
@@ -266,18 +310,18 @@ public abstract class Expr {
      * substitutions we have to track which of the binders that scope over us
      * cause an accidental binding of a formerly free variable in the replacement
      * expression.
-     * Those binders that cause accidental binding are put into the 'accidentalBinders'
-     * parameter, which is filled in by the *callee*. It is an out-parameter of sorts.
+     * Those binders that cause accidental binding are recorded in the 'accidentalBinders'
+     * parameter.
      * 
      * This method only performs a single lambda conversion, so we have to be
      * careful that in n-ary operators, if a lambda conversion
-     * ocurrs within one operand, we must not do any conversions in the other operands.
+     * occurs within one operand, we must not do any conversions in the other operands.
      *
      * This method returns null to signify that no conversion took place.
      *
      * @param accidentalBinders as we perform substitution, we record here
      * those binders whose variables must be modified so that they don't accidentally
-     * capture free variable in the replacement
+     * capture free variables in the replacement
      * @return null if no lambda conversion took place, otherwise the lambda-converted
      * expression 
      */
@@ -315,6 +359,7 @@ public abstract class Expr {
      * @param accidentalBinders as we perform substitution, we record here
      * those binders whose variables must be modified so that they don't accidentally
      * capture free variable in the replacement
+     * @throws TypeEvaluationException if a type inconsistency is found in any subexpression
      * @return the expression with substitutions performed
      */
     protected abstract Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException;
@@ -327,6 +372,7 @@ public abstract class Expr {
      * in variablesInUse.
      * @param v a variable to base the new variable on
      * @param variablesInUse a set of all variables in use
+     * @param return a fresh variable
      */
     public static Var createFreshVar(Var v, Set variablesInUse) {
         while (variablesInUse.contains(v))
@@ -334,24 +380,33 @@ public abstract class Expr {
         return v;
     }
 
-    // This method creates an alphabetical variant by altering the variables used by
-    // each of the binders in bindersToChange to a fresh variable.  Binders implement
-    // this method, if they are in bindersToChange, by choosing a fresh variable based
-    // on variablesInUse, adding that variable to variablesInUse when it passes it down,
-    // and adding a mapping from the old variable to the new variable in updates, passing
-    // that down as well.  Variables implement this method by replacing themselves with
-    // another variable according to updates.
+   /**
+    * This method creates an alphabetical variant by altering the variables used by
+    * each of the binders in bindersToChange to a fresh variable.  Binders implement
+    * this method by doing the following: If they are in bindersToChange, they choose a fresh variable based
+    * on variablesInUse, add that variable to variablesInUse when they pass it down,
+    * and add a mapping from the old variable to the new variable in updates, passing
+    * that down as well.  Variables implement this method by replacing themselves with
+    * another variable according to updates.
+    * @param bindersToChange the set of binders whose variables are to be replaced with fresh ones
+    * @param variablesInUse the variables which cannot be used as fresh variables
+    * @param updates a replacement mapping from variables in use to fresh variables
+    * @return an expression with alphabetical variant performed
+    */
     protected abstract Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates);
     
     /**
      * Writes a serialization of the expression to a DataOutputStream.
      * In implementations of this method in subclasses, the first thing written
      * must be the name of the class as a string (i.e. "lambdacalc.logic.And").
+     * @param output the data stream to which the expression is written
      */
     public abstract void writeToStream(java.io.DataOutputStream output) throws java.io.IOException;
    
     /**
-     * Reads a serialization of the types from a DataInputStream.
+     * Reads a serialized expression from a DataInputStream.
+     * @param input the data source from which we read the expression instance
+     * @return a deserialized expression
      */
     public static Expr readFromStream(java.io.DataInputStream input) throws java.io.IOException {
         String exprType = input.readUTF();

@@ -10,13 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Function application, in the case of both predicates
- * with arguments as well as lambda expressions applied
- * to arguments.
+ * This class models lambda expressions applied to arguments
+ * (traditional function application) as well as predicates with
+ * arguments.
  * 
  * For example:
  *    pred-with-arg:   P(x,y) where (x,y) is an ArgList
  *    fun app:         (Lx.x) (a) where (a) is an ArgList
+ *
  * To create R(x,y): create (x,y) as an ArgList and then create R
  * as a constant of type <e*e, t>.
  */

@@ -20,6 +20,9 @@ import lambdacalc.exercises.*;
 public class TeacherToolWindow extends javax.swing.JFrame {
     static TeacherToolWindow singleton;
     
+    File directory;
+    String titleOfShowingExercise;
+    
     public static void showWindow() {
         if (singleton == null) {
             singleton = new TeacherToolWindow();
@@ -48,6 +51,8 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         
         fileTable.getSelectionModel().addListSelectionListener(new SelectionListener());
         fileTable.getColumnModel().getSelectionModel().addListSelectionListener(new SelectionListener());
+        
+        setExtendedState(MAXIMIZED_BOTH);
     }
     
     /** This method is called from within the constructor to
@@ -153,7 +158,11 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     private boolean onOpen() {
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == fileChooser.APPROVE_OPTION) {
-            loadDirectory(fileChooser.getSelectedFile());
+            directory = fileChooser.getSelectedFile();
+            scanForAssignments();
+            if (assignmentList.size() > 0)
+                titleOfShowingExercise = (String)assignmentList.get(0);
+            showExercises();
             return true;
         }             
         return false;
@@ -190,53 +199,118 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     
     
+    Vector assignmentList = new Vector();
+    Vector exercises = new Vector();
+    String tableAsString = "";
+   
+    // This gets a unique list of the titles of the
+    // various exercise files in the directory, so that
+    // we can display one assignment (i.e. class of homeworks)
+    // at a time.
+    private void scanForAssignments() {
+        assignmentList.clear();
+        File[] files = directory.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (MainWindow.isSerialized(files[i])) {
+                try {
+                    ExerciseFile ex = new ExerciseFile(files[i]);
+                    if (!assignmentList.contains(ex.getTitle()))
+                        assignmentList.add(ex.getTitle());
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
     
-    Vector fileList = new Vector();
+    private class ReadOnlyTableModel extends DefaultTableModel {
+        public boolean isCellEditable(int x, int y) {
+            return false;
+        }
+    }
     
-    private void loadDirectory(File directoryOfFiles) {
+    private class ExerciseFileListEntry implements Comparable {
+    	public File file;
+        public ExerciseFile exFile;
+        public String errorMessage;
+        public int compareTo(Object other) {
+            return getSortKey().compareTo(((ExerciseFileListEntry)other).getSortKey());
+        }
+        String getSortKey() {
+            if (exFile == null)
+                return file.getName();
+            else if (exFile.getStudentName() == null)
+            	return "[Unknown]";
+            else
+            	return exFile.getStudentName();
+        }
+    }
+    
+    private void showExercises() {
         // Load the student's work.
         
-        DefaultTableModel model = new DefaultTableModel();
-        
-        model.addColumn("File Name"); // 0
-        model.addColumn("Student");   // 1
-        model.addColumn("Assignment");// 2
-        model.addColumn("# of Exercises");//3
-        model.addColumn("Points"); // 4
-        
-        fileList.clear();
-        
-        ArrayList scores = new ArrayList();
-        
-        File[] files = directoryOfFiles.listFiles();
+        // First load in the files so that we can sort them
+        // ourself.
+        exercises.clear();
+        File[] files = directory.listFiles();
         for (int i = 0; i < files.length; i++) {
             if (MainWindow.isSerialized(files[i])) {
                 Object[] row = new Object[6];
-                row[0] = files[i].getName();
+
+                ExerciseFileListEntry entry = new ExerciseFileListEntry();
+                entry.file = files[i];
 
                 try {
-                    ExerciseFile ex = MainWindow.deserialize(files[i]);
-                    row[1] = ex.getStudentName();
-                    row[2] = ex.getTitle();
-                    row[3] = new Integer(ex.exercises().size());
-                    row[4] = ex.getPointsCorrect() + "/" + ex.getTotalPointsAvailable();
-                    //row[5] = new Boolean(ex.exercises().size()==numberCorrect(ex.exercises()));
+                    ExerciseFile ex = new ExerciseFile(files[i]);
+                    if (!ex.getTitle().equals(titleOfShowingExercise))
+                    	continue;
                     
-                    scores.add(ex.getPointsCorrect());
+                    entry.exFile = ex;
                     
                 } catch (Exception e) {
-                    System.err.println(e.getStackTrace());
-                    row[1] = "Error: " + e.getMessage();
+                    entry.errorMessage = e.getMessage();
                 }
         
-                model.addRow(row);
-                fileList.add(files[i]);
+                exercises.add(entry);
             }
+        }
+        
+        Collections.sort(exercises);
+        
+        // Now put the exercises into a table model
+        
+        DefaultTableModel model = new ReadOnlyTableModel();
+        
+        model.addColumn("Student");   // 0
+        model.addColumn("Points"); // 1
+        model.addColumn("File Name"); // 2
+        
+        tableAsString = ""; // for copying to clipboard, easier to create now
+        
+        ArrayList scores = new ArrayList();
+        
+        for (int i = 0; i < exercises.size(); i++) {
+            ExerciseFileListEntry entry = (ExerciseFileListEntry)exercises.get(i);
+            
+            Object[] row = new Object[6];
+            row[2] = entry.file.getName();
+
+            if (entry.exFile != null) {
+                row[0] = entry.exFile.getStudentName();
+                row[1] = entry.exFile.getPointsCorrect() + "/" + entry.exFile.getTotalPointsAvailable();
+                    
+                scores.add(entry.exFile.getPointsCorrect());
+            } else {
+                row[0] = "Error Loading File";
+            }
+            
+            model.addRow(row);
+            
+            tableAsString = tableAsString + row[0] + "\t" + row[1] + "\t" + row[2] + "\n";
         }
         
         fileTable.setModel(model);
         
-        textArea.setText("Click on a student's submitted assignment in the table to the left to see assignment details.");
+        textArea.setText(createAssignmentSummary());
         
         // Compute statistics.
         if (scores.size() == 0)
@@ -279,14 +353,15 @@ public class TeacherToolWindow extends javax.swing.JFrame {
 
     class SelectionListener implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) {
-            if (fileTable.getSelectedRow() == -1) { textArea.setText(""); return; }
-            showFileDetails((File)fileList.get(fileTable.getSelectedRow()));
+            if (fileTable.getSelectedRow() == -1) { textArea.setText(createAssignmentSummary()); return; }
+            ExerciseFileListEntry entry = (ExerciseFileListEntry)exercises.get(fileTable.getSelectedRow());
+            showFileDetails(entry.file);
         }
     }
     
     public void showFileDetails(File file) {
         try {
-            ExerciseFile exfile = MainWindow.deserialize(file);
+            ExerciseFile exfile = new ExerciseFile(file);
             
             String text = "";
             text += exfile.getTitle() + "\n";
@@ -294,7 +369,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             text += "Student: " + exfile.getStudentName() + "\n";
             text += "\n";
             
-            text += exfile.getPointsCorrect() + "/" + exfile.getTotalPointsAvailable() + "\n";
+            text += "Points: " + exfile.getPointsCorrect() + "/" + exfile.getTotalPointsAvailable() + "\n";
 
             text += "\n";
             
@@ -304,7 +379,8 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                 text += (char)('A' + i) + ". " + g.getTitle() + "\n";
                 text += "\n";
                 
-                int groupCorrectCount = 0;
+                java.math.BigDecimal groupPointsTotal = java.math.BigDecimal.valueOf(0);
+                java.math.BigDecimal groupPointsCorrect = java.math.BigDecimal.valueOf(0);
                 
                 for (int j = 0; j < g.size(); j++) {
                     Exercise ex = g.getItem(j);
@@ -326,12 +402,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                     
                     text += "\n";
                     
+                    groupPointsTotal = groupPointsTotal.add(ex.getPoints());
                     if (ex.isDone())
-                        groupCorrectCount++;
+                        groupPointsCorrect = groupPointsCorrect.add(ex.getPoints());
                 }
                 
                 text += "\n";
-                text += "   " + groupCorrectCount + "/" + g.size() + " correct (" + (100*groupCorrectCount/g.size()) + "%) in this section.\n";
+                text += "   " + groupPointsCorrect + "/" + groupPointsTotal + " points in this section.\n";
                 text += "\n";
             }
             
@@ -346,5 +423,61 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             textArea.setText(text);
             
         }
+    }
+    
+    String createAssignmentSummary() {
+        // This creates a summary of how many students got each question right.
+        
+        // Use one student's exercise as a template.
+        if (exercises.size() == 0) return "No student exercises are loaded.";
+        ExerciseFile extempl = ((ExerciseFileListEntry)exercises.get(0)).exFile;
+        String text = "Click on an exercise in the table to the left to view the student's details.\n\nAssignment Summary:\n\nEach line reports the number of students who got each question right and wrong.\n\n";
+        for (int g = 0; g < extempl.size(); g++) {
+            ExerciseGroup group = extempl.getGroup(g);
+             
+            text += (char)('A' + g) + ". " + group.getTitle() + "\n";
+            text += "\n";
+                
+            for (int j = 0; j < group.size(); j++) {
+                Exercise ex = group.getItem(j);
+                    
+                text += "   ";
+                    
+                // Loop through each student's work
+                int correct = 0, incorrect = 0;
+                for (int i = 0; i < exercises.size(); i++) {
+                    ExerciseFile exf = ((ExerciseFileListEntry)exercises.get(i)).exFile;
+                    if (exf == null) continue;
+                    ExerciseGroup gg = exf.getGroup(g);
+                    Exercise ee = gg.getItem(j);
+                    
+                    if (ee.isDone())
+                        correct++; 
+                    else
+                        incorrect++;
+                }
+                
+                text += correct + " right";
+                text += "/";
+                text += incorrect + " wrong";  
+                text += ": ";
+                text += ex.getExerciseText();
+                text += "\n";
+            }
+            
+            text += "\n";
+        }
+        
+        return text;
+    }
+    
+    public void copyTable() {
+        java.awt.datatransfer.StringSelection ss
+            = new java.awt.datatransfer.StringSelection(tableAsString);
+        try {
+            java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+        } catch (Exception e) {
+            // if copying to clipboard is not supported at this time
+        }                
     }
 }

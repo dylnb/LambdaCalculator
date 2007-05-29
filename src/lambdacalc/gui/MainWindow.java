@@ -70,9 +70,16 @@ public class MainWindow extends javax.swing.JFrame {
         
         initializeJFileChooser(jFileChooser1, true, true);
         
+        jTreeExerciseFile.setFont(Util.getUnicodeFont(14));
+
+        lblHelpLambda.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
+        lblHelpBinders.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
+        lblHelpBinaries.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
+        lblHelpNot.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
+        lblHelpConditionals.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
 
         lblHelpLambda.setText("Type capital L for " + Lambda.SYMBOL);
-        lblHelpBinders.setText("Type capital A or E for " + ForAll.SYMBOL + " and " + Exists.SYMBOL);
+        lblHelpBinders.setText("Type capital A, E, and I for " + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
         lblHelpBinaries.setText("Type & for " + And.SYMBOL + " and | for " + Or.SYMBOL);
         lblHelpNot.setText("Type the tilde (~) for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
@@ -135,7 +142,7 @@ public class MainWindow extends javax.swing.JFrame {
         if (!isSerialized(f)) {
             return false;   
         }
-        ExerciseFile temp = deserialize(f);
+        ExerciseFile temp = new ExerciseFile(f);
         return temp.hasBeenCompleted();    
     }
     
@@ -143,12 +150,6 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO On Mac OS, suffixes aren't normally used to distinguish files - 
         // what do we do about that?
         return f.toString().endsWith("."+SERIALIZED_FILE_SUFFIX);
-    }
-    
-    public static ExerciseFile deserialize(File f) throws IOException, ExerciseFileFormatException {
-        ExerciseFile result = new ExerciseFile();
-        result.readFrom(f);
-        return result;
     }
     
     // used in:
@@ -159,7 +160,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         try {
             if (isSerialized(f)) {
-                this.exFile = deserialize(f);
+                this.exFile = new ExerciseFile(f);
                 isWorkFile = true;
             } else {
                 this.exFile = parse(f);
@@ -438,7 +439,6 @@ public class MainWindow extends javax.swing.JFrame {
         lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
         jScrollPaneDirections.setViewportView(lblDirections);
 
-        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUserAnswerActionPerformed(evt);
@@ -457,7 +457,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
         txtQuestion.setEditable(false);
-        txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
 
         btnDoAgain.setText("Do Problem Again");
         btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
@@ -735,6 +734,7 @@ public class MainWindow extends javax.swing.JFrame {
                     (this, "Please enter your name: ",
                     "Lambda", JOptionPane.QUESTION_MESSAGE);
             if (studentName == null) return; // cancelled
+            if (studentName.trim().length() == 0) return; // treat as cancelled, not a valid student name, would cause setStudentName to throw
             this.exFile.setStudentName(studentName);
         }
         
