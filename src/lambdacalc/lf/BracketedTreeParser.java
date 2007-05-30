@@ -39,15 +39,15 @@ public class BracketedTreeParser {
                     break;
                     
                 default:
-                    if (stack.size() > 0)
-                        ((Nonterminal)stack.peek()).getChildren().add(node);
+                    //if (stack.size() > 0)
+                      //  ((Nonterminal)stack.peek()).getChildren().add(node);
                 
                 }
                 
             } else if (parseMode == 1) {
                 switch (c) {
                 case '[':
-                    throw new SyntaxException("");
+                    //throw new SyntaxException("", i);
                 case ']':
                      Nonterminal node = new Nonterminal();
                     if (stack.size() > 0)
@@ -60,6 +60,8 @@ public class BracketedTreeParser {
             }
         
         }
+        
+        throw new RuntimeException();
         
     }
 
