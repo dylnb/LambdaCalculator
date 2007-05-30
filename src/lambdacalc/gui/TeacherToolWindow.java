@@ -451,7 +451,6 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         }
         
         fileTable.setModel(model);
-        fileTable.getTableHeader().setVisible(true);
         
         textArea.setText(createAssignmentSummary());
         

@@ -4,9 +4,9 @@ public class SyntaxException extends Exception {
 
     int position;
     
-    public SyntaxException(String message, int position) {
-        super(message + " at column " + position);
-        this.position = position;
+    public SyntaxException(String message, int column) {
+        super(message + " at column " + column);
+        this.position = column;
     }
 
 }
