@@ -34,11 +34,11 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     /**
      * Whether student's answers are parsed with the singleLetterIdentifiers option set.
      */
-    public boolean ParseSingleLetterIdentifiers = true;
+    public boolean parseSingleLetterIdentifiers = true;
     /**
      * Whether students are prohibited from skipping steps in multi-step problems.
      */
-    public boolean NotSoFast = false; // one step at a time
+    private boolean notSoFast = false; // one step at a time
     
     /**
      * Initializes the exercise and works out beforehand what the student should do.
@@ -85,7 +85,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      */
     public LambdaConversionExercise(String expr, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {
         this(ExpressionParser.parse(expr, parseOptions), index, types);
-        ParseSingleLetterIdentifiers = parseOptions.singleLetterIdentifiers;
+        parseSingleLetterIdentifiers = parseOptions.singleLetterIdentifiers;
     }
     
     public String getExerciseText() {
@@ -113,7 +113,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // in the text box appropriately.
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false;
-        exprParseOpts.singleLetterIdentifiers = ParseSingleLetterIdentifiers;
+        exprParseOpts.singleLetterIdentifiers = parseSingleLetterIdentifiers;
         exprParseOpts.typer = types;
         
         Expr users_answer;
@@ -157,11 +157,11 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // renaming of bound vars, i.e. alpha-equivalent)
         // what we're expecting as the next answer, or some future answer
         // if the user gives something equaling a future answer but
-        // NotSoFast is true, then it's deemed an incorrect answer.
+        // notSoFast is true, then it's deemed an incorrect answer.
         for (int matched_step = cur_step; matched_step < steps.size(); matched_step++) {
             Expr correct_answer = (Expr)steps.get(matched_step);
             if (correct_answer.alphaEquivalent(users_answer)) {
-                if (matched_step > cur_step && NotSoFast)
+                if (matched_step > cur_step && isNotSoFast())
                     return AnswerStatus.Incorrect("Not so fast!  Do one " + Lambda.SYMBOL + "-conversion or alphabetical variant step at a time.");
 
                 // When this step is to create an alphabetical variant, the user
@@ -504,8 +504,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             last_answer.writeToStream(output);
         }
         output.writeShort(cur_step);
-        output.writeBoolean(ParseSingleLetterIdentifiers);
-        output.writeBoolean(NotSoFast);
+        output.writeBoolean(parseSingleLetterIdentifiers);
+        output.writeBoolean(isNotSoFast());
         // TODO: We're outputting a canonicalized version of what the student answered.
     }
     
@@ -524,8 +524,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         
         this.cur_step = input.readShort();
            
-        ParseSingleLetterIdentifiers = input.readBoolean();
-        NotSoFast = input.readBoolean();
+        parseSingleLetterIdentifiers = input.readBoolean();
+        setNotSoFast(input.readBoolean());
         
         try {
             initialize();
@@ -533,5 +533,16 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             System.err.println(e);
             throw new ExerciseFileFormatException();
         }
+    }
+
+    /**
+     * Whether students are prohibited from skipping steps in multi-step problems.
+     */
+    public boolean isNotSoFast() {
+        return notSoFast;
+    }
+
+    public void setNotSoFast(boolean notSoFast) {
+        this.notSoFast = notSoFast;
     }
 }

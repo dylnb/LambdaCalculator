@@ -30,6 +30,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private Exercise ex;
     
+    private String currentProblemString = "";
+    
     private static MainWindow parent; // a reference to the MainWindow
         
     public static void showWindow(MainWindow theParent) {
@@ -172,7 +174,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         menuFile.setMnemonic('F');
         menuFile.setText("File");
         jExitMenuItem.setMnemonic('x');
-        jExitMenuItem.setText("Exit Teacher Tool");
+        jExitMenuItem.setLabel("Exit Scratch Pad");
         jExitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jExitMenuItemActionPerformed(evt);
@@ -273,19 +275,27 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         try {
             if (this.selection==LAMBDA_CONVERSION) {
                 this.ex= new LambdaConversionExercise(line, exprParseOpts, 1, it);
-                if (ex == null) {
-                    throw new SyntaxException("warning: TypeExercise constructor returned null",0);
+                if (this.ex == null) {
+                    throw new SyntaxException("Warning: TypeExercise constructor returned null",
+                            txtUserAnswer.getText().length());
                 }
-                tellGUIProblemEntered();
+                
+                // we don't want to bug people in the ScratchPad application
+                ((LambdaConversionExercise) ex).setNotSoFast(false);
+                
             } else if (this.selection==TYPE_SIMPLIFICATION) {
                 this.ex= new TypeExercise(line, exprParseOpts, 1, it);
-                if (ex == null) {
-                    throw new SyntaxException("warning: TypeExercise constructor returned null",0);
+                if (this.ex == null) {
+                    throw new SyntaxException("Warning: TypeExercise constructor returned null",
+                            txtUserAnswer.getText().length());
                 }
-                tellGUIProblemEntered();
             } else {
                 throw new RuntimeException("Scratch pad is in an illegal state");
             }
+            // successfully entered a problem
+            
+            this.currentProblemString = line;
+            tellGUIProblemEntered();
         } catch (SyntaxException s) {
             displayFeedback(s.getMessage());
             if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
@@ -299,6 +309,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
     private void jButtonDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoAgainActionPerformed
         ex.reset();
+        txtEnterYourOwnProblem.setText(this.currentProblemString);
+        displayFeedback("");
+        tellGUIProblemEntered();
     }//GEN-LAST:event_jButtonDoAgainActionPerformed
 
     private void jButtonDoAnotherProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoAnotherProblemActionPerformed
@@ -331,14 +344,18 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonConfirm.doClick();
     }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
 
-    private void switchOn(javax.swing.text.JTextComponent j) {
+    private void switchOn(javax.swing.JTextField j) {
         //j.setEnabled(true);
         j.setEditable(true);
+        //j.setBackground(javax.swing.UIManager.getColor("TextField.activeBackground"));
     }
     
-    private void switchOff(javax.swing.text.JTextComponent j) {
+    private void switchOff(javax.swing.JTextField j) {
         //j.setEnabled(false);
         j.setEditable(false);
+        //if (j.getText().equals("")) {
+        //    j.setBackground(javax.swing.UIManager.getColor("TextField.inactiveBackground"));
+        //}
     }
     
     // before user has entered anything -- waiting for a problem
@@ -368,6 +385,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonDoAnotherProblem.setEnabled(true);
         jButtonDoAgain.setEnabled(true);
         switchOn(txtUserAnswer);
+        
+        if (selection==LAMBDA_CONVERSION) {
+            displayFeedback("Enter a lambda expression into the highlighted text field.");
+        } else { // selection==TYPE+SIMPLIFICATION
+            displayFeedback("Enter a type into the highlighted text field.");
+        }
         
         txtUserAnswer.requestFocus();
     }

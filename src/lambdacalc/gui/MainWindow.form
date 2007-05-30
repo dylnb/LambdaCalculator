@@ -152,21 +152,21 @@
                               <Component id="lblIdentifierTypes" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                  <Component id="btnCheckAnswer" pref="605" max="32767" attributes="0"/>
+                                  <Component id="btnCheckAnswer" pref="589" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="txtUserAnswer" alignment="0" pref="606" max="32767" attributes="0"/>
-                              <Component id="jScrollPaneFeedback" alignment="0" pref="606" max="32767" attributes="0"/>
+                              <Component id="txtUserAnswer" alignment="0" pref="590" max="32767" attributes="0"/>
+                              <Component id="jScrollPaneFeedback" alignment="0" pref="590" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="btnPrev" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
                                   <Component id="btnDoAgain" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="106" max="32767" attributes="0"/>
+                                  <EmptySpace pref="102" max="32767" attributes="0"/>
                                   <Component id="btnNext" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="txtQuestion" alignment="0" pref="606" max="32767" attributes="0"/>
-                                      <Component id="jScrollPaneDirections" alignment="1" pref="606" max="32767" attributes="0"/>
+                                      <Component id="txtQuestion" alignment="0" pref="590" max="32767" attributes="0"/>
+                                      <Component id="jScrollPaneDirections" alignment="1" pref="590" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -195,7 +195,7 @@
                               <Component id="btnDoAgain" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblIdentifierTypes" pref="151" max="32767" attributes="0"/>
+                          <Component id="lblIdentifierTypes" pref="134" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -204,7 +204,7 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="btnCheckAnswer">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Check My Answer"/>
+                    <Property name="text" type="java.lang.String" value="Check Answer"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onCheckAnswer"/>
@@ -220,7 +220,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="btnNext">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Next Problem&gt;"/>
+                    <Property name="text" type="java.lang.String" value="Next Problem &gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNextActionPerformed"/>
@@ -420,7 +420,7 @@
                                       <Component id="lblHelpNot" alignment="0" min="-2" pref="229" max="-2" attributes="0"/>
                                       <Component id="lblHelpConditionals" alignment="0" min="-2" pref="229" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace pref="22" max="32767" attributes="0"/>
+                                  <EmptySpace pref="1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -442,7 +442,7 @@
                           <Component id="lblHelpNot" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="lblHelpConditionals" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="165" max="32767" attributes="0"/>
+                          <EmptySpace pref="145" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

@@ -395,7 +395,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelRightHalf.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelRightHalf.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btnCheckAnswer.setText("Check My Answer");
+        btnCheckAnswer.setText("Check Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onCheckAnswer(evt);
@@ -409,7 +409,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        btnNext.setText("Next Problem>");
+        btnNext.setText("Next Problem >");
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextActionPerformed(evt);
@@ -439,6 +439,7 @@ public class MainWindow extends javax.swing.JFrame {
         lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
         jScrollPaneDirections.setViewportView(lblDirections);
 
+        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUserAnswerActionPerformed(evt);
@@ -457,6 +458,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
         txtQuestion.setEditable(false);
+        txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
 
         btnDoAgain.setText("Do Problem Again");
         btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
@@ -475,19 +477,19 @@ public class MainWindow extends javax.swing.JFrame {
                     .add(lblIdentifierTypes)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
                         .add(1, 1, 1)
-                        .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
-                    .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                    .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                        .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
+                    .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                    .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
                         .add(btnPrev)
                         .add(70, 70, 70)
                         .add(btnDoAgain)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 106, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 102, Short.MAX_VALUE)
                         .add(btnNext))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
                         .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                            .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                            .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
         );
@@ -510,7 +512,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .add(btnPrev)
                     .add(btnDoAgain))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                .add(lblIdentifierTypes, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                 .add(32, 32, 32))
         );
         jPanelRightHalf.add(jPanelRightHalf2);
@@ -571,7 +573,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 22, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 1, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -589,7 +591,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .add(lblHelpNot)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(lblHelpConditionals)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
         jSplitPaneLeftHalf.setRightComponent(jPanelEnterExpressions);
 
