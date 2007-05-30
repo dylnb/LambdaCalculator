@@ -113,7 +113,7 @@ public class ExpressionParser {
      * @return whether it is a letter
      */
     private static boolean isLetter(char c) {
-        return Character.isLetter(c) && c != Lambda.SYMBOL;
+        return Character.isLetter(c) && c != Lambda.SYMBOL && c != Identifier.PRIME;
     }
     
     /**
