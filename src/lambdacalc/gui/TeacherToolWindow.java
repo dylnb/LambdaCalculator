@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.*;
 import lambdacalc.exercises.*;
 
@@ -21,12 +22,15 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     static TeacherToolWindow singleton;
     
     File directory;
-    String titleOfShowingExercise;
+    
+    Vector assignmentList = new Vector();
+    Vector exercises = new Vector();
+    String tableAsString = "";
     
     public static void showWindow() {
         if (singleton == null) {
             singleton = new TeacherToolWindow();
-        
+            
             // Ask the user to open a directory immediately,
             // but if user cancels, don't bother showing the window.
             if (!singleton.onOpen()) {
@@ -46,11 +50,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     /** Creates new form TeacherToolWindow */
     public TeacherToolWindow() {
         initComponents();
-
+        
         MainWindow.initializeJFileChooser(fileChooser, false, true);
         
         fileTable.getSelectionModel().addListSelectionListener(new SelectionListener());
         fileTable.getColumnModel().getSelectionModel().addListSelectionListener(new SelectionListener());
+        
+        jTextTeacherComments.getDocument().addDocumentListener(new DocumentListener());
         
         setExtendedState(MAXIMIZED_BOTH);
     }
@@ -63,23 +69,68 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         fileChooser = new javax.swing.JFileChooser();
+        jLabelCurrentDirectory = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
-        fileTable = new javax.swing.JTable();
-        statsField = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextTeacherComments = new javax.swing.JTextArea();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        fileTable = new javax.swing.JTable();
+        statsField = new javax.swing.JTextField();
+        jListAssignments = new javax.swing.JComboBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jOpenMenuItem = new javax.swing.JMenuItem();
         jExitMenuItem = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItemCopyTable = new javax.swing.JMenuItem();
 
         fileChooser.setApproveButtonText("Open Directory");
         fileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
         setTitle("Lambda Teacher Tool");
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jLabelCurrentDirectory.setText("Current Directory");
+
+        textArea.setColumns(20);
+        textArea.setEditable(false);
+        textArea.setFont(new java.awt.Font("Serif", 0, 14));
+        textArea.setLineWrap(true);
+        textArea.setRows(5);
+        textArea.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(textArea);
+
+        jLabel1.setText("Teacher comments:");
+
+        jTextTeacherComments.setColumns(20);
+        jTextTeacherComments.setRows(5);
+        jScrollPane3.setViewportView(jTextTeacherComments);
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jLabel1)
+                .addContainerGap())
+            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLabel1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+        jSplitPane1.setRightComponent(jPanel2);
+
+        jPanel3.setLayout(new java.awt.BorderLayout());
 
         fileTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -92,25 +143,22 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jPanel1.add(fileTable, java.awt.BorderLayout.CENTER);
+        jScrollPane1.setViewportView(fileTable);
+
+        jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         statsField.setEditable(false);
         statsField.setText(".... statistics ...");
-        jPanel1.add(statsField, java.awt.BorderLayout.SOUTH);
+        jPanel3.add(statsField, java.awt.BorderLayout.SOUTH);
 
-        jScrollPane1.setViewportView(jPanel1);
+        jSplitPane1.setLeftComponent(jPanel3);
 
-        jSplitPane1.setLeftComponent(jScrollPane1);
-
-        textArea.setColumns(20);
-        textArea.setEditable(false);
-        textArea.setFont(new java.awt.Font("Serif", 0, 14));
-        textArea.setLineWrap(true);
-        textArea.setRows(5);
-        textArea.setWrapStyleWord(true);
-        jScrollPane2.setViewportView(textArea);
-
-        jSplitPane1.setRightComponent(jScrollPane2);
+        jListAssignments.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jListAssignments.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jListAssignmentsActionPerformed(evt);
+            }
+        });
 
         jMenu1.setMnemonic('F');
         jMenu1.setText("File");
@@ -136,21 +184,72 @@ public class TeacherToolWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setMnemonic('e');
+        jMenu2.setText("Edit");
+        jMenu2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu2ActionPerformed(evt);
+            }
+        });
+
+        jMenuItemCopyTable.setMnemonic('c');
+        jMenuItemCopyTable.setText("Copy Table");
+        jMenuItemCopyTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCopyTableActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(jMenuItemCopyTable);
+
+        jMenuBar1.add(jMenu2);
+
         setJMenuBar(jMenuBar1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .add(layout.createSequentialGroup()
+                        .add(jLabelCurrentDirectory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+                        .add(92, 92, 92))
+                    .add(layout.createSequentialGroup()
+                        .add(jListAssignments, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(617, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jLabelCurrentDirectory)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jListAssignments, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jMenuItemCopyTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyTableActionPerformed
+        copyTable();
+    }//GEN-LAST:event_jMenuItemCopyTableActionPerformed
+
+    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
+// TODO add your handling code here:
+    }//GEN-LAST:event_jMenu2ActionPerformed
+    
+    private void jListAssignmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jListAssignmentsActionPerformed
+        showExercises();
+        clearTeacherComments();
+    }//GEN-LAST:event_jListAssignmentsActionPerformed
+    
     private void jOpenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOpenMenuItemActionPerformed
         onOpen();
     }
@@ -159,15 +258,14 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == fileChooser.APPROVE_OPTION) {
             directory = fileChooser.getSelectedFile();
+            jLabelCurrentDirectory.setText("Browsing: " + directory.getAbsolutePath());
             scanForAssignments();
-            if (assignmentList.size() > 0)
-                titleOfShowingExercise = (String)assignmentList.get(0);
-            showExercises();
+            jListAssignments.setSelectedIndex(0); // there's always an entry for All Homeworks
             return true;
-        }             
+        }
         return false;
     }//GEN-LAST:event_jOpenMenuItemActionPerformed
-
+    
     private void jExitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jExitMenuItemActionPerformed
         this.hide();
     }//GEN-LAST:event_jExitMenuItemActionPerformed
@@ -187,22 +285,26 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JTable fileTable;
     private javax.swing.JMenuItem jExitMenuItem;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelCurrentDirectory;
+    private javax.swing.JComboBox jListAssignments;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItemCopyTable;
     private javax.swing.JMenuItem jOpenMenuItem;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTextArea jTextTeacherComments;
     private javax.swing.JTextField statsField;
     private javax.swing.JTextArea textArea;
     // End of variables declaration//GEN-END:variables
     
     
-    Vector assignmentList = new Vector();
-    Vector exercises = new Vector();
-    String tableAsString = "";
-   
     // This gets a unique list of the titles of the
     // various exercise files in the directory, so that
     // we can display one assignment (i.e. class of homeworks)
@@ -220,6 +322,14 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                 }
             }
         }
+        Collections.sort(assignmentList);
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        model.addElement("All Assignments");
+        for (int i = 0; i < assignmentList.size(); i++)
+            model.addElement(assignmentList.get(i));
+        
+        jListAssignments.setModel(model);
     }
     
     private class ReadOnlyTableModel extends DefaultTableModel {
@@ -229,19 +339,33 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     }
     
     private class ExerciseFileListEntry implements Comparable {
-    	public File file;
+        public File file;
         public ExerciseFile exFile;
         public String errorMessage;
         public int compareTo(Object other) {
-            return getSortKey().compareTo(((ExerciseFileListEntry)other).getSortKey());
+            ExerciseFileListEntry o = (ExerciseFileListEntry)other;
+            
+            // put unopenable files first
+            if (exFile == null && o.exFile != null) return -1;
+            if (exFile != null && o.exFile == null) return 1;
+            
+            // sort by assignment name
+            if (exFile != null) {
+                int c = exFile.getTitle().compareTo(o.exFile.getTitle());
+                if (c != 0)
+                    return c;
+            }
+            
+            // sort by student name, or if unopenable then file name
+            return getSortKey().compareTo(o.getSortKey());
         }
         String getSortKey() {
             if (exFile == null)
                 return file.getName();
             else if (exFile.getStudentName() == null)
-            	return "[Unknown]";
+                return "[Unknown]";
             else
-            	return exFile.getStudentName();
+                return exFile.getStudentName();
         }
     }
     
@@ -255,21 +379,25 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         for (int i = 0; i < files.length; i++) {
             if (MainWindow.isSerialized(files[i])) {
                 Object[] row = new Object[6];
-
+                
                 ExerciseFileListEntry entry = new ExerciseFileListEntry();
                 entry.file = files[i];
-
+                
                 try {
                     ExerciseFile ex = new ExerciseFile(files[i]);
-                    if (!ex.getTitle().equals(titleOfShowingExercise))
-                    	continue;
+                    
+                    // If jListAssignments index 0 is selected, view all homeworks.
+                    // Otherwise, filter out homeworks that don't match title in jListAssignments.
+                    if (jListAssignments.getSelectedIndex() != 0
+                            && !ex.getTitle().equals(jListAssignments.getSelectedItem()))
+                        continue;
                     
                     entry.exFile = ex;
                     
                 } catch (Exception e) {
                     entry.errorMessage = e.getMessage();
                 }
-        
+                
                 exercises.add(entry);
             }
         }
@@ -280,9 +408,11 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         
         DefaultTableModel model = new ReadOnlyTableModel();
         
-        model.addColumn("Student");   // 0
-        model.addColumn("Points"); // 1
-        model.addColumn("File Name"); // 2
+        if (jListAssignments.getSelectedIndex() == 0)
+            model.addColumn("Assignment");
+        model.addColumn("Student");
+        model.addColumn("Score");
+        model.addColumn("File Name");
         
         tableAsString = ""; // for copying to clipboard, easier to create now
         
@@ -291,24 +421,37 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         for (int i = 0; i < exercises.size(); i++) {
             ExerciseFileListEntry entry = (ExerciseFileListEntry)exercises.get(i);
             
-            Object[] row = new Object[6];
-            row[2] = entry.file.getName();
-
+            Object[] row = new Object[model.getColumnCount()];
+            
+            int col = 0;
+            if (jListAssignments.getSelectedIndex() == 0)
+                row[col++] = entry.exFile.getTitle();
+            
             if (entry.exFile != null) {
-                row[0] = entry.exFile.getStudentName();
-                row[1] = entry.exFile.getPointsCorrect() + "/" + entry.exFile.getTotalPointsAvailable();
-                    
+                row[col++] = entry.exFile.getStudentName();
+                row[col++] = entry.exFile.getPointsCorrect();
+                    //+ "/" + entry.exFile.getTotalPointsAvailable();
+                
                 scores.add(entry.exFile.getPointsCorrect());
             } else {
-                row[0] = "Error Loading File";
+                row[col++] = "Error Loading File";
+                row[col++] = "";
             }
+            
+            row[col++] = entry.file.getName();
             
             model.addRow(row);
             
-            tableAsString = tableAsString + row[0] + "\t" + row[1] + "\t" + row[2] + "\n";
+            for (int j = 0; j < row.length; j++) {
+                if (j > 0)
+                    tableAsString = tableAsString + "\t";
+                tableAsString = tableAsString + row[j];
+            }
+            tableAsString = tableAsString + "\n";
         }
         
         fileTable.setModel(model);
+        fileTable.getTableHeader().setVisible(true);
         
         textArea.setText(createAssignmentSummary());
         
@@ -340,7 +483,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         }
         return Math.sqrt(total / ((double)scores.size()-1));
     }
-
+    
     double median(ArrayList scores) {
         ArrayList sortedScores = (ArrayList)scores.clone();
         Collections.sort(sortedScores);
@@ -350,12 +493,32 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             return (((java.math.BigDecimal)sortedScores.get(scores.size() / 2 - 1)).doubleValue() + ((java.math.BigDecimal)sortedScores.get(scores.size() / 2)).doubleValue())/2.0;
         }
     }
-
+    
     class SelectionListener implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) {
             if (fileTable.getSelectedRow() == -1) { textArea.setText(createAssignmentSummary()); return; }
             ExerciseFileListEntry entry = (ExerciseFileListEntry)exercises.get(fileTable.getSelectedRow());
             showFileDetails(entry.file);
+        }
+    }
+    
+    class DocumentListener implements javax.swing.event.DocumentListener {
+        public void insertUpdate(javax.swing.event.DocumentEvent e) { onChange(); }
+        public void removeUpdate(javax.swing.event.DocumentEvent e) { onChange(); }
+        public void changedUpdate(javax.swing.event.DocumentEvent e) { onChange(); }
+        
+        void onChange() {
+            if (fileTable.getSelectedRow() == -1) return;
+            ExerciseFileListEntry entry = (ExerciseFileListEntry)exercises.get(fileTable.getSelectedRow());
+            if (entry.exFile == null) return;
+            entry.exFile.setTeacherComments(jTextTeacherComments.getText());
+            try {
+                entry.exFile.saveTo(entry.file);
+            } catch (IOException e) {
+                javax.swing.JOptionPane.showMessageDialog
+                        (TeacherToolWindow.this, "Could not save comments to exercise file: " + (e.getMessage() == null ? "Unknown write error." : e.getMessage()),
+                        "Error saving comments", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
     
@@ -369,8 +532,8 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             text += "Student: " + exfile.getStudentName() + "\n";
             text += "\n";
             
-            text += "Points: " + exfile.getPointsCorrect() + "/" + exfile.getTotalPointsAvailable() + "\n";
-
+            text += "Points: " + exfile.getPointsCorrect() + " (out of " + exfile.getTotalPointsAvailable() + ")\n";
+            
             text += "\n";
             
             for (int i = 0; i < exfile.size(); i++) {
@@ -393,12 +556,14 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                         text += ExerciseTreeModel.CHECKMARK;
                     
                     text += "   " + (j+1) + ".  ";
-
+                    
                     text += ex.getExerciseText();
                     text += "\t";
                     
                     if (ex.hasBeenStarted() && !ex.isDone())
                         text += "Student's Last Answer: " + ex.getLastAnswer();
+                    
+                    text += " [" + ex.getPoints() + " pt]";
                     
                     text += "\n";
                     
@@ -413,7 +578,10 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             }
             
             textArea.setText(text);
-        
+            
+            jTextTeacherComments.setText(exfile.getTeacherComments());
+            jTextTeacherComments.setEditable(true);
+            
         } catch (IOException e) {
             String text = "The file " + file.getPath() + " could not be opened: " + e.toString();
             textArea.setText(text);
@@ -428,56 +596,97 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     String createAssignmentSummary() {
         // This creates a summary of how many students got each question right.
         
-        // Use one student's exercise as a template.
-        if (exercises.size() == 0) return "No student exercises are loaded.";
-        ExerciseFile extempl = ((ExerciseFileListEntry)exercises.get(0)).exFile;
+        // Which assignments to show statistics for?
+        Vector alist;
+        if (jListAssignments.getSelectedIndex() == 0) {
+            alist = assignmentList;
+        } else {
+            alist = new Vector();
+            alist.add(jListAssignments.getSelectedItem());
+        }
+        
         String text = "Click on an exercise in the table to the left to view the student's details.\n\nAssignment Summary:\n\nEach line reports the number of students who got each question right and wrong.\n\n";
-        for (int g = 0; g < extempl.size(); g++) {
-            ExerciseGroup group = extempl.getGroup(g);
-             
-            text += (char)('A' + g) + ". " + group.getTitle() + "\n";
-            text += "\n";
+        
+        // For each assignment...
+        for (int a = 0; a < alist.size(); a++) {
+            // Use one student's exercise as a template. Find one student for this assignment.
+            
+            ExerciseFile extempl = null;
+            for (int i = 0; i < exercises.size(); i++) {
+                ExerciseFile exf = ((ExerciseFileListEntry)exercises.get(i)).exFile;
+                if (exf == null || !exf.getTitle().equals(alist.get(a)))
+                    continue;
+                extempl = exf;
+            }
+            if (extempl == null) // couldn't find any files for this assignment, strangely
+                continue;
+            
+            text += extempl.getTitle() + "\n\n";
+            
+            // Compute stats for this homework.
+            ArrayList scores = new ArrayList();
+            for (int i = 0; i < exercises.size(); i++) {
+                ExerciseFile exf = ((ExerciseFileListEntry)exercises.get(i)).exFile;
+                if (exf == null || !exf.getTitle().equals(alist.get(a)))
+                    continue;
+                scores.add(exf.getPointsCorrect());
+            }
+            text += "Mean score: " + formatDouble(mean(scores)) + "; Std-dev: " + formatDouble(stdev(scores)) + "; Median: " + formatDouble(median(scores)) + "\n\n";
+            
+            for (int g = 0; g < extempl.size(); g++) {
+                ExerciseGroup group = extempl.getGroup(g);
                 
-            for (int j = 0; j < group.size(); j++) {
-                Exercise ex = group.getItem(j);
+                text += (char)('A' + g) + ". " + group.getTitle() + "\n";
+                text += "\n";
+                
+                for (int j = 0; j < group.size(); j++) {
+                    Exercise ex = group.getItem(j);
                     
-                text += "   ";
+                    text += "   ";
                     
-                // Loop through each student's work
-                int correct = 0, incorrect = 0;
-                for (int i = 0; i < exercises.size(); i++) {
-                    ExerciseFile exf = ((ExerciseFileListEntry)exercises.get(i)).exFile;
-                    if (exf == null) continue;
-                    ExerciseGroup gg = exf.getGroup(g);
-                    Exercise ee = gg.getItem(j);
+                    // Loop through each student's work
+                    int correct = 0, incorrect = 0;
+                    for (int i = 0; i < exercises.size(); i++) {
+                        ExerciseFile exf = ((ExerciseFileListEntry)exercises.get(i)).exFile;
+                        if (exf == null || !exf.getTitle().equals(alist.get(a)))
+                            continue;
+                        
+                        ExerciseGroup gg = exf.getGroup(g);
+                        Exercise ee = gg.getItem(j);
+                        
+                        if (ee.isDone())
+                            correct++;
+                        else
+                            incorrect++;
+                    }
                     
-                    if (ee.isDone())
-                        correct++; 
-                    else
-                        incorrect++;
+                    text += correct + " right";
+                    text += "/";
+                    text += incorrect + " wrong";
+                    text += ": ";
+                    text += ex.getExerciseText();
+                    text += "\n";
                 }
                 
-                text += correct + " right";
-                text += "/";
-                text += incorrect + " wrong";  
-                text += ": ";
-                text += ex.getExerciseText();
                 text += "\n";
             }
-            
-            text += "\n";
         }
         
         return text;
     }
     
+    private void clearTeacherComments() {
+        jTextTeacherComments.setText("");
+        jTextTeacherComments.setEditable(false);
+    }
+    
     public void copyTable() {
         java.awt.datatransfer.StringSelection ss
-            = new java.awt.datatransfer.StringSelection(tableAsString);
+                = new java.awt.datatransfer.StringSelection(tableAsString);
         try {
             java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
         } catch (Exception e) {
             // if copying to clipboard is not supported at this time
-        }                
+        }
     }
 }
