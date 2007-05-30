@@ -34,7 +34,10 @@ public abstract class Expr {
      *   1   Identifier
      *   0   Parens, ArgList (because ArgList is always parenthesized) -- strongest
      * 
-     * @return an integr which represents the expression's operator precedence
+     * The parser implements this operator precedence independently so don't change it.
+     * It is used only for the toString method.
+     *
+     * @return an integer which represents the expression's operator precedence
      */
     public abstract int getOperatorPrecedence();
     
