@@ -62,7 +62,7 @@
                               <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                               <Component id="jButtonCloseWindow" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPaneFeedback" alignment="0" pref="803" max="32767" attributes="0"/>
+                          <Component id="jScrollPaneFeedback" alignment="0" pref="809" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jRadioButtonType" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -71,8 +71,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtEnterYourOwnProblem" pref="656" max="32767" attributes="1"/>
                           </Group>
-                          <Component id="txtUserAnswer" alignment="0" pref="803" max="32767" attributes="1"/>
-                          <Component id="jButtonCheckAnswer" alignment="1" pref="803" max="32767" attributes="1"/>
+                          <Component id="txtUserAnswer" alignment="0" pref="809" max="32767" attributes="1"/>
+                          <Component id="jButtonCheckAnswer" alignment="1" pref="809" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -96,7 +96,7 @@
                       <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="txtEnterYourOwnProblem" pref="52" max="32767" attributes="1"/>
+                      <Component id="txtEnterYourOwnProblem" pref="53" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -137,7 +137,6 @@
     </Component>
     <Component class="lambdacalc.gui.LambdaEnabledTextField" name="txtUserAnswer">
       <Properties>
-        <Property name="editable" type="boolean" value="false"/>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Serif" size="18" style="0"/>
         </Property>
@@ -218,6 +217,9 @@
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPaneFeedback">
       <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="c8" green="c8" id="Panel.background" palette="3" red="c8" type="palette"/>
+        </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Feedback"/>

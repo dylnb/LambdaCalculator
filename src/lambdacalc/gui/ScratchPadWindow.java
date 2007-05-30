@@ -51,7 +51,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     /** Creates new form ScratchPadWindow */
     public ScratchPadWindow() {
         initComponents();
-
+        
     }
     
     /** This method is called from within the constructor to
@@ -90,7 +90,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        txtUserAnswer.setEditable(false);
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,6 +143,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
+        jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
         txtFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtFeedback.setColumns(20);
@@ -200,15 +200,15 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                                 .add(jButtonDoAnotherProblem)
                                 .add(116, 116, 116)
                                 .add(jButtonCloseWindow))
-                            .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)
+                            .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(jRadioButtonType)
                                     .add(jRadioButtonLambda))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(txtEnterYourOwnProblem, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE))
-                            .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE)))
+                            .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
                         .add(350, 350, 350)
                         .add(jButtonConfirm)))
@@ -225,7 +225,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                         .add(jRadioButtonType)
                         .add(17, 17, 17))
                     .add(layout.createSequentialGroup()
-                        .add(txtEnterYourOwnProblem, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                        .add(txtEnterYourOwnProblem, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButtonConfirm, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -273,18 +273,28 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         try {
             if (this.selection==LAMBDA_CONVERSION) {
                 this.ex= new LambdaConversionExercise(line, exprParseOpts, 1, it);
+                if (ex == null) {
+                    throw new SyntaxException("warning: TypeExercise constructor returned null",0);
+                }
+                tellGUIProblemEntered();
             } else if (this.selection==TYPE_SIMPLIFICATION) {
                 this.ex= new TypeExercise(line, exprParseOpts, 1, it);
+                if (ex == null) {
+                    throw new SyntaxException("warning: TypeExercise constructor returned null",0);
+                }
+                tellGUIProblemEntered();
             } else {
                 throw new RuntimeException("Scratch pad is in an illegal state");
             }
-        } catch (SyntaxException e) {
-            displayFeedback(e.getMessage());
-        } catch (TypeEvaluationException e) {
-            displayFeedback(e.getMessage());
+        } catch (SyntaxException s) {
+            displayFeedback(s.getMessage());
+            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
+                txtUserAnswer.setCaretPosition(s.getPosition());
+ 
+        } catch (TypeEvaluationException t) {
+            displayFeedback(t.getMessage());
         }
 
-        tellGUIProblemEntered();
     }//GEN-LAST:event_jButtonConfirmActionPerformed
 
     private void jButtonDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoAgainActionPerformed
@@ -321,33 +331,44 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonConfirm.doClick();
     }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
 
+    private void switchOn(javax.swing.text.JTextComponent j) {
+        //j.setEnabled(true);
+        j.setEditable(true);
+    }
+    
+    private void switchOff(javax.swing.text.JTextComponent j) {
+        //j.setEnabled(false);
+        j.setEditable(false);
+    }
+    
     // before user has entered anything -- waiting for a problem
     private void resetGUI() {
         displayFeedback("Entering resetGUI");
-        txtEnterYourOwnProblem.setEnabled(true);
+        switchOn(txtEnterYourOwnProblem);
         jButtonConfirm.setEnabled(true);
         jButtonCheckAnswer.setEnabled(false);
         txtUserAnswer.setText("");
-        txtUserAnswer.setEnabled(false);
+        switchOff(txtUserAnswer);
         setRadioButtonsEnabled(true);
         jButtonDoAnotherProblem.setEnabled(false);
         txtFeedback.setText("");
         jButtonDoAgain.setEnabled(false);
-
+        
         txtEnterYourOwnProblem.requestFocus();
     }
     
     // after user has entered a problem and clicked "Enter problem" or hit Return
     private void tellGUIProblemEntered() {
-        displayFeedback("Entering tellGUIProblemEntered");
-        txtEnterYourOwnProblem.setEnabled(true);
+        //displayFeedback("Entering tellGUIProblemEntered");
+        switchOff(txtEnterYourOwnProblem);
         jButtonConfirm.setEnabled(false);
         jButtonCheckAnswer.setEnabled(true);
         txtUserAnswer.setText("");
         setRadioButtonsEnabled(false);
         jButtonDoAnotherProblem.setEnabled(true);
         jButtonDoAgain.setEnabled(true);
-        txtUserAnswer.setEnabled(true);
+        switchOn(txtUserAnswer);
+        
         txtUserAnswer.requestFocus();
     }
     
@@ -377,6 +398,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             String string = txtUserAnswer.getText().trim();
             if (!string.equals(txtUserAnswer.getText())) {
                 txtUserAnswer.setText(string);
+            }
+            
+            if (ex == null) {
+                // TODO exception handling
             }
             AnswerStatus status = ex.checkAnswer(string);
             displayFeedback(status.getMessage());

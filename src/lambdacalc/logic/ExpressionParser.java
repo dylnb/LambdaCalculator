@@ -97,7 +97,7 @@ public class ExpressionParser {
         while (true) {
             if (start == expression.length()) {
                 if (allowEOS) return -1;
-                throw new SyntaxException("You seem to be missing " + expected + " at the end of your answer.", start);
+                throw new SyntaxException("You seem to be missing " + expected + " at the end of your expression.", start);
             }
             if (expression.charAt(start) != ' ')
                 break;
