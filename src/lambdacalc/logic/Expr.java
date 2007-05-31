@@ -221,20 +221,20 @@ public abstract class Expr {
         /**
          * The expression resulting from the lambda conversion.
          */
-        public final Expr Result;
+        public final Expr result;
  	//TODO uncapitalize fields
         /**
          * If an alphabetical variant was needed to perform the lambda conversion, this
-         * holds the alphabetical variant that was chosen before computing Result.
+         * holds the alphabetical variant that was chosen before computing result.
          */
-        public final Expr AlphabeticalVariant;
+        public final Expr alphabeticalVariant;
  
         /**
          * If an alphabetical variant was needed, for pedagogical purposes this field holds
          * the result of performing the lambda conversion without first creating an
          * alphabetical variant.
          */
-        public final Expr SubstitutionWithoutAlphabeticalVariant;
+        public final Expr substitutionWithoutAlphabeticalVariant;
         
         /*
          * Creates a new instance of LambdaConversionResult.
@@ -244,9 +244,9 @@ public abstract class Expr {
          * or null if o variant was needed
          */
         public LambdaConversionResult(Expr r, Expr a, Expr s) {
-            Result = r;
-            AlphabeticalVariant = a;
-            SubstitutionWithoutAlphabeticalVariant = s;
+            result = r;
+            alphabeticalVariant = a;
+            substitutionWithoutAlphabeticalVariant = s;
         }
     }
     

@@ -114,7 +114,7 @@ public class TreeTester extends javax.swing.JFrame {
             Expr.LambdaConversionResult lcr = e.performLambdaConversion();
             if (lcr == null)
                 return e;
-            return lcr.Result;
+            return lcr.result;
         }
     }
     

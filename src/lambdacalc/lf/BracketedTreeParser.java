@@ -187,7 +187,7 @@ public class BracketedTreeParser {
             lambdacalc.logic.Expr.LambdaConversionResult r = expr.performLambdaConversion();
             if (r == null)
                 break;
-            expr = r.Result;
+            expr = r.result;
             System.out.println(expr);
         }
     }

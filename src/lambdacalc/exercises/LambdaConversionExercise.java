@@ -63,12 +63,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 break;
             
             // If an alphabetical variant was necessary, record that.
-            if (lcr.AlphabeticalVariant != null) {
+            if (lcr.alphabeticalVariant != null) {
                 steptypes.add("alphavary");
-                e = lcr.AlphabeticalVariant;
+                e = lcr.alphabeticalVariant;
             } else {
                 steptypes.add("betareduce");
-                e = lcr.Result;
+                e = lcr.result;
             }
 
             steps.add(e);
@@ -175,7 +175,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                     
                     if (steptypes.get(matched_step).equals("alphavary")
                         && lcr != null
-                        && lcr.AlphabeticalVariant != null)
+                        && lcr.alphabeticalVariant != null)
                         continue; // continue stepping through the future expected answers -
                                 //maybe it matches a future step that is OK (it shouldn't)
                 } catch (TypeEvaluationException tee) {
@@ -486,8 +486,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         try {
             Expr.LambdaConversionResult lcr = expr.performLambdaConversion();
             if (lcr == null) return;
-            if (lcr.AlphabeticalVariant == null) return;
-            if (lcr.SubstitutionWithoutAlphabeticalVariant.alphaEquivalent(answer))
+            if (lcr.alphabeticalVariant == null) return;
+            if (lcr.substitutionWithoutAlphabeticalVariant.alphaEquivalent(answer))
                 hints.add("Your answer changed the truth conditions of the expression because a free variable was accidentally bound during substitution.");
         } catch (TypeEvaluationException ex) {
         }
