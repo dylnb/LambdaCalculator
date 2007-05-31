@@ -10,5 +10,13 @@ public abstract class CompositionRule {
         this.name = name;
     }
     
+    public String getName() {
+        return name;
+    }
+
+    public String toString() {
+        return name;
+    }
+    
     public abstract Expr getMeaning(Nonterminal node) throws MeaningEvaluationException;
 }

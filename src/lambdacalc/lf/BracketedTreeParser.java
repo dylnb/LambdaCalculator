@@ -12,16 +12,23 @@ public class BracketedTreeParser {
         Terminal curterminal = null;
         
         int parseMode = 0;
-        // 0 -> looking for a node, [ indicates start of nonterminal
-        //                          white space is skipped
-        //                          ] indicates end of node: add to parent
-        //                          . indicates start of nonterminal label (like qtree)
-        //                          anything else indicates start of terminal
-        // 1 -> reading a nonterminal label, space indicates end
-        //                                   [ ] indicate end, must back-track
-        //                                   everything else gets added to label
-        // 2 -> reading terminal label, space and brackets indicate end
-        //                              everything else gets added to the label
+        // 0 -> looking for a node:
+        //      [ indicates start of nonterminal
+        //      white space is skipped
+        //      ] indicates end of node: add to parent
+        //      . indicates start of nonterminal label (like qtree)
+        //      = indicates the start of a name of a composition rule to use
+        //        for this nonterminal, terminated by a semicolon
+        //      anything else indicates start of terminal
+        // 1 -> reading a nonterminal label:
+        //      space indicates end
+        //      [ ] indicate end, must back-track
+        //      everything else gets added to label
+        // 2 -> reading terminal label:
+        //      space and brackets indicate end
+        //      = is the start of a lambda expression to
+        //        assign as the lexical entry, up until the next semicolon
+        //      everything else gets added to the label
         
         for (int i = 0; i < tree.length(); i++) {
         
@@ -68,6 +75,23 @@ public class BracketedTreeParser {
                         }
                         return curnode;
                     }
+                    break;
+                    
+                case '=':
+                    if (curnode == null)
+                        throw new SyntaxException("An equal sign cannot appear before the starting open-bracket of the root node.", i);
+                    if (curnode.getChildren().size() != 0)
+                        throw new SyntaxException("An equal sign to start a nonterminal composition rule cannot appear after a child node.", i);
+                    // scan for ending semicolon
+                    int semi = tree.indexOf(';', i);
+                    if (semi == -1)
+                        throw new SyntaxException("A semicolon must terminate the end of a composition rule being assigned to a nonterminal node with '='.", i);
+                    String rulename = tree.substring(i+1, semi);
+                    if (rulename.equals("fa"))
+                        curnode.setCompositionRule(new FunctionApplicationRule());
+                    else
+                        throw new SyntaxException("The name '" + rulename + "' is invalid", i);
+                    i = semi; // resume from next position (i is incremented at end of iteration)
                     break;
                     
                 case ' ':
@@ -119,6 +143,25 @@ public class BracketedTreeParser {
                         curterminal = null;
                         i--; // back track so they are parsed in parseMode 0
                         break;
+                    
+                    case '=':
+                        // scan for ending semicolon
+                        int semi = tree.indexOf(';', i);
+                        if (semi == -1)
+                            throw new SyntaxException("A semicolon must terminate the end of a predicate logic expression being assigned to a terminal node with '='.", i);
+                        String lambda = tree.substring(i+1, semi);
+                        try {
+                            lambdacalc.logic.ExpressionParser.ParseOptions popts = new lambdacalc.logic.ExpressionParser.ParseOptions();
+                            popts.ASCII = true;
+                            popts.singleLetterIdentifiers = false;
+                            lambdacalc.logic.Expr expr = lambdacalc.logic.ExpressionParser.parse(lambda, popts);
+                            curterminal.setMeaning(expr);
+                        } catch (lambdacalc.logic.SyntaxException ex) {
+                            throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
+                        }
+                        i = semi; // resume from next position (i is incremented at end of iteration)
+                        parseMode = 0; // reading of terminal label is complete
+                        break;
                         
                     default:
                         curterminal.setLabel(curterminal.getLabel() + c);
@@ -134,8 +177,18 @@ public class BracketedTreeParser {
         
     }
 
-    public static void main(String[] args) throws SyntaxException {
+    public static void main(String[] args) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
         Nonterminal root = parse(args[0]);
         System.out.println(root.toString());
+        lambdacalc.logic.Expr expr = root.getMeaning();
+        System.out.println(expr);
+        
+        while (true) {
+            lambdacalc.logic.Expr.LambdaConversionResult r = expr.performLambdaConversion();
+            if (r == null)
+                break;
+            expr = r.Result;
+            System.out.println(expr);
+        }
     }
 }

@@ -1,8 +1,10 @@
 package lambdacalc.lf;
 
+import java.io.*;
 import java.util.*;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.ExpressionParser;
+import lambdacalc.logic.ExpressionParser.ParseOptions;
 
 public class Lexicon {
 
@@ -34,14 +36,14 @@ public class Lexicon {
         public Expr meaning;
     }
     
-    public void readFrom(Reader reader) {
-        ExpressionParser.ParserOptions popts = new ExpressionParser.ParserOptions();
+    public void readFrom(Reader reader) throws IOException, SyntaxException {
+        ExpressionParser.ParseOptions popts = new ExpressionParser.ParseOptions();
         // TODO: Set options...
     
         BufferedReader br = new BufferedReader(reader);
         int linectr = 0;
         String line;
-        while ((line = b.readLine()) != null) {
+        while ((line = br.readLine()) != null) {
             linectr++;
             if (line.trim().equals(""))
                 continue;
@@ -54,7 +56,11 @@ public class Lexicon {
             String orthos = line.substring(0, colon).trim();
             String exprform = line.substring(colon+1).trim();
             
-            Expr expr = ExpressionParser.parseExpression(exprform);
+            try {
+                Expr expr = ExpressionParser.parse(exprform, popts);
+            } catch (lambdacalc.logic.SyntaxException ex) {
+                throw new SyntaxException(ex.getMessage(), linectr);
+            }
         }
     }
     
