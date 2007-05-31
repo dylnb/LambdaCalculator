@@ -424,16 +424,18 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             Object[] row = new Object[model.getColumnCount()];
             
             int col = 0;
-            if (jListAssignments.getSelectedIndex() == 0)
-                row[col++] = entry.exFile.getTitle();
             
             if (entry.exFile != null) {
+                if (jListAssignments.getSelectedIndex() == 0)
+                    row[col++] = entry.exFile.getTitle();
                 row[col++] = entry.exFile.getStudentName();
                 row[col++] = entry.exFile.getPointsCorrect();
                     //+ "/" + entry.exFile.getTotalPointsAvailable();
                 
                 scores.add(entry.exFile.getPointsCorrect());
             } else {
+                if (jListAssignments.getSelectedIndex() == 0)
+                    row[col++] = "Unknown";
                 row[col++] = "Error Loading File";
                 row[col++] = "";
             }
@@ -581,14 +583,15 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             jTextTeacherComments.setText(exfile.getTeacherComments());
             jTextTeacherComments.setEditable(true);
             
-        } catch (IOException e) {
-            String text = "The file " + file.getPath() + " could not be opened: " + e.toString();
+        } catch (ExerciseFileVersionException e) {
+            String text = "The file " + file.getPath() + " could not be opened: " + e.getMessage();
             textArea.setText(text);
-            
         } catch (ExerciseFileFormatException e) {
             String text = "The file " + file.getPath() + " could not be opened.  It looks like this isn't a student work file for this program, or a bug in the program prevented the file from being read: " + e.toString();
             textArea.setText(text);
-            
+        } catch (IOException e) {
+            String text = "The file " + file.getPath() + " could not be opened: " + e.toString();
+            textArea.setText(text);
         }
     }
     
