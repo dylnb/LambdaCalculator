@@ -193,37 +193,43 @@ public class ExpressionParser {
                 start = var.Next;
 
                 start = skipWhitespace(expression, start, "a '.' or an expression", false);
+                
                 boolean hadPeriod = false;
                 if (getChar(expression, start, context) == '.') {
                     start++;
                     hadPeriod = true;
                 }
                 
-                // Brackets immediately following binders (without periods) should indicate the scope of the binder. OTOH, binders
-                // can immediately outscope conjunctions (Ex.a ^ b), and the first conjunct can be a Parens.
-                // That means we have an ambiguity in the grammar. We need a special case so that
-                // Lx[...] & [...] is treated as (Lx[...]) & ([...]).
-                // In addition, lambdas inside lambdas and PropositionalBinders inside PropositionalBinders
-                // should be taken the same way -- as outscoping any infix operators
-                // (i.e. LxLy.a & b  is not  Lx[(Ly.a) & b]).
+                // The inside of a binder can be one of two things:
+                //   a bracketed expression (Parens)
+                //   another binder (and inside that eventually (recursively) we'll get our brackets)
+                // This issue is that without an explicit scope marker at the end of the scope
+                // of the binder, it's impossible to know whether infix operators take wide
+                // or narrow scope, as in:  Ax.P(x) & Q(x).  This is ambiguous since we allow
+                // variables to be free. It could be: [Ax.P(x)] & Q(x). While we could just
+                // parse binders allowing for only prefix (i.e. not infix) expressions in
+                // their scope, for pedagogical reasons we want to enforce the use of clear
+                // syntax. Otherwise we would parse as given above, but the user probably will
+                // not think that that is what we did. So, we require brackets after binders,
+                // which makes the scope clear, except when a binder is followed by another binder,
+                // which is also permitted since it just pushes the brackets requirement down
+                // into the inner expression.
+                ParseResult inside = parsePrefixExpression(expression, start, context, "the expression in the scope of the operator");
                 
-                ParseResult rhs = parsePrefixExpression(expression, start, context, "an expression in the scope of the lambda operator");
-                if (
-                       !(!hadPeriod && rhs.Expression instanceof Parens) // if we have a binder followed by a period, or also if we have a binder not followed by a parenthesis
-                    && !(c == Lambda.SYMBOL && rhs.Expression instanceof Lambda)
-                    && !(c != Lambda.SYMBOL && rhs.Expression instanceof PropositionalBinder))
-                    rhs = parseInfixExpression(expression, start, context, "an expression in the scope of the lambda operator", rhs);
-                
+                if (!(inside.Expression instanceof Parens)
+                      && !(inside.Expression instanceof Binder)) 
+                    throw new SyntaxException("After a binder, either a bracket or another binder must come next.", start+1);
+                 
                 Binder bin;
                 switch (c) {
-                    case ForAll.SYMBOL: bin = new ForAll((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
-                    case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
-                    case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
-                    case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, rhs.Expression, hadPeriod); break;
+                    case ForAll.SYMBOL: bin = new ForAll((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                    case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                    case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                    case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, inside.Expression, hadPeriod); break;
                     default:
                         throw new RuntimeException(); // unreachable
                 }
-                return new ParseResult(bin, rhs.Next);
+                return new ParseResult(bin, inside.Next);
                 //break
                 
             default:
