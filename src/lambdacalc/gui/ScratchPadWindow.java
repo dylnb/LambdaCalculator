@@ -32,7 +32,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private boolean selection = LAMBDA_CONVERSION;
     
-    private Exercise ex;
+    private boolean userMod = false; // whether user is trying to modify a problem he's currently working on
+    
+    private Exercise ex=null; // contract: this must be null whenever a problem has been solved
+    private Exercise previousEx; // whenever a problem is solved it is written in here
     
     private String currentProblemString = "";
     
@@ -109,7 +112,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         });
 
         jButtonCheckAnswer.setText("Check Answer");
-        jButtonCheckAnswer.setActionCommand("Check My Answer");
+        jButtonCheckAnswer.setActionCommand("Check Answer");
         jButtonCheckAnswer.setMaximumSize(new java.awt.Dimension(120, 25));
         jButtonCheckAnswer.setMinimumSize(new java.awt.Dimension(120, 25));
         jButtonCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
@@ -210,7 +213,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                                 .add(jButtonDoAnotherProblem)
                                 .add(116, 116, 116)
                                 .add(jButtonCloseWindow))
-                            .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(jRadioButtonType)
@@ -221,7 +223,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
                         .add(350, 350, 350)
-                        .add(jButtonConfirm)))
+                        .add(jButtonConfirm))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -257,6 +262,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
     private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmActionPerformed
         
+        Exercise enteredEx;
+        
+        switchOff(txtUserAnswer);
+        
         IdentifierTyper it;
         Exercise currentMainWindowEx=null;
         
@@ -285,39 +294,61 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         
         try {
             if (this.selection==LAMBDA_CONVERSION) {
-                this.ex= new LambdaConversionExercise(line, exprParseOpts, 1, it);
-                if (this.ex == null) {
+                enteredEx= new LambdaConversionExercise(line, exprParseOpts, 1, it);
+                if (enteredEx == null) {
+                  
                     throw new SyntaxException("Warning: TypeExercise constructor returned null",
                             txtUserAnswer.getText().length());
+                    
                 }
                 
                 // we don't want to bug people in the ScratchPad application
-                ((LambdaConversionExercise) ex).setNotSoFast(false);
+                ((LambdaConversionExercise) enteredEx).setNotSoFast(false);
                 
             } else if (this.selection==TYPE_SIMPLIFICATION) {
-                this.ex= new TypeExercise(line, exprParseOpts, 1, it);
-                if (this.ex == null) {
+                enteredEx= new TypeExercise(line, exprParseOpts, 1, it);
+                if (enteredEx == null) {
+                    
                     throw new SyntaxException("Warning: TypeExercise constructor returned null",
-                            txtUserAnswer.getText().length());
+                            txtUserAnswer.getText().length());                   
                 }
             } else {
                 throw new RuntimeException("Scratch pad is in an illegal state");
             }
-            // successfully entered a problem
             
+            // successfully entered a problem
             this.currentProblemString = line;
+            previousEx=ex;
+            ex=enteredEx;
             tellGUIProblemEntered();
         } catch (SyntaxException s) {
-            displayFeedback(s.getMessage());
-            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
-                txtUserAnswer.setCaretPosition(s.getPosition());
- 
+            
+            if (this.ex!=null) { // user is trying to modify a problem on the fly
+                undoOnTheFlyModification();
+                displayFeedback("I could not understand your modification of the current problem: " + s.getMessage()
+                +"I'm reverting your modification. If you would like to scratch the current problem " +
+                        "and start a new one, click on Do Another Problem.");                
+            } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
+                if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
+                    txtUserAnswer.setCaretPosition(s.getPosition());
+            }
         } catch (TypeEvaluationException t) {
-            displayFeedback(t.getMessage());
+            if (this.ex!=null) { // user is trying to modify a problem on the fly
+                undoOnTheFlyModification();
+                displayFeedback("I could not understand your modification of the current problem: " + t.getMessage()
+                +"I'm reverting your modification. If you would like to scratch the current problem " +
+                        "and start a new one, click on Do Another Problem.");
+            } else {
+            }
         }
 
     }//GEN-LAST:event_jButtonConfirmActionPerformed
 
+    private void undoOnTheFlyModification() {
+        txtEnterYourOwnProblem.setText(this.currentProblemString);
+        //tellGUIProblemEntered();
+    }
+    
     private void jButtonDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoAgainActionPerformed
         ex.reset();
         txtEnterYourOwnProblem.setText(this.currentProblemString);
@@ -387,9 +418,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     // after user has entered a problem and clicked "Enter problem" or hit Return
     private void tellGUIProblemEntered() {
-        //displayFeedback("Entering tellGUIProblemEntered");
-        switchOff(txtEnterYourOwnProblem);
-        jButtonConfirm.setEnabled(false);
+
+        switchOn(txtEnterYourOwnProblem); // switch off if you don't want to allow users
+        // to allow entering a problem while they're working on another one
+        jButtonConfirm.setEnabled(true);
         jButtonCheckAnswer.setEnabled(true);
         txtUserAnswer.setText("");
         setRadioButtonsEnabled(false);
@@ -398,9 +430,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         switchOn(txtUserAnswer);
         
         if (selection==LAMBDA_CONVERSION) {
-            displayFeedback("Enter a lambda expression into the highlighted text field.");
+            displayFeedback("I got your problem. Now enter a lambda expression into the highlighted text field.");
         } else { // selection==TYPE+SIMPLIFICATION
-            displayFeedback("Enter a type into the highlighted text field.");
+            displayFeedback("I got your problem. Now enter a type into the highlighted text field.");
         }
         
         txtUserAnswer.requestFocus();
@@ -409,8 +441,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     // when problem is solved
     private void tellGUIProblemSolved() {
         txtEnterYourOwnProblem.setEnabled(true);
-        jButtonConfirm.setEnabled(false);
-        txtUserAnswer.setEnabled(true);
+        jButtonConfirm.setEnabled(true);
+        txtUserAnswer.setEnabled(false);
         jButtonCheckAnswer.setEnabled(false);
         setRadioButtonsEnabled(false);
         jButtonDoAnotherProblem.setEnabled(true);
@@ -442,6 +474,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             if (status.isCorrect()) {
                 if (status.endsExercise()) {
                     tellGUIProblemSolved();
+                    
+                    previousEx=ex;
+                    ex=null;
                 } else { // "Correct! Now simplify..."
                     txtEnterYourOwnProblem.setText(ex.getLastAnswer());
                 }

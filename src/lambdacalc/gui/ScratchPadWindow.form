@@ -62,7 +62,6 @@
                               <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                               <Component id="jButtonCloseWindow" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPaneFeedback" alignment="0" pref="809" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jRadioButtonType" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -78,6 +77,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="350" max="-2" attributes="0"/>
                       <Component id="jButtonConfirm" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPaneFeedback" pref="809" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -148,7 +151,7 @@
     <Component class="javax.swing.JButton" name="jButtonCheckAnswer">
       <Properties>
         <Property name="text" type="java.lang.String" value="Check Answer"/>
-        <Property name="actionCommand" type="java.lang.String" value="Check My Answer"/>
+        <Property name="actionCommand" type="java.lang.String" value="Check Answer"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[120, 25]"/>
         </Property>
