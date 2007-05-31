@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.DataFormatException;
 import lambdacalc.logic.*;
+import lambdacalc.lf.Lexicon;
 
 /**
  * Represents a set of Exercises grouped into one or more ExerciseGroups.
@@ -24,6 +25,8 @@ public class ExerciseFile {
     String title;
     ArrayList groups = new ArrayList();
     
+    Lexicon lexicon;
+    
     String studentName;
     
     String teacherComments;
@@ -33,6 +36,7 @@ public class ExerciseFile {
      */
     public ExerciseFile() {
         title = "Exercises";
+        lexicon = new Lexicon();
     }
     
     public String toString() {
@@ -77,6 +81,15 @@ public class ExerciseFile {
         if (title == null || title.equals(""))
             throw new IllegalArgumentException();
         this.title = title;
+    }
+    
+    /**
+     * Returns the lexicon associated with the exercise file.
+     *
+     * @return the lexicon associated with the exercise file
+     */
+    public Lexicon getLexicon() {
+       return lexicon;
     }
     
     /**

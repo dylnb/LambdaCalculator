@@ -104,6 +104,8 @@ public class ExerciseGroup {
                 output.writeShort(1);
             else if (e instanceof LambdaConversionExercise)
                 output.writeShort(2);
+            else if (e instanceof TreeExercise)
+                output.writeShort(3);
             else
                 throw new RuntimeException("Exercise type not recognized in ExerciseGroup::WriteToStream.");
             e.writeToStream(output);
@@ -129,6 +131,8 @@ public class ExerciseGroup {
                 ex = new TypeExercise(input, fileFormatVersion, i);
             else if (exType == 2)
                 ex = new LambdaConversionExercise(input, fileFormatVersion, i);
+            else if (exType == 3)
+                ex = new TreeExercise(input, fileFormatVersion, i);
             else
                 throw new ExerciseFileFormatException();
             

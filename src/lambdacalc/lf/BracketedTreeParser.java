@@ -1,6 +1,7 @@
 package lambdacalc.lf;
 
 import java.util.*;
+import lambdacalc.logic.SyntaxException;
 
 public class BracketedTreeParser {
 

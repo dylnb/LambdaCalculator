@@ -7,13 +7,22 @@ import lambdacalc.logic.ExpressionParser;
 import lambdacalc.logic.ExpressionParser.ParseOptions;
 
 public class Lexicon {
+    //IdentifierTyper typer; // Do we want this? TODO: Consistency check?
+    // Implement Expr.getEffectiveIdentifierTyper
+    // Implement are two IdentifierTypers consistent?
+    //   and unify them
 
     Vector entries = new Vector();
+    
+    public Vector getEntries() {
+        // TODO: Return a read-only wrapper so entries can't be modified?
+        return entries;
+    }
 
     public void addLexicalEntry(String[] orthoForms, Expr meaning) {
-        Entry entry = new Entry();
-        entry.orthoForms = orthoForms;
-        entry.meaning = meaning;
+        if (orthoForms.length == 0)
+            throw new IllegalArgumentException("orthoForms must have length at least once");
+        Entry entry = new Entry(orthoForms, meaning);
         entries.add(entry);
     }
     
@@ -31,37 +40,15 @@ public class Lexicon {
         return (Expr[])exprs.toArray(new Expr[0]);
     }
 
-    class Entry {
-        public String[] orthoForms;
-        public Expr meaning;
-    }
-    
-    public void readFrom(Reader reader) throws IOException, SyntaxException {
-        ExpressionParser.ParseOptions popts = new ExpressionParser.ParseOptions();
-        // TODO: Set options...
-    
-        BufferedReader br = new BufferedReader(reader);
-        int linectr = 0;
-        String line;
-        while ((line = br.readLine()) != null) {
-            linectr++;
-            if (line.trim().equals(""))
-                continue;
-            if (line.charAt(0) == '#')
-                continue;
-            int colon = line.indexOf(':');
-            if (colon == -1)
-                throw new SyntaxException("Every line in a lexicon file must contain a colon.", linectr);
-            
-            String orthos = line.substring(0, colon).trim();
-            String exprform = line.substring(colon+1).trim();
-            
-            try {
-                Expr expr = ExpressionParser.parse(exprform, popts);
-            } catch (lambdacalc.logic.SyntaxException ex) {
-                throw new SyntaxException(ex.getMessage(), linectr);
-            }
+    public class Entry {
+        public final String[] orthoForms;
+        public final Expr meaning;
+        
+        public Entry(String[] orthoForms, Expr meaning) {
+            this.orthoForms = orthoForms;
+            this.meaning = meaning;
         }
     }
-    
+
+ 
 }

@@ -105,8 +105,10 @@ public class ExerciseFileParser {
                 
             } else if (line.startsWith("exercise ")) {
                 extype = line.substring("exercise ".length());
-                if (!(extype.equals("semantic types") || extype.equals("lambda conversion")))
-                    throw new ExerciseFileFormatException("An exercise type must be 'semantic types' or 'lambda conversion'", linectr, line);
+                if (!(extype.equals("semantic types")
+                    || extype.equals("lambda conversion")
+                    || extype.equals("tree")))
+                    throw new ExerciseFileFormatException("An exercise type must be 'semantic types', 'lambda conversion', or 'tree'", linectr, line);
                 group = null;
                 exindex = 0;
             
@@ -126,6 +128,9 @@ public class ExerciseFileParser {
                 exprParseOpts.singleLetterIdentifiers = true;
             } else if (line.equals("multiple letter identifiers")) {
                 exprParseOpts.singleLetterIdentifiers = false;
+                
+            } else if (line.startsWith("define ")) {
+                parseLexiconLine(line, exprParseOpts, file, linectr);
 
             } else {
                 // this is an exercise
@@ -142,6 +147,12 @@ public class ExerciseFileParser {
                 } else if (extype.equals("lambda conversion")) {
                     try {
                         ex = new LambdaConversionExercise(line, exprParseOpts, exindex++, typer.cloneTyper());
+                    } catch (Exception e) {
+                        throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
+                    }
+                } else if (extype.equals("tree")) {
+                    try {
+                        ex = new TreeExercise(line, exindex++, typer.cloneTyper());
                     } catch (Exception e) {
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
                     }
@@ -209,4 +220,40 @@ public class ExerciseFileParser {
             }
         }
     }
+    
+    private void parseLexiconLine(String line, ExpressionParser.ParseOptions exprParseOpts, ExerciseFile file, int linenum) throws ExerciseFileFormatException {
+        // lexicon lines start with "define "
+    
+            int colon = line.indexOf(':');
+            if (colon == -1)
+                throw new ExerciseFileFormatException("Every lexical entry 'define' line must contain a colon.", linenum, line);
+            
+            // get the orthographic forms after "define " and before the colon
+            String orthos = line.substring("define ".length(), colon).trim();
+            String exprform = line.substring(colon+1).trim();
+            
+            // Before the comma, we can have multiple orthographic
+            // forms associated with the lexical entry, separated by
+            // commas. After splitting it on the comma, trim each entry
+            // to eliminate white space around commas and before the colon.
+            String[] orthoForms = orthos.split(",");
+            for (int i = 0; i < orthoForms.length; i++)
+                orthoForms[i] = orthoForms[i].trim();
+            
+            // if there was nothing before the colon (note: it has already
+            // been trimmed), then raise an error.
+            if (orthoForms[0].length() == 0)
+                throw new ExerciseFileFormatException("One or more words separated by commas must precede the colon in the lexical entry.", linenum, line);
+            
+            // Parse the expression
+            Expr expr;
+            try {
+                expr = ExpressionParser.parse(exprform, exprParseOpts);
+            } catch (lambdacalc.logic.SyntaxException ex) {
+                throw new ExerciseFileFormatException(ex.getMessage(), linenum, line);
+            }
+            
+            // Add this lexical entry into our database.
+            file.getLexicon().addLexicalEntry(orthoForms, expr);
+    }            
 }

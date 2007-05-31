@@ -222,7 +222,7 @@ public abstract class Expr {
          * The expression resulting from the lambda conversion.
          */
         public final Expr result;
- 	//TODO uncapitalize fields
+
         /**
          * If an alphabetical variant was needed to perform the lambda conversion, this
          * holds the alphabetical variant that was chosen before computing result.
