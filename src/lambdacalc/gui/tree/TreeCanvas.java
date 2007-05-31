@@ -9,6 +9,7 @@ package lambdacalc.gui.tree;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import javax.swing.*;
 
 /**
  * A widget that displays a tree.
@@ -58,6 +59,7 @@ public class TreeCanvas extends Container {
         
         TreeNode(TreeNode parent, TreeCanvas container) {
             this.container = container;
+            this.parent = parent;
             setLayout(null);
             invalid_layout = true;
         }
@@ -72,10 +74,12 @@ public class TreeCanvas extends Container {
                 remove(this.label);
             }
             this.label = label;
-            add(label);
-            label.addComponentListener(this);
-            invalidate_layout();
-            container.doLayout();
+            if (this.label != null) {
+                add(label);
+                label.addComponentListener(this);
+                invalidate_layout();
+                container.doLayout();
+            }
         }
         
         public void setLabel(String label) {
@@ -92,6 +96,23 @@ public class TreeCanvas extends Container {
             return n;
         }
         
+        public void clearChildren() {
+            // remove from AWT layout
+            for (int i = 0; i < children.size(); i++)
+                remove((TreeNode)children.get(i));
+            children.clear();
+            invalidate_layout();
+            container.doLayout();
+        }
+        
+        public int arity() {
+            return children.size();
+        }
+        
+        public TreeNode getChild(int index) {
+            return (TreeNode)children.get(index);
+        }
+        
         void invalidate_layout() {
             TreeNode n = this;
             while (n != null) {
@@ -105,10 +126,14 @@ public class TreeCanvas extends Container {
                 return;
             invalid_layout = false;
             
+            if (getLabel() != null) {
+                getLabel().doLayout();
+                getLabel().setSize(getLabel().getPreferredSize());
+            }
+            
             if (children.size() == 0) {
                 if (getLabel() != null) {
                     getLabel().setLocation(0, 0);
-                    getLabel().setSize(getLabel().getPreferredSize());
                     setSize(getLabel().getSize());
                     rootPosition = getWidth() / 2;
                 } else {
@@ -120,7 +145,6 @@ public class TreeCanvas extends Container {
                 // them one after the other.
                 int tops = 0;
                 if (getLabel() != null && getLabel().isVisible()) {
-                    getLabel().setSize(getLabel().getPreferredSize());
                     tops = getLabel().getHeight();
                 }
                 

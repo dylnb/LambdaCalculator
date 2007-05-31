@@ -9,6 +9,7 @@ package lambdacalc.gui.tree;
 import java.awt.*;
 import javax.swing.*;
 import lambdacalc.logic.*;
+import lambdacalc.lf.*;
 
 /**
  *
@@ -16,105 +17,52 @@ import lambdacalc.logic.*;
  */
 public class TreeTester extends javax.swing.JFrame {
     
+   TreeCanvas tree = new TreeCanvas();
+
     /** Creates new form TreeTester */
     public TreeTester() {
         initComponents();
-        
-        getContentPane().setLayout(new java.awt.FlowLayout());
-        
-        CreateTree();
+        jPanel1.add(tree);
     }
-
-   TreeCanvas tree = new TreeCanvas();
-
-    void CreateTree() {
-        getContentPane().add(tree);
-        
-        /*tree.getRoot().setLabel("Root");
-        tree.getRoot().addChild().setLabel("Child 1");
-        TreeCanvas.TreeNode r = tree.getRoot().addChild();
-        r.addChild().setLabel("Child 2222222");
-        r.addChild().setLabel("Child 3333333");*/
-        
+    
+    void createTree() {
         try {
-            ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
-            opts.ASCII = true;
-            opts.typer.addEntry("j", false, Type.E);
-            opts.typer.addEntry("m", false, Type.E);
-            opts.typer.addEntry("x", true, Type.E);
-            opts.typer.addEntry("y", true, Type.E);
-            opts.typer.addEntry("r", false, Type.ExET);
-
-            LFNode run = new LFNode("run", ExpressionParser.parse("Lx.Ly.run(y,x)", opts));
-            LFNode mary = new LFNode("mary", ExpressionParser.parse("m", opts));
-            LFNode john = new LFNode("john", ExpressionParser.parse("j", opts));
-            
-            LFNode runmary = new LFNode(run, mary);
-            LFNode johnrunmary = new LFNode(john, runmary);
-            
-            buildTree(tree.getRoot(), johnrunmary);
+            Nonterminal root = BracketedTreeParser.parse(jTextField1.getText());
+            tree.getRoot().clearChildren();
+            buildTree(tree.getRoot(), root);
         } catch (Exception e) {
             System.err.println(e);
         }
        
     }
     
-    void buildTree(TreeCanvas.TreeNode treenode, LFNode lfnode) throws TypeEvaluationException {
-        JLabel label = new JLabel();
-        label.setText(lfnode.getValue().toString());
-        label.setFont(new java.awt.Font("Times New Roman", 0, 14));
+    void buildTree(TreeCanvas.TreeNode treenode, LFNode lfnode) throws MeaningEvaluationException, TypeEvaluationException {
+        // [=fa; John=a; [=fa; loves=Lx.Ly.loves(y,x); Mary=b;]]
+        // [=fa; John=Ix(john(x)); [=fa; loves=Lx.Ly.loves(y,x); Mary=Ix(mary(x));]]
         
+        Panel label = new Panel();
+        BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
+        label.setLayout(bl);
+                
+        Expr expr = lfnode.getMeaning();
+        while (true) {
+            JLabel line = new JLabel();
+            line.setText(expr.toString());
+            line.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
+            label.add(line);
+
+            Expr.LambdaConversionResult r = expr.performLambdaConversion();
+            if (r == null)
+                break;
+            expr = r.result;
+        }
+
         treenode.setLabel(label);
-        if (lfnode.Left != null) {
-            buildTree(treenode.addChild(), lfnode.Left);
-            buildTree(treenode.addChild(), lfnode.Right);
-        }
-    }
-    
-    class LFNode {
-        public LFNode Left, Right;
-        public String Ortho;
-        public Expr Value;
         
-        public LFNode(LFNode left, LFNode right) {
-            Left = left;
-            Right = right;
-        }
-        
-        public LFNode(String ortho, Expr value) {
-            Ortho = ortho;
-            Value = value;
-        }
-        
-        public Expr getValue() throws TypeEvaluationException {
-            if (Left == null)
-                return Value;
-            
-            Expr eleft = Left.getValue();
-            Expr eright = Right.getValue();
-            
-            if (isFunctionOf(eleft, eright))
-                return applyFunction(eleft, eright);
-            if (isFunctionOf(eright, eleft))
-                return applyFunction(eright, eleft);
-            throw new RuntimeException();
-        }
-        
-        boolean isFunctionOf(Expr func, Expr arg) throws TypeEvaluationException {
-            Type functype = func.getType();
-            Type argtype = arg.getType();
-            if (functype instanceof CompositeType)
-                if (((CompositeType)functype).getLeft().equals(argtype))
-                    return true;
-            return false;
-        }
-        
-        Expr applyFunction(Expr func, Expr arg) throws TypeEvaluationException {
-            Expr e = new FunApp(func, arg);
-            Expr.LambdaConversionResult lcr = e.performLambdaConversion();
-            if (lcr == null)
-                return e;
-            return lcr.result;
+        if (lfnode instanceof Nonterminal) {
+            Nonterminal nt = (Nonterminal)lfnode;
+            for (int i = 0; i < nt.getChildren().size(); i++)
+                buildTree(treenode.addChild(), (LFNode)nt.getChildren().get(i));
         }
     }
     
@@ -125,6 +73,8 @@ public class TreeTester extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jTextField1 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -133,21 +83,41 @@ public class TreeTester extends javax.swing.JFrame {
             }
         });
 
+        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jTextField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        createTree();
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        tree.getRoot().addChild().setLabel("Click!");
     }//GEN-LAST:event_formMouseClicked
     
     /**
@@ -162,6 +132,8 @@ public class TreeTester extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
     
 }
