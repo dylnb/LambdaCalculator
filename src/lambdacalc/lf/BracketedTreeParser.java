@@ -15,6 +15,7 @@ public class BracketedTreeParser {
         // 0 -> looking for a node, [ indicates start of nonterminal
         //                          white space is skipped
         //                          ] indicates end of node: add to parent
+        //                          . indicates start of nonterminal label (like qtree)
         //                          anything else indicates start of terminal
         // 1 -> reading a nonterminal label, space indicates end
         //                                   [ ] indicate end, must back-track
@@ -37,12 +38,19 @@ public class BracketedTreeParser {
                         stack.push(curnode);
                     }
                     curnode = nt;
-                    parseMode = 1;
                     break;
-                    
+
+                case '.':
+                    if (curnode == null)
+                        throw new SyntaxException("A period cannot appear before the starting open-bracket of the root node.", i);
+                    if (curnode.getChildren().size() != 0)
+                        throw new SyntaxException("A period to start a nonterminal node label cannot appear after a child node.", i);
+                    parseMode = 1;
+                    break;      
+                                                            
                 case ']':
                     if (curnode == null)
-                        throw new SyntaxException("A close-bracket cannot appear before the start or after the end of the root node.", i);
+                        throw new SyntaxException("A close-bracket cannot appear before the starting open-bracket of the root node.", i);
                     if (curnode.getChildren().size() == 0)
                         throw new SyntaxException("A nonterminal node must have at least one child.", i);
                     if (stack.size() > 0) {

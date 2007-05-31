@@ -29,9 +29,9 @@ public class Nonterminal extends LFNode {
     public String toString() {
         String ret = "[";
         if (getLabel() != null)
-            ret += getLabel();
+            ret += "." + getLabel() + " ";
         for (int i = 0; i < children.size(); i++) {
-            ret += " ";
+            if (i > 0) ret += " ";
             ret += children.get(i).toString();
         }
         ret += "]";

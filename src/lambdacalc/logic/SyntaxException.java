@@ -12,7 +12,7 @@ package lambdacalc.logic;
  * The 'position' argument may be -1 if no position is relevant,
  * otherwise the character index at the point the problem occurred.
  */
-public class SyntaxException extends Exception {
+  public class SyntaxException extends Exception {
     int position;
     
     /**
