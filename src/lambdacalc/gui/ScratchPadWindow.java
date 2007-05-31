@@ -32,9 +32,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private String currentProblemString = "";
     
-    private static MainWindow parent; // a reference to the MainWindow
+    private static TrainingWindow parent; // a reference to the MainWindow
         
-    public static void showWindow(MainWindow theParent) {
+    public static void showWindow(TrainingWindow theParent) {
         
         parent = theParent;
         

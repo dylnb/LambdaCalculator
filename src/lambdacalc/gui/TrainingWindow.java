@@ -1,5 +1,5 @@
 /*
- * MainWindow.java
+ * TrainingWindow.java
  *
  * Created on May 29, 2006, 12:43 PM
  */
@@ -20,7 +20,7 @@ import java.io.*;
  *
  * @author  tauberer
  */
-public class MainWindow extends javax.swing.JFrame {
+public class TrainingWindow extends javax.swing.JFrame {
     
     // If you edit this, don't add a dot, it messes up the ExerciseFileFilter
     public static final String SERIALIZED_FILE_SUFFIX = "lbd"; 
@@ -62,8 +62,8 @@ public class MainWindow extends javax.swing.JFrame {
     
     }
     
-    /** Creates new form MainWindow */
-    public MainWindow() {
+    /** Creates new form TrainingWindow */
+    public TrainingWindow() {
         
         initLookAndFeel();
         initComponents(); // calls the uneditable Netbeans-generated code
@@ -89,7 +89,7 @@ public class MainWindow extends javax.swing.JFrame {
         //loadExerciseFile("tests/example1.txt");
     }
     
-    // called by MainWindow constructor
+    // called by TrainingWindow constructor
     private void clearAllControls() {
         hasUserSaved = false;
         hasUnsavedWork = false;
@@ -313,7 +313,7 @@ public class MainWindow extends javax.swing.JFrame {
         btnDoAgain.setVisible(ex.hasBeenStarted());
     }
     
-    // called in MainWindow() constructor
+    // called in TrainingWindow() constructor
     private static void initLookAndFeel() {
         String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
         

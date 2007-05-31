@@ -51,7 +51,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     public TeacherToolWindow() {
         initComponents();
         
-        MainWindow.initializeJFileChooser(fileChooser, false, true);
+        TrainingWindow.initializeJFileChooser(fileChooser, false, true);
         
         fileTable.getSelectionModel().addListSelectionListener(new SelectionListener());
         fileTable.getColumnModel().getSelectionModel().addListSelectionListener(new SelectionListener());
@@ -313,7 +313,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         assignmentList.clear();
         File[] files = directory.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if (MainWindow.isSerialized(files[i])) {
+            if (TrainingWindow.isSerialized(files[i])) {
                 try {
                     ExerciseFile ex = new ExerciseFile(files[i]);
                     if (!assignmentList.contains(ex.getTitle()))
@@ -377,7 +377,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         exercises.clear();
         File[] files = directory.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if (MainWindow.isSerialized(files[i])) {
+            if (TrainingWindow.isSerialized(files[i])) {
                 Object[] row = new Object[6];
                 
                 ExerciseFileListEntry entry = new ExerciseFileListEntry();

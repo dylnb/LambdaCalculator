@@ -68,14 +68,18 @@ public class ExerciseFileView extends FileView {
 //	    icon = (Icon) icons.get(extension);
 //	}
 //	return icon;
-        if (!MainWindow.isSerialized(f)) {
+        
+        // TODO move isSerialized, hasBeenCompleted etc. from 
+        // TrainingWindow to some other more generic place
+        
+        if (!TrainingWindow.isSerialized(f)) {
             return null; // let the standard look and feel handle it
         } else {
             try {
-                if (MainWindow.hasBeenCompleted(f)) {
-                    return MainWindow.SOLVED_FILE_ICON;
+                if (TrainingWindow.hasBeenCompleted(f)) {
+                    return TrainingWindow.SOLVED_FILE_ICON;
                 } else {
-                    return MainWindow.UNSOLVED_FILE_ICON;
+                    return TrainingWindow.UNSOLVED_FILE_ICON;
                 }
             } catch (ExerciseFileFormatException ex) {
                 ex.printStackTrace();
