@@ -25,7 +25,7 @@ public abstract class Exercise {
     }
     
     /**
-     * Gets the zero-baed index of this Exercise in its ExerciseGroup.
+     * Gets the zero-based index of this Exercise in its ExerciseGroup.
      */
     public int getIndex() {
         return index;

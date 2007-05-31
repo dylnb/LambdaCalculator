@@ -21,8 +21,8 @@ public class Main {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 
-                new MainWindow().setVisible(true);
-                //new TeacherToolWindow().setVisible(true);
+                //new TrainingWindow().setVisible(true);
+                new WelcomeWindow().setVisible(true);
 
             }
         });

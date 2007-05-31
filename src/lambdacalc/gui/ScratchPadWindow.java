@@ -20,8 +20,12 @@ import lambdacalc.logic.*;
  * @author tauberer
  */
 public class ScratchPadWindow extends javax.swing.JFrame {
-    static ScratchPadWindow singleton;
+    private static ScratchPadWindow singleton=null;
 
+    static ScratchPadWindow getSingleton() {
+        return singleton;
+    }    
+    
     // states set by the radio buttons
     private static final boolean LAMBDA_CONVERSION = true;
     private static final boolean TYPE_SIMPLIFICATION = false;
@@ -32,17 +36,21 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private String currentProblemString = "";
     
-    private static TrainingWindow parent; // a reference to the MainWindow
-        
-    public static void showWindow(TrainingWindow theParent) {
-        
-        parent = theParent;
-        
-        if (singleton == null) {
+    public static void prepareWindow() {
+       if (singleton == null) {
             singleton = new ScratchPadWindow();
-        }
-        singleton.resetGUI();
+       }
+       singleton.resetGUI();
+    }
+        
+    public static void showWindow() {
+        
+        prepareWindow();
         singleton.show();
+    }
+    
+    static void exit() {
+        disposeWindow();
     }
     
     public static void disposeWindow() {
@@ -250,9 +258,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmActionPerformed
         
         IdentifierTyper it;
+        Exercise currentMainWindowEx=null;
         
-        Exercise currentMainWindowEx = parent.getCurrentExercise();
-        
+        if (TrainingWindow.getSingleton() != null) {
+            currentMainWindowEx = 
+                    TrainingWindow.getSingleton().getCurrentExercise();
+        }
         if (currentMainWindowEx != null && currentMainWindowEx instanceof HasIdentifierTyper) {
             it = ((HasIdentifierTyper) currentMainWindowEx).getIdentifierTyper();
         } else {

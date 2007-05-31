@@ -19,8 +19,11 @@ import lambdacalc.exercises.*;
  * @author  tauberer
  */
 public class TeacherToolWindow extends javax.swing.JFrame {
-    static TeacherToolWindow singleton;
+    private static TeacherToolWindow singleton=null;
     
+    static TeacherToolWindow getSingleton() {
+        return singleton;
+    }
     File directory;
     
     Vector assignmentList = new Vector();
@@ -28,6 +31,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     String tableAsString = "";
     
     public static void showWindow() {
+    
         if (singleton == null) {
             singleton = new TeacherToolWindow();
             
@@ -38,9 +42,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                 return;
             }
         }
-        
         singleton.show();
     }
+    
+    static void exit() {
+        disposeWindow();
+    }
+    
     
     public static void disposeWindow() {
         if (singleton != null)

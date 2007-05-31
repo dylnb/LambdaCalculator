@@ -20,7 +20,8 @@ import java.io.*;
  *
  * @author  tauberer
  */
-public class TrainingWindow extends javax.swing.JFrame {
+public class TrainingWindow extends JFrame {
+
     
     // If you edit this, don't add a dot, it messes up the ExerciseFileFilter
     public static final String SERIALIZED_FILE_SUFFIX = "lbd"; 
@@ -47,6 +48,26 @@ public class TrainingWindow extends javax.swing.JFrame {
             (SERIALIZED_FILE_SUFFIX, "Saved work");
     private static final ExerciseFileFilter allRecognizedFiles = new ExerciseFileFilter
             (new String[]{"txt",SERIALIZED_FILE_SUFFIX}, "All recognized files");    
+    
+
+    private static TrainingWindow singleton=null;
+    
+    static TrainingWindow getSingleton() {
+        return singleton;
+    }
+    
+    public static void prepareWindow() {
+        if (singleton == null) {
+            singleton = new TrainingWindow();
+        }
+    }
+    
+    public static void showWindow() {
+        prepareWindow();
+        singleton.show();
+    }
+    
+    
     
     public static void initializeJFileChooser(JFileChooser chooser, boolean includeTextFiles, boolean includeSerializedFiles) {
         ExerciseFileView fileView = new ExerciseFileView();
@@ -270,7 +291,8 @@ public class TrainingWindow extends javax.swing.JFrame {
 
         if (ex instanceof HasIdentifierTyper) {
             lblIdentifierTypes.setVisible(true);
-            lblIdentifierTypes.setText("Use the following typing conventions:\n" + ((HasIdentifierTyper)ex).getIdentifierTyper().toString());
+            IdentifierTyper typer = ((HasIdentifierTyper)ex).getIdentifierTyper();
+            lblIdentifierTypes.setText("Use the following typing conventions:\n" + typer.toString());
         } else {
             lblIdentifierTypes.setVisible(false);
         }
@@ -643,7 +665,7 @@ public class TrainingWindow extends javax.swing.JFrame {
         menuFile.add(jSeparator1);
 
         menuItemQuit.setMnemonic('x');
-        menuItemQuit.setText("Exit");
+        menuItemQuit.setText("Exit Exercise Solver");
         menuItemQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemQuitActionPerformed(evt);
@@ -683,7 +705,7 @@ public class TrainingWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemScratchPadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemScratchPadActionPerformed
-        ScratchPadWindow.showWindow(this);
+        ScratchPadWindow.showWindow();
     }//GEN-LAST:event_menuItemScratchPadActionPerformed
 
     private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
@@ -706,7 +728,7 @@ public class TrainingWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuFileActionPerformed
 
     private void onWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onWindowClosed
-        onQuit();
+        doExit();
     }//GEN-LAST:event_onWindowClosed
 
     private void menuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveActionPerformed
@@ -716,7 +738,7 @@ public class TrainingWindow extends javax.swing.JFrame {
     // called in:
     // menuItemSaveAsActionPerformed()
     // menuItemOpenActionPerformed()
-    // onQuit()
+    // prepareToExit()
     private void onSaveAs() {
 // to use native Mac OS save menu, use something like this:
        
@@ -766,7 +788,7 @@ public class TrainingWindow extends javax.swing.JFrame {
     // called in:
     // menuItemSaveActionPerformed()
     // menuItemOpenActionPerformed()
-    // onQuit()
+    // prepareToExit()
     private void onSave() {
         assert(hasUserSaved);
         writeUsersWorkFile(usersWorkFile);
@@ -791,13 +813,17 @@ public class TrainingWindow extends javax.swing.JFrame {
     }
     
     private void menuItemQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemQuitActionPerformed
-        onQuit();
+        doExit();
     }//GEN-LAST:event_menuItemQuitActionPerformed
 
+    static void exit() {
+        singleton.exit();
+    }
+    
     // called in:
     // onWindowClosed()
     // menuItemQuitActionPerformed()
-    private void onQuit() {
+    void doExit() {
         if (this.exFile != null && this.exFile.hasBeenStarted() && hasUnsavedWork) {
             
            Object[] options = {"Save and quit",
