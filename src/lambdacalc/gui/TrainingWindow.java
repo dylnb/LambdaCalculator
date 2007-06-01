@@ -28,11 +28,16 @@ public class TrainingWindow extends JFrame {
     
     public static final ImageIcon UNSOLVED_FILE_ICON = new ImageIcon("images/logo.gif");
     public static final ImageIcon SOLVED_FILE_ICON   = new ImageIcon("images/logo_green.gif");
-    
+
+    // used for switchViewTo method that switches the content of the 
+    // right half of the screen
+    public static final int TYPES_AND_CONVERSIONS = 0;
+    public static final int TREES = 1;
+
     ExerciseFile exFile; // this is null if no file has been loaded yet
     
     Exercise ex;
-    int currentGroup = 0, currentEx = 0;
+    int currentGroup = 0, currentEx = 0; // we start counting at zero
     ExerciseTreeModel treemodel;
     boolean updatingTree = false;
     
@@ -60,6 +65,8 @@ public class TrainingWindow extends JFrame {
         if (singleton == null) {
             singleton = new TrainingWindow();
         }
+         // maximize window
+        singleton.setExtendedState(JFrame.MAXIMIZED_BOTH); 
     }
     
     public static void showWindow() {
@@ -109,6 +116,21 @@ public class TrainingWindow extends JFrame {
         
         //loadExerciseFile("tests/example1.txt");
     }
+    
+    
+    public void switchViewTo(int view) {
+        switch (view) {
+            case TYPES_AND_CONVERSIONS:
+                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
+                break;
+            case TREES:
+                jSplitPaneMain.setRightComponent(jPanelTrees);
+                break;
+            default:
+                throw new IllegalArgumentException("Don't know this view");
+        }
+    }
+    
     
     // called by TrainingWindow constructor
     private void clearAllControls() {
@@ -258,13 +280,18 @@ public class TrainingWindow extends JFrame {
         return exFile.getGroup(currentGroup).getItem(currentEx);
     }
     
+    private void showExercise() {
+        showLambdaConversionOrTypeExercise();
+    }
+    
+    
     // called in:
     // showFirstExercise()
     // btnDoAgainActionPerformed()
     // onExerciseTreeValueChanged()
     // btnNextActionPerformed()
     // btnPrevActionPerformed()
-    private void showExercise() {
+    private void showLambdaConversionOrTypeExercise() {
         lblDirections.setText(exFile.getGroup(currentGroup).getDirections());
         ex = getCurrentExercise();
 
@@ -368,9 +395,8 @@ public class TrainingWindow extends JFrame {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jFileChooser1 = new javax.swing.JFileChooser();
-        jSplitPaneMain = new javax.swing.JSplitPane();
-        jPanelRightHalf = new javax.swing.JPanel();
-        jPanelRightHalf2 = new javax.swing.JPanel();
+        jPanelTypesAndConversions = new javax.swing.JPanel();
+        jPanelTypesAndConversions2 = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -381,6 +407,8 @@ public class TrainingWindow extends JFrame {
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnDoAgain = new javax.swing.JButton();
+        jPanelTrees = new javax.swing.JPanel();
+        jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
         jScrollPaneUpperLeft = new javax.swing.JScrollPane();
         jTreeExerciseFile = new javax.swing.JTree();
@@ -393,6 +421,7 @@ public class TrainingWindow extends JFrame {
         lblHelpNot = new javax.swing.JLabel();
         lblHelpConditionals = new javax.swing.JLabel();
         lblIdentifierTypes = new javax.swing.JTextArea();
+        jPanelDefaultRightHalf = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -404,20 +433,9 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
-        getContentPane().setLayout(new java.awt.GridLayout(1, 0));
+        jPanelTypesAndConversions.setLayout(new java.awt.GridLayout(1, 0));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Lambda");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                onWindowClosed(evt);
-            }
-        });
-
-        jSplitPaneMain.setDividerLocation(300);
-        jPanelRightHalf.setLayout(new java.awt.GridLayout(1, 0));
-
-        jPanelRightHalf.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnCheckAnswer.setText("Check Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -480,27 +498,27 @@ public class TrainingWindow extends JFrame {
             }
         });
 
-        org.jdesktop.layout.GroupLayout jPanelRightHalf2Layout = new org.jdesktop.layout.GroupLayout(jPanelRightHalf2);
-        jPanelRightHalf2.setLayout(jPanelRightHalf2Layout);
-        jPanelRightHalf2Layout.setHorizontalGroup(
-            jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelRightHalf2Layout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout jPanelTypesAndConversions2Layout = new org.jdesktop.layout.GroupLayout(jPanelTypesAndConversions2);
+        jPanelTypesAndConversions2.setLayout(jPanelTypesAndConversions2Layout);
+        jPanelTypesAndConversions2Layout.setHorizontalGroup(
+            jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
-                    .add(jPanelRightHalf2Layout.createSequentialGroup()
-                        .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
+                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
+                        .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelTypesAndConversions2Layout.createSequentialGroup()
                                 .add(1, 1, 1)
                                 .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
                             .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelRightHalf2Layout.createSequentialGroup()
-                                .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelTypesAndConversions2Layout.createSequentialGroup()
+                                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                                     .add(org.jdesktop.layout.GroupLayout.LEADING, txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
                                     .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                         .addContainerGap())
-                    .add(jPanelRightHalf2Layout.createSequentialGroup()
+                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
                         .add(btnPrev)
                         .add(70, 70, 70)
                         .add(btnDoAgain)
@@ -508,9 +526,9 @@ public class TrainingWindow extends JFrame {
                         .add(btnNext)
                         .add(23, 23, 23))))
         );
-        jPanelRightHalf2Layout.setVerticalGroup(
-            jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelRightHalf2Layout.createSequentialGroup()
+        jPanelTypesAndConversions2Layout.setVerticalGroup(
+            jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -522,16 +540,36 @@ public class TrainingWindow extends JFrame {
                 .add(3, 3, 3)
                 .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanelRightHalf2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnNext)
                     .add(btnPrev)
                     .add(btnDoAgain))
                 .addContainerGap())
         );
-        jPanelRightHalf.add(jPanelRightHalf2);
+        jPanelTypesAndConversions.add(jPanelTypesAndConversions2);
 
-        jSplitPaneMain.setRightComponent(jPanelRightHalf);
+        org.jdesktop.layout.GroupLayout jPanelTreesLayout = new org.jdesktop.layout.GroupLayout(jPanelTrees);
+        jPanelTrees.setLayout(jPanelTreesLayout);
+        jPanelTreesLayout.setHorizontalGroup(
+            jPanelTreesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
+        );
+        jPanelTreesLayout.setVerticalGroup(
+            jPanelTreesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
+        );
 
+        getContentPane().setLayout(new java.awt.GridLayout(1, 0));
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Lambda");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onWindowClosed(evt);
+            }
+        });
+
+        jSplitPaneMain.setDividerLocation(300);
         jSplitPaneLeftHalf.setDividerLocation(300);
         jSplitPaneLeftHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14));
@@ -624,6 +662,18 @@ public class TrainingWindow extends JFrame {
         jSplitPaneLeftHalf.setRightComponent(jPanel1);
 
         jSplitPaneMain.setLeftComponent(jSplitPaneLeftHalf);
+
+        org.jdesktop.layout.GroupLayout jPanelDefaultRightHalfLayout = new org.jdesktop.layout.GroupLayout(jPanelDefaultRightHalf);
+        jPanelDefaultRightHalf.setLayout(jPanelDefaultRightHalfLayout);
+        jPanelDefaultRightHalfLayout.setHorizontalGroup(
+            jPanelDefaultRightHalfLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 634, Short.MAX_VALUE)
+        );
+        jPanelDefaultRightHalfLayout.setVerticalGroup(
+            jPanelDefaultRightHalfLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 645, Short.MAX_VALUE)
+        );
+        jSplitPaneMain.setRightComponent(jPanelDefaultRightHalf);
 
         getContentPane().add(jSplitPaneMain);
 
@@ -993,9 +1043,11 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelDefaultRightHalf;
     private javax.swing.JPanel jPanelEnterExpressions;
-    private javax.swing.JPanel jPanelRightHalf;
-    private javax.swing.JPanel jPanelRightHalf2;
+    private javax.swing.JPanel jPanelTrees;
+    private javax.swing.JPanel jPanelTypesAndConversions;
+    private javax.swing.JPanel jPanelTypesAndConversions2;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
