@@ -17,6 +17,8 @@ public abstract class CompositionRule {
     public String toString() {
         return name;
     }
+       
+    public abstract boolean isApplicable(Nonterminal node);
     
     public abstract Expr getMeaning(Nonterminal node) throws MeaningEvaluationException;
 }

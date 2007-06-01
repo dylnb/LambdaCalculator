@@ -12,11 +12,17 @@ public class Lexicon {
     // Implement are two IdentifierTypers consistent?
     //   and unify them
 
-    Vector entries = new Vector();
+    Vector entries = new Vector(); // lexical entries for words
+    
+    Vector compositionRules = new Vector(); // available composition rules
     
     public Vector getEntries() {
         // TODO: Return a read-only wrapper so entries can't be modified?
         return entries;
+    }
+
+    public void addLexicalEntry(String orthoForm, Expr meaning) {
+        addLexicalEntry(new String[] { orthoForm }, meaning);
     }
 
     public void addLexicalEntry(String[] orthoForms, Expr meaning) {
@@ -50,5 +56,8 @@ public class Lexicon {
         }
     }
 
+    public Vector getCompositionRules() {
+        return compositionRules;
+    }
  
 }

@@ -8,8 +8,16 @@ public class Nonterminal extends LFNode {
     CompositionRule compositor;
     Vector children = new Vector();
     
-    public Vector getChildren() {
-        return children;
+    public int size() {
+        return children.size();
+    }
+    
+    public LFNode getChild(int index) {
+        return (LFNode)children.get(index);
+    }
+    
+    public void addChild(LFNode node) {
+        children.add(node);
     }
     
     public CompositionRule getCompositionRule() {
@@ -24,6 +32,31 @@ public class Nonterminal extends LFNode {
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
         return compositor.getMeaning(this);
+    }
+    
+    public void guessLexicalChoices(Lexicon lexicon) {
+        for (int i = 0; i < children.size(); i++)
+            getChild(i).guessLexicalChoices(lexicon);
+        
+        if (compositor != null)
+            return;
+        
+        for (int i = 0; i < lexicon.getCompositionRules().size(); i++) {
+            CompositionRule rule = (CompositionRule)lexicon.getCompositionRules().get(i);
+            if (rule.isApplicable(this)) {
+                if (compositor == null) {
+                    // The first time we hit a compatible composition rule, 
+                    // assign it to ourself.
+                    compositor = rule;
+                } else {
+                    // But on the next time we hit a compatible rule, clear
+                    // out what we set and return. We thus don't actually set
+                    // compositor unless there is a uniquely applicable rule.
+                    compositor = null;
+                    return;
+                }
+            }
+        }
     }
 
     public String toString() {

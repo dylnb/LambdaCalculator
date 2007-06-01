@@ -3,27 +3,55 @@ package lambdacalc.lf;
 import java.util.*;
 import lambdacalc.logic.SyntaxException;
 
+/**
+ * Parses bracketed tree expressions into LFNode trees.
+ *
+ * A bracketed tree expression is:
+ *
+ * S -> NODE
+ * NODE -> NONTERMINAL | TERMINAL
+ * NONTERMINAL -> `[` (.LABEL)? (=RULE;)? NODE+ `]`
+ * TERMINAL -> LABEL(=EXPR;)?
+ * LABEL => a text string, no white space
+ * RULE => `fa`     (i.e. function application)
+ * EXPR -> a predicate logic expression parsed by lambdacalc.logic.ExpressionParser.
+ *
+ * Implementation notes:
+ * This is a simple recursive descent parser. One pass is made over the input
+ * string from left to right. A state variable (parseMode) holds onto what the
+ * parser is currently doing, and a stack holds the path of nonterminals from
+ * the root to the node currently being processed.
+ */
 public class BracketedTreeParser {
 
     public static Nonterminal parse(String tree) throws SyntaxException {
         // A quick and dirty recurive cfg parser.
         
+        // A stack of the nonterminal nodes from the root down to (but not
+        // including) the nonterminal node currently being processed.
         Stack stack = new Stack();
+        
+        // The nonterminal node currently being processed. null if we have not
+        // yet encountered the root node.
         Nonterminal curnode = null;
+        
+        // The terminal node currently being processed while parseMode==2,
+        // i.e. when we're reading a terminal label. null if parseMode!=2.
         Terminal curterminal = null;
         
+        // The current state of the parser.
         int parseMode = 0;
         // 0 -> looking for a node:
         //      [ indicates start of nonterminal
         //      white space is skipped
-        //      ] indicates end of node: add to parent
+        //      ] indicates end of node, pop the stack to get current node's parent
         //      . indicates start of nonterminal label (like qtree)
         //      = indicates the start of a name of a composition rule to use
         //        for this nonterminal, terminated by a semicolon
         //      anything else indicates start of terminal
         // 1 -> reading a nonterminal label:
         //      space indicates end
-        //      [ ] indicate end, must back-track
+        //      [, ], = indicate end, must back-track
         //      everything else gets added to label
         // 2 -> reading terminal label:
         //      space and brackets indicate end
@@ -42,7 +70,7 @@ public class BracketedTreeParser {
                     // start a nonterminal
                     Nonterminal nt = new Nonterminal();
                     if (curnode != null) {
-                        curnode.getChildren().add(nt);
+                        curnode.addChild(nt);
                         stack.push(curnode);
                     }
                     curnode = nt;
@@ -51,7 +79,7 @@ public class BracketedTreeParser {
                 case '.':
                     if (curnode == null)
                         throw new SyntaxException("A period cannot appear before the starting open-bracket of the root node.", i);
-                    if (curnode.getChildren().size() != 0)
+                    if (curnode.size() != 0)
                         throw new SyntaxException("A period to start a nonterminal node label cannot appear after a child node.", i);
                     parseMode = 1;
                     break;      
@@ -59,7 +87,7 @@ public class BracketedTreeParser {
                 case ']':
                     if (curnode == null)
                         throw new SyntaxException("A close-bracket cannot appear before the starting open-bracket of the root node.", i);
-                    if (curnode.getChildren().size() == 0)
+                    if (curnode.size() == 0)
                         throw new SyntaxException("A nonterminal node must have at least one child.", i);
                     if (stack.size() > 0) {
                         curnode = (Nonterminal)stack.pop();
@@ -81,7 +109,7 @@ public class BracketedTreeParser {
                 case '=':
                     if (curnode == null)
                         throw new SyntaxException("An equal sign cannot appear before the starting open-bracket of the root node.", i);
-                    if (curnode.getChildren().size() != 0)
+                    if (curnode.size() != 0)
                         throw new SyntaxException("An equal sign to start a nonterminal composition rule cannot appear after a child node.", i);
                     // scan for ending semicolon
                     int semi = tree.indexOf(';', i);
@@ -102,10 +130,10 @@ public class BracketedTreeParser {
                 default:
                     // this is the start of a terminal
                     if (curnode == null)
-                        throw new SyntaxException("An open bracket for the root node must be the first thing in the tree.", i);
+                        throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
                     curterminal = new Terminal();
                     curterminal.setLabel(String.valueOf(c));
-                    curnode.getChildren().add(curterminal);
+                    curnode.addChild(curterminal);
                     parseMode = 2;
                     break;
                 }
@@ -119,8 +147,12 @@ public class BracketedTreeParser {
                 
                     case ']':
                     case '[':
+                    case '=':
                         parseMode = 0;
                         i--; // back track so they are parsed in parseMode 0
+                             // (i gets incremented at end of iteration, so we
+                             // set it back one here so that on next iteration
+                             // we haven't moved)
                         break;
                         
                     default:
@@ -178,6 +210,7 @@ public class BracketedTreeParser {
         
     }
 
+    // For debugging.
     public static void main(String[] args) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
         Nonterminal root = parse(args[0]);
         System.out.println(root.toString());

@@ -1,0 +1,25 @@
+Homework 2
+
+# one can write arbitrary comments in this file after hashes
+
+constants of type e : a b-c j m
+constants of type <e,t> : P-Q
+constants of type <e*e,t> : R
+variables of type e : x-z
+variables of type <et> : X Y
+
+multiple letter identifiers
+
+define sleep,sleeps : Lx[sleep(x)]
+define love, loves : LyLx[love(x,y)]
+define John : j
+define Mary : m
+
+exercise tree
+title Full Derivations
+directions Derive the semantic value of each nonterminal node of the tree.
+points per exercise 20
+
+[.S John [.VP sleeps]]
+[.S John [.VP loves Mary]]
+

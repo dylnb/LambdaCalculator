@@ -27,7 +27,20 @@ public class TreeTester extends javax.swing.JFrame {
     
     void createTree() {
         try {
+            ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
+            opts.ASCII = true;
+            opts.singleLetterIdentifiers = false;
+                    
+            Lexicon lexicon = new Lexicon();
+            lexicon.addLexicalEntry("sleeps", ExpressionParser.parse("Lx[sleeps(x)]", opts));
+            lexicon.addLexicalEntry("saw", ExpressionParser.parse("LyLx[saw(x,y)]", opts));
+            lexicon.addLexicalEntry("John", ExpressionParser.parse("a", opts));
+            lexicon.addLexicalEntry("Mary", ExpressionParser.parse("b", opts));
+            lexicon.getCompositionRules().add(FunctionApplicationRule.INSTANCE);
+            
             Nonterminal root = BracketedTreeParser.parse(jTextField1.getText());
+            root.guessLexicalChoices(lexicon);
+            
             tree.getRoot().clearChildren();
             buildTree(tree.getRoot(), root);
         } catch (Exception e) {
@@ -61,8 +74,8 @@ public class TreeTester extends javax.swing.JFrame {
         
         if (lfnode instanceof Nonterminal) {
             Nonterminal nt = (Nonterminal)lfnode;
-            for (int i = 0; i < nt.getChildren().size(); i++)
-                buildTree(treenode.addChild(), (LFNode)nt.getChildren().get(i));
+            for (int i = 0; i < nt.size(); i++)
+                buildTree(treenode.addChild(), nt.getChild(i));
         }
     }
     

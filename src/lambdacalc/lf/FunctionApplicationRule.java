@@ -6,17 +6,39 @@ import lambdacalc.logic.FunApp;
 import lambdacalc.logic.TypeEvaluationException;
 
 public class FunctionApplicationRule extends CompositionRule {
+    public static final FunctionApplicationRule INSTANCE = new FunctionApplicationRule();
 
     public FunctionApplicationRule() {
         super("Function Application");
     }
     
+    public boolean isApplicable(Nonterminal node) {
+        if (node.size() != 2)
+            return false;
+        
+        LFNode left = node.getChild(0);
+        LFNode right = node.getChild(1);
+        
+        try {
+            Expr leftMeaning = left.getMeaning();
+            Expr rightMeaning = right.getMeaning();
+
+            if (isFunctionOf(leftMeaning, rightMeaning))
+                return true;
+            if (isFunctionOf(rightMeaning, leftMeaning))
+                return true;
+        } catch (Exception e) {
+        }
+
+        return false;
+    }
+    
     public Expr getMeaning(Nonterminal node) throws MeaningEvaluationException {
-        if (node.getChildren().size() != 2)
+        if (node.size() != 2)
             throw new MeaningEvaluationException("Function application is not applicable on a nonterminal that does not have exactly two children.");
         
-        LFNode left = (LFNode)node.getChildren().get(0);
-        LFNode right = (LFNode)node.getChildren().get(1);
+        LFNode left = node.getChild(0);
+        LFNode right = node.getChild(1);
         
         Expr leftMeaning = left.getMeaning();
         Expr rightMeaning = right.getMeaning();
@@ -47,4 +69,5 @@ public class FunctionApplicationRule extends CompositionRule {
     private Expr apply(Expr left, Expr right) {
         return new FunApp(left, right);
     }
+
 }
