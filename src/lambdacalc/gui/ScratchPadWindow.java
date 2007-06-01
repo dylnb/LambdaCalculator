@@ -56,13 +56,14 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         disposeWindow();
     }
     
-    public static void disposeWindow() {
-        if (singleton != null)
+    static void disposeWindow() {
+        if (singleton != null) {
             singleton.dispose();
+        }
     }
     
-    /** Creates new form ScratchPadWindow */
-    public ScratchPadWindow() {
+    /** Creates new form ScratchPadWindow. Private so that showWindow is used instead. */
+    private ScratchPadWindow() {
         initComponents();
         
     }
@@ -89,7 +90,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonConfirm = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
-        jExitMenuItem = new javax.swing.JMenuItem();
+        menuItemClose = new javax.swing.JMenuItem();
 
         fileChooser.setApproveButtonText("Open Directory");
         fileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -112,7 +113,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         });
 
         jButtonCheckAnswer.setText("Check Answer");
-        jButtonCheckAnswer.setActionCommand("Check Answer");
         jButtonCheckAnswer.setMaximumSize(new java.awt.Dimension(120, 25));
         jButtonCheckAnswer.setMinimumSize(new java.awt.Dimension(120, 25));
         jButtonCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
@@ -184,15 +184,15 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
         menuFile.setMnemonic('F');
         menuFile.setText("File");
-        jExitMenuItem.setMnemonic('x');
-        jExitMenuItem.setLabel("Exit Scratch Pad");
-        jExitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        menuItemClose.setMnemonic('c');
+        menuItemClose.setText("Close Window");
+        menuItemClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jExitMenuItemActionPerformed(evt);
+                menuItemCloseActionPerformed(evt);
             }
         });
 
-        menuFile.add(jExitMenuItem);
+        menuFile.add(menuItemClose);
 
         jMenuBar1.add(menuFile);
 
@@ -326,7 +326,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             if (this.ex!=null) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
                 displayFeedback("I could not understand your modification of the current problem: " + s.getMessage()
-                +"I'm reverting your modification. If you would like to scratch the current problem " +
+                +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");                
             } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
                 if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
@@ -336,7 +336,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             if (this.ex!=null) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
                 displayFeedback("I could not understand your modification of the current problem: " + t.getMessage()
-                +"I'm reverting your modification. If you would like to scratch the current problem " +
+                +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");
             } else {
             }
@@ -362,7 +362,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonDoAnotherProblemActionPerformed
 
     private void jButtonCloseWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseWindowActionPerformed
-        jExitMenuItem.doClick();
+        menuItemClose.doClick();
     }//GEN-LAST:event_jButtonCloseWindowActionPerformed
 
     private void jRadioButtonTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTypeActionPerformed
@@ -494,9 +494,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         onCheckAnswer(evt);
     }//GEN-LAST:event_txtUserAnswerActionPerformed
 
-    private void jExitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jExitMenuItemActionPerformed
+    private void menuItemCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCloseActionPerformed
         this.hide();
-    }//GEN-LAST:event_jExitMenuItemActionPerformed
+    }//GEN-LAST:event_menuItemCloseActionPerformed
     
     /**
      * @param args the command line arguments
@@ -517,12 +517,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonConfirm;
     private javax.swing.JButton jButtonDoAgain;
     private javax.swing.JButton jButtonDoAnotherProblem;
-    private javax.swing.JMenuItem jExitMenuItem;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JRadioButton jRadioButtonLambda;
     private javax.swing.JRadioButton jRadioButtonType;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JMenu menuFile;
+    private javax.swing.JMenuItem menuItemClose;
     private lambdacalc.gui.LambdaEnabledTextField txtEnterYourOwnProblem;
     private javax.swing.JTextArea txtFeedback;
     private lambdacalc.gui.LambdaEnabledTextField txtUserAnswer;

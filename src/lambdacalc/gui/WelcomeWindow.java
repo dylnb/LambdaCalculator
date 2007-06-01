@@ -16,8 +16,15 @@ import javax.swing.JFrame;
  */
 public class WelcomeWindow extends javax.swing.JFrame {
     
-    /** Creates new form WelcomeWindow */
-    public WelcomeWindow() {
+    private static WelcomeWindow singleton=null;
+
+    static WelcomeWindow getSingleton() {
+        return singleton;
+    }    
+    
+    
+    /** Creates new form WelcomeWindow. Private so that showWindow is used instead. */
+    private WelcomeWindow() {
         TrainingWindow.prepareWindow();
         ScratchPadWindow.prepareWindow();
         // we don't prepare the TeacherToolWindow because it's not
@@ -26,6 +33,29 @@ public class WelcomeWindow extends javax.swing.JFrame {
         
         initComponents();
     }
+    
+    public static void prepareWindow() {
+       if (singleton == null) {
+            singleton = new WelcomeWindow();
+       }
+    }
+        
+    public static void showWindow() {
+        
+        prepareWindow();
+        singleton.show();
+    }
+    
+    public static void exit() {
+        
+        disposeWindow();
+        
+    }
+    
+    static void disposeWindow() {
+        if (singleton != null)
+            singleton.dispose();
+    }    
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -182,6 +212,8 @@ public class WelcomeWindow extends javax.swing.JFrame {
         TrainingWindow.exit();
         ScratchPadWindow.exit();
         TeacherToolWindow.exit();
+        
+        exit();
         
     }//GEN-LAST:event_btnExitActionPerformed
 

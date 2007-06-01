@@ -55,8 +55,8 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             singleton.dispose();
     }
     
-    /** Creates new form TeacherToolWindow */
-    public TeacherToolWindow() {
+    /** Creates new form TeacherToolWindow. Private so that showWindow is used instead. */
+    private TeacherToolWindow() {
         initComponents();
         
         TrainingWindow.initializeJFileChooser(fileChooser, false, true);
@@ -91,13 +91,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         statsField = new javax.swing.JTextField();
         jListAssignments = new javax.swing.JComboBox();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jOpenMenuItem = new javax.swing.JMenuItem();
-        jExitMenuItem = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItemCopyTable = new javax.swing.JMenuItem();
+        jMenuFile = new javax.swing.JMenu();
+        menuItemOpen = new javax.swing.JMenuItem();
+        menuItemClose = new javax.swing.JMenuItem();
+        jMenuEdit = new javax.swing.JMenu();
+        menuItemCopyTable = new javax.swing.JMenuItem();
 
-        fileChooser.setApproveButtonText("Open Directory");
+        fileChooser.setApproveButtonText("Select Directory");
         fileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
         setTitle("Lambda Teacher Tool");
@@ -124,13 +124,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             .add(jPanel2Layout.createSequentialGroup()
                 .add(jLabel1)
                 .addContainerGap())
-            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -168,49 +168,49 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             }
         });
 
-        jMenu1.setMnemonic('F');
-        jMenu1.setText("File");
-        jOpenMenuItem.setMnemonic('O');
-        jOpenMenuItem.setText("Open Directory...");
-        jOpenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        jMenuFile.setMnemonic('F');
+        jMenuFile.setText("File");
+        menuItemOpen.setMnemonic('O');
+        menuItemOpen.setText("Open Directory...");
+        menuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jOpenMenuItemActionPerformed(evt);
+                menuItemOpenActionPerformed(evt);
             }
         });
 
-        jMenu1.add(jOpenMenuItem);
+        jMenuFile.add(menuItemOpen);
 
-        jExitMenuItem.setMnemonic('x');
-        jExitMenuItem.setText("Exit Teacher Tool");
-        jExitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        menuItemClose.setMnemonic('c');
+        menuItemClose.setText("Close Window");
+        menuItemClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jExitMenuItemActionPerformed(evt);
+                menuItemCloseActionPerformed(evt);
             }
         });
 
-        jMenu1.add(jExitMenuItem);
+        jMenuFile.add(menuItemClose);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenuFile);
 
-        jMenu2.setMnemonic('e');
-        jMenu2.setText("Edit");
-        jMenu2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuEdit.setMnemonic('e');
+        jMenuEdit.setText("Edit");
+        jMenuEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu2ActionPerformed(evt);
+                jMenuEditActionPerformed(evt);
             }
         });
 
-        jMenuItemCopyTable.setMnemonic('c');
-        jMenuItemCopyTable.setText("Copy Table");
-        jMenuItemCopyTable.addActionListener(new java.awt.event.ActionListener() {
+        menuItemCopyTable.setMnemonic('c');
+        menuItemCopyTable.setText("Copy Table");
+        menuItemCopyTable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemCopyTableActionPerformed(evt);
+                menuItemCopyTableActionPerformed(evt);
             }
         });
 
-        jMenu2.add(jMenuItemCopyTable);
+        jMenuEdit.add(menuItemCopyTable);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(jMenuEdit);
 
         setJMenuBar(jMenuBar1);
 
@@ -222,10 +222,10 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
+                        .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
                         .addContainerGap())
                     .add(layout.createSequentialGroup()
-                        .add(jLabelCurrentDirectory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+                        .add(jLabelCurrentDirectory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
                         .add(92, 92, 92))
                     .add(layout.createSequentialGroup()
                         .add(jListAssignments, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -245,20 +245,20 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItemCopyTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyTableActionPerformed
+    private void menuItemCopyTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCopyTableActionPerformed
         copyTable();
-    }//GEN-LAST:event_jMenuItemCopyTableActionPerformed
+    }//GEN-LAST:event_menuItemCopyTableActionPerformed
 
-    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
+    private void jMenuEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuEditActionPerformed
 // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu2ActionPerformed
+    }//GEN-LAST:event_jMenuEditActionPerformed
     
     private void jListAssignmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jListAssignmentsActionPerformed
         showExercises();
         clearTeacherComments();
     }//GEN-LAST:event_jListAssignmentsActionPerformed
     
-    private void jOpenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOpenMenuItemActionPerformed
+    private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
         onOpen();
     }
     
@@ -272,11 +272,11 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             return true;
         }
         return false;
-    }//GEN-LAST:event_jOpenMenuItemActionPerformed
+    }//GEN-LAST:event_menuItemOpenActionPerformed
     
-    private void jExitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jExitMenuItemActionPerformed
+    private void menuItemCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCloseActionPerformed
         this.hide();
-    }//GEN-LAST:event_jExitMenuItemActionPerformed
+    }//GEN-LAST:event_menuItemCloseActionPerformed
     
     /**
      * @param args the command line arguments
@@ -292,15 +292,12 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JTable fileTable;
-    private javax.swing.JMenuItem jExitMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelCurrentDirectory;
     private javax.swing.JComboBox jListAssignments;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItemCopyTable;
-    private javax.swing.JMenuItem jOpenMenuItem;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -308,6 +305,9 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextTeacherComments;
+    private javax.swing.JMenuItem menuItemClose;
+    private javax.swing.JMenuItem menuItemCopyTable;
+    private javax.swing.JMenuItem menuItemOpen;
     private javax.swing.JTextField statsField;
     private javax.swing.JTextArea textArea;
     // End of variables declaration//GEN-END:variables

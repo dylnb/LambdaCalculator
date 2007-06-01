@@ -18,13 +18,13 @@
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jExitMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemClose">
               <Properties>
-                <Property name="mnemonic" type="int" value="120"/>
-                <Property name="label" type="java.lang.String" value="Exit Scratch Pad"/>
+                <Property name="mnemonic" type="int" value="99"/>
+                <Property name="text" type="java.lang.String" value="Close Window"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jExitMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemCloseActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -151,7 +151,6 @@
     <Component class="javax.swing.JButton" name="jButtonCheckAnswer">
       <Properties>
         <Property name="text" type="java.lang.String" value="Check Answer"/>
-        <Property name="actionCommand" type="java.lang.String" value="Check Answer"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[120, 25]"/>
         </Property>

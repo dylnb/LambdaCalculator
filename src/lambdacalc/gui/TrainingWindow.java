@@ -83,8 +83,8 @@ public class TrainingWindow extends JFrame {
     
     }
     
-    /** Creates new form TrainingWindow */
-    public TrainingWindow() {
+    /** Creates new form TrainingWindow. Private so that showWindow is used instead. */
+    private TrainingWindow() {
         
         initLookAndFeel();
         initComponents(); // calls the uneditable Netbeans-generated code
@@ -398,7 +398,7 @@ public class TrainingWindow extends JFrame {
         menuItemSave = new javax.swing.JMenuItem();
         menuItemSaveAs = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
-        menuItemQuit = new javax.swing.JMenuItem();
+        menuItemClose = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
@@ -664,15 +664,15 @@ public class TrainingWindow extends JFrame {
 
         menuFile.add(jSeparator1);
 
-        menuItemQuit.setMnemonic('x');
-        menuItemQuit.setText("Exit Exercise Solver");
-        menuItemQuit.addActionListener(new java.awt.event.ActionListener() {
+        menuItemClose.setMnemonic('c');
+        menuItemClose.setText("Close Window");
+        menuItemClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemQuitActionPerformed(evt);
+                menuItemCloseActionPerformed(evt);
             }
         });
 
-        menuFile.add(menuItemQuit);
+        menuFile.add(menuItemClose);
 
         jMenuBar1.add(menuFile);
 
@@ -812,12 +812,12 @@ public class TrainingWindow extends JFrame {
         }
     }
     
-    private void menuItemQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemQuitActionPerformed
+    private void menuItemCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCloseActionPerformed
         doExit();
-    }//GEN-LAST:event_menuItemQuitActionPerformed
+    }//GEN-LAST:event_menuItemCloseActionPerformed
 
     static void exit() {
-        singleton.exit();
+        singleton.doExit();
     }
     
     // called in:
@@ -856,8 +856,6 @@ public class TrainingWindow extends JFrame {
         }
 
         this.dispose();
-        TeacherToolWindow.disposeWindow();
-        ScratchPadWindow.disposeWindow();
     }
 
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
@@ -1007,8 +1005,8 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel lblHelpNot;
     private javax.swing.JTextArea lblIdentifierTypes;
     private javax.swing.JMenu menuFile;
+    private javax.swing.JMenuItem menuItemClose;
     private javax.swing.JMenuItem menuItemOpen;
-    private javax.swing.JMenuItem menuItemQuit;
     private javax.swing.JMenuItem menuItemSave;
     private javax.swing.JMenuItem menuItemSaveAs;
     private javax.swing.JMenuItem menuItemScratchPad;

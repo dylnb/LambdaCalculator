@@ -21,8 +21,7 @@ public class Main {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 
-                //new TrainingWindow().setVisible(true);
-                new WelcomeWindow().setVisible(true);
+                WelcomeWindow.showWindow();
 
             }
         });
