@@ -41,25 +41,21 @@ public class ExpressionParser {
         public IdentifierTyper typer = IdentifierTyper.createDefault();
         
         /**
-         * This field is used internally by the parser to track the
-         * specified types of variables after binders. i.e. if the
-         * user gives:  LX:<et>[X(a)]  we can load in the type of
-         * the first X because it is specified, and we know it is
-         * a variable because it follows a binder, but when we get
-         * to the inner type, even if its type were specified by
-         * the user, we must remember the fact that it is a variable.
-         * This maps strings, the names of identifiers, to the 
-         * Identifier instance in the parser's current upward-looking
-         * scope (what variables have scope).
+         * This map is populated during the course of parsing an
+         * expression and lists some of the types assigned explicitly
+         * in the expression. One type is remembered per name, so
+         * if a single name is used with different types in multiple
+         * places (i.e. bound variables with different scopes), only
+         * the last one parsed will be listed in the Map.
          */
-         Map identifiersInScope = new HashMap();
-         
-         ParseOptions cloneContext() {
+        public Map explicitTypes = new HashMap();
+        
+        ParseOptions cloneContext() {
              ParseOptions ret = new ParseOptions();
              ret.singleLetterIdentifiers = singleLetterIdentifiers;
              ret.ASCII = ASCII;
-             ret.typer = typer;
-             ret.identifiersInScope = identifiersInScope;
+             ret.typer = typer.cloneTyper();
+             ret.explicitTypes = explicitTypes;
              return ret;
          }
      }
@@ -95,6 +91,8 @@ public class ExpressionParser {
      *
      */
     public static Expr parse(String expression, ParseOptions options) throws SyntaxException {
+        options.explicitTypes.clear();
+        
         if (expression.length() == 0)
             throw new SyntaxException("Enter a lambda expression.", -1);
         
@@ -225,9 +223,11 @@ public class ExpressionParser {
                 
                 // Remember the type of the variable, since it might have been given explicitly,
                 // so that when we encounter it within our scope, we can give it the same type.
+                // Cloning the context clones the IdentifierTyper, so we can modify it
+                // in context2 and it will be unchanged when we pop out of this scope.
                 ParseOptions context2 = context.cloneContext();
-                context2.identifiersInScope = new HashMap(context.identifiersInScope);
-                context2.identifiersInScope.put(((Identifier)var.Expression).getSymbol(), var.Expression);
+                Identifier varid = (Identifier)var.Expression;
+                context2.typer.addEntry(varid.getSymbol(), varid instanceof Var, varid.getType());
                 
                 // The inside of a binder can be one of two things:
                 //   a bracketed expression (Parens)
@@ -461,13 +461,6 @@ public class ExpressionParser {
         boolean isvar;
         Type type;
         
-        if (context.identifiersInScope.containsKey(id)) {
-            Identifier firstUse = (Identifier)context.identifiersInScope.get(id);
-            if (specifiedType == null)
-                specifiedType = firstUse.getType();
-            isRightAfterBinder = (firstUse instanceof Var);
-        }
-        
         if (specifiedType == null) {
             try {
                 isvar = context.typer.isVariable(id);
@@ -490,6 +483,9 @@ public class ExpressionParser {
         else
             ident = new Const(id, type, specifiedType != null);
         
+        if (specifiedType != null)
+            context.explicitTypes.put(id, ident); // ident because it stores both type and isVar
+
         return ident;
     }
     

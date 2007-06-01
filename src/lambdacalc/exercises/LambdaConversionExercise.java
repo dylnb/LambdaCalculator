@@ -86,6 +86,20 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     public LambdaConversionExercise(String expr, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {
         this(ExpressionParser.parse(expr, parseOptions), index, types);
         parseSingleLetterIdentifiers = parseOptions.singleLetterIdentifiers;
+        
+        // If explicit types were assigned to identifiers in the expression,
+        // add those conventions to the IdentifierTyper used for this exercise.
+        // Note that since a variable can be used with different types in different
+        // places, this doesn't guarantee that every identifier will be typed
+        // according to a single set of conventions.
+        if (parseOptions.explicitTypes.keySet().size() > 0) {
+            this.types = this.types.cloneTyper();
+            for (Iterator i = parseOptions.explicitTypes.keySet().iterator(); i.hasNext(); ) {
+                String name = (String)i.next();
+                Identifier info = (Identifier)parseOptions.explicitTypes.get(name);
+                this.types.addEntry(name, info instanceof Var, info.getType());
+            }
+        }
     }
     
     public String getExerciseText() {
