@@ -18,7 +18,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
     
     private static WelcomeWindow singleton=null;
 
-    static WelcomeWindow getSingleton() {
+    public static WelcomeWindow getSingleton() {
         return singleton;
     }    
     
