@@ -324,6 +324,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             
         } catch (SyntaxException s) {
 
+            jButtonCheckAnswer.setEnabled(false);
             //if (this.ex!=null) { // user is trying to modify a problem on the fly
             if (false) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
@@ -331,11 +332,13 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                 +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");                
             } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
+
                 displayFeedback(s.getMessage());
                 if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
                     txtUserAnswer.setCaretPosition(s.getPosition());
             }
         } catch (TypeEvaluationException t) {
+            jButtonCheckAnswer.setEnabled(false);
 //            if (this.ex!=null) { // user is trying to modify a problem on the fly
             if (false) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
@@ -343,6 +346,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                 +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");
             } else {
+                
                 displayFeedback(t.getMessage());
             }
         }
@@ -380,6 +384,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
     private void radioButtonSwitch(boolean userChoice) {
         selection = userChoice;
+        jButtonDoAnotherProblem.doClick();
     }
     
     private void txtUserAnswerActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserAnswerActionPerformed1
@@ -430,7 +435,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonEnterProblem.setEnabled(true);
         jButtonCheckAnswer.setEnabled(true);
         txtUserAnswer.setText("");
-        setRadioButtonsEnabled(false);
+        setRadioButtonsEnabled(true);
         jButtonDoAnotherProblem.setEnabled(true);
         jButtonDoAgain.setEnabled(true);
         switchOn(txtUserAnswer);
@@ -450,7 +455,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jButtonEnterProblem.setEnabled(true);
         switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
-        setRadioButtonsEnabled(false);
+        setRadioButtonsEnabled(true);
         jButtonDoAnotherProblem.setEnabled(true);
         jButtonDoAgain.setEnabled(true);
     }
