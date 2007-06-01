@@ -39,6 +39,29 @@ public class ExpressionParser {
          * with a default setup.
          */
         public IdentifierTyper typer = IdentifierTyper.createDefault();
+        
+        /**
+         * This field is used internally by the parser to track the
+         * specified types of variables after binders. i.e. if the
+         * user gives:  LX:<et>[X(a)]  we can load in the type of
+         * the first X because it is specified, and we know it is
+         * a variable because it follows a binder, but when we get
+         * to the inner type, even if its type were specified by
+         * the user, we must remember the fact that it is a variable.
+         * This maps strings, the names of identifiers, to the 
+         * Identifier instance in the parser's current upward-looking
+         * scope (what variables have scope).
+         */
+         Map identifiersInScope = new HashMap();
+         
+         ParseOptions cloneContext() {
+             ParseOptions ret = new ParseOptions();
+             ret.singleLetterIdentifiers = singleLetterIdentifiers;
+             ret.ASCII = ASCII;
+             ret.typer = typer;
+             ret.identifiersInScope = identifiersInScope;
+             return ret;
+         }
      }
     
     private static class ParseResult {
@@ -192,13 +215,19 @@ public class ExpressionParser {
                     throw new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1);
                 start = var.Next;
 
-                start = skipWhitespace(expression, start, "a '.' or an expression", false);
+                start = skipWhitespace(expression, start, "a period, open bracket, or another binder", false);
                 
                 boolean hadPeriod = false;
                 if (getChar(expression, start, context) == '.') {
                     start++;
                     hadPeriod = true;
                 }
+                
+                // Remember the type of the variable, since it might have been given explicitly,
+                // so that when we encounter it within our scope, we can give it the same type.
+                ParseOptions context2 = context.cloneContext();
+                context2.identifiersInScope = new HashMap(context.identifiersInScope);
+                context2.identifiersInScope.put(((Identifier)var.Expression).getSymbol(), var.Expression);
                 
                 // The inside of a binder can be one of two things:
                 //   a bracketed expression (Parens)
@@ -214,7 +243,7 @@ public class ExpressionParser {
                 // which makes the scope clear, except when a binder is followed by another binder,
                 // which is also permitted since it just pushes the brackets requirement down
                 // into the inner expression.
-                ParseResult inside = parsePrefixExpression(expression, start, context, "the expression in the scope of the operator");
+                ParseResult inside = parsePrefixExpression(expression, start, context2, "the expression in the scope of the operator");
                 
                 if (!(inside.Expression instanceof Parens)
                       && !(inside.Expression instanceof Binder)) 
@@ -234,7 +263,7 @@ public class ExpressionParser {
                 
             default:
                 // Hope that it's an identifier or predicate. If not, a BadCharacterException is thrown.
-                return parsePredicate(expression, start, context, "an expression", false, true);
+                return parsePredicate(expression, start, context, "an expression", false);
         }
     }
     
@@ -251,7 +280,7 @@ public class ExpressionParser {
     private static ParseResult parseIdentifier(String expression, int start,
             ParseOptions context, String whatIsExpected) throws SyntaxException {
         return parsePredicate(expression, start, context,
-                whatIsExpected, true, false);
+                whatIsExpected, true);
         
     }
     
@@ -265,24 +294,25 @@ public class ExpressionParser {
      * @param context global options for parsing
      * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
      * for error messages
-     * @param lookingForVariable a hint to the feedback module -- indicates whether 
-     * the caller expects a variable at this position, as opposed to a constant or a predicate
-     * @param allowPredicate whether only an identifier or possibly also a predicate can be parsed by this method
+     * @param isRightAfterBinder whether we're looking for the variable immediately after a binder, in which
+     * case: 1) predicates are not allowed, so we stop reading immediately after the identifier, 2) if
+     * a type on the identifier is specified (i.e. x:e), then we know to load the identifier as a variable,
+     * and 3) the error message reflects that we're looking for a variable.
      * @return a predicate
      * @throws lambdacalc.logic.SyntaxException if there is a parse error
      */
-    private static ParseResult parsePredicate(String expression, int start, ParseOptions context, String whatIsExpected, boolean lookingForVariable, boolean allowPredicate) throws SyntaxException {
+    private static ParseResult parsePredicate(String expression, int start, ParseOptions context, String whatIsExpected, boolean isRightAfterBinder) throws SyntaxException {
         start = skipWhitespace(expression, start, whatIsExpected, false);
         char c = expression.charAt(start);
         
         // 0 and 1 are parsed as constants of type t.
         if (c == '0' || c == '1') {
             start++;
-            return new ParseResult(new Const(String.valueOf(c), Type.T), start);
+            return new ParseResult(new Const(String.valueOf(c), Type.T, false), start);
         }
             
         if (!isLetter(c)) {
-            if (lookingForVariable)
+            if (isRightAfterBinder)
                 throw new BadCharacterException("I'm expecting a variable here, but variables must start with a letter.", start);
             else
                 throw new BadCharacterException("I'm expecting an expression here, but '" + c + "' can't be the beginning of an expression.", start);
@@ -299,9 +329,19 @@ public class ExpressionParser {
                 break;
             id += expression.charAt(start++);
         }
+        
+        // If a colon follows the name of the identifier, then the identifier's
+        // type follows the colon.
+        Type specifiedType = null;
+        if (start < expression.length() && getChar(expression, start, context) == ':') {
+            start++;
+            TypeParser.ParseResult tr = TypeParser.parseType(expression, start, true);
+            start = tr.end + 1;
+            specifiedType = tr.result;
+        }
 
-        if (start == expression.length() || !allowPredicate) {
-            Identifier ident = loadIdentifier(id, context, start, null);
+        if (start == expression.length() || isRightAfterBinder) {
+            Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
             return new ParseResult(ident, start);
         }
 
@@ -311,7 +351,7 @@ public class ExpressionParser {
         if (!(
                 getChar(expression, start, context) == '('
                 || (context.singleLetterIdentifiers && isLetter(getChar(expression, start, context))))) {
-            Identifier ident = loadIdentifier(id, context, start, null);
+            Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
             return new ParseResult(ident, start);
         }
 
@@ -353,13 +393,13 @@ public class ExpressionParser {
                 char cc = getChar(expression, start, context);
                 if (!isLetter(cc))
                     throw new SyntaxException("Invalid identifier as an argument to " + id + ".", start);
-                arguments.add(loadIdentifier(String.valueOf(cc), context, start, null));
+                arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false));
                 start++;
             }
         }
         
         if (arguments.size() == 0) // we treat "P()" as "P"
-            return new ParseResult(loadIdentifier(id, context, start, null), start);
+            return new ParseResult(loadIdentifier(id, context, start, null, specifiedType, false), start);
 
         // If the type of the identifier is not known to the IdentifierTyper,
         // we'll infer its type from the types of the arguments, and assume
@@ -377,7 +417,7 @@ public class ExpressionParser {
         } catch (TypeEvaluationException e) {
         }
 
-        Identifier ident = loadIdentifier(id, context, start, inferType);
+        Identifier ident = loadIdentifier(id, context, start, inferType, specifiedType, false);
 
         if (arguments.size() == 1) // P(a) : a is an identifier; there is no ArgList
             return new ParseResult(new FunApp(ident, (Expr)arguments.get(0)), start);
@@ -417,25 +457,38 @@ public class ExpressionParser {
      * @throws lambdacalc.logic.SyntaxException if a parsing error occurs
      * @return the new Identifier instance
      */
-    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferType) throws SyntaxException {
+    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferredType, Type specifiedType, boolean isRightAfterBinder) throws SyntaxException {
         boolean isvar;
         Type type;
-        try {
-            isvar = context.typer.isVariable(id);
-            type = context.typer.getType(id);
-        } catch (IdentifierTypeUnknownException e) {
-            if (inferType == null)
-                throw new SyntaxException(e.getMessage(), start);
+        
+        if (context.identifiersInScope.containsKey(id)) {
+            Identifier firstUse = (Identifier)context.identifiersInScope.get(id);
+            if (specifiedType == null)
+                specifiedType = firstUse.getType();
+            isRightAfterBinder = (firstUse instanceof Var);
+        }
+        
+        if (specifiedType == null) {
+            try {
+                isvar = context.typer.isVariable(id);
+                type = context.typer.getType(id);
+            } catch (IdentifierTypeUnknownException e) {
+                if (inferredType == null)
+                    throw new SyntaxException(e.getMessage(), start);
             
-            isvar = false;
-            type = inferType;
+                isvar = false;
+                type = inferredType;
+            }
+        } else {
+            type = specifiedType;
+            isvar = isRightAfterBinder;
         }
 
         Identifier ident;
         if (isvar)
-            ident = new Var(id, type);
+            ident = new Var(id, type, specifiedType != null);
         else
-            ident = new Const(id, type);
+            ident = new Const(id, type, specifiedType != null);
         
         return ident;
     }

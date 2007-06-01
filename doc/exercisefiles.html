@@ -36,7 +36,7 @@ directions Give the semantic type of the following lambda-expressions.
 c
 P(c)
 Q(x) | ~Q(x)
-Lx. P(x) &amp; Q(x)
+Lx[P(x) &amp; Q(x)]
 
 exercise lambda conversion
 points per exercise 15
@@ -45,10 +45,10 @@ directions After checking that the type of the function and the type of the
 directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.
 
-Lx. P(x) &amp; Q(x) (a)
-LxLy. R(a,y) &amp; Q(x) (a) (b)
-Lx.a (b)
-LxLx.P(x) -> R(x,c) (a) (b)
+Lx[P(x) &amp; Q(x)] (a)
+LxLy[R(a,y) &amp; Q(x)] (a) (b)
+Lx[a] (b)
+LxLx[P(x) -> R(x,c)] (a) (b)
 </pre>
 
 <h2>File Format Basics</h2>
@@ -116,9 +116,8 @@ directions one lambda-conversion at a time.</pre></dd>
 one letter, or may only be single letters. When the <tt>single letter identifiers</tt>
 directive is set, certain abbreviations are accepted when reading predicate
 logic expressions. For instance, "Pabc" may be used to abbreviate P(a,b,c).
-Likewise, "Lxpx" abbreviates Lx[p(x)]. When <tt>multiple letter identifiers</tt>
-is used, "Pabc" is treated as a single identifier, and likewise "Lxpx" is
-treated as a lambda binding the variable "xpx". If neither directive is
+When <tt>multiple letter identifiers</tt>
+is used, "Pabc" is treated as a single identifier. If neither directive is
 specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
 
 </dl>
@@ -131,7 +130,7 @@ specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
 
 <p>For this exercise type, the instructor enters an expression in predicate logic. The student's task is to provide the semantic type of the expression. For example, if the exercise is:</p>
 
-<pre>λx.P(x) ∧ Q(x)</pre>
+<pre>λx[P(x) ∧ Q(x)]</pre>
 
 <p>The student is expected to answer:</p>
 
@@ -141,7 +140,7 @@ specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
 
 <p>Predicate logic expressions can be entered in exercise files without needing to insert special characters like lambdas and wedges. This is described in more detail below. For the example above, the instructor enters into the exercise file:</p>
 
-<pre>Lx. P(x) &amp; Q(x)</pre>
+<pre>Lx[P(x) &amp; Q(x)]</pre>
 
 <p>The correct answer, i.e. the type of this expression, does not need to be entered into the exercise file. The Lambda program will compute the correct answer itself.</p>
 
@@ -149,11 +148,11 @@ specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
 
 <p>For this exercise type, the instructor enters an expression in predicate logic. The student's task is to simplify the expression by performing lambda conversions, one at a time. For example, if the exercise is:</p>
 
-<pre>λxλy.R(a,y) ∧ Q(x) (a) (b)</pre>
+<pre>λx.λy[R(a,y) ∧ Q(x)] (a) (b)</pre>
 
 <p>The student is expected first to answer:</p>
 
-<pre>λy.R(a,y) ∧ Q(a) (b)</pre>
+<pre>λy[R(a,y) ∧ Q(a)] (b)</pre>
 
 <p>The Lambda program will check this intermediate answer and then allow the student to proceed to the next step:</p>
 
@@ -162,8 +161,8 @@ specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
 <p>It is possible to lambda-convert over higher types. This proceeds as follows:</p>
 
 <pre>
-λX. X(b) (λx. R(a,x)) 
-(λx. R(a,x)) (b) 
+λX[X(b)] (λx. R(a,x)) 
+(λx[R(a,x)]) (b) 
 R(a,b)
 </pre>
 
@@ -184,17 +183,18 @@ Student's responses:
 
 <p>The Lambda program will read predicate logic expressions from exercise files. Predicate logic expressions may include:</p>
 
-<p>constants and variables (which must be single letters unless the <tt>multiple letter identifiers</tt> directive is used),</p>
-<p>predicates, entered as P(a) or P(a,b,c) (or in abbreviated form Pabc unless the <tt>multiple letter identifiers</tt> directive is used),</p>
-<p>the logical connectives ¬, ∧, ∨, →, and ↔, which can be entered as ~, &amp;, | (the pipe character), -&gt;, and &lt;-&gt;,</p>
-<p>parenthesized expressions, using parens () or brackets [],</p>
-<p>the quantifiers ∀ and ∃, which can be abbreviated as the capital letters A and E, entered for example as Ax.P(x) or AxEy[P(x) &amp; Q(y)] (also as ExP(x) unless the <tt>multiple letter identifiers</tt> directive is used)</p>
-<p>lambda binders, λ, or abbreviated as the captital letter L, entered as Lx.P(x) or LxLy[P(x,y)] (or LxP(x) unless the <tt>multiple letter identifiers</tt> directive is used), and</p>
-<p>function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx.P(x) (b).</p>
+<ul>
+<li>Constants and variables (which must be single letters unless the <tt>multiple letter identifiers</tt> directive is used)</li>
+<li>Constants and variable with explicit types using a colon to separate the name and the type, such as: x:e, X:&lt;e,t&gt;, etc. Composite types such as &lt;e,t&gt; must be written with brackets and cannot be abbreviated as "et". Explicit types are unnecessary when the typing conventions specified in the exercise file already provide a type for the identifier.</li>
+<li>Predicates, entered as P(a) or P(a,b,c) (or in abbreviated form Pabc unless the <tt>multiple letter identifiers</tt> directive is used).</li>
+<li>The logical connectives ¬, ∧, ∨, →, and ↔, which can be entered as ~, &amp;, | (the pipe character), -&gt;, and &lt;-&gt;.</li>
+<li>Parenthesized expressions, using parens () or brackets []</li>
+<li>The quantifiers ∀ and ∃, which can be entered as the capital letters A and E, entered for example as Ax[P(x)] or AxEy[P(x) &amp; Q(y)]. Periods may separate multiple consecutive quantifiers. After quantifiers, a bracketed expression must always follow to avoid ambiguity.</li>
+<li>lambda λ and iota ι binders, which can be entered as the captital letters L or I, entered as Lx[P(x)] or LxLy[P(x,y)], Iz[king(z)] etc. Periods may separate multiple consecutive binders. After binders, a bracketed expression must always follow to avoid ambiguity.</li>
+<li>function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx[P(x)] (b).</li>
+</ul>
 
-<p>Because the capital letters A, E, and L are used for special symbols, they cannot serve as constants or variables.</p>
-
-<p>Care must be taken that the operator precedence assumed by the instructor agrees with that used by the Lambda program. When in doubt, add parenthesis. Importantly, expressions involving binders and the logical infix connectives are often ambiguously written in print, but the Lambda program will not warn the instructor of potential ambiguity. For instance, Lx.P(x) &amp; Q(x) will be interpreted by the lambda program as Lx.[P(x) &amp; Q(x)]. Likewise, Lx.P(x) &amp; Ly.Q(y) will be interpreted as Lx.[P(x) &amp; Ly.Q(y)], which is perhaps counterintuitive.</p>
+<p>Because the capital letters A, E, L, and I are used for special symbols, they cannot serve as constants or variables.</p>
 
 	</body>
 </html>

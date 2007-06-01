@@ -36,12 +36,25 @@ public class TypeParser {
      * @throws SyntaxException if the string cannot be parsed
      */
     public static Type parse(String type) throws SyntaxException {
+        return parseType(type, 0, false).result;
+    }
+    
+    static class ParseResult {
+        public final Type result;
+        public final int end;
+        public ParseResult(Type result, int end) {
+            this.result = result;
+            this.end = end;
+        }
+    }
+    
+    static ParseResult parseType(String type, int start, boolean stopSoon) throws SyntaxException {
         Stack stack = new Stack();
         ParseState current = new ParseState();
         
         boolean isParsingProduct = false;
         
-        for (int i = 0; i < type.length(); i++) {
+        for (int i = start; i < type.length(); i++) {
             char c = type.charAt(i);
             
             if (isParsingProduct) {
@@ -94,6 +107,8 @@ public class TypeParser {
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket here.", i);
                     current = CloseType(stack, current);
+                    if (stopSoon && stack.size() == 0)
+                        return new ParseResult(current.Left, i);
                 }
                 
             } else if (c == ',') {
@@ -122,6 +137,8 @@ public class TypeParser {
             } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
                 AtomicType at = new AtomicType(c);
                 if (current.Left == null) {
+                    if (stopSoon && stack.size() == 0 && !current.ReadBracket)
+                        return new ParseResult(at, i);
                     current.Left = at;
                 } else if (current.Right == null) {
                     if (!current.ReadBracket && !(current.Left instanceof AtomicType))
@@ -163,23 +180,23 @@ public class TypeParser {
         }
         
         if (stack.size() != 0)
-            throw new SyntaxException("Your brackets are not balanced.", -1);
+            throw new SyntaxException("Your brackets are not balanced.", type.length()-1);
             
         if (current.Left == null) {
-            throw new SyntaxException("Enter a type.", 0);
+            throw new SyntaxException("Enter a type.", start);
         } else if (current.Right == null) {
             if (current.ReadBracket)
                 throw new SyntaxException("You're missing the right side of the type.", type.length());
             else if (current.ReadComma)
                 throw new SyntaxException("Go on typing after the comma.", type.length());
             else
-                return current.Left;
+                return new ParseResult(current.Left, type.length()-1);
         } else {
             if (current.ReadBracket)
                 throw new SyntaxException("You're missing a closing bracket.", type.length());
             if (current.ReadComma) // comma but no brackets
-                 throw new SyntaxException("I can only understand a complex type with a comma when the type is surrounded by brackets. Add brackets around the whole type.", 0);
-            return new CompositeType(current.Left, current.Right);
+                 throw new SyntaxException("I can only understand a complex type with a comma when the type is surrounded by brackets. Add brackets around the whole type.", start);
+            return new ParseResult(new CompositeType(current.Left, current.Right), type.length()-1);
         }
     }
     

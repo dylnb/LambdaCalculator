@@ -21,8 +21,8 @@ public class Const extends Identifier {
      * @param repr the name of the constant
      * @param type the type of the constant
      */
-    public Const(String repr, Type type) {
-        super(repr, type); 
+    public Const(String repr, Type type, boolean isTypeExplicit) {
+        super(repr, type, isTypeExplicit); 
     }    
 
     protected Set getVars(boolean unboundOnly) {

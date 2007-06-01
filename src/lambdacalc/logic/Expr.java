@@ -379,7 +379,7 @@ public abstract class Expr {
      */
     public static Var createFreshVar(Var v, Set variablesInUse) {
         while (variablesInUse.contains(v))
-            v = new Var(v.getSymbol() + Identifier.PRIME, v.getType());
+            v = new Var(v.getSymbol() + Identifier.PRIME, v.getType(), v.isTypeExplicit());
         return v;
     }
 

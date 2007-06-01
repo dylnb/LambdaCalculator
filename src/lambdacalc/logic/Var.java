@@ -19,8 +19,8 @@ public class Var extends Identifier {
     /**
      * Constructs a variable with the given name and type.
      */
-    public Var(String repr, Type type) {
-        super(repr, type);
+    public Var(String repr, Type type, boolean isTypeExplicit) {
+        super(repr, type, isTypeExplicit);
     }
 
     protected Set getVars(boolean unboundOnly) {

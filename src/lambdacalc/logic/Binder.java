@@ -158,7 +158,7 @@ public abstract class Binder extends Expr {
         if (bindersToChange.contains(this)) {
             // Choose a fresh variable
             if (v instanceof Const)
-                v = new Var(v.getSymbol(), v.getType()); // very odd, but we need it to be a variable so that we can call createFreshVar
+                v = new Var(v.getSymbol(), v.getType(), v.isTypeExplicit()); // very odd, but we need it to be a variable so that we can call createFreshVar
             v = createFreshVar((Var)v, variablesInUse);
             
             // Push the variable and mapping onto the stack

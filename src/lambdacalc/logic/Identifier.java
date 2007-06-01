@@ -23,11 +23,13 @@ public abstract class Identifier extends Expr {
     
     String symbol;
     Type type;
+    boolean typeIsExplicit;
     
     /** Creates a new instance of Identifier */
-    public Identifier(String symbol, Type type) {
-        this.symbol=symbol; 
+    public Identifier(String symbol, Type type, boolean isTypeExplicit) {
+        this.symbol = symbol; 
         this.type = type;
+        this.typeIsExplicit = isTypeExplicit;
         if (symbol == null) throw new IllegalArgumentException();
         if (type == null) throw new IllegalArgumentException();
     }
@@ -66,7 +68,10 @@ public abstract class Identifier extends Expr {
     }
     
     public String toString() {
-        return symbol;
+        if (!isTypeExplicit())
+            return symbol;
+        else
+            return symbol + ":" + type.toString();
     }
     
     /**
@@ -80,17 +85,23 @@ public abstract class Identifier extends Expr {
         return type;
     }
     
+    public boolean isTypeExplicit() {
+        return typeIsExplicit;
+    }
+    
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeUTF(getClass().getName());
-        output.writeShort(0); // data format version
+        output.writeShort(1); // data format version
         output.writeUTF(symbol);
         type.writeToStream(output);
+        output.writeBoolean(typeIsExplicit);
     }
     
     Identifier(java.io.DataInputStream input) throws java.io.IOException {
         // the class name has already been read
-        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        if (input.readShort() != 1) throw new java.io.IOException("Invalid data."); // future version?
         symbol = input.readUTF();
         type = Type.readFromStream(input);
+        typeIsExplicit = input.readBoolean();
     }
 }
