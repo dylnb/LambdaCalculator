@@ -24,7 +24,7 @@ import lambdacalc.logic.*;
  *
  * @author tauberer
  */
-public class LambdaEnabledTextField extends JTextField implements Serializable {
+public class LambdaEnabledTextField extends JTextField {
 
      boolean isTempText = false;
     

@@ -393,6 +393,7 @@ public class TrainingWindow extends JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
         jFileChooser1 = new javax.swing.JFileChooser();
         jPanelTypesAndConversions = new javax.swing.JPanel();
         jPanelTypesAndConversions2 = new javax.swing.JPanel();
@@ -419,7 +420,6 @@ public class TrainingWindow extends JFrame {
         lblHelpBinaries = new javax.swing.JLabel();
         lblHelpNot = new javax.swing.JLabel();
         lblHelpConditionals = new javax.swing.JLabel();
-        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
         lblIdentifierTypes = new javax.swing.JTextArea();
         jPanelDefaultRightHalf = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -436,6 +436,7 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
+        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(80, 80));
         jPanelTypesAndConversions.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -653,11 +654,10 @@ public class TrainingWindow extends JFrame {
                 .add(lblHelpNot)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(lblHelpConditionals)
-                .addContainerGap(336, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jSplitPaneLowerLeft.setRightComponent(jPanelEnterExpressions);
 
-        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(80, 80));
         lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblIdentifierTypes.setColumns(20);
         lblIdentifierTypes.setEditable(false);
@@ -668,9 +668,7 @@ public class TrainingWindow extends JFrame {
         lblIdentifierTypes.setWrapStyleWord(true);
         lblIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Conventions about letters"));
         lblIdentifierTypes.setPreferredSize(new java.awt.Dimension(80, 80));
-        jScrollPaneIdentifierTypes.setViewportView(lblIdentifierTypes);
-
-        jSplitPaneLowerLeft.setLeftComponent(jScrollPaneIdentifierTypes);
+        jSplitPaneLowerLeft.setLeftComponent(lblIdentifierTypes);
 
         jSplitPaneLeftHalf.setRightComponent(jSplitPaneLowerLeft);
 
