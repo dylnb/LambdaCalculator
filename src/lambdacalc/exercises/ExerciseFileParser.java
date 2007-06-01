@@ -34,17 +34,13 @@ import lambdacalc.logic.*;
  * A parser for teacher-written exercise files in text format.
  */
 public class ExerciseFileParser {
-    
-    /**
-     * Creates a new instance of ExerciseFileParser.
-     */
-    public ExerciseFileParser() {
+    private ExerciseFileParser() {
     }
     
     /**
      * Parses an exercise file from the given Reader.
      */
-    public ExerciseFile parse(Reader reader) 
+    public static ExerciseFile parse(Reader reader) 
         throws IOException, ExerciseFileFormatException {
         
         // distinguishes between variables and constants and knows their semantic types
@@ -132,6 +128,15 @@ public class ExerciseFileParser {
             } else if (line.startsWith("define ")) {
                 parseLexiconLine(line, exprParseOpts, file, linectr);
 
+            } else if (line.startsWith("use rule ")) {
+                String rule = line.substring("use rule ".length());
+                if (rule.equals("function application"))
+                    file.getLexicon().getCompositionRules().add(
+                        lambdacalc.lf.FunctionApplicationRule.INSTANCE);
+                else
+                    throw new ExerciseFileFormatException(
+                       "'use rule' must be followed by 'function application", linectr, line);
+
             } else {
                 // this is an exercise
                 Exercise ex = null;
@@ -183,7 +188,7 @@ public class ExerciseFileParser {
     /**
      * Parses a line that indicates the semantic type of an identifier.
      */
-    private void parseTypeLine(int chop, boolean variable, String line, IdentifierTyper typer, 
+    private static void parseTypeLine(int chop, boolean variable, String line, IdentifierTyper typer, 
             int linenum) throws ExerciseFileFormatException {
         int colon = line.indexOf(':');
         if (colon == -1)
@@ -221,7 +226,7 @@ public class ExerciseFileParser {
         }
     }
     
-    private void parseLexiconLine(String line, ExpressionParser.ParseOptions exprParseOpts, ExerciseFile file, int linenum) throws ExerciseFileFormatException {
+    private static void parseLexiconLine(String line, ExpressionParser.ParseOptions exprParseOpts, ExerciseFile file, int linenum) throws ExerciseFileFormatException {
         // lexicon lines start with "define "
     
             int colon = line.indexOf(':');

@@ -56,6 +56,10 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     public IdentifierTyper getIdentifierTyper() {
         return types;
     }
+    
+    public Nonterminal getTree() {
+        return treeroot;
+    }
 
     public String toString() {
         return treeroot.toString();
