@@ -87,7 +87,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
         jButtonDoAgain = new javax.swing.JButton();
-        jButtonConfirm = new javax.swing.JButton();
+        jButtonEnterProblem = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemClose = new javax.swing.JMenuItem();
@@ -133,7 +133,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(jRadioButtonType);
-        jRadioButtonType.setText("Type Simplification");
+        jRadioButtonType.setText("Type Identification");
         jRadioButtonType.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jRadioButtonType.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jRadioButtonType.addActionListener(new java.awt.event.ActionListener() {
@@ -175,10 +175,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        jButtonConfirm.setText("Enter Problem");
-        jButtonConfirm.addActionListener(new java.awt.event.ActionListener() {
+        jButtonEnterProblem.setText("Enter Problem");
+        jButtonEnterProblem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonConfirmActionPerformed(evt);
+                jButtonEnterProblemActionPerformed(evt);
             }
         });
 
@@ -223,7 +223,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
                         .add(350, 350, 350)
-                        .add(jButtonConfirm))
+                        .add(jButtonEnterProblem))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)))
@@ -243,7 +243,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                         .add(txtEnterYourOwnProblem, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButtonConfirm, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jButtonEnterProblem, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -260,7 +260,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmActionPerformed
+    private void jButtonEnterProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterProblemActionPerformed
         
         Exercise enteredEx;
         
@@ -321,6 +321,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             previousEx=ex;
             ex=enteredEx;
             tellGUIProblemEntered();
+            
         } catch (SyntaxException s) {
             
             if (this.ex!=null) { // user is trying to modify a problem on the fly
@@ -342,7 +343,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         }
 
-    }//GEN-LAST:event_jButtonConfirmActionPerformed
+    }//GEN-LAST:event_jButtonEnterProblemActionPerformed
 
     private void undoOnTheFlyModification() {
         txtEnterYourOwnProblem.setText(this.currentProblemString);
@@ -383,12 +384,13 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
       
     private void txtEnterYourOwnProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnterYourOwnProblemActionPerformed
-        jButtonConfirm.doClick();
+        jButtonEnterProblem.doClick();
     }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
 
     private void switchOn(javax.swing.JTextField j) {
         //j.setEnabled(true);
         j.setEditable(true);
+        System.out.println("DEBUG: switched on "+j);
         //j.setBackground(javax.swing.UIManager.getColor("TextField.activeBackground"));
     }
     
@@ -404,7 +406,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private void resetGUI() {
         displayFeedback("Entering resetGUI");
         switchOn(txtEnterYourOwnProblem);
-        jButtonConfirm.setEnabled(true);
+        jButtonEnterProblem.setEnabled(true);
         jButtonCheckAnswer.setEnabled(false);
         txtUserAnswer.setText("");
         switchOff(txtUserAnswer);
@@ -421,7 +423,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
         switchOn(txtEnterYourOwnProblem); // switch off if you don't want to allow users
         // to allow entering a problem while they're working on another one
-        jButtonConfirm.setEnabled(true);
+        
+        jButtonEnterProblem.setEnabled(true);
         jButtonCheckAnswer.setEnabled(true);
         txtUserAnswer.setText("");
         setRadioButtonsEnabled(false);
@@ -441,8 +444,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     // when problem is solved
     private void tellGUIProblemSolved() {
         txtEnterYourOwnProblem.setEnabled(true);
-        jButtonConfirm.setEnabled(true);
-        txtUserAnswer.setEnabled(false);
+        jButtonEnterProblem.setEnabled(true);
+        switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
         setRadioButtonsEnabled(false);
         jButtonDoAnotherProblem.setEnabled(true);
@@ -514,9 +517,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton jButtonCheckAnswer;
     private javax.swing.JButton jButtonCloseWindow;
-    private javax.swing.JButton jButtonConfirm;
     private javax.swing.JButton jButtonDoAgain;
     private javax.swing.JButton jButtonDoAnotherProblem;
+    private javax.swing.JButton jButtonEnterProblem;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JRadioButton jRadioButtonLambda;
     private javax.swing.JRadioButton jRadioButtonType;

@@ -76,7 +76,7 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="350" max="-2" attributes="0"/>
-                      <Component id="jButtonConfirm" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonEnterProblem" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
@@ -104,7 +104,7 @@
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButtonConfirm" max="32767" attributes="1"/>
+              <Component id="jButtonEnterProblem" max="32767" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="txtUserAnswer" min="-2" pref="30" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -187,7 +187,7 @@
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Type Simplification"/>
+        <Property name="text" type="java.lang.String" value="Type Identification"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
             <EmptyBorder bottom="0" left="0" right="0" top="0"/>
@@ -259,12 +259,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDoAgainActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButtonConfirm">
+    <Component class="javax.swing.JButton" name="jButtonEnterProblem">
       <Properties>
         <Property name="text" type="java.lang.String" value="Enter Problem"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonConfirmActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonEnterProblemActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
