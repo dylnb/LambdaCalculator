@@ -154,7 +154,7 @@ public class TrainingWindow extends JFrame {
     
     // used in loadExerciseFile()
     private ExerciseFile parse(File f) throws IOException, ExerciseFileFormatException {
-        return new ExerciseFileParser().parse(new FileReader(f));
+        return ExerciseFileParser.parse(new FileReader(f));
     }
     
     
