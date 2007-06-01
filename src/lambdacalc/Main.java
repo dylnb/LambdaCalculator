@@ -6,6 +6,7 @@
 
 package lambdacalc;
 
+import javax.swing.JOptionPane;
 import lambdacalc.gui.*;
 
 /**
@@ -18,12 +19,21 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        
+        try {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
 
-                WelcomeWindow.showWindow();
+                    WelcomeWindow.showWindow();
 
-            }
-        });
+                }
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    WelcomeWindow.getSingleton(),
+                    e.toString(),
+                    e.getMessage(),
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
