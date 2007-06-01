@@ -323,23 +323,27 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             tellGUIProblemEntered();
             
         } catch (SyntaxException s) {
-            
-            if (this.ex!=null) { // user is trying to modify a problem on the fly
+
+            //if (this.ex!=null) { // user is trying to modify a problem on the fly
+            if (false) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
                 displayFeedback("I could not understand your modification of the current problem: " + s.getMessage()
                 +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");                
             } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
+                displayFeedback(s.getMessage());
                 if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
                     txtUserAnswer.setCaretPosition(s.getPosition());
             }
         } catch (TypeEvaluationException t) {
-            if (this.ex!=null) { // user is trying to modify a problem on the fly
+//            if (this.ex!=null) { // user is trying to modify a problem on the fly
+            if (false) { // user is trying to modify a problem on the fly
                 undoOnTheFlyModification();
                 displayFeedback("I could not understand your modification of the current problem: " + t.getMessage()
                 +"\nI reverted your modification. If you would like to scratch the current problem " +
                         "and start a new one, click on Do Another Problem.");
             } else {
+                displayFeedback(t.getMessage());
             }
         }
 
@@ -388,14 +392,13 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
 
     private void switchOn(javax.swing.JTextField j) {
-        //j.setEnabled(true);
+        j.setEnabled(true);
         j.setEditable(true);
-        System.out.println("DEBUG: switched on "+j);
         //j.setBackground(javax.swing.UIManager.getColor("TextField.activeBackground"));
     }
     
     private void switchOff(javax.swing.JTextField j) {
-        //j.setEnabled(false);
+        j.setEnabled(false);
         j.setEditable(false);
         //if (j.getText().equals("")) {
         //    j.setBackground(javax.swing.UIManager.getColor("TextField.inactiveBackground"));
@@ -433,9 +436,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         switchOn(txtUserAnswer);
         
         if (selection==LAMBDA_CONVERSION) {
-            displayFeedback("I got your problem. Now enter a lambda expression into the highlighted text field.");
+            displayFeedback("I got your problem, Josh. I think I can help you. Enter a lambda expression into the highlighted text field.");
         } else { // selection==TYPE+SIMPLIFICATION
-            displayFeedback("I got your problem. Now enter a type into the highlighted text field.");
+            displayFeedback("I got your problem, Josh. I think I can help you. Enter a type into the highlighted text field.");
         }
         
         txtUserAnswer.requestFocus();
