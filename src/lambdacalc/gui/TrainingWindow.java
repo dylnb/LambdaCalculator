@@ -119,17 +119,17 @@ public class TrainingWindow extends JFrame {
     
     
     public void switchViewTo(int view) {
-        switch (view) {
-            case TYPES_AND_CONVERSIONS:
-                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
-                break;
-            case TREES:
-                jSplitPaneMain.setRightComponent(jPanelTrees);
-                break;
-            default:
-                throw new IllegalArgumentException("Don't know this view");
-        }
-        
+//        switch (view) {
+//            case TYPES_AND_CONVERSIONS:
+//                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
+//                break;
+//            case TREES:
+//                jSplitPaneMain.setRightComponent(jPanelTrees);
+//                break;
+//            default:
+//                throw new IllegalArgumentException("Don't know this view");
+//        }
+//        
     }
     
     
@@ -408,9 +408,9 @@ public class TrainingWindow extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanelDefaultRightHalf = new javax.swing.JPanel();
         jFileChooser1 = new javax.swing.JFileChooser();
-        jPanelTrees = new javax.swing.JPanel();
+        jScrollPaneTree = new javax.swing.JScrollPane();
+        jPanelTree = new javax.swing.JPanel();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
         jScrollPaneUpperLeft = new javax.swing.JScrollPane();
@@ -432,13 +432,14 @@ public class TrainingWindow extends JFrame {
         btnNext = new javax.swing.JButton();
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
-        jScrollPaneDirections = new javax.swing.JScrollPane();
-        lblDirections = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         jPanelLexicon = new javax.swing.JPanel();
         jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnTransfer = new javax.swing.JButton();
+        jPanelDirectionsOrTrees = new javax.swing.JPanel();
+        jScrollPaneDirections = new javax.swing.JScrollPane();
+        lblDirections = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -450,26 +451,18 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
-        org.jdesktop.layout.GroupLayout jPanelDefaultRightHalfLayout = new org.jdesktop.layout.GroupLayout(jPanelDefaultRightHalf);
-        jPanelDefaultRightHalf.setLayout(jPanelDefaultRightHalfLayout);
-        jPanelDefaultRightHalfLayout.setHorizontalGroup(
-            jPanelDefaultRightHalfLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 639, Short.MAX_VALUE)
+        jScrollPaneTree.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
+        org.jdesktop.layout.GroupLayout jPanelTreeLayout = new org.jdesktop.layout.GroupLayout(jPanelTree);
+        jPanelTree.setLayout(jPanelTreeLayout);
+        jPanelTreeLayout.setHorizontalGroup(
+            jPanelTreeLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 0, Short.MAX_VALUE)
         );
-        jPanelDefaultRightHalfLayout.setVerticalGroup(
-            jPanelDefaultRightHalfLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 649, Short.MAX_VALUE)
+        jPanelTreeLayout.setVerticalGroup(
+            jPanelTreeLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 0, Short.MAX_VALUE)
         );
-        org.jdesktop.layout.GroupLayout jPanelTreesLayout = new org.jdesktop.layout.GroupLayout(jPanelTrees);
-        jPanelTrees.setLayout(jPanelTreesLayout);
-        jPanelTreesLayout.setHorizontalGroup(
-            jPanelTreesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 100, Short.MAX_VALUE)
-        );
-        jPanelTreesLayout.setVerticalGroup(
-            jPanelTreesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 100, Short.MAX_VALUE)
-        );
+        jScrollPaneTree.setViewportView(jPanelTree);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -676,26 +669,6 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jScrollPaneFeedback, gridBagConstraints);
 
-        jScrollPaneDirections.setBorder(null);
-        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        lblDirections.setColumns(20);
-        lblDirections.setEditable(false);
-        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
-        lblDirections.setLineWrap(true);
-        lblDirections.setRows(5);
-        lblDirections.setWrapStyleWord(true);
-        lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
-        jScrollPaneDirections.setViewportView(lblDirections);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanelTypesAndConversions.add(jScrollPaneDirections, gridBagConstraints);
-
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -765,6 +738,37 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
+
+        jPanelDirectionsOrTrees.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPaneDirections.setBorder(null);
+        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblDirections.setColumns(20);
+        lblDirections.setEditable(false);
+        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblDirections.setLineWrap(true);
+        lblDirections.setRows(5);
+        lblDirections.setWrapStyleWord(true);
+        lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
+        jScrollPaneDirections.setViewportView(lblDirections);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelDirectionsOrTrees.add(jScrollPaneDirections, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTypesAndConversions.add(jPanelDirectionsOrTrees, gridBagConstraints);
 
         jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
 
@@ -1170,15 +1174,16 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanelDefaultRightHalf;
+    private javax.swing.JPanel jPanelDirectionsOrTrees;
     private javax.swing.JPanel jPanelEnterExpressions;
     private javax.swing.JPanel jPanelLexicon;
     private javax.swing.JPanel jPanelNavigationButtons;
     private javax.swing.JPanel jPanelQuestion;
-    private javax.swing.JPanel jPanelTrees;
+    private javax.swing.JPanel jPanelTree;
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneTree;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
