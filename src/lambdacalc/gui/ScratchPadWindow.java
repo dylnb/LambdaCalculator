@@ -334,8 +334,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
 
                 displayFeedback(s.getMessage());
+                txtEnterYourOwnProblem.requestFocusInWindow();
                 if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
-                    txtUserAnswer.setCaretPosition(s.getPosition());
+                    txtEnterYourOwnProblem.setCaretPosition(s.getPosition());
             }
         } catch (TypeEvaluationException t) {
             jButtonCheckAnswer.setEnabled(false);
@@ -348,6 +349,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             } else {
                 
                 displayFeedback(t.getMessage());
+                txtEnterYourOwnProblem.requestFocusInWindow();
             }
         }
 
@@ -423,7 +425,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         txtFeedback.setText("");
         jButtonDoAgain.setEnabled(false);
         
-        txtEnterYourOwnProblem.requestFocus();
+        txtEnterYourOwnProblem.requestFocusInWindow();
     }
     
     // after user has entered a problem and clicked "Enter problem" or hit Return
@@ -441,12 +443,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         switchOn(txtUserAnswer);
         
         if (selection==LAMBDA_CONVERSION) {
-            displayFeedback("I got your problem, Josh. I think I can help you. Enter a lambda expression into the highlighted text field.");
+            displayFeedback("I got your problem. Now enter a lambda expression into the highlighted text field.");
         } else { // selection==TYPE+SIMPLIFICATION
-            displayFeedback("I got your problem, Josh. I think I can help you. Enter a type into the highlighted text field.");
+            displayFeedback("I got your problem. Now enter a type into the highlighted text field.");
         }
         
-        txtUserAnswer.requestFocus();
+        txtUserAnswer.requestFocusInWindow();
     }
     
     // when problem is solved
@@ -497,7 +499,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
                 txtUserAnswer.setCaretPosition(s.getPosition());
         }
-        txtUserAnswer.requestFocus();
+        txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_onCheckAnswer
 
     
