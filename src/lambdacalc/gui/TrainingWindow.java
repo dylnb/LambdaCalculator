@@ -406,21 +406,24 @@ public class TrainingWindow extends JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
         jFileChooser1 = new javax.swing.JFileChooser();
         jPanelTypesAndConversions = new javax.swing.JPanel();
-        jPanelTypesAndConversions2 = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
+        jPanelNavigationButtons = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
+        btnDoAgain = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
         jScrollPaneDirections = new javax.swing.JScrollPane();
         lblDirections = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
+        jPanelLexicon = new javax.swing.JPanel();
+        jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
-        btnDoAgain = new javax.swing.JButton();
         btnTransfer = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
         jPanelTrees = new javax.swing.JPanel();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
@@ -447,15 +450,25 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
-        jPanelTypesAndConversions.setLayout(new java.awt.GridLayout(1, 1));
+        jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
-        jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnCheckAnswer.setText("Check Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onCheckAnswer(evt);
             }
         });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 15;
+        gridBagConstraints.weightx = 1.0;
+        jPanelTypesAndConversions.add(btnCheckAnswer, gridBagConstraints);
+
+        jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
 
         btnPrev.setText("< Previous Problem");
         btnPrev.addActionListener(new java.awt.event.ActionListener() {
@@ -464,12 +477,43 @@ public class TrainingWindow extends JFrame {
             }
         });
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
+
+        btnDoAgain.setText("Do Problem Again");
+        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoAgainActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
+
         btnNext.setText("Next Problem >");
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextActionPerformed(evt);
             }
         });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        jPanelNavigationButtons.add(btnNext, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanelTypesAndConversions.add(jPanelNavigationButtons, gridBagConstraints);
 
         jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
@@ -483,6 +527,14 @@ public class TrainingWindow extends JFrame {
         txtFeedback.setBorder(null);
         jScrollPaneFeedback.setViewportView(txtFeedback);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTypesAndConversions.add(jScrollPaneFeedback, gridBagConstraints);
+
         jScrollPaneDirections.setBorder(null);
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblDirections.setColumns(20);
@@ -494,6 +546,15 @@ public class TrainingWindow extends JFrame {
         lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
         jScrollPaneDirections.setViewportView(lblDirections);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTypesAndConversions.add(jScrollPaneDirections, gridBagConstraints);
+
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -501,16 +562,48 @@ public class TrainingWindow extends JFrame {
             }
         });
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelTypesAndConversions.add(txtUserAnswer, gridBagConstraints);
+
+        jPanelLexicon.setBorder(javax.swing.BorderFactory.createTitledBorder("Placeholder for lexicon"));
+        jPanelLexicon.setMinimumSize(new java.awt.Dimension(250, 100));
+        jPanelLexicon.setPreferredSize(new java.awt.Dimension(250, 100));
+        org.jdesktop.layout.GroupLayout jPanelLexiconLayout = new org.jdesktop.layout.GroupLayout(jPanelLexicon);
+        jPanelLexicon.setLayout(jPanelLexiconLayout);
+        jPanelLexiconLayout.setHorizontalGroup(
+            jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 238, Short.MAX_VALUE)
+        );
+        jPanelLexiconLayout.setVerticalGroup(
+            jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
+        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanelTypesAndConversions.add(jPanelLexicon, gridBagConstraints);
+
+        jPanelQuestion.setLayout(new java.awt.GridBagLayout());
+
         txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
         txtQuestion.setEditable(false);
         txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
-
-        btnDoAgain.setText("Do Problem Again");
-        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDoAgainActionPerformed(evt);
-            }
-        });
+        txtQuestion.setPreferredSize(new java.awt.Dimension(460, 47));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelQuestion.add(txtQuestion, gridBagConstraints);
 
         btnTransfer.setText("Paste below");
         btnTransfer.addActionListener(new java.awt.event.ActionListener() {
@@ -519,78 +612,18 @@ public class TrainingWindow extends JFrame {
             }
         });
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Placeholder for lexicon"));
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 181, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 283, Short.MAX_VALUE)
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        jPanelQuestion.add(btnTransfer, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout jPanelTypesAndConversions2Layout = new org.jdesktop.layout.GroupLayout(jPanelTypesAndConversions2);
-        jPanelTypesAndConversions2.setLayout(jPanelTypesAndConversions2Layout);
-        jPanelTypesAndConversions2Layout.setHorizontalGroup(
-            jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .add(1, 1, 1)
-                        .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
-                    .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                                .add(txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(btnTransfer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .add(btnPrev)
-                        .add(70, 70, 70)
-                        .add(btnDoAgain)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 102, Short.MAX_VALUE)
-                        .add(btnNext))
-                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 387, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        jPanelTypesAndConversions2Layout.setVerticalGroup(
-            jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jScrollPaneDirections, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(txtQuestion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .add(btnTransfer, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(txtUserAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnCheckAnswer, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .add(3, 3, 3)
-                        .add(jScrollPaneFeedback, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
-                    .add(jPanelTypesAndConversions2Layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanelTypesAndConversions2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(btnPrev)
-                        .add(btnDoAgain))
-                    .add(btnNext))
-                .addContainerGap())
-        );
-        jPanelTypesAndConversions.add(jPanelTypesAndConversions2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
         org.jdesktop.layout.GroupLayout jPanelTreesLayout = new org.jdesktop.layout.GroupLayout(jPanelTrees);
         jPanelTrees.setLayout(jPanelTreesLayout);
@@ -809,6 +842,82 @@ public class TrainingWindow extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void onCheckAnswer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckAnswer
+        try {
+            String string = txtUserAnswer.getText().trim();
+            if (!string.equals(txtUserAnswer.getText()))
+                txtUserAnswer.setText(string);
+            
+            AnswerStatus status = ex.checkAnswer(string);
+            if (status.isCorrect() && status.endsExercise()) {
+                String response = status.getMessage() + " ";
+                if (btnNext.isEnabled() && !exFile.hasBeenCompleted())
+                    response += "Click the Next Problem button below to go on to the next exercise.";
+                else if (!exFile.hasBeenCompleted())
+                    response += "Now go back and finish the exercises you haven't solved yet.";
+                else
+                    response += "Congratulations! You've solved all the problems in this exercise file. Now save your work for submission.";
+                txtFeedback.setText(response);
+            } else if (status.isCorrect()) {
+                txtFeedback.setText(status.getMessage());
+                txtQuestion.setText(ex.getLastAnswer());
+            } else {
+                String message = status.getMessage();
+                
+                // This seems vaguely insulting after x repetitions, so we take it out.
+//                if (++wrongInARowCount >= 3) {
+//                    message += "\nHave you read the directions carefully?";
+//                    wrongInARowCount = 0;
+//                }
+                txtFeedback.setText(message);
+            }
+            
+            jTreeExerciseFile.repaint();
+            
+            setAnswerEnabledState(); // update enabled state of controls
+            
+            if (status.isCorrect())
+                flagChangeMade();
+            
+        } catch (SyntaxException s) {
+            txtFeedback.setText(s.getMessage());
+            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
+                txtUserAnswer.setCaretPosition(s.getPosition());
+        }
+        txtUserAnswer.requestFocus();
+    }//GEN-LAST:event_onCheckAnswer
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        if (currentEx > 0)
+            currentEx--;
+        else
+            currentGroup--;
+        showExercise();
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        if (currentEx+1 < exFile.getGroup(currentGroup).size())
+            currentEx++;
+        else
+            currentGroup++;
+        showExercise();
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void txtUserAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserAnswerActionPerformed
+        onCheckAnswer(evt);
+    }//GEN-LAST:event_txtUserAnswerActionPerformed
+
+    private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
+        ex.reset();
+        flagChangeMade();
+        jTreeExerciseFile.repaint();
+        showExercise();
+    }//GEN-LAST:event_btnDoAgainActionPerformed
+
+    private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
+        txtUserAnswer.setText(txtQuestion.getText());
+    }//GEN-LAST:event_btnTransferActionPerformed
+
     private void jTreeExerciseFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeExerciseFileMouseClicked
         
         // by clicking on the tree view when no exercise is loaded,
@@ -821,20 +930,9 @@ public class TrainingWindow extends JFrame {
         }
     }//GEN-LAST:event_jTreeExerciseFileMouseClicked
 
-    private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
-        txtUserAnswer.setText(txtQuestion.getText());
-    }//GEN-LAST:event_btnTransferActionPerformed
-
     private void menuItemScratchPadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemScratchPadActionPerformed
         ScratchPadWindow.showWindow();
     }//GEN-LAST:event_menuItemScratchPadActionPerformed
-
-    private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
-        ex.reset();
-        flagChangeMade();
-        jTreeExerciseFile.repaint();
-        showExercise();
-    }//GEN-LAST:event_btnDoAgainActionPerformed
 
     private void menuItemTeacherToolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTeacherToolActionPerformed
         TeacherToolWindow.showWindow();
@@ -1025,71 +1123,6 @@ public class TrainingWindow extends JFrame {
             showExercise();
         }
     }//GEN-LAST:event_onExerciseTreeValueChanged
-
-    private void txtUserAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserAnswerActionPerformed
-        onCheckAnswer(evt);
-    }//GEN-LAST:event_txtUserAnswerActionPerformed
-
-    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        if (currentEx+1 < exFile.getGroup(currentGroup).size())
-            currentEx++;
-        else
-            currentGroup++;
-        showExercise();
-    }//GEN-LAST:event_btnNextActionPerformed
-
-    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-        if (currentEx > 0)
-            currentEx--;
-        else
-            currentGroup--;
-        showExercise();
-    }//GEN-LAST:event_btnPrevActionPerformed
-
-    private void onCheckAnswer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckAnswer
-        try {
-            String string = txtUserAnswer.getText().trim();
-            if (!string.equals(txtUserAnswer.getText()))
-                txtUserAnswer.setText(string);
-            
-            AnswerStatus status = ex.checkAnswer(string);
-            if (status.isCorrect() && status.endsExercise()) {
-                String response = status.getMessage() + " ";
-                if (btnNext.isEnabled() && !exFile.hasBeenCompleted())
-                    response += "Click the Next Problem button below to go on to the next exercise.";
-                else if (!exFile.hasBeenCompleted())
-                    response += "Now go back and finish the exercises you haven't solved yet.";
-                else
-                    response += "Congratulations! You've solved all the problems in this exercise file. Now save your work for submission.";
-                txtFeedback.setText(response);
-            } else if (status.isCorrect()) {
-                txtFeedback.setText(status.getMessage());
-                txtQuestion.setText(ex.getLastAnswer());
-            } else {
-                String message = status.getMessage();
-
-                // This seems vaguely insulting after x repetitions, so we take it out.
-//                if (++wrongInARowCount >= 3) {
-//                    message += "\nHave you read the directions carefully?";
-//                    wrongInARowCount = 0;
-//                }
-                txtFeedback.setText(message);
-            }
-            
-            jTreeExerciseFile.repaint();
-
-            setAnswerEnabledState(); // update enabled state of controls
-            
-            if (status.isCorrect())
-                flagChangeMade();
-                    
-        } catch (SyntaxException s) {
-            txtFeedback.setText(s.getMessage());
-            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
-                txtUserAnswer.setCaretPosition(s.getPosition());
-        }
-        txtUserAnswer.requestFocus();
-    }//GEN-LAST:event_onCheckAnswer
     
     // called in:
     // btnDoAgainActionPerformed()
@@ -1109,12 +1142,13 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanelDefaultRightHalf;
     private javax.swing.JPanel jPanelEnterExpressions;
+    private javax.swing.JPanel jPanelLexicon;
+    private javax.swing.JPanel jPanelNavigationButtons;
+    private javax.swing.JPanel jPanelQuestion;
     private javax.swing.JPanel jPanelTrees;
     private javax.swing.JPanel jPanelTypesAndConversions;
-    private javax.swing.JPanel jPanelTypesAndConversions2;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
