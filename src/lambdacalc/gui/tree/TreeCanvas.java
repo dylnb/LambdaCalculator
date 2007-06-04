@@ -1,4 +1,4 @@
-    /*
+/*
  * TreeCanvas.java
  *
  * Created on May 22, 2007, 10:44 AM
@@ -122,8 +122,8 @@ public class TreeCanvas extends Container {
         }
         
         void layoutControls() {
-            if (!invalid_layout)
-                return;
+            /*if (!invalid_layout)
+                return;*/
             invalid_layout = false;
             
             if (getLabel() != null) {
