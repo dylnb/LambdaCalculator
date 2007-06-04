@@ -6,14 +6,13 @@
 
 package lambdacalc.gui;
 
+import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.border.TitledBorder;
-
-import java.util.*;
 import java.io.*;
 
 /**
@@ -284,7 +283,6 @@ public class TrainingWindow extends JFrame {
     
     private void showExercise() {
         
-        
         showLambdaConversionOrTypeExercise();
     }
     
@@ -315,7 +313,7 @@ public class TrainingWindow extends JFrame {
         setQuestionText();
 
         if (txtUserAnswer.isEnabled()) {
-            txtUserAnswer.requestFocus();
+            txtUserAnswer.requestFocusInWindow();
         }
 
         try {
@@ -337,6 +335,8 @@ public class TrainingWindow extends JFrame {
         wrongInARowCount = 0;
         
         switchViewTo(TYPES_AND_CONVERSIONS);
+        
+        txtUserAnswer.requestFocusInWindow();
     }
     
     // called in showExercise()
@@ -500,6 +500,11 @@ public class TrainingWindow extends JFrame {
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextActionPerformed(evt);
+            }
+        });
+        btnNext.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnNextKeyPressed(evt);
             }
         });
 
@@ -842,6 +847,15 @@ public class TrainingWindow extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnNextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnNextKeyPressed
+        // we want this button to be pressable using Enter:
+        //TODO add similar code to other buttons -- or find
+        //a centralized way to do this
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnNext.doClick();
+        }
+    }//GEN-LAST:event_btnNextKeyPressed
+
     private void onCheckAnswer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckAnswer
         try {
             String string = txtUserAnswer.getText().trim();
@@ -851,8 +865,10 @@ public class TrainingWindow extends JFrame {
             AnswerStatus status = ex.checkAnswer(string);
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
-                if (btnNext.isEnabled() && !exFile.hasBeenCompleted())
+                if (btnNext.isEnabled() && !exFile.hasBeenCompleted()) {
                     response += "Click the Next Problem button below to go on to the next exercise.";
+                    btnNext.requestFocusInWindow();
+                }
                 else if (!exFile.hasBeenCompleted())
                     response += "Now go back and finish the exercises you haven't solved yet.";
                 else
@@ -884,7 +900,12 @@ public class TrainingWindow extends JFrame {
             if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
                 txtUserAnswer.setCaretPosition(s.getPosition());
         }
-        txtUserAnswer.requestFocus();
+        if (txtUserAnswer.isEnabled()) {
+            txtUserAnswer.requestFocusInWindow();
+        } else if (btnNext.isEnabled() && !exFile.hasBeenCompleted()) {
+            btnNext.requestFocusInWindow();
+        }
+        
     }//GEN-LAST:event_onCheckAnswer
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
@@ -916,6 +937,7 @@ public class TrainingWindow extends JFrame {
 
     private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
         txtUserAnswer.setText(txtQuestion.getText());
+        txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_btnTransferActionPerformed
 
     private void jTreeExerciseFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeExerciseFileMouseClicked
@@ -974,7 +996,7 @@ public class TrainingWindow extends JFrame {
  
         if (this.exFile.getStudentName() == null) {
             String studentName = JOptionPane.showInputDialog
-                    (this, "Please enter your name: ",
+                    (this, "Please enter your name (e.g. Noam Chomsky): ",
                     "Lambda", JOptionPane.QUESTION_MESSAGE);
             if (studentName == null) return; // cancelled
             if (studentName.trim().length() == 0) return; // treat as cancelled, not a valid student name, would cause setStudentName to throw
