@@ -14,20 +14,22 @@ import javax.swing.*;
 /**
  * A widget that displays a tree.
  */
-public class TreeCanvas extends Container {
-    TreeNode root;
+public class TreeCanvas extends JComponent {
+    JTreeNode root;
     
     javax.swing.Timer timer;
     
-    /** Creates a new instance of TreeCanvas */
+    /**
+     * Creates a new instance of TreeCanvas
+     */
     public TreeCanvas() {
-        root = new TreeNode(null, this);
+        root = new JTreeNode(null, this);
         add(root);
         setLayout(new GridLayout()); // TODO: Size ourself to be the size of the root
         doLayout();
     }
     
-    public TreeNode getRoot() {
+    public JTreeNode getRoot() {
         return root;
     }
     
@@ -43,11 +45,11 @@ public class TreeCanvas extends Container {
         getRoot().layoutControls();
     }
     
-    public class TreeNode extends Panel implements ComponentListener {
+    public class JTreeNode extends JPanel implements ComponentListener {
         static final int NODE_VERTICAL_SPACING = 10;
         static final int NODE_HORIZONTAL_SPACING = 10;
         
-        TreeNode parent;
+        JTreeNode parent;
         TreeCanvas container;
         
         Component label = null;
@@ -55,13 +57,13 @@ public class TreeCanvas extends Container {
         
         int rootPosition;
         
-        boolean invalid_layout;
+        boolean invalidLayout;
         
-        TreeNode(TreeNode parent, TreeCanvas container) {
+        JTreeNode(JTreeNode parent, TreeCanvas container) {
             this.container = container;
             this.parent = parent;
             setLayout(null);
-            invalid_layout = true;
+            invalidLayout = true;
         }
         
         public Component getLabel() {
@@ -77,7 +79,7 @@ public class TreeCanvas extends Container {
             if (this.label != null) {
                 add(label);
                 label.addComponentListener(this);
-                invalidate_layout();
+                invalidateLayout();
                 container.doLayout();
             }
         }
@@ -87,11 +89,11 @@ public class TreeCanvas extends Container {
             setLabel(c);
         }
 
-        public TreeNode addChild() {
-            TreeNode n = new TreeNode(this, container);
+        public JTreeNode addChild() {
+            JTreeNode n = new JTreeNode(this, container);
             children.add(n);
             add(n); // to our own container layout
-            invalidate_layout();
+            invalidateLayout();
             container.doLayout();
             return n;
         }
@@ -99,9 +101,9 @@ public class TreeCanvas extends Container {
         public void clearChildren() {
             // remove from AWT layout
             for (int i = 0; i < children.size(); i++)
-                remove((TreeNode)children.get(i));
+                remove((JTreeNode)children.get(i));
             children.clear();
-            invalidate_layout();
+            invalidateLayout();
             container.doLayout();
         }
         
@@ -109,14 +111,14 @@ public class TreeCanvas extends Container {
             return children.size();
         }
         
-        public TreeNode getChild(int index) {
-            return (TreeNode)children.get(index);
+        public JTreeNode getChild(int index) {
+            return (JTreeNode)children.get(index);
         }
         
-        void invalidate_layout() {
-            TreeNode n = this;
+        void invalidateLayout() {
+            JTreeNode n = this;
             while (n != null) {
-                n.invalid_layout = true;
+                n.invalidLayout = true;
                 n = n.parent;
             }
         }
@@ -124,7 +126,7 @@ public class TreeCanvas extends Container {
         void layoutControls() {
             /*if (!invalid_layout)
                 return;*/
-            invalid_layout = false;
+            invalidLayout = false;
             
             if (getLabel() != null) {
                 getLabel().doLayout();
@@ -153,7 +155,7 @@ public class TreeCanvas extends Container {
                 int left = 0;
                 int maxHeight = 0;
                 for (int i = 0; i < children.size(); i++) {
-                    TreeNode c = (TreeNode)children.get(i);
+                    JTreeNode c = (JTreeNode)children.get(i);
                     c.layoutControls();
                     c.setLocation(new Point(left, tops));
                     left = left + c.getWidth() + NODE_HORIZONTAL_SPACING;
@@ -164,8 +166,8 @@ public class TreeCanvas extends Container {
                 
                 // The root position is where we put the center of our label, which
                 // is centered between the first and last root positions of the children.
-                rootPosition = (((TreeNode)children.get(0)).getLocation().x + ((TreeNode)children.get(0)).rootPosition
-                        + ((TreeNode)children.get(children.size()-1)).getLocation().x + ((TreeNode)children.get(children.size()-1)).rootPosition) / 2;
+                rootPosition = (((JTreeNode) children.get(0)).getLocation().x + ((JTreeNode) children.get(0)).rootPosition
+                        + ((JTreeNode) children.get(children.size()-1)).getLocation().x + ((JTreeNode) children.get(children.size()-1)).rootPosition) / 2;
                 
                 // Position the label at the root position.
                 if (getLabel() != null) {
@@ -193,25 +195,25 @@ public class TreeCanvas extends Container {
             int rootY = getLabel() == null ? 0 : getLabel().getHeight() + 1;
             
             for (int i = 0; i < children.size(); i++) {
-                TreeNode c = (TreeNode)children.get(i);
+                JTreeNode c = (JTreeNode)children.get(i);
                 g.drawLine(rootPosition, rootY, c.getLocation().x + c.rootPosition, c.getLocation().y);
             }
         }
         
         // When a change is made to the label, relayout everything.
         public void componentResized(ComponentEvent e) {
-            invalidate_layout();
+            invalidateLayout();
             container.doLayout();
         }
         public void componentMoved(ComponentEvent e) {
             // ignore this--we're responsible for moving controls
         }
         public void componentShown(ComponentEvent e) {
-            invalidate_layout();
+            invalidateLayout();
             container.doLayout();
         }
         public void componentHidden(ComponentEvent e) {
-            invalidate_layout();
+            invalidateLayout();
             container.doLayout();
         }
     }

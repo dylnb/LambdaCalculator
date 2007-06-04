@@ -49,7 +49,7 @@ public class TreeTester extends javax.swing.JFrame {
        
     }
     
-    void buildTree(TreeCanvas.TreeNode treenode, LFNode lfnode) throws MeaningEvaluationException, TypeEvaluationException {
+    void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) throws MeaningEvaluationException, TypeEvaluationException {
         // [=fa; John=a; [=fa; loves=Lx.Ly.loves(y,x); Mary=b;]]
         // [=fa; John=Ix(john(x)); [=fa; loves=Lx.Ly.loves(y,x); Mary=Ix(mary(x));]]
         

@@ -14,7 +14,7 @@ import lambdacalc.gui.tree.TreeCanvas;
  * This widget wraps a TreeCanvas and controls the user interaction
  * with the LF tree, revealing the propostional content of nodes as
  * space and enter are pressed.
- *
+ * 
  * Each node in the tree can be in one of a few states:
  *   - Not evaluated yet; no lambda expression is displayed
  *   - Evaluation attempted but failed; error message is displayed
@@ -110,7 +110,7 @@ public class TreeExerciseWidget extends JPanel {
     
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
-    void buildTree(TreeCanvas.TreeNode treenode, LFNode lfnode) {
+    void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
         Panel label = new Panel(); // this is the control made the node label for this node
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
         label.setLayout(bl);
