@@ -210,7 +210,19 @@ public abstract class Expr {
      * @return a set of either all variables or all free variables used in this expression
      */
     protected abstract Set getVars(boolean unboundOnly);
-    
+
+    /**
+     * Simplifies the expression by performing all possible lambda conversions.
+     */
+    public final Expr simplify() throws TypeEvaluationException {
+        Expr expr = this;    
+        while (true) {
+            LambdaConversionResult r = expr.performLambdaConversion();
+            if (r == null) return expr; // not further simplifiable
+            expr = r.result; // simplification was possible, try again on next iteration
+        }
+    }
+
     /**
      * Holds the result of a lambda conversion operation. In addition to the converted expression
      * itself, this class records any alphabetical variants chosen during the conversion.

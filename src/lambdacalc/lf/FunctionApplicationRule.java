@@ -43,6 +43,13 @@ public class FunctionApplicationRule extends CompositionRule {
         Expr leftMeaning = left.getMeaning();
         Expr rightMeaning = right.getMeaning();
         
+        // Simplify the left and right before combining them.
+        // simplify() can throw TypeEvaluationException when
+        // a type mismatch occurs, but we don't expect this to
+        // happen within subnodes.
+        try { leftMeaning = leftMeaning.simplify(); } catch (TypeEvaluationException e) { }
+        try { rightMeaning = rightMeaning.simplify(); } catch (TypeEvaluationException e) { }
+        
         if (isFunctionOf(leftMeaning, rightMeaning))
             return apply(leftMeaning, rightMeaning);
         if (isFunctionOf(rightMeaning, leftMeaning))
