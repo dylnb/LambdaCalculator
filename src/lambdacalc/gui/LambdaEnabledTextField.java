@@ -113,19 +113,32 @@ public class LambdaEnabledTextField extends JTextField {
                       char c1 = (char)0, c2 = (char)0;
                       for (int i = 0; i < content.length(); i++) {
                           char c3 = content.getString(i, 1).charAt(0);
+                          
+                          
+                          // multi-character substitutions
+                          
+                          // Iff: <-> <=>
+                          
                           if (c1 == '<' && (c2 == '-' || c2 == '=') && c3 == '>') {
                               replace(i-2, 3, String.valueOf(Iff.SYMBOL), null);
                               foundChange = true;
                               break;
+                          
+                          // If: -> =>
+                              
                           } else if ((c2 == '-' || c2 == '=') && c3 == '>') {
                               replace(i-1, 2, String.valueOf(If.SYMBOL), null);
                               foundChange = true;
                               break;
+                          
+                          // Nonequal: !=
+                          
                           } else if (c2 == '!' && c3 == '=') {
                               replace(i-1, 2, String.valueOf(Equality.NEQ_SYMBOL), null);
                               foundChange = true;
                               break;
                           }
+                          
                           c1 = c2;
                           c2 = c3;
                       }

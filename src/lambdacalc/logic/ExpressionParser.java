@@ -544,12 +544,18 @@ public class ExpressionParser {
                 char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
                 if (c == '&')
                     c = And.SYMBOL;
+                
+                // TODO: synchronize this with LambdaEnabledTextField
+                
                 else if (c == '|')
                     c = Or.SYMBOL;
+                
                 else if (c == '-' && cnext == '>')
                     { c = If.SYMBOL; start++; }
+                
                 else if (c == '<' && cnext == '-' && cnextnext == '>')
                     { c = Iff.SYMBOL; start+=2; }
+                
                 else if (c == '!' && cnext == '=')
                     { c = Equality.NEQ_SYMBOL; start++; }
             }
