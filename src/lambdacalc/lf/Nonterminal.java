@@ -83,6 +83,9 @@ public class Nonterminal extends LFNode {
             ret += children.get(i).toString();
         }
         ret += "]";
+        if (this.hasIndex()) {
+            ret += LFNode.SEPARATOR+this.getIndex();
+        }
         return ret;
     }
 }

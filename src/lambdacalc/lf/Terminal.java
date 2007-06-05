@@ -4,7 +4,7 @@ import lambdacalc.logic.Expr;
 
 public class Terminal extends LFNode {
 
-    Expr meaning;
+    protected Expr meaning;
     
     public void setMeaning(Expr meaning) {
         this.meaning = meaning;
@@ -33,9 +33,7 @@ public class Terminal extends LFNode {
         Expr[] meanings = lexicon.getMeanings(getLabel());
         if (meanings.length == 1)
             meaning = meanings[0];
+    
     }
     
-    public String toString() {
-        return getLabel();
-    }
 }

@@ -3,8 +3,16 @@ package lambdacalc.lf;
 import lambdacalc.logic.Expr;
 
 public abstract class LFNode {
+    
+    /**
+     * The symbol used for separating the label from its index (if any)
+     * in the #toString() method.
+     */
+    public static final String SEPARATOR = "_"; 
 
-    String label;
+    protected String label;
+    
+    protected int index = -1;
     
     public String getLabel() {
         return label;
@@ -13,7 +21,34 @@ public abstract class LFNode {
     public void setLabel(String label) {
         this.label = label;
     }
+    
+    /**
+     * Returns -1 if no index has been set.
+     */
+    public int getIndex() {
+        return index;
+    }
+    
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    public void removeIndex() {
+        setIndex(-1);
+    }
+    
+    public boolean hasIndex() {
+        return this.index!=-1;
+    }
 
+    public String toString() {
+        String result = getLabel();
+        if (hasIndex()) {
+            result += SEPARATOR + getIndex();
+        } 
+        return result;
+    }
+        
     public abstract Expr getMeaning() throws MeaningEvaluationException;
     
     public abstract void guessLexicalChoices
