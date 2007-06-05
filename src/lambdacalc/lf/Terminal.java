@@ -16,7 +16,17 @@ public class Terminal extends LFNode {
         return meaning;
     }
     
-    public void guessLexicalChoices(Lexicon lexicon) {
+    /**
+     * If the meaning of this terminal hasn't been set yet, 
+     * and if the terminal is unambiguous in the lexicon,
+     * assigns the meaning it finds in the lexicon to this
+     * terminal.
+     *
+     * @param lexicon the lexicon
+     * @param rules this parameter is ignored 
+     * (maybe later it can be used for type-shifting rules)
+     */
+    public void guessLexicalChoices(Lexicon lexicon, RuleList rules) {
         if (meaning != null)
             return;
         

@@ -6,13 +6,14 @@ import lambdacalc.logic.FunApp;
 import lambdacalc.logic.TypeEvaluationException;
 
 public class FunctionApplicationRule extends CompositionRule {
-    public static final FunctionApplicationRule INSTANCE = new FunctionApplicationRule();
+    public static final FunctionApplicationRule INSTANCE 
+            = new FunctionApplicationRule();
 
     public FunctionApplicationRule() {
         super("Function Application");
     }
     
-    public boolean isApplicable(Nonterminal node) {
+    public boolean isApplicableTo(Nonterminal node) {
         if (node.size() != 2)
             return false;
         
@@ -33,9 +34,11 @@ public class FunctionApplicationRule extends CompositionRule {
         return false;
     }
     
-    public Expr getMeaning(Nonterminal node) throws MeaningEvaluationException {
+    public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {
         if (node.size() != 2)
-            throw new MeaningEvaluationException("Function application is not applicable on a nonterminal that does not have exactly two children.");
+            throw new MeaningEvaluationException("Function application is not " +
+                    "applicable on a nonterminal that does not have exactly " +
+                    "two children.");
         
         LFNode left = node.getChild(0);
         LFNode right = node.getChild(1);
@@ -55,11 +58,14 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(rightMeaning, leftMeaning))
             return apply(rightMeaning, leftMeaning);
 
-        throw new MeaningEvaluationException("The children of the nonterminal " + node.toString() + " are not of compatible types for function application.");
+        throw new MeaningEvaluationException("The children of the nonterminal "
+                + node.toString() + " are not of compatible types for function " +
+                "application.");
     }
     
-    private boolean isFunctionOf(Expr left, Expr right) throws MeaningEvaluationException {
-        // Return true iif left is a composite type <X,Y>
+    private boolean isFunctionOf(Expr left, Expr right) 
+    throws MeaningEvaluationException {
+        // Return true iff left is a composite type <X,Y>
         // and right is of type X.
         try {
             if (left.getType() instanceof CompositeType) {
@@ -69,7 +75,8 @@ public class FunctionApplicationRule extends CompositionRule {
             }
             return false;
         } catch (TypeEvaluationException ex) {
-            throw new MeaningEvaluationException("A type mismatch exists: " + ex.getMessage());
+            throw new MeaningEvaluationException("A type mismatch exists: " 
+                    + ex.getMessage());
         }
     }
     

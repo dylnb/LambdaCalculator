@@ -36,10 +36,13 @@ public class TreeTester extends javax.swing.JFrame {
             lexicon.addLexicalEntry("saw", ExpressionParser.parse("LyLx[saw(x,y)]", opts));
             lexicon.addLexicalEntry("John", ExpressionParser.parse("a", opts));
             lexicon.addLexicalEntry("Mary", ExpressionParser.parse("b", opts));
-            lexicon.getCompositionRules().add(FunctionApplicationRule.INSTANCE);
+            
+            RuleList rules = new RuleList();
+            
+            rules.add(FunctionApplicationRule.INSTANCE);
             
             Nonterminal root = BracketedTreeParser.parse(jTextField1.getText());
-            root.guessLexicalChoices(lexicon);
+            root.guessLexicalChoices(lexicon, rules);
             
             tree.getRoot().clearChildren();
             buildTree(tree.getRoot(), root);
@@ -53,7 +56,10 @@ public class TreeTester extends javax.swing.JFrame {
         // [=fa; John=a; [=fa; loves=Lx.Ly.loves(y,x); Mary=b;]]
         // [=fa; John=Ix(john(x)); [=fa; loves=Lx.Ly.loves(y,x); Mary=Ix(mary(x));]]
         
-        Panel label = new Panel();
+        
+        
+        
+        JPanel label = new JPanel();
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
         label.setLayout(bl);
                 

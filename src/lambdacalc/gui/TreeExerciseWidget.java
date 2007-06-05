@@ -97,7 +97,7 @@ public class TreeExerciseWidget extends JPanel {
     
     void initialize(ExerciseFile file, TreeExercise ex) {
         lftree = ex.getTree();
-        lftree.guessLexicalChoices(file.getLexicon());
+        lftree.guessLexicalChoices(file.getLexicon(), file.getRules());
         
         lfToOrthoLabel.clear();
         lfToMeaningLabel.clear();

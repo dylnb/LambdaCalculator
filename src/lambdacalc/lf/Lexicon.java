@@ -6,16 +6,21 @@ import lambdacalc.logic.Expr;
 import lambdacalc.logic.ExpressionParser;
 import lambdacalc.logic.ExpressionParser.ParseOptions;
 
+/**
+ * Records the lexical entries of words.
+ */
 public class Lexicon {
+    
+    //TODO retrofit to extend HashMap or ArrayList  and thereby implement Collection interface
+    //(see CompositionRuleList)
+    
     //IdentifierTyper typer; // Do we want this? TODO: Consistency check?
     // Implement Expr.getEffectiveIdentifierTyper
     // Implement are two IdentifierTypers consistent?
     //   and unify them
 
     Vector entries = new Vector(); // lexical entries for words
-    
-    Vector compositionRules = new Vector(); // available composition rules
-    
+        
     public Vector getEntries() {
         // TODO: Return a read-only wrapper so entries can't be modified?
         return entries;
@@ -55,9 +60,4 @@ public class Lexicon {
             this.meaning = meaning;
         }
     }
-
-    public Vector getCompositionRules() {
-        return compositionRules;
-    }
- 
 }

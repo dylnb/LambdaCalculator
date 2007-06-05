@@ -131,7 +131,7 @@ public class ExerciseFileParser {
             } else if (line.startsWith("use rule ")) {
                 String rule = line.substring("use rule ".length());
                 if (rule.equals("function application"))
-                    file.getLexicon().getCompositionRules().add(
+                    file.getRules().add(
                         lambdacalc.lf.FunctionApplicationRule.INSTANCE);
                 else
                     throw new ExerciseFileFormatException(

@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.zip.DataFormatException;
 import lambdacalc.logic.*;
 import lambdacalc.lf.Lexicon;
+import lambdacalc.lf.RuleList;
 
 /**
  * Represents a set of Exercises grouped into one or more ExerciseGroups.
@@ -27,6 +28,8 @@ public class ExerciseFile {
     
     Lexicon lexicon;
     
+    RuleList rules;
+    
     String studentName;
     
     String teacherComments;
@@ -37,6 +40,7 @@ public class ExerciseFile {
     public ExerciseFile() {
         title = "Exercises";
         lexicon = new Lexicon();
+        rules = new RuleList();
     }
     
     public String toString() {
@@ -90,6 +94,10 @@ public class ExerciseFile {
      */
     public Lexicon getLexicon() {
        return lexicon;
+    }
+    
+    public RuleList getRules() {
+        return rules;
     }
     
     /**

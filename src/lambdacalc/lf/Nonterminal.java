@@ -31,19 +31,26 @@ public class Nonterminal extends LFNode {
     public Expr getMeaning() throws MeaningEvaluationException {
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
-        return compositor.getMeaning(this);
+        return compositor.applyTo(this);
     }
     
-    public void guessLexicalChoices(Lexicon lexicon) {
+    /**
+     * Calls itself recursively on the children nodes, then
+     * sets the composition rule of this nonterminal if it hasn't been 
+     * set yet and if it's uniquely determined. 
+     *
+     * @param lexicon the lexicon
+     */
+    public void guessLexicalChoices(Lexicon lexicon, RuleList rules) {
         for (int i = 0; i < children.size(); i++)
-            getChild(i).guessLexicalChoices(lexicon);
+            getChild(i).guessLexicalChoices(lexicon, rules);
         
         if (compositor != null)
             return;
         
-        for (int i = 0; i < lexicon.getCompositionRules().size(); i++) {
-            CompositionRule rule = (CompositionRule)lexicon.getCompositionRules().get(i);
-            if (rule.isApplicable(this)) {
+        for (int i = 0; i < rules.size(); i++) {
+            CompositionRule rule = (CompositionRule) rules.get(i);
+            if (rule.isApplicableTo(this)) {
                 if (compositor == null) {
                     // The first time we hit a compatible composition rule, 
                     // assign it to ourself.
