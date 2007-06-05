@@ -74,18 +74,24 @@ public class TreeExerciseWidget extends JPanel {
     }
 
     public TreeExerciseWidget() {
-        setLayout(new FlowLayout());
+        
+        setLayout(new BorderLayout());
         
         canvas = new TreeCanvas();
-        add(canvas);
+        add(canvas, BorderLayout.CENTER);
+        
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new FlowLayout());
         
         JButton bspace = new JButton("Space");
         bspace.addActionListener(new SpaceActionListener());
-        add(bspace);
+        buttons.add(bspace);
         JButton benter = new JButton("Enter");
         benter.addActionListener(new EnterActionListener());
-        add(benter);
+        buttons.add(benter);
 
+        add(buttons, BorderLayout.PAGE_END);
+        
         try {
             ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
             initialize(file, (TreeExercise)file.getGroup(0).getItem(0));

@@ -73,7 +73,8 @@ public class FunApp extends Binary {
 
     public Type getType() throws TypeEvaluationException {
         if (!(getFunc().getType() instanceof CompositeType))
-            throw new TypeMismatchException(getFunc() + " cannot be applied to an argument because it is not a function.");
+            throw new TypeMismatchException(getFunc() + " cannot be applied to an argument because it is of type " +
+                    getFunc().getType() + " and therefore not a function.");
         
         CompositeType funcType = (CompositeType)getFunc().getType();
         Type domain = funcType.getLeft();

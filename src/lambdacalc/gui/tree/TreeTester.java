@@ -53,22 +53,22 @@ public class TreeTester extends javax.swing.JFrame {
     }
     
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) throws MeaningEvaluationException, TypeEvaluationException {
-        // [=fa; John=a; [=fa; loves=Lx.Ly.loves(y,x); Mary=b;]]
+        // [=fa; John=a; [=fa; loves=Lx.Ly.[loves(y,x)]; Mary=b;]]
         // [=fa; John=Ix(john(x)); [=fa; loves=Lx.Ly.loves(y,x); Mary=Ix(mary(x));]]
         
         
         
         
-        JPanel label = new JPanel();
-        BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
-        label.setLayout(bl);
+        JPanel panel = new JPanel();
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
                 
         Expr expr = lfnode.getMeaning();
         while (true) {
             JLabel line = new JLabel();
             line.setText(expr.toString());
             line.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
-            label.add(line);
+            panel.add(line);
 
             Expr.LambdaConversionResult r = expr.performLambdaConversion();
             if (r == null)
@@ -76,7 +76,7 @@ public class TreeTester extends javax.swing.JFrame {
             expr = r.result;
         }
 
-        treenode.setLabel(label);
+        treenode.setLabel(panel);
         
         if (lfnode instanceof Nonterminal) {
             Nonterminal nt = (Nonterminal)lfnode;
@@ -133,6 +133,7 @@ public class TreeTester extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        System.out.println("text field action performed");
         createTree();
     }//GEN-LAST:event_jTextField1ActionPerformed
 

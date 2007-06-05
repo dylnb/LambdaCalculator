@@ -130,12 +130,20 @@ public class ExerciseFileParser {
 
             } else if (line.startsWith("use rule ")) {
                 String rule = line.substring("use rule ".length());
-                if (rule.equals("function application"))
+                if (rule.equals("function application")) {
                     file.getRules().add(
                         lambdacalc.lf.FunctionApplicationRule.INSTANCE);
-                else
+                } else if (rule.equals("non-branching nodes")) {
+                    file.getRules().add(
+                            lambdacalc.lf.NonBranchingRule.INSTANCE);
+                } else if (rule.equals("predicate modification")) {
+                    file.getRules().add(
+                            lambdacalc.lf.PredicateModificationRule.INSTANCE);
+                } else
                     throw new ExerciseFileFormatException(
-                       "'use rule' must be followed by 'function application", linectr, line);
+                       "'use rule' must be followed by 'function application' " +
+                            "'non-branching nodes', or 'predicate modification'", 
+                            linectr, line);
 
             } else {
                 // this is an exercise

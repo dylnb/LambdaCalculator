@@ -50,6 +50,24 @@ public class ExpressionParser {
          */
         public Map explicitTypes = new HashMap();
         
+        public ParseOptions() {
+            
+        }
+        
+        public ParseOptions(boolean singleLetterIdentifiers,
+                boolean ASCII,
+                IdentifierTyper typer) {
+            this.singleLetterIdentifiers = singleLetterIdentifiers;
+            this.ASCII = ASCII;
+            this.typer = typer;
+        }
+        
+        public ParseOptions(boolean singleLetterIdentifiers,
+                boolean ASCII) {
+            this.singleLetterIdentifiers = singleLetterIdentifiers;
+            this.ASCII = ASCII;
+        }
+        
         ParseOptions cloneContext() {
              ParseOptions ret = new ParseOptions();
              ret.singleLetterIdentifiers = singleLetterIdentifiers;
@@ -80,7 +98,19 @@ public class ExpressionParser {
      */
     private ExpressionParser() {
     }
-
+    
+    
+    public static Expr parseAndSuppressExceptions
+            (String expression, ParseOptions options) {
+        Expr result = null;
+        try {
+            result = parse(expression, options);
+        } catch (SyntaxException s) {
+            
+        }
+        return result;
+    }
+    
     /**
      * Parses an expression with the given options. This is the entry point of this class.
      *

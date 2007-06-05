@@ -15,6 +15,21 @@ import java.util.*;
  */
 public class RuleList extends Vector {
     
+    public static final RuleList HEIM_KRATZER 
+            = new RuleList(new CompositionRule[] {
+            FunctionApplicationRule.INSTANCE,
+            NonBranchingRule.INSTANCE,
+            PredicateModificationRule.INSTANCE
+          // add other Heim & Kratzer rules here as we implement them
+    });
+  
+    public RuleList() {
+        super();
+    }
+            
+    public RuleList(CompositionRule[] rules) {
+        super(Arrays.asList(rules));
+    }
     
     public boolean add(Object o) {
         if (!(o instanceof CompositionRule)) throw new IllegalArgumentException();

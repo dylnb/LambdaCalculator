@@ -16,6 +16,14 @@ public class Nonterminal extends LFNode {
         return (LFNode)children.get(index);
     }
     
+    public LFNode getLeftChild() {
+        return (LFNode) children.get(0);
+    }
+    
+    public LFNode getRightChild() {
+        return (LFNode) children.get(children.size()-1);
+    }
+    
     public void addChild(LFNode node) {
         children.add(node);
     }
