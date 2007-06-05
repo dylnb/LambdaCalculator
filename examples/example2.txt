@@ -38,6 +38,7 @@ points per exercise 20
 #[.S John [.VP sleeps]]
 #[.S John [.VP loves Mary]]
 #[.S someone [.VP loves Mary]]
-[.S [.NP a man] [.VP sleeps]]
+[.S [.NP a [.N' happy man]] [.VP sleeps]]
+
 
 

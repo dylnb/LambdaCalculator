@@ -106,7 +106,7 @@ public class ExpressionParser {
         try {
             result = parse(expression, options);
         } catch (SyntaxException s) {
-            
+            //s.printStackTrace();
         }
         return result;
     }
