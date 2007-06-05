@@ -2,7 +2,7 @@ Homework 2
 
 # one can write arbitrary comments in this file after hashes
 
-constants of type e : a b-c j m
+constants of type e : a b-c j
 constants of type <e,t> : P-Q
 constants of type <e*e,t> : R
 variables of type e : x-z
@@ -25,7 +25,7 @@ define someone : LX[Ex[X(x)]]
 define a : LX.LY.[Ex[X(x)&Y(x)]]
 define is : LX.Lx.[X(x)]
 # can we define "is" as LX.X?
-define John : j
+define John : j	
 # define Mary : m
 
 
