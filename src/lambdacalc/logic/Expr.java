@@ -396,6 +396,28 @@ public abstract class Expr {
             v = new Var(v.getSymbol() + Identifier.PRIME, v.getType(), v.isTypeExplicit());
         return v;
     }
+    
+    /**
+     * Creates a fresh variable based on the given variable and
+     * the set of variables in use in this expression. 
+     * The new variable has the same
+     * type and prefix as the given variable, but with as many
+     * prime characters appended as needed until it does not appear
+     * either bound or free in this expression.
+     */
+    public Var createFreshVar(Var v) {
+        return createFreshVar(v, this.getAllVars());
+    }
+    
+    /**
+     * Creates a fresh variable x (or x' or x'') of type et.
+     * The new variable has as many
+     * prime characters appended as needed until it does not appear
+     * either bound or free in this expression.
+     */    
+    public Var createFreshVar() {
+        return createFreshVar(Var.X, this.getAllVars());
+    }
 
    /**
     * This method creates an alphabetical variant by altering the variables used by

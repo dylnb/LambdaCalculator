@@ -13,7 +13,7 @@ package lambdacalc.lf;
  */
 public class Trace extends Terminal {
     
-    public static final String TRACE_SYMBOL = "t";
+    public static final String SYMBOL = "t";
     
     /** Creates a new instance of Trace */
     private Trace() {
@@ -21,11 +21,11 @@ public class Trace extends Terminal {
     
     public Trace(int index) {
         this.index = index;
-        this.label = TRACE_SYMBOL;
+        this.label = SYMBOL;
     }
     
     public String getLabel() {
-        return TRACE_SYMBOL;
+        return SYMBOL;
     }
     
     public void setLabel(String label) {

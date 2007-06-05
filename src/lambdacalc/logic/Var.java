@@ -16,6 +16,9 @@ import java.util.Set;
  */
 public class Var extends Identifier {
 
+    public static final Var X = 
+            new Var("x", Type.E, false);
+    
     /**
      * Constructs a variable with the given name and type.
      */
