@@ -328,8 +328,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTransferActionPerformed
-        txtUserAnswer.setText(txtEnterYourOwnProblem.getText());
-        txtUserAnswer.requestFocusInWindow();
+        if (txtUserAnswer.isEnabled()) {
+            txtUserAnswer.setText(txtEnterYourOwnProblem.getText());
+            txtUserAnswer.requestFocusInWindow();
+        } else if (txtEnterYourOwnProblem.isEnabled()) {
+            txtEnterYourOwnProblem.requestFocusInWindow();
+        }
     }//GEN-LAST:event_jButtonTransferActionPerformed
 
     private void jButtonEnterProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterProblemActionPerformed
