@@ -540,7 +540,7 @@ public class TrainingWindow extends JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 24, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 20, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -659,7 +659,6 @@ public class TrainingWindow extends JFrame {
         txtFeedback.setRows(5);
         txtFeedback.setWrapStyleWord(true);
         txtFeedback.setBorder(null);
-        txtFeedback.setPreferredSize(new java.awt.Dimension(220, 80));
         jScrollPaneFeedback.setViewportView(txtFeedback);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -691,11 +690,11 @@ public class TrainingWindow extends JFrame {
         jPanelLexicon.setLayout(jPanelLexiconLayout);
         jPanelLexiconLayout.setHorizontalGroup(
             jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 238, Short.MAX_VALUE)
+            .add(0, 234, Short.MAX_VALUE)
         );
         jPanelLexiconLayout.setVerticalGroup(
             jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 147, Short.MAX_VALUE)
+            .add(0, 143, Short.MAX_VALUE)
         );
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -710,7 +709,7 @@ public class TrainingWindow extends JFrame {
         txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
         txtQuestion.setEditable(false);
         txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
-        txtQuestion.setPreferredSize(new java.awt.Dimension(460, 47));
+        txtQuestion.setPreferredSize(new java.awt.Dimension(460, 60));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
