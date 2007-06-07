@@ -38,6 +38,15 @@ public abstract class LogicalBinary extends Binary {
      */
     public abstract String getSymbol();
 
+    /**
+     * Gets the operator precedence of this operator.
+     * All values are documented in Expr, so don't change the value here
+     * without changing it there.
+     */
+    public final int getOperatorPrecedence() {
+        return 5;
+    }
+    
     public Type getType() throws TypeEvaluationException {
         // Our default implementation checks that the operands are of type t,
         // but this is overridden in Equality which only checks that the

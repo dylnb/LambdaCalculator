@@ -25,15 +25,6 @@ public class And extends LogicalBinary {
        super(left,right);
     }
     
-    /**
-     * Gets the operator precedence of this operator.
-     * All values are documented in Expr, so don't change the value here
-     * without changing it there.
-     */
-    public int getOperatorPrecedence() {
-        return 5;
-    }
-    
     public String getSymbol() {
         return String.valueOf(SYMBOL);
     }

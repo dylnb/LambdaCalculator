@@ -33,7 +33,7 @@ public class Lambda extends Binder {
      * without changing it there.
      */
     public int getOperatorPrecedence() {
-        return 7;
+        return 4;
     }
     
     public String getSymbol() {
