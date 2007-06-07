@@ -33,7 +33,7 @@
     </Menu>
   </NonVisualComponents>
   <Properties>
-    <Property name="title" type="java.lang.String" value="Lambda Teacher Tool"/>
+    <Property name="title" type="java.lang.String" value="Lambda Scratch Pad"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>

@@ -1,5 +1,5 @@
 /*
- * TeacherToolWindow.java
+ * ScratchPadWindow.java
  *
  * Created on May 29th, 2007
  */

@@ -327,7 +327,7 @@ public class TreeExerciseWidget extends JPanel {
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setSize(640, 480);
-                frame.add(new TreeExerciseWidget());
+                frame.getContentPane().add(new TreeExerciseWidget());
                 frame.setVisible(true);
             }
         });
