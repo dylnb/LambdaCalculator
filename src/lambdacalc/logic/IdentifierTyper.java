@@ -163,12 +163,12 @@ public class IdentifierTyper {
                 ret += "constants";
             ret += " of type ";
             if (m[i].type.equals(Type.ExET))
-                ret += "two place predicate";
+                ret += "\n    two place predicate";
             else
                 ret += m[i].type.toString();
 
             if (m[i].type.equals(Type.ET))
-                ret += " (one place predicate)";
+                ret += "\n    (one place predicate)";
         }
         return ret;
     }

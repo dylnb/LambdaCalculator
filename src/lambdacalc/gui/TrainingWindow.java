@@ -255,8 +255,9 @@ public class TrainingWindow extends JFrame {
             this.jTreeExerciseFile.expandRow(i);
             this.jTreeExerciseFile.setRowHeight(this.jTreeExerciseFile.getFont().getBaselineFor('A'));
         }
-
+        
         showFirstExercise();
+        
     }
     
     
@@ -327,7 +328,9 @@ public class TrainingWindow extends JFrame {
         if (ex instanceof HasIdentifierTyper) {
             //lblIdentifierTypes.setVisible(true);
             IdentifierTyper typer = ((HasIdentifierTyper)ex).getIdentifierTyper();
+            
             lblIdentifierTypes.setText("Use the following typing conventions:\n" + typer.toString());
+            ScratchPadWindow.setTypingConventions(typer);
         } else {
             //lblIdentifierTypes.setVisible(false);
         }
@@ -540,7 +543,7 @@ public class TrainingWindow extends JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 20, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -645,6 +648,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelNavigationButtons, gridBagConstraints);
 
         jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
@@ -690,11 +694,11 @@ public class TrainingWindow extends JFrame {
         jPanelLexicon.setLayout(jPanelLexiconLayout);
         jPanelLexiconLayout.setHorizontalGroup(
             jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 234, Short.MAX_VALUE)
+            .add(0, 238, Short.MAX_VALUE)
         );
         jPanelLexiconLayout.setVerticalGroup(
             jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 143, Short.MAX_VALUE)
+            .add(0, 151, Short.MAX_VALUE)
         );
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

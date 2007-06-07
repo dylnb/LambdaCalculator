@@ -43,6 +43,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
        if (singleton == null) {
             singleton = new ScratchPadWindow();
        }
+       setTypingConventions(null); // sets them to default
+
        singleton.resetGUI();
     }
         
@@ -68,6 +70,15 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         
     }
     
+    static void setTypingConventions(IdentifierTyper typer) {
+        if (typer == null) {
+            typer = IdentifierTyper.createDefault();
+        } 
+        if (singleton != null) {
+            singleton.lblIdentifierTypes.setText("Use the following typing conventions:\n" + typer);
+        }
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -81,19 +92,23 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         jButtonCheckAnswer = new javax.swing.JButton();
-        jScrollPaneFeedback = new javax.swing.JScrollPane();
-        txtFeedback = new javax.swing.JTextArea();
         jButtonEnterProblem = new javax.swing.JButton();
         jPanelButtons = new javax.swing.JPanel();
         jButtonCloseWindow = new javax.swing.JButton();
-        jButtonDoAgain = new javax.swing.JButton();
+        jPanelLeftButtons = new javax.swing.JPanel();
         jButtonDoAnotherProblem = new javax.swing.JButton();
+        jButtonDoAgain = new javax.swing.JButton();
         jPanelRadioButtons = new javax.swing.JPanel();
         jRadioButtonType = new javax.swing.JRadioButton();
         jRadioButtonLambda = new javax.swing.JRadioButton();
         jPanelEnterYourOwnProblem = new javax.swing.JPanel();
         txtEnterYourOwnProblem = new lambdacalc.gui.LambdaEnabledTextField();
         jButtonTransfer = new javax.swing.JButton();
+        jPanelFeedbackAndTypes = new javax.swing.JPanel();
+        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
+        lblIdentifierTypes = new javax.swing.JTextArea();
+        jScrollPaneFeedback = new javax.swing.JScrollPane();
+        txtFeedback = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemClose = new javax.swing.JMenuItem();
@@ -103,7 +118,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        setTitle("Lambda Teacher Tool");
+        setTitle("Lambda Scratch Pad");
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,27 +153,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         getContentPane().add(jButtonCheckAnswer, gridBagConstraints);
 
-        jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
-        txtFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        txtFeedback.setColumns(20);
-        txtFeedback.setEditable(false);
-        txtFeedback.setFont(new java.awt.Font("SansSerif", 0, 12));
-        txtFeedback.setLineWrap(true);
-        txtFeedback.setRows(5);
-        txtFeedback.setWrapStyleWord(true);
-        txtFeedback.setBorder(null);
-        jScrollPaneFeedback.setViewportView(txtFeedback);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        getContentPane().add(jScrollPaneFeedback, gridBagConstraints);
-
         jButtonEnterProblem.setText("Enter Problem");
         jButtonEnterProblem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,10 +167,27 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         getContentPane().add(jButtonEnterProblem, gridBagConstraints);
 
+        jPanelButtons.setLayout(new java.awt.GridBagLayout());
+
+        jPanelButtons.setPreferredSize(new java.awt.Dimension(523, 40));
         jButtonCloseWindow.setText("Close Window");
         jButtonCloseWindow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCloseWindowActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 108, 0, 0);
+        jPanelButtons.add(jButtonCloseWindow, gridBagConstraints);
+
+        jButtonDoAnotherProblem.setText("Do Another Problem");
+        jButtonDoAnotherProblem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDoAnotherProblemActionPerformed(evt);
             }
         });
 
@@ -187,42 +198,34 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        jButtonDoAnotherProblem.setText("Do Another Problem");
-        jButtonDoAnotherProblem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonDoAnotherProblemActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout jPanelButtonsLayout = new org.jdesktop.layout.GroupLayout(jPanelButtons);
-        jPanelButtons.setLayout(jPanelButtonsLayout);
-        jPanelButtonsLayout.setHorizontalGroup(
-            jPanelButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelButtonsLayout.createSequentialGroup()
-                .addContainerGap()
+        org.jdesktop.layout.GroupLayout jPanelLeftButtonsLayout = new org.jdesktop.layout.GroupLayout(jPanelLeftButtons);
+        jPanelLeftButtons.setLayout(jPanelLeftButtonsLayout);
+        jPanelLeftButtonsLayout.setHorizontalGroup(
+            jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelLeftButtonsLayout.createSequentialGroup()
                 .add(jButtonDoAgain)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButtonDoAnotherProblem)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 101, Short.MAX_VALUE)
-                .add(jButtonCloseWindow)
-                .addContainerGap())
+                .add(jButtonDoAnotherProblem))
         );
-        jPanelButtonsLayout.setVerticalGroup(
-            jPanelButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelButtonsLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanelButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jButtonDoAgain)
-                    .add(jButtonDoAnotherProblem)
-                    .add(jButtonCloseWindow))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        jPanelLeftButtonsLayout.setVerticalGroup(
+            jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(jButtonDoAgain)
+                .add(jButtonDoAnotherProblem))
         );
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanelButtons.add(jPanelLeftButtons, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
         getContentPane().add(jPanelButtons, gridBagConstraints);
 
         jPanelRadioButtons.setLayout(new java.awt.GridBagLayout());
@@ -307,6 +310,64 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 5);
         getContentPane().add(jPanelEnterYourOwnProblem, gridBagConstraints);
+
+        jPanelFeedbackAndTypes.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPaneIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Conventions about letters"));
+        jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(232, 228));
+        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(232, 228));
+        lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblIdentifierTypes.setColumns(20);
+        lblIdentifierTypes.setEditable(false);
+        lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblIdentifierTypes.setLineWrap(true);
+        lblIdentifierTypes.setRows(5);
+        lblIdentifierTypes.setText(" ");
+        lblIdentifierTypes.setWrapStyleWord(true);
+        lblIdentifierTypes.setBorder(null);
+        lblIdentifierTypes.setMinimumSize(new java.awt.Dimension(220, 75));
+        lblIdentifierTypes.setPreferredSize(new java.awt.Dimension(220, 180));
+        jScrollPaneIdentifierTypes.setViewportView(lblIdentifierTypes);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        jPanelFeedbackAndTypes.add(jScrollPaneIdentifierTypes, gridBagConstraints);
+
+        jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
+        jScrollPaneFeedback.setMinimumSize(new java.awt.Dimension(247, 228));
+        jScrollPaneFeedback.setPreferredSize(new java.awt.Dimension(247, 228));
+        txtFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        txtFeedback.setColumns(20);
+        txtFeedback.setEditable(false);
+        txtFeedback.setFont(new java.awt.Font("SansSerif", 0, 12));
+        txtFeedback.setLineWrap(true);
+        txtFeedback.setRows(5);
+        txtFeedback.setWrapStyleWord(true);
+        txtFeedback.setBorder(null);
+        txtFeedback.setPreferredSize(new java.awt.Dimension(220, 180));
+        jScrollPaneFeedback.setViewportView(txtFeedback);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelFeedbackAndTypes.add(jScrollPaneFeedback, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jPanelFeedbackAndTypes, gridBagConstraints);
 
         menuFile.setMnemonic('F');
         menuFile.setText("File");
@@ -610,10 +671,14 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelEnterYourOwnProblem;
+    private javax.swing.JPanel jPanelFeedbackAndTypes;
+    private javax.swing.JPanel jPanelLeftButtons;
     private javax.swing.JPanel jPanelRadioButtons;
     private javax.swing.JRadioButton jRadioButtonLambda;
     private javax.swing.JRadioButton jRadioButtonType;
     private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
+    private javax.swing.JTextArea lblIdentifierTypes;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenuItem menuItemClose;
     private lambdacalc.gui.LambdaEnabledTextField txtEnterYourOwnProblem;
