@@ -48,10 +48,11 @@ public class Nonterminal extends LFNode {
      * set yet and if it's uniquely determined. 
      *
      * @param lexicon the lexicon
+     * @param rules the rules
      */
-    public void guessLexicalChoices(Lexicon lexicon, RuleList rules) {
+    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
         for (int i = 0; i < children.size(); i++)
-            getChild(i).guessLexicalChoices(lexicon, rules);
+            getChild(i).guessLexicalEntriesAndRules(lexicon, rules);
         
         if (compositor != null)
             return;

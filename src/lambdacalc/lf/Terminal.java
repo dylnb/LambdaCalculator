@@ -26,7 +26,7 @@ public class Terminal extends LFNode {
      * @param rules this parameter is ignored 
      * (maybe later it can be used for type-shifting rules)
      */
-    public void guessLexicalChoices(Lexicon lexicon, RuleList rules) {
+    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
         if (meaning != null)
             return;
         

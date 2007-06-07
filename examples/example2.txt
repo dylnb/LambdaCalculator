@@ -16,7 +16,7 @@ use rule predicate modification
 
 define sleep,sleeps : Lx[sleep(x)]
 define happy : Lx[happy(x)]
-define man : Lx[man(x)]
+define guy : Lx[guy(x)]
 define love, loves : LyLx[love(x,y)]
 define someone : LX[Ex[X(x)]]
 # TODO when we define "someone" as  LP[Ex[P(x)]],
@@ -36,9 +36,10 @@ directions Derive the semantic value of each nonterminal node of the tree.
 points per exercise 20
 
 #[.S John [.VP sleeps]]
-[.S John [.VP loves Mary]]
-#[.S [.NBAR a man] [.VP loves Mary]]
-#[.S [.NP a [.N' man]] [.VP sleeps]]
+#[.S John [.VP loves Mary]]
+#[.S [.NBAR a guy] [.VP loves Mary]]
+#[.NP a guy]
+[.S [.NP a [.N' happy guy]] [.VP sleeps]]
 
 
 

@@ -51,7 +51,7 @@ public abstract class LFNode {
         
     public abstract Expr getMeaning() throws MeaningEvaluationException;
     
-    public abstract void guessLexicalChoices
+    public abstract void guessLexicalEntriesAndRules
             (Lexicon lexicon, RuleList rules);
     
 }
