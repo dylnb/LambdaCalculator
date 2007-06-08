@@ -139,10 +139,14 @@ public class ExerciseFileParser {
                 } else if (rule.equals("predicate modification")) {
                     file.getRules().add(
                             lambdacalc.lf.PredicateModificationRule.INSTANCE);
+                } else if (rule.equals("lambda abstraction")) {
+                    file.getRules().add(
+                            lambdacalc.lf.LambdaAbstractionRule.INSTANCE);
                 } else
                     throw new ExerciseFileFormatException(
                        "'use rule' must be followed by 'function application' " +
-                            "'non-branching nodes', or 'predicate modification'", 
+                            "'non-branching nodes', or 'predicate modification'," +
+                            "or 'lambda abstraction'", 
                             linectr, line);
 
             } else {

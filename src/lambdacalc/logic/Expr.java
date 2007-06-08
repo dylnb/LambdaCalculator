@@ -31,10 +31,11 @@ public abstract class Expr {
      *   3   Not
      *   2   FunApp over Predicate
      *   1   Identifier
-     *   0   Parens, ArgList (because ArgList is always parenthesized) -- strongest
+     *   0   Parens, ArgList (because ArgList is always parenthesized), GApp -- strongest
      * 
      * The parser implements this operator precedence independently so don't change it.
      * It is used only for the toString method.
+     * 
      *
      * @return an integer which represents the expression's operator precedence
      */
@@ -435,6 +436,12 @@ public abstract class Expr {
      * Writes a serialization of the expression to a DataOutputStream.
      * In implementations of this method in subclasses, the first thing written
      * must be the name of the class as a string (i.e. "lambdacalc.logic.And").
+     *
+     * Any subclass must provide a constructor that takes a DataInputStream as 
+     * an argument and creates a deserialized instance by reading from that argument.
+     *
+     * Note also that any subclass needs to be recorded into the code of readFromStream.
+     *
      * @param output the data stream to which the expression is written
      */
     public abstract void writeToStream(java.io.DataOutputStream output) throws java.io.IOException;
@@ -454,6 +461,7 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Exists")) return new Exists(input);
         if (exprType.equals("lambdacalc.logic.ForAll")) return new ForAll(input);
         if (exprType.equals("lambdacalc.logic.FunApp")) return new FunApp(input);
+        if (exprType.equals("lambdacalc.logic.GApp")) return new GApp(input);
         if (exprType.equals("lambdacalc.logic.If")) return new If(input);
         if (exprType.equals("lambdacalc.logic.Iff")) return new Iff(input);
         if (exprType.equals("lambdacalc.logic.Iota")) return new Iota(input);

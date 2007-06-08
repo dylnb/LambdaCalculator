@@ -13,6 +13,7 @@ multiple letter identifiers
 use rule function application
 use rule non-branching nodes
 use rule predicate modification
+use rule lambda abstraction
 
 define sleep,sleeps : Lx[sleep(x)]
 define happy : Lx[happy(x)]
