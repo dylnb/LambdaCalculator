@@ -49,7 +49,12 @@ public abstract class LFNode {
         return result;
     }
         
-    public abstract Expr getMeaning() throws MeaningEvaluationException;
+    public Expr getMeaning() throws MeaningEvaluationException {
+        return getMeaning(null);
+    }
+    
+    public abstract Expr getMeaning(AssignmentFunction a) 
+    throws MeaningEvaluationException;
     
     public abstract void guessLexicalEntriesAndRules
             (Lexicon lexicon, RuleList rules);
