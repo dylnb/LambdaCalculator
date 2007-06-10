@@ -174,7 +174,8 @@ public abstract class Binder extends Expr {
     
     public String toString() {
         String inner = innerExpr.toString();
-        if (innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
+        if (!(innerExpr instanceof Binder) 
+          && innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
             inner = "[" + inner + "]";
         } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {
             inner = "." + inner;

@@ -9,9 +9,78 @@ package lambdacalc.logic;
 import java.util.*;
 
 /**
- * Parses an expression into an Expr object.
+ * Parses a string into an Expr object.
+ *
+ * This is a simple recursive descent parser augmented with the
+ * possibility for the detection of ambiguous strings. For
+ * each of the main functions, parseFunctionApplication, parseInfixExpression,
+ * and parsePrefixExpression, the caller is asking the callee to find
+ * every legitimate instance of function application, an infix expression,
+ * or a prefix expression starting at the indicated position, but ending
+ * anywhere. So, for infix expressions like A & B & C, the callee returns
+ * A, A & B, and A & B & C. Likewise, for function applications like
+ * P a b c, the callee returns P (the predicate alone), P a, (P a) b, and
+ * ((P a) b) c. This allows for the scopes of infix operators to pop up.
+ * For instance, Ax.P(x) & Q(x), two parsing paths are taken.
+ * parseFunctionApplication calls parseInfixExpression which
+ * calls parsePrefixExpression, which sees the binder and calls parseInfixExpression
+ * to get its inner expression. parseInfixExpression returns a set comprising
+ * the parses P(x) and P(x) & Q(x). parsePrefixExpression wraps each possibility
+ * with the binder, so it returns the set: Ax.P(x) and Ax.P(x) & Q(x).
+ * Above that, parseInfixExpression looks to the right of each possibility
+ * for a connective. In the first case, it finds the ampersand, so it creates
+ * a conjunction yielding [Ax.P(x)] & Q(x). In the second case, it hits the
+ * end of the string and just returns Ax.P(x) & Q(x) unchanged.
+ *
+ * Each such call can return either 1) a set of one or more possible parses,
+ * or 2) an error condition (SyntaxException) indicating why nothing could
+ * be parsed. Further, each possible parse can be tagged with why the parse
+ * didn't go any further than it did (HowToContinue, a SyntaxException).
+ * For instance, in "[Lx.P(x)] ^", parseFunctionApplication will try to parse
+ * the caret as an expression, but will fail, so it will return as much as
+ * it could parse, which is "[Lx.P(x)]", but tagged with the SyntaxException
+ * that ocurred parsing the next bit. This is used as the message for the user
+ * when the remainder of the string couldn't be parsed.
  */
 public class ExpressionParser {
+    
+    /**
+     * Testing routine. It prints out the various potential parses
+     * and the at the end the actually accepted parse, or the error
+     * message that would be thrown on failure.
+     */
+    public static void main(String[] args) {
+        ParseOptions opts = new ParseOptions();
+        opts.ASCII = true;
+
+        ParseResultSet rs = parseExpression(args[0], 0, opts, "an expression");
+        if (rs.Exception != null) {
+            rs.Exception.printStackTrace();
+            return;
+        }
+        for (int i = 0; i < rs.Parses.size(); i++) {
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            System.out.print(r.Next + "   " + r.Expression.toString());
+            String type = "(type mismatch)";
+            try {
+                type = r.Expression.getType().toString();
+            } catch (TypeEvaluationException tee) {
+            }
+            System.out.println(" " + type);
+            if (r.HowToContinue != null)
+                System.out.print("  " + r.HowToContinue.getMessage());
+            System.out.println();
+        }
+        
+        System.out.println();
+        
+        try {
+            System.out.println(parse(args[0], opts));
+        } catch (SyntaxException se) {
+            System.err.println(se.getMessage());
+        }
+    }
+    
     /**
      * Options for parsing expressions.
      */
@@ -75,21 +144,61 @@ public class ExpressionParser {
              ret.typer = typer.cloneTyper();
              ret.explicitTypes = explicitTypes;
              return ret;
-         }
-     }
+        }
+    }
     
-    private static class ParseResult {
-        public Expr Expression;
-        public int Next;
+    /**
+     * This class represents the set of possible parses that could be
+     * read at a given position in the string, taking into account that
+     * some strings are legitimately ambiguous, to be resolved at the end.
+     * This class can also represent a fatal error condition when no parses
+     * are possible.
+     * So, either Exception is set at Parses is null, or else Parses is
+     * a vector of one or more elements, and Exception is null.
+     */
+    private static class ParseResultSet {
+        public final SyntaxException Exception; // if set, a fatal error, no parses available
+        public final Vector Parses; // if set, one or more possible parses
         
-        /**
-         * 
-         * @param expression 
-         * @param next 
-         */
-        public ParseResult(Expr expression, int next) {
-            Expression = expression;
+        public ParseResultSet(SyntaxException ex) {
+            Exception = ex;
+            Parses = null;
+        }
+        
+        public ParseResultSet(Vector parses) {
+            Exception = null;
+            Parses = parses;
+        }
+
+        public ParseResultSet(ParseResult singletonParse) {
+            Exception = null;
+            Parses = new Vector();
+            Parses.add(singletonParse);
+        }
+    }
+    
+    /**
+     * This class represents a single potential parse of a string at a given
+     * location. Expression contains the parsed substring. Next is the next
+     * character position after the substring read. HowToContinue is an
+     * informative error message about why the parser stopped when it did.
+     * It is normally used when we were able to parse a substring as something,
+     * but when it is the best we can parse of the user input yet it is not the
+     * whole expression given.
+     */ 
+    private static class ParseResult {
+        public final Expr Expression; // parsed subexpression
+        public final int Next; // next character position after subexpression
+        public final SyntaxException HowToContinue; // if set, why we stopped here
+        
+        public ParseResult(Expr expr, int next) {
+            this(expr, next, null);
+        }
+        
+        public ParseResult(Expr expr, int next, SyntaxException continuation) {
+            Expression = expr;
             Next = next;
+            HowToContinue = continuation;
         }
     }
     
@@ -123,33 +232,133 @@ public class ExpressionParser {
     public static Expr parse(String expression, ParseOptions options) throws SyntaxException {
         options.explicitTypes.clear();
         
-        if (expression.length() == 0)
-            throw new SyntaxException("Enter a lambda expression.", -1);
+        if (expression.trim().length() == 0)
+            throw new SyntaxException("Enter a lambda expression.", 0);
         
-        ParseResult r = parseExpression(expression, 0, options, "an expression");
-        if (r.Next != expression.length())
-            throw new SyntaxException("\"" + expression.substring(r.Next) + "\" doesn't look like a lambda expression.", r.Next);
+        ParseResult r = parse2(expression, 0, options, "an expression", true);
         
         return r.Expression;
+    }
+    
+    /**
+     * This method starts off the main work of the class. It tries to parse
+     * an expression and then resolve the ambiguities, according to several
+     * constraints. If the expression could not be parsed at all, a SyntaxExceptin
+     * is thrown.
+     * To resolve ambiguities, first only the parses that read the longest
+     * amount of the expression are considered. Then, if any parse is well-typed,
+     * discard the non-well-typed parses. Last, take only the parses that have
+     * the least number of free variables.
+     * If more than one parse still results, a SyntaxException is thrown altering
+     * the user to the ambiguities remaining.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for a prefix expression
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @param readFully true iff a failure to read to the end of the string should
+     * cause an exception to be thrown.
+     * @return a single ParseResult for the best parse
+     * @throws SyntaxException if no parse is possible
+     */
+    private static ParseResult parse2(String expression, int start, ParseOptions context, String whatIsExpected, boolean readFully) throws SyntaxException {
+        // Parse the string into a number of potential ambiguous parses.
+        ParseResultSet rs = parseExpression(expression, start, context, whatIsExpected);
+        
+        // If a fatal parsing error ocurred such that no parses were available, just
+        // throw the error.
+        if (rs.Exception != null)
+            throw rs.Exception;
+        
+        // Use ordered constraints to filter out parses.
+        
+        // The first constraint is to drop all parses that don't go as far into the
+        // string as the most extensive parse.
+        int maxParse = -1;
+        for (int i = 0; i < rs.Parses.size(); i++) { // get maximum
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            if (r.Next > maxParse) maxParse = r.Next;
+        }
+        for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-maximal parses
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            if (r.Next < maxParse) { rs.Parses.remove(i); i--; } // decrement i to repeat iteration at same index
+        }
+        
+        // If readFully is true, we are wanting to read the entire string. In that case,
+        // if we haven't gotten to the end of the string, raise an exception.
+        // (When parsing arguments to predicates, this method is called but we don't
+        // want to read to the end of the string.) We'll just take the first error message
+        // we can find in a HowToContinue field, or throw a generic one if there aren't any
+        // prepared messages.
+        if (readFully && maxParse != expression.length()) {
+            for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-maximal parses
+                ParseResult r = (ParseResult)rs.Parses.get(i);
+                if (r.HowToContinue != null)
+                    throw r.HowToContinue;
+            }
+            throw new SyntaxException("\"" + expression.substring(maxParse) + "\" doesn't look like a complete lambda expression.", maxParse);
+        }
+        
+        // Next, if any parse is well typed, then drop the non-well-typed parses.
+        boolean hasWellTyped = false;
+        for (int i = 0; i < rs.Parses.size(); i++) {
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            try {
+                r.Expression.getType(); // return value is not important
+                hasWellTyped = true; // not executed if type evaluation fails
+            } catch (TypeEvaluationException tee) {
+            }
+        }
+        if (hasWellTyped) {
+            for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-maximal parses
+                ParseResult r = (ParseResult)rs.Parses.get(i);
+                try {
+                    r.Expression.getType(); // return value is not important
+                } catch (TypeEvaluationException tee) {
+                    rs.Parses.remove(i); i--; // decrement i to repeat iteration at same index
+                }
+            }
+        }
+        
+        /*
+        // Lastly, minimize the number of free variables by tossing out parses
+        // that have more free variables than the parse with the fewest free variables.
+        int minFreeVars = -1;
+        for (int i = 0; i < rs.Parses.size(); i++) { // scan for the fewest number of free vars
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            int n = r.Expression.getFreeVars().size();
+            if (minFreeVars == -1 || n < minFreeVars) minFreeVars = n;
+        }
+        for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-minimal parses
+            ParseResult r = (ParseResult)rs.Parses.get(i);
+            int n = r.Expression.getFreeVars().size();
+            if (n > minFreeVars) { rs.Parses.remove(i); i--; } // decrement i to repeat iteration at same index
+        }
+        */
+        
+        // If more than one parse remains, tell the user his expression is ambiguous.
+        if (rs.Parses.size() > 1) {
+            Vector alternatives = new Vector();
+            for (int i = 0; i < rs.Parses.size(); i++) {
+                ParseResult r = (ParseResult)rs.Parses.get(i);
+                alternatives.add(r.Expression.toString());
+            }
+            throw new AmbiguousStringException("Your expression is ambiguous between the following possibilities and should be corrected by adding parentheses", alternatives);
+        }
+        
+        return (ParseResult)rs.Parses.get(0);
     }
     
     /**
      * Skips any whitespace.
      * @param expression the text string being parsed
      * @param start the position at which to start scanning for an identifier
-     * @param expected a string describing what kind of expression is expected to occur at this position,
-     * for error messages
-     * @param allowEOS if true, returns -1 if it hits the end of the string. Otherwise,
-     * an exception is raised in that case.
-     * @return a position in the string after any whitespace.
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return a position in the string after any whitespace, or -1 if whitespace goes to the end of the expression.
      */
-    private static int skipWhitespace(String expression, int start, String expected, boolean allowEOS) throws SyntaxException {
+    private static int skipWhitespace(String expression, int start) {
         while (true) {
-            if (start == expression.length()) {
-                if (allowEOS) return -1;
-                throw new SyntaxException("You seem to be missing " + expected + " at the end of your expression.", start);
-            }
+            if (start == expression.length())
+                return -1;
             if (expression.charAt(start) != ' ')
                 break;
             start++;
@@ -199,51 +408,108 @@ public class ExpressionParser {
      * parser to recognize them. This includes parenthesis expressions, 
      * negation expressions, binding
      * expressions, and predicates (which include identifiers). 
-     * If none of these are present
-     * at position start, a BadCharacterException is thrown.
+     * If none of these are present a BadCharacterException is returned.
      * @param expression the text string being parsed
      * @param start the position at which to start scanning for a prefix expression
      * @param context global options for parsing
      * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
      * for error messages
-     * @return a prefix expression
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return all prefix expressions that could be parsed at this point
      */
-    private static ParseResult parsePrefixExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
-        start = skipWhitespace(expression, start, whatIsExpected, false);
+    private static ParseResultSet parsePrefixExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
+        start = skipWhitespace(expression, start);
+        if (start == -1)
+            return new ParseResultSet(new SyntaxException("You seem to be missing " + whatIsExpected + " at the end of your expression.", expression.length()-1));
         char c = getChar(expression, start, context);
         
         switch (c) {
             case '(':
             case '[':
-                ParseResult parenr = parseExpression(expression, start+1, context, "an expression inside your parentheses or brackets");
-                start = skipWhitespace(expression, parenr.Next, "a ')'", false);
-                char closeChar = (c == '(') ? ')' : ']';
-                if (getChar(expression, start, context) != closeChar)
-                    throw new SyntaxException("You need a '" + closeChar + "' here but a '" + getChar(expression, start, context) + "' was found.", start);
-                return new ParseResult(new Parens(parenr.Expression, c == '(' ? Parens.ROUND : Parens.SQUARE), start+1);
+                ParseResultSet parenrs = parseExpression(expression, start+1, context, "an expression inside your " + (c == '(' ? "parentheses" : "brackets"));
+                if (parenrs.Exception != null) return parenrs; // return any fatal errors directly
+
+                char closeChar = (c == '(') ? ')' : ']'; // what char do we need to close the parens?
+
+                int needCloseParenAt = -1; // a position that we need a close paren at, if no
+                                           // possible parse of a subclass ends with the close paren character
+                SyntaxException orFixError = null; // corresponding to needCloseParenAt, the
+                                                   // HowToContinue exception that resulted in
+                                                   // not parsing more of the inner expression
+                
+                Vector result = new Vector(); // possible parses
+                
+                // Wrap each possible parse of the subexpression in Parens.
+                for (int i = 0; i < parenrs.Parses.size(); i++) {
+                    ParseResult parenr = (ParseResult)parenrs.Parses.get(i);
+                    
+                    // Does the subexpression get followed by closeChar?
+                    int newstart = skipWhitespace(expression, parenr.Next);
+                    if (newstart == -1) {
+                        // If we hit the end of the string, we need a close paren there.
+                        needCloseParenAt = expression.length() - 1;
+                        orFixError = null;
+                        continue;
+                    }
+                    if (getChar(expression, newstart, context) != closeChar) {
+                        needCloseParenAt = newstart;
+                        orFixError = parenr.HowToContinue; // why did the subexpression end there
+                        continue;
+                    }
+                    
+                    // If it is followed by closeChar, wrap it in Parens and
+                    // consider it a possible parse.
+                    result.add(new ParseResult(new Parens(parenr.Expression, c == '(' ? Parens.ROUND : Parens.SQUARE), newstart+1));
+                }
+                
+                // If no possible parses are followed by closeChar, raise an exception
+                // and given the user one of the possible positions where closeChar
+                // would have been a good idea.
+                if (result.size() == 0) {
+                    if (orFixError == null)
+                        return new ParseResultSet(new SyntaxException("You need a '" + closeChar + "' at the indicated location.", needCloseParenAt));
+                    else
+                        return new ParseResultSet(new SyntaxException(orFixError.getMessage() + " Or, perhaps add a '" + closeChar + "' at the indicated location.", needCloseParenAt));
+                }
+                
+                return new ParseResultSet(result);
                 //break
                 
             case Not.SYMBOL:
-                ParseResult negr = parsePrefixExpression(expression, start+1, context, "an expression after the negation operator");
+                // Get the possibilities for the subexpression
+                ParseResultSet negrs = parsePrefixExpression(expression, start+1, context, "an expression after the negation operator");
+                if (negrs.Exception != null) return negrs; // return any fatal errors directly
+                
                 // By parsing a prefix expression as opposed to just any expression here,
                 // we achieve the effect that negation binds more strongly than any other infix operator, 
                 // and more strongly than function application.
                 // E.g. ~A & B is parsed as [~A] & B                
                 
-                return new ParseResult(new Not(negr.Expression), negr.Next);
+                // Wrap each possible parse of the subexpression in negation
+                for (int i = 0; i < negrs.Parses.size(); i++) {
+                    ParseResult negr = (ParseResult)negrs.Parses.get(i);
+                    negrs.Parses.set(i, new ParseResult(new Not(negr.Expression), negr.Next));
+                }
+                
+                // Return the wrapped possible parses
+                return negrs;
                 //break
                 
             case ForAll.SYMBOL: //fall through
             case Exists.SYMBOL: //fall through
             case Lambda.SYMBOL: //fall through
             case Iota.SYMBOL:
-                ParseResult var = parseIdentifier(expression, start+1, context, "a variable");
-                if (!(var.Expression instanceof Identifier))
-                    throw new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1);
+                // Get the identifier that follows the binder.
+                ParseResultSet vars = parseIdentifier(expression, start+1, context, "a variable");
+                if (vars.Exception != null) return vars; // return any fatal errors directly
+                ParseResult var = (ParseResult)vars.Parses.get(0); // parseIdentifier always returns a singleton, if anything
+                if (!(var.Expression instanceof Identifier)) // should never occur??
+                    return new ParseResultSet(new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1));
                 start = var.Next;
 
-                start = skipWhitespace(expression, start, "a period, open bracket, or another binder", false);
+                // See if a period follows and remember whether one does.
+                start = skipWhitespace(expression, start);
+                if (start == -1)
+                    return new ParseResultSet(new SyntaxException("You seem to be missing an expression following the binder at the end of your expression.", expression.length()-1));
                 
                 boolean hadPeriod = false;
                 if (getChar(expression, start, context) == '.') {
@@ -259,41 +525,34 @@ public class ExpressionParser {
                 Identifier varid = (Identifier)var.Expression;
                 context2.typer.addEntry(varid.getSymbol(), varid instanceof Var, varid.getType());
                 
-                // The inside of a binder can be one of two things:
-                //   a bracketed expression (Parens)
-                //   another binder (and inside that eventually (recursively) we'll get our brackets)
-                // This issue is that without an explicit scope marker at the end of the scope
-                // of the binder, it's impossible to know whether infix operators take wide
-                // or narrow scope, as in:  Ax.P(x) & Q(x).  This is ambiguous since we allow
-                // variables to be free. It could be: [Ax.P(x)] & Q(x). While we could just
-                // parse binders allowing for only prefix (i.e. not infix) expressions in
-                // their scope, for pedagogical reasons we want to enforce the use of clear
-                // syntax. Otherwise we would parse as given above, but the user probably will
-                // not think that that is what we did. So, we require brackets after binders,
-                // which makes the scope clear, except when a binder is followed by another binder,
-                // which is also permitted since it just pushes the brackets requirement down
-                // into the inner expression.
-                ParseResult inside = parsePrefixExpression(expression, start, context2, "the expression in the scope of the operator");
+                // Get the possible parses of the inner expression.
+                ParseResultSet insides = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder");
+                if (insides.Exception != null) return insides; // return any fatal errors immediately
                 
-                if (!(inside.Expression instanceof Parens)
-                      && !(inside.Expression instanceof Binder)) 
-                    throw new SyntaxException("After a binder, either a bracket or another binder must come next.", start+1);
-                 
-                Binder bin;
-                switch (c) {
-                    case ForAll.SYMBOL: bin = new ForAll((Identifier)var.Expression, inside.Expression, hadPeriod); break;
-                    case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, inside.Expression, hadPeriod); break;
-                    case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, inside.Expression, hadPeriod); break;
-                    case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, inside.Expression, hadPeriod); break;
-                    default:
-                        throw new RuntimeException(); // unreachable
+                // Wrap each possible parse inside a Binder expression
+                for (int i = 0; i < insides.Parses.size(); i++) {
+                    ParseResult inside = (ParseResult)insides.Parses.get(i);
+                    
+                    Binder bin;
+                    switch (c) {
+                        case ForAll.SYMBOL: bin = new ForAll((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                        case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                        case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                        case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                        default:
+                            throw new RuntimeException(); // unreachable
+                    }
+                    
+                    insides.Parses.set(i, new ParseResult(bin, inside.Next, inside.HowToContinue));
                 }
-                return new ParseResult(bin, inside.Next);
+                
+                // return the possible parses
+                return insides;
                 //break
                 
             default:
-                // Hope that it's an identifier or predicate. If not, a BadCharacterException is thrown.
-                return parsePredicate(expression, start, context, "an expression", false);
+                // Hope that it's an identifier or predicate. If not, a BadCharacterException is returned.
+                return parsePredicate(expression, start, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
         }
     }
     
@@ -304,11 +563,10 @@ public class ExpressionParser {
      * @param context global options for parsing
      * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
      * for error messages
-     * @return an identifier
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return an identifier or an error condition
      */
-    private static ParseResult parseIdentifier(String expression, int start,
-            ParseOptions context, String whatIsExpected) throws SyntaxException {
+    private static ParseResultSet parseIdentifier(String expression, int start,
+            ParseOptions context, String whatIsExpected) {
         return parsePredicate(expression, start, context,
                 whatIsExpected, true);
         
@@ -328,24 +586,22 @@ public class ExpressionParser {
      * case: 1) predicates are not allowed, so we stop reading immediately after the identifier, 2) if
      * a type on the identifier is specified (i.e. x:e), then we know to load the identifier as a variable,
      * and 3) the error message reflects that we're looking for a variable.
-     * @return a predicate
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return an identifier, predicate, or error condition
      */
-    private static ParseResult parsePredicate(String expression, int start, ParseOptions context, String whatIsExpected, boolean isRightAfterBinder) throws SyntaxException {
-        start = skipWhitespace(expression, start, whatIsExpected, false);
+    private static ParseResultSet parsePredicate(String expression, int start, ParseOptions context, String whatIsExpected, boolean isRightAfterBinder) {
+        // If there's no more here, return an error condition.
+        start = skipWhitespace(expression, start);
+        if (start == -1)
+            return new ParseResultSet(new SyntaxException("You seem to be missing " + whatIsExpected + " at the end of your expression.", expression.length()-1));
+            
+        int realStart = start;
         char c = expression.charAt(start);
         
-        // 0 and 1 are parsed as constants of type t.
-        if (c == '0' || c == '1') {
-            start++;
-            return new ParseResult(new Const(String.valueOf(c), Type.T, false), start);
-        }
-            
         if (!isLetter(c)) {
             if (isRightAfterBinder)
-                throw new BadCharacterException("I'm expecting a variable here, but variables must start with a letter.", start);
+                return new ParseResultSet(new BadCharacterException("I'm expecting a variable at the indicated location, but variables must start with a letter.", start));
             else
-                throw new BadCharacterException("I'm expecting an expression here, but '" + c + "' can't be the beginning of an expression.", start);
+                return new ParseResultSet(new BadCharacterException("You cannot have a '" + c + "' at the indicated location. I'm expecting to find " + whatIsExpected + ".", start));
         }
     
         // Read in the identifier until the first non-letter-or-number
@@ -365,24 +621,37 @@ public class ExpressionParser {
         Type specifiedType = null;
         if (start < expression.length() && getChar(expression, start, context) == ':') {
             start++;
-            TypeParser.ParseResult tr = TypeParser.parseType(expression, start, true);
-            start = tr.end + 1;
-            specifiedType = tr.result;
+            try {
+                TypeParser.ParseResult tr = TypeParser.parseType(expression, start, true);
+                start = tr.end + 1;
+                specifiedType = tr.result;
+            } catch (SyntaxException se) {
+                return new ParseResultSet(se);
+            }
         }
+        
+        boolean parsePredicate = true;
 
-        if (start == expression.length() || isRightAfterBinder) {
-            Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
-            return new ParseResult(ident, start);
-        }
-
+        // If we're at the end of the expression, or if our caller does not permit us
+        // to parse a predicate, we won't parse a predicate.
+        if (start == expression.length() || isRightAfterBinder)
+            parsePredicate = false;
+        
         // If parens, or another identifier, follow immediately, it is a predicate.
         // We parse such predicates here. If neither of those conditions holds, then
         // we return the identifier we found.
-        if (!(
+        else if (!(
                 getChar(expression, start, context) == '('
-                || (context.singleLetterIdentifiers && isLetter(getChar(expression, start, context))))) {
-            Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
-            return new ParseResult(ident, start);
+                || (context.singleLetterIdentifiers && isLetter(getChar(expression, start, context)))))
+            parsePredicate = false;
+                
+        if (!parsePredicate) {
+            try {
+                Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
+                return new ParseResultSet(new ParseResult(ident, start));
+            } catch (IdentifierTypeUnknownException itue) {
+                return new ParseResultSet(new SyntaxException(itue.getMessage(), realStart));
+            }
         }
 
         boolean parens = false;
@@ -396,9 +665,11 @@ public class ExpressionParser {
         while (true) {
             if (parens) {
                 // skip whitespace and look for close parens
-                start = skipWhitespace(expression, start, 
-                        first ? "a comma, expression, or close parenthesis"
-                           : "a comma or close parenthesis", false);
+                start = skipWhitespace(expression, start); 
+                if (start == -1)
+                    return new ParseResultSet(new SyntaxException("You seem to be missing " +
+                        (first ? "a comma, expression, or close parenthesis"
+                           : "a comma or close parenthesis") + " at the end of your expression.", expression.length()-1));
                 if (getChar(expression, start, context) == ')') { start++; break; }
             } else {
                 if (start == expression.length())
@@ -411,25 +682,33 @@ public class ExpressionParser {
                 if (!first) {
                     // With parentheses, we need commas between the arguments.
                     if (getChar(expression, start, context) != ',')
-                        throw new SyntaxException("A comma must be used to separate arguments to a predicate.", start);
+                        return new ParseResultSet(new SyntaxException("A comma must be used to separate arguments to a predicate.", start));
                     start++;
                 }
                 first = false;
 
-                ParseResult arg = parseExpression(expression, start, context, "the next argument to the predicate " + id);
-                arguments.add(arg.Expression);
-                start = arg.Next;
+                try {
+                    ParseResult arg = parse2(expression, start, context, "the next argument to the predicate " + id, false);
+                    arguments.add(arg.Expression);
+                    start = arg.Next;
+                } catch (SyntaxException se) {
+                    return new ParseResultSet(new SyntaxException("Argument " + (arguments.size()+1) + " to the predicate " + id + " at the indicated location had the following problem: " + se.getMessage(), se.getPosition()));
+                }
             } else {
                 char cc = getChar(expression, start, context);
                 if (!isLetter(cc))
-                    throw new SyntaxException("Invalid identifier as an argument to " + id + ".", start);
-                arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false));
+                    return new ParseResultSet(new SyntaxException("Invalid identifier as an argument to " + id + ".", start));
+                try {
+                    arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false));
+                } catch (IdentifierTypeUnknownException itue) {
+                    return new ParseResultSet(new SyntaxException(itue.getMessage(), start));
+                }
                 start++;
             }
         }
         
-        if (arguments.size() == 0) // we treat "P()" as "P"
-            return new ParseResult(loadIdentifier(id, context, start, null, specifiedType, false), start);
+        if (arguments.size() == 0) // "P()" is not valid
+            return new ParseResultSet(new SyntaxException("Within the parenthesis of a predicate, one or more expressions must appear.", start));
 
         // If the type of the identifier is not known to the IdentifierTyper,
         // we'll infer its type from the types of the arguments, and assume
@@ -447,12 +726,18 @@ public class ExpressionParser {
         } catch (TypeEvaluationException e) {
         }
 
-        Identifier ident = loadIdentifier(id, context, start, inferType, specifiedType, false);
+        Identifier ident;
+        
+        try {
+            ident = loadIdentifier(id, context, start, inferType, specifiedType, false);
+        } catch (IdentifierTypeUnknownException itue) {
+            return new ParseResultSet(new SyntaxException(itue.getMessage(), realStart));
+        }
 
         if (arguments.size() == 1) // P(a) : a is an identifier; there is no ArgList
-            return new ParseResult(new FunApp(ident, (Expr)arguments.get(0)), start);
+            return new ParseResultSet(new ParseResult(new FunApp(ident, (Expr)arguments.get(0)), start));
         else // P(a,b) : (a,b) is an ArgList
-            return new ParseResult(new FunApp(ident, new ArgList((Expr[])arguments.toArray(new Expr[0]))), start);
+            return new ParseResultSet(new ParseResult(new FunApp(ident, new ArgList((Expr[])arguments.toArray(new Expr[0]))), start));
     }
     
     
@@ -484,10 +769,10 @@ public class ExpressionParser {
      * @param inferType if null and the typing conventions cannot provide a type
      * for the identifier, an exception is thrown; otherwise, if the typing conventions
      * cannot provide a type for the identifier, inferType is used
-     * @throws lambdacalc.logic.SyntaxException if a parsing error occurs
+     * @throws IdentifierTypeUnknownException if the type of the identifier could not be determined
      * @return the new Identifier instance
      */
-    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferredType, Type specifiedType, boolean isRightAfterBinder) throws SyntaxException {
+    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferredType, Type specifiedType, boolean isRightAfterBinder) throws IdentifierTypeUnknownException{
         boolean isvar;
         Type type;
         
@@ -497,8 +782,7 @@ public class ExpressionParser {
                 type = context.typer.getType(id);
             } catch (IdentifierTypeUnknownException e) {
                 if (inferredType == null)
-                    throw new SyntaxException(e.getMessage(), start);
-            
+                    throw e;
                 isvar = false;
                 type = inferredType;
             }
@@ -538,6 +822,10 @@ public class ExpressionParser {
      *   And
      *   Or -- binds weakest
      *
+     * Ambiguity of expressions like Lx.P & Q as Vx.[P & Q] or [Vx.P] & Q
+     * are handled by returning not a single result, but for expressions
+     * like A & B & C, a list of possible parses: { A, A & B, A & B & C }.
+     *
      * @param expression the text string being parsed
      * @param start the position at which to start scanning for an infix expression
      * @param context global options for parsing
@@ -545,96 +833,186 @@ public class ExpressionParser {
      * for error messages
      * @param firstConjunct if null, ignored; otherwise, this is the first conjunct (scanning
      * the first conjunct is skipped); this is used for look-ahead in parsing quantifiers
-     * @return an infix expression or something lesser as fallback
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return the possible infix expressions (or something lesser as fallback) that could be parsed
+     * at this location
      */
-    private static ParseResult parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, ParseResult firstConjunct) throws SyntaxException {
-        // We allow our caller to do a parsePrefixExpression before calling us so it can
-        // look ahead and see what type of expression is next. If it didn't do any look-ahead
-        // it passes left as null and we fetch the first conjunct here.
-        if (firstConjunct == null)
-            firstConjunct = parsePrefixExpression(expression, start, context, whatIsExpected);
+    private static ParseResultSet parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
+        // Parse the first operand
+        ParseResultSet firstConjuncts = parsePrefixExpression(expression, start, context, whatIsExpected);
+        if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
         
-        ArrayList operators = new ArrayList();
-        ArrayList operands = new ArrayList();
+        Vector results = new Vector();
         
-        operands.add(firstConjunct.Expression);
+        // When we parse the first conjunct, we can get any number of possible parses back,
+        // and for each we continue trying to parse the rest of the expression looking
+        // for a following infix operator.
         
-        start = firstConjunct.Next;
-        
-        while (true) {
-            int start2 = skipWhitespace(expression, start, null, true);
-            if (start2 == -1) break;
-            start = start2;
+        for (int i = 0; i < firstConjuncts.Parses.size(); i++) {
+            ParseResult firstConjunct = (ParseResult)firstConjuncts.Parses.get(i);
 
-            char c = getChar(expression, start, context);
+            ArrayList operators = new ArrayList();
+            ArrayList operands = new ArrayList();
+
+            operands.add(firstConjunct.Expression);
             
-            if (context.ASCII) {
-                char cnext = (start+1 < expression.length()) ? expression.charAt(start+1) : (char)0;
-                char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
-                if (c == '&')
-                    c = And.SYMBOL;
-                
-                // TODO: synchronize this with LambdaEnabledTextField
-                
-                else if (c == '|')
-                    c = Or.SYMBOL;
-                
-                else if (c == '-' && cnext == '>')
-                    { c = If.SYMBOL; start++; }
-                
-                else if (c == '<' && cnext == '-' && cnextnext == '>')
-                    { c = Iff.SYMBOL; start+=2; }
-                
-                else if (c == '!' && cnext == '=')
-                    { c = Equality.NEQ_SYMBOL; start++; }
-            }
+            // Record the nondeterministic choice of ending the infix expression after
+            // the first conjunct. Return any failure conditions immediately.
+            SyntaxException err2 = parseInfixExpressionFinish(operators, operands, firstConjunct.Next, null, results);
+            if (err2 != null)
+                return new ParseResultSet(err2);
             
-            // If the next operator is and, or, if, or iff, then parse the succeeding
-            // expression and return a binary expression.
-            if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL))
-                break;
-            
-            ParseResult right = parsePrefixExpression(expression, start+1, context, "another expression after the connective");
-            
-            operators.add(String.valueOf(c));
-            operands.add(right.Expression);
-            
-            start = right.Next;
+            // Continue parsing the rest and return any error conditions immediately.
+            SyntaxException err = parseInfixExpressionRemainder(expression, firstConjunct.Next, context, operators, operands, results);
+            if (err != null)
+                return new ParseResultSet(err);
         }
         
-        if (operands.size() == 1) return firstConjunct;
+        return new ParseResultSet(results);
+    }
+
+    /**
+     * Parse the remainder of an infix expression, returning any error conditions.
+     */
+    private static SyntaxException parseInfixExpressionRemainder(String expression, int start, ParseOptions context, ArrayList operators, ArrayList operands, Vector results) {
+        // Skip any white space after the previous expression to where we expect an operator
+        start = skipWhitespace(expression, start);
         
-        // group operands by operator precedence, tighter operators first
+        // We know we've reached the end of this infix expression if we've hit the
+        // end of the string.
+        if (start == -1)
+            return null;
         
-        groupOperands(operands, operators, Equality.NEQ_SYMBOL);
-        groupOperands(operands, operators, Equality.EQ_SYMBOL);
-        groupOperands(operands, operators, If.SYMBOL);
-        groupOperands(operands, operators, Iff.SYMBOL);
-        groupOperands(operands, operators, And.SYMBOL);
-        groupOperands(operands, operators, Or.SYMBOL);
+        char c = getChar(expression, start, context);
+
+        // If we're in ASCII mode, convert the ASCII character
+        // to a unicode character, and possibly read a few more
+        // characters to get the symbol.
+        if (context.ASCII) {
+            char cnext = (start+1 < expression.length()) ? expression.charAt(start+1) : (char)0;
+            char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
+            if (c == '&')
+                c = And.SYMBOL;
+
+            // TODO: synchronize this with LambdaEnabledTextField
+
+            else if (c == '|')
+                c = Or.SYMBOL;
+                
+            else if (c == '-' && cnext == '>')
+                { c = If.SYMBOL; start++; }
+
+            else if (c == '<' && cnext == '-' && cnextnext == '>')
+                { c = Iff.SYMBOL; start+=2; }
+
+            else if (c == '!' && cnext == '=')
+                { c = Equality.NEQ_SYMBOL; start++; }
+        }
+            
+        start++;
+
+        // If the next character isn't and, or, if, iff, eq, or neq, then we're at the end of
+        // our expression. Since we've found something complete already, and we have no indication
+        // that the user intended a connective, there's no need to return any error status.
+        if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL))
+            return null;
+
+        // Try to parse the right operand.
+        ParseResultSet nextoperands = parsePrefixExpression(expression, start, context, "another expression after the " + c + " connective");
         
-        return new ParseResult((Expr)operands.get(0), start);
+        // If parsing the right operand failed completely, then we return the reason. Because
+        // a failure to parse that expression is fatal, since we've already gotten the connective,
+        // we are right to return it fatally.
+        if (nextoperands.Exception != null)
+            return nextoperands.Exception;
+        
+        // For each possible right operand, record what we have so far as the end of a
+        // nondeterministic path, and recursively parse for more operands.
+        for (int i = 0; i < nextoperands.Parses.size(); i++) {
+            ParseResult right = (ParseResult)nextoperands.Parses.get(i);
+          
+            // Clone the list of operators and operands that we have so
+            // far and add our latest operator/operand to them.
+            ArrayList operators2 = new ArrayList(operators);
+            ArrayList operands2 = new ArrayList(operands);
+            
+            operators2.add(String.valueOf(c));
+            operands2.add(right.Expression);
+            
+            // Record the nondeterministic path of ending here.
+            SyntaxException err2 = parseInfixExpressionFinish(operators2, operands2, right.Next, right.HowToContinue, results);
+            if (err2 != null)
+                return err2;
+            
+            // Try to parse more infix operators...
+            SyntaxException err = parseInfixExpressionRemainder(expression, right.Next, context, operators2, operands2, results);
+            if (err != null)
+                return err;
+        }
+        
+        return null;
     }
     
     /**
-     * 
-     * @param operands 
-     * @param operators 
-     * @param op 
-     * @throws lambdacalc.logic.SyntaxException 
+     * Finish parsing an infix expression. Handle operator
+     * precedence and record the result. An exception is returned
+     * just when grouping the operators is impossible because two
+     * operators of equal precedence (i.e. -> and <->) are used
+     * next to eachother.
      */
-    private static void groupOperands(ArrayList operands, ArrayList operators, char op) throws SyntaxException {
+    private static SyntaxException parseInfixExpressionFinish(ArrayList operators, ArrayList operands, int next, SyntaxException continuationException, Vector results) {
+        // Group the operands we found by operator precedence, tighter operators first.
+        // After these calls, only a single operand will be left, the one with
+        // lowest precedence.
+        
+        // Make copies of the lists before grouping since grouping modifies the list,
+        // and we came here nondeterminisitically. (Is this necessary?)
+        operands = new ArrayList(operands);
+        operators = new ArrayList(operators);
+        
+        if (operands.size() > 1) {
+            char[] operator_precedence = {
+                Equality.NEQ_SYMBOL,
+                Equality.EQ_SYMBOL,
+                If.SYMBOL,
+                Iff.SYMBOL,
+                And.SYMBOL,
+                Or.SYMBOL };
+               
+            for (int i = 0; i < operator_precedence.length; i++) {
+                SyntaxException ex = groupOperands(operands, operators, operator_precedence[i]);
+                if (ex != null)
+                    return ex;
+            }
+        }
+        
+        results.add(new ParseResult((Expr)operands.get(0), next, continuationException));
+        
+        return null;
+    }
+    
+    /**
+     * Finds each occurrence of the given operator (op) and groups the operand on its
+     * left and right together in a new instance of the appropriate Expr class.
+     * Left associativity is assumed. The operands/operators lists are modified in
+     * place and after this method returns, operands contains a single Expr object
+     * that represents the whole sequence of operands/operators.
+     * @param operands the sequence of operand in the string
+     * @param operators the sequence of operators in the string (one less than the number of operand)
+     * @param op the operator to group
+     * @throws SyntaxException when operators of the same precedence (-> and <->) are used
+     * next to eachother.
+     */
+    private static SyntaxException groupOperands(ArrayList operands, ArrayList operators, char op) {
         for (int i = 0; i+1 < operands.size(); i++) {
             while (i+1 < operands.size() && ((String)operators.get(i)).charAt(0) == op) {
                 Expr left = (Expr)operands.get(i);
                 Expr right = (Expr)operands.get(i+1);
                 
                 if ((op == If.SYMBOL || op == Iff.SYMBOL) && (left instanceof If || left instanceof Iff))
-                    throw new SyntaxException("Your expression is ambiguous because it has adjacent conditionals without parenthesis.", -1);
+                    return new SyntaxException("Your expression is ambiguous because it has adjacent conditionals without parenthesis.", -1);
                 
                 if ((op == Equality.EQ_SYMBOL || op == Equality.NEQ_SYMBOL) && (left instanceof Equality))
-                    throw new SyntaxException("Your expression is ambiguous because it has adjacent equality operators without parenthesis.", -1);
+                    return new SyntaxException("Your expression is ambiguous because it has adjacent equality operators without parenthesis.", -1);
                 
                 Expr binary;
                 switch (op) {
@@ -651,12 +1029,14 @@ public class ExpressionParser {
                 operands.remove(i+1);
             }
         }
+        
+        return null;
     }
 
     /**
      * Parses all sorts of expressions starting at position start in expression.
      * It looks first for an infix/prefix expression (anything returned by
-     * parseInfixExpression), and if that's followed by an identifier or parenthetical expression,
+     * parseInfixExpression), and if that's followed by another expression,
      * take it as an argument to a function application expression.
      * Parses an expression at position start in expression.
      * We first try to parse a function application because it is the operator with the
@@ -676,50 +1056,86 @@ public class ExpressionParser {
      * @param context global options for parsing
      * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
      * for error messages
-     * @return a function application expression or something lesser as fallback
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return a set of possible parses of function application expressions or something lesser as fallback,
+     * or an error condition
      */
-    private static ParseResult parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
-        ParseResult left = parseInfixExpression(expression, start, context, whatIsExpected, null);
-        start = left.Next;
+    private static ParseResultSet parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
+        // Parse the left-hand side of the function application, which can be
+        // any type of expression besides function application.
+        ParseResultSet lefts = parseInfixExpression(expression, start, context, whatIsExpected);
+        if (lefts.Exception != null) return lefts; // return any fatal errors immediately
         
-        Expr expr = left.Expression;
+        // Collect possible parses here. Delay adding the left expression until later.
+        Vector results = new Vector();
         
-        while (true) {
-            // Skip any white space after the first infix expression we parse
-            // (following the left hand side). If we hit the end of the string
-            // while skipping white space, skipWhitespace returns -1, and we
-            // just break out.
-            int start2 = skipWhitespace(expression, start, null, true);
-            if (start2 == -1) { break; }
-            start = start2;
-
-            char c = getChar(expression, start, context);
-
-            // We have to know when to terminate parsing a function application
-            // otherwise when parsing an embedded function application, after the
-            // function application is actually finished, we'll try doing a
-            // parsePrefixExpression below, and it'll throw an exception because
-            // what follows isn't a prefix expression. Example:
-            //    [Lx.P(x) (a)] & P(a)
-            // What follows is a close bracket, not a prefix expression, so we
-            // better not parse a prefix expression.
-            // Except at top-level scope, this method is only called when parsing
-            // the inside of a parenthesis expression or arguments to a predicate,
-            // so we know that we must be done just when we encounter a close bracket
-            // or a comma. (It can't match up
-            // with an open bracket *within* the function application because
-            // those have already been parsed. Thus, it must correspond to the
-            // parenthesis outside.)
-            if (c == ')' || c == ']' || c == ',')
-                break;
-            
-            ParseResult right = parsePrefixExpression(expression, start, context, "a variable or parenthesized expression"); // message never used
-            expr = new FunApp(expr, right.Expression); // left associativity
-            start = right.Next;
+        // For each possible parse of the left hand side, try to parse an expression
+        // after it as its argument.
+        for (int i = 0; i < lefts.Parses.size(); i++) {
+            ParseResult left = (ParseResult)lefts.Parses.get(i);
+            parseFunctionApplicationRemainder(expression, context, left, results);
         }
         
-        return new ParseResult(expr, start);
+        return new ParseResultSet(results);    
+    }
+    
+    /**
+     * Try to parse the right-hand-side of a function application. If the string ends,
+     * we just yield the left hand side directly. Otherwise, we parse a second expression
+     * and wrap the left and right sides in a FunApp. Left-associativity is accomplished by
+     * taking this result and using it as the left-hand-side of a further attempt to find
+     * a right-hand-side/FunApp. Possible parses --- both for the left-hand-side alone
+     * and for the whole thing as a FunApp --- are collected in results.
+     * @param expression the text string being parsed
+     * @param start the position at which to start scanning for a function application
+     * @param context global options for parsing
+     * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
+     * for error messages
+     * @param left the left-hand-side of the function application
+     * @param results the list into which possible parses of function application (ending at
+     * any point) are added
+     */
+    private static void parseFunctionApplicationRemainder(String expression, ParseOptions context, ParseResult left, Vector results) {
+        // Attempt to parse a second expression, and if we get one,
+        // we create a FunApp between the first (left) and second.
+
+        // Skip any white space after the previous expression.
+        // If we hit the end of the string, skipWhitespace returns -1, and we
+        // record the possible parse of just the left hand expression and then break out.
+        int start = skipWhitespace(expression, left.Next);
+        if (start == -1) {
+            results.add(left);
+            return;
+        }
+
+        // Parse a prefix expression to our right.
+        String expected = "an argument to the function " + left.Expression.toString();
+        if (!(left.Expression instanceof FunApp))               // when picking up the first FunApp argument, the user might
+            expected = "a logical connective or " + expected;   // have meant a logical connective here, but after later
+        else                                                    // arguments, parens must be used if the user really wants one
+            expected = expected + ", but if a logical connective was desired there, surround the left side with parentheses";
+        ParseResultSet rights = parsePrefixExpression(expression, start, context, expected);
+        
+        // If we couldn't parse anything to our right,
+        // we return the nondeterministic path up to
+        // the left expression and note in its HowToContinue
+        // field the error that prevents us from continuing
+        // it with the text that follows.
+        if (rights.Exception != null) {
+            results.add(new ParseResult(left.Expression, left.Next, rights.Exception));
+            return;
+        }
+        
+        // For each possible parse to our right, assemble a FunApp, and then
+        // recursively attempt to parse yet another argument to our right.
+        // We don't add the parsed FunApp to results here. Rather, we delay
+        // that until later in the recursive call so that if it has a failed
+        // parse of a further argument, it can note in the ParseResult what
+        // the error was.
+        for (int j = 0; j < rights.Parses.size(); j++) {
+            ParseResult right = (ParseResult)rights.Parses.get(j);
+            Expr expr = new FunApp(left.Expression, right.Expression); // left associativity
+            parseFunctionApplicationRemainder(expression, context, new ParseResult(expr, right.Next), results);
+        }
     }
 
     /**
@@ -732,10 +1148,10 @@ public class ExpressionParser {
      * @param context global options for parsing
      * @param whatIsExpected a string describing what kind of expression is expected to occur at this position,
      * for error messages
-     * @return an expression
-     * @throws lambdacalc.logic.SyntaxException if there is a parse error
+     * @return the set of possible expressions parsed starting at this location (and ending wherever),
+     * or an error condition
      */
-    private static ParseResult parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) throws SyntaxException {
+    private static ParseResultSet parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
         return parseFunctionApplicationExpression(expression, start, context, whatIsExpected);
     }
 }

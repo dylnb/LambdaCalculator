@@ -44,7 +44,7 @@ public abstract class LogicalBinary extends Binary {
      * without changing it there.
      */
     public final int getOperatorPrecedence() {
-        return 5;
+        return 4;
     }
     
     public Type getType() throws TypeEvaluationException {

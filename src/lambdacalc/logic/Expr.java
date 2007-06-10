@@ -27,7 +27,7 @@ public abstract class Expr {
      * Gets an integer representing the (outermost) expression's operator precedence:
      *
      *   8   FunApp over Lambda Expression -- weakest
-     *   4   Binders and Logical Connectives
+     *   4   Binders and Logical Connectives (so that either inside the other always gets parenthesis for clarity and correctness)
      *   3   Not
      *   2   FunApp over Predicate
      *   1   Identifier
