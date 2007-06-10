@@ -71,7 +71,7 @@ public abstract class Identifier extends Expr {
         if (!isTypeExplicit())
             return symbol;
         else
-            return symbol + ":" + type.toString();
+            return symbol + "_" + type.toString();
     }
     
     /**

@@ -616,10 +616,10 @@ public class ExpressionParser {
             id += expression.charAt(start++);
         }
         
-        // If a colon follows the name of the identifier, then the identifier's
-        // type follows the colon.
+        // If an underscore follows the name of the identifier, then the identifier's
+        // type follows.
         Type specifiedType = null;
-        if (start < expression.length() && getChar(expression, start, context) == ':') {
+        if (start < expression.length() && getChar(expression, start, context) == '_') {
             start++;
             try {
                 TypeParser.ParseResult tr = TypeParser.parseType(expression, start, true);
@@ -756,7 +756,6 @@ public class ExpressionParser {
                 || ic == '\''
                 || ic == '`' // alternate prime character
                 || ic == '"' // as if double prime
-                || ic == '_'
                 || ic == Identifier.PRIME;
     }
     
