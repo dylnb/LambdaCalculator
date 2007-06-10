@@ -66,7 +66,7 @@ public class ExpressionParser {
                 type = r.Expression.getType().toString();
             } catch (TypeEvaluationException tee) {
             }
-            System.out.println(" " + type);
+            System.out.print(" " + type);
             if (r.HowToContinue != null)
                 System.out.print("  " + r.HowToContinue.getMessage());
             System.out.println();
@@ -504,12 +504,14 @@ public class ExpressionParser {
                 ParseResult var = (ParseResult)vars.Parses.get(0); // parseIdentifier always returns a singleton, if anything
                 if (!(var.Expression instanceof Identifier)) // should never occur??
                     return new ParseResultSet(new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1));
-                start = var.Next;
+                int start1 = var.Next;
 
                 // See if a period follows and remember whether one does.
-                start = skipWhitespace(expression, start);
+                start = skipWhitespace(expression, start1);
                 if (start == -1)
                     return new ParseResultSet(new SyntaxException("You seem to be missing an expression following the binder at the end of your expression.", expression.length()-1));
+                    
+                boolean hadWhiteSpace = (start1 != start);
                 
                 boolean hadPeriod = false;
                 if (getChar(expression, start, context) == '.') {
@@ -526,8 +528,40 @@ public class ExpressionParser {
                 context2.typer.addEntry(varid.getSymbol(), varid instanceof Var, varid.getType());
                 
                 // Get the possible parses of the inner expression.
-                ParseResultSet insides = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder");
-                if (insides.Exception != null) return insides; // return any fatal errors immediately
+                ParseResultSet insides;
+                
+                // If there was no space or period, then only prefix expressions may be
+                // in the scope of the binder,
+                if (!hadWhiteSpace && !hadPeriod) {
+                    insides = parsePrefixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder");
+                    if (insides.Exception != null) return insides; // return any fatal errors immediately
+                    
+                    // However, unless a paren or bracket followed, in which case we can be sure
+                    // that the scope of the binder was indicated by the bracketing, we want to
+                    // make sure that the user hasn't given us something that might mean he
+                    // wanted an infix expression in the scope of the binder. That is,
+                    // LxP(x) & Q(x) means the conjunction takes wide scope (i.e. only parse
+                    // a prefix expression in the scope of the binder), but, crucially,
+                    // LxP(x)&Q(x) is just strange, and we want to reject it outright. (If we
+                    // treat it ambiguously, the type-sanity preference will rule out one
+                    // of the parses, but we want the end result to be an ambiguity error, so
+                    // we must treat it as a fatal error.)
+                    // In order to test this, we attempt to parse an infix expression in the
+                    // scope of the binder, but flagged as "testSpaceRequired". If the first infix
+                    // operator is not surrounded by spaces, parseInfixExpression returns an
+                    // error, and we pass it on. If it succeeds, we discard the result because
+                    // in fact we want the infix operator to have wide scope.
+                      
+                    char n = getChar(expression, start, context);
+                    if (!(n == '(' || n == '[')) {
+                        ParseResultSet infixes = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", true);
+                        if (infixes.Exception != null) return infixes; // return any fatal errors immediately
+                    }
+                } else {
+                    insides = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false);
+                    if (insides.Exception != null) return insides; // return any fatal errors immediately
+                }
+                
                 
                 // Wrap each possible parse inside a Binder expression
                 for (int i = 0; i < insides.Parses.size(); i++) {
@@ -832,10 +866,12 @@ public class ExpressionParser {
      * for error messages
      * @param firstConjunct if null, ignored; otherwise, this is the first conjunct (scanning
      * the first conjunct is skipped); this is used for look-ahead in parsing quantifiers
+     * @param testSpaceRequired if true, just test that if an infix operator is found, that it is surrounded
+     * by spaces
      * @return the possible infix expressions (or something lesser as fallback) that could be parsed
      * at this location
      */
-    private static ParseResultSet parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
+    private static ParseResultSet parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, boolean testSpaceRequired) {
         // Parse the first operand
         ParseResultSet firstConjuncts = parsePrefixExpression(expression, start, context, whatIsExpected);
         if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
@@ -861,7 +897,7 @@ public class ExpressionParser {
                 return new ParseResultSet(err2);
             
             // Continue parsing the rest and return any error conditions immediately.
-            SyntaxException err = parseInfixExpressionRemainder(expression, firstConjunct.Next, context, operators, operands, results);
+            SyntaxException err = parseInfixExpressionRemainder(expression, firstConjunct.Next, context, operators, operands, results, testSpaceRequired);
             if (err != null)
                 return new ParseResultSet(err);
         }
@@ -872,9 +908,11 @@ public class ExpressionParser {
     /**
      * Parse the remainder of an infix expression, returning any error conditions.
      */
-    private static SyntaxException parseInfixExpressionRemainder(String expression, int start, ParseOptions context, ArrayList operators, ArrayList operands, Vector results) {
+    private static SyntaxException parseInfixExpressionRemainder(String expression, int start, ParseOptions context, ArrayList operators, ArrayList operands, Vector results, boolean testSpaceRequired) {
         // Skip any white space after the previous expression to where we expect an operator
+        int pstart = start;
         start = skipWhitespace(expression, start);
+        boolean wsBefore = (pstart != start);
         
         // We know we've reached the end of this infix expression if we've hit the
         // end of the string.
@@ -914,6 +952,15 @@ public class ExpressionParser {
         // that the user intended a connective, there's no need to return any error status.
         if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL))
             return null;
+            
+        // See if any white space is after the connective
+        int pstart2 = start;
+        boolean wsAfter = (pstart2 != skipWhitespace(expression, start));
+        
+        // If we're testing whether spaces are required around the operators,
+        // if no space was found on either side, return an error condition.
+        if (testSpaceRequired && (!wsBefore || !wsAfter))
+            return new SyntaxException("Spaces are required around '" + c + "' connectives.", pstart);
 
         // Try to parse the right operand.
         ParseResultSet nextoperands = parsePrefixExpression(expression, start, context, "another expression after the " + c + " connective");
@@ -943,7 +990,7 @@ public class ExpressionParser {
                 return err2;
             
             // Try to parse more infix operators...
-            SyntaxException err = parseInfixExpressionRemainder(expression, right.Next, context, operators2, operands2, results);
+            SyntaxException err = parseInfixExpressionRemainder(expression, right.Next, context, operators2, operands2, results, testSpaceRequired);
             if (err != null)
                 return err;
         }
@@ -1061,7 +1108,7 @@ public class ExpressionParser {
     private static ParseResultSet parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
         // Parse the left-hand side of the function application, which can be
         // any type of expression besides function application.
-        ParseResultSet lefts = parseInfixExpression(expression, start, context, whatIsExpected);
+        ParseResultSet lefts = parseInfixExpression(expression, start, context, whatIsExpected, false);
         if (lefts.Exception != null) return lefts; // return any fatal errors immediately
         
         // Collect possible parses here. Delay adding the left expression until later.
