@@ -34,7 +34,8 @@ public class FunctionApplicationRule extends CompositionRule {
         return false;
     }
     
-    public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {
+    public Expr applyTo(Nonterminal node, AssignmentFunction g) 
+    throws MeaningEvaluationException {
         if (node.size() != 2)
             throw new MeaningEvaluationException("Function application is not " +
                     "applicable on a nonterminal that does not have exactly " +

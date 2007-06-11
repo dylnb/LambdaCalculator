@@ -699,4 +699,8 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             // if copying to clipboard is not supported at this time
         }
     }
+    
+    public Object clone() throws CloneNotSupportedException {
+	throw new CloneNotSupportedException();
+    }    
 }

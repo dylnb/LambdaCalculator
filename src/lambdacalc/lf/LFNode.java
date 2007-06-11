@@ -8,7 +8,7 @@ public abstract class LFNode {
      * The symbol used for separating the label from its index (if any)
      * in the #toString() method.
      */
-    public static final String SEPARATOR = "_"; 
+    public static final char INDEX_SEPARATOR = '_'; 
 
     protected String label;
     
@@ -44,16 +44,16 @@ public abstract class LFNode {
     public String toString() {
         String result = getLabel();
         if (hasIndex()) {
-            result += SEPARATOR + getIndex();
+            result += INDEX_SEPARATOR + getIndex();
         } 
         return result;
     }
         
     public Expr getMeaning() throws MeaningEvaluationException {
-        return getMeaning(null);
+        return getMeaning(new AssignmentFunction());
     }
     
-    public abstract Expr getMeaning(AssignmentFunction a) 
+    public abstract Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException;
     
     public abstract void guessLexicalEntriesAndRules

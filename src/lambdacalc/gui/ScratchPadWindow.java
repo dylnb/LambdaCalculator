@@ -659,6 +659,10 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         });
     }*/
     
+    public Object clone() throws CloneNotSupportedException {
+	throw new CloneNotSupportedException();
+    }
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JFileChooser fileChooser;

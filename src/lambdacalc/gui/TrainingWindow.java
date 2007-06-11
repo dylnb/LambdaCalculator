@@ -1168,6 +1168,10 @@ public class TrainingWindow extends JFrame {
             menuItemSave.setEnabled(true);
     }
     
+    public Object clone() throws CloneNotSupportedException {
+	throw new CloneNotSupportedException();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheckAnswer;
     private javax.swing.JButton btnDoAgain;

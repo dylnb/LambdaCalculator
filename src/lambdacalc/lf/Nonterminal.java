@@ -36,11 +36,13 @@ public class Nonterminal extends LFNode {
         compositor = rule;
     }
 
-    public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
+    public Expr getMeaning(AssignmentFunction g) 
+    throws MeaningEvaluationException {
+
         //TODO don't ignore g
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
-        return compositor.applyTo(this);
+        return compositor.applyTo(this, g);
     }
     
     /**
@@ -86,7 +88,7 @@ public class Nonterminal extends LFNode {
         }
         ret += "]";
         if (this.hasIndex()) {
-            ret += LFNode.SEPARATOR+this.getIndex();
+            ret += LFNode.INDEX_SEPARATOR+this.getIndex();
         }
         return ret;
     }

@@ -18,8 +18,12 @@ public class BareIndex extends Terminal {
     private BareIndex() {
     }
     
+    public BareIndex(int i) {
+        this.setIndex(i);
+    }
+    
     public String getLabel() {
-        return "";
+        return this.getIndex()+"";
     }
     
     public void setLabel(String label) {

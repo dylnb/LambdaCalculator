@@ -12,7 +12,8 @@ import lambdacalc.logic.SyntaxException;
  * NODE -> NONTERMINAL | TERMINAL
  * NONTERMINAL -> `[` (.LABEL)? (=RULE;)? NODE+ `]`
  * TERMINAL -> LABEL(=EXPR;)?
- * LABEL => a text string, no white space
+ * LABEL => a text string, no white space, optionally followed by an underscore
+ *          and an integral value (its index)
  * RULE => `fa`     (i.e. function application)
  * EXPR -> a predicate logic expression parsed by lambdacalc.logic.ExpressionParser.
  *
@@ -39,6 +40,9 @@ public class BracketedTreeParser {
         // i.e. when we're reading a terminal label. null if parseMode!=2.
         Terminal curterminal = null;
         
+        // The node that we're currently setting the index of.
+        LFNode curNodeForIndex = null;
+        
         // The current state of the parser.
         int parseMode = 0;
         // 0 -> looking for a node:
@@ -52,12 +56,18 @@ public class BracketedTreeParser {
         // 1 -> reading a nonterminal label:
         //      space indicates end
         //      [, ], = indicate end, must back-track
+        //      _ indicates start of index
         //      everything else gets added to label
         // 2 -> reading terminal label:
         //      space and brackets indicate end
         //      = is the start of a lambda expression to
         //        assign as the lexical entry, up until the next semicolon
+        //      _ indicates start of index
         //      everything else gets added to the label
+        // 3 -> reading the index of curNode
+        //      a non-digit indicates the end, must back track so it's
+        //       parsed in the right state
+        //      all digits go into the index
         
         for (int i = 0; i < tree.length(); i++) {
         
@@ -123,6 +133,11 @@ public class BracketedTreeParser {
                     i = semi; // resume from next position (i is incremented at end of iteration)
                     break;
                     
+                case LFNode.INDEX_SEPARATOR:
+                    parseMode = 3;
+                    curNodeForIndex = curnode;
+                    break;
+                        
                 case ' ':
                     // skip
                     break;
@@ -133,7 +148,6 @@ public class BracketedTreeParser {
                         throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
                     curterminal = new Terminal();
                     curterminal.setLabel(String.valueOf(c));
-                    curnode.addChild(curterminal);
                     parseMode = 2;
                     break;
                 }
@@ -172,6 +186,7 @@ public class BracketedTreeParser {
                     case ' ':
                     case ']':
                     case '[':
+                        finishTerminal(curnode, curterminal);
                         parseMode = 0;
                         curterminal = null;
                         i--; // back track so they are parsed in parseMode 0
@@ -192,14 +207,34 @@ public class BracketedTreeParser {
                         } catch (lambdacalc.logic.SyntaxException ex) {
                             throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
                         }
+                        finishTerminal(curnode, curterminal);
                         i = semi; // resume from next position (i is incremented at end of iteration)
                         parseMode = 0; // reading of terminal label is complete
+                        break;
+                        
+                    case LFNode.INDEX_SEPARATOR:
+                        curNodeForIndex = finishTerminal(curnode, curterminal);
+                        parseMode = 3;
+                        curterminal = null;
                         break;
                         
                     default:
                         curterminal.setLabel(curterminal.getLabel() + c);
                         break;
-                }   
+                }
+                
+            } else if (parseMode == 3) {
+                // Reading the index of a node.
+                if (Character.isDigit(c)) {
+                    int idx = Integer.valueOf(String.valueOf(c)).intValue();
+                    if (curNodeForIndex.getIndex() == -1)
+                        curNodeForIndex.setIndex(idx);
+                    else // perform arithmetic to do string concatenation
+                        curNodeForIndex.setIndex(curNodeForIndex.getIndex() * 10 + idx);
+                } else {
+                    parseMode = 0;
+                    i--; // make sure to re-read this character on the next iteration
+                }
             }
         
         }
@@ -208,6 +243,17 @@ public class BracketedTreeParser {
         // root node. If we get here, the tree is bad.
         throw new SyntaxException("Not enough close-brackets at the end of the tree.", tree.length() - 1);
         
+    }
+    
+    private static Terminal finishTerminal(Nonterminal parent, Terminal child) {
+        try {
+            int idx = Integer.valueOf(child.getLabel()).intValue();
+            child = new BareIndex(idx);
+        } catch (NumberFormatException e) {
+            // ignore parsing error: it's not a bare index
+        }
+        parent.addChild(child);
+        return child;
     }
 
     // For debugging.

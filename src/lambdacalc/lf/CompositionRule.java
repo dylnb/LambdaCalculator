@@ -20,5 +20,9 @@ public abstract class CompositionRule {
        
     public abstract boolean isApplicableTo(Nonterminal node);
     
-    public abstract Expr applyTo(Nonterminal node) throws MeaningEvaluationException;
+    public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {
+        return applyTo(node, new AssignmentFunction());
+    }
+    public abstract Expr applyTo(Nonterminal node, 
+            AssignmentFunction g) throws MeaningEvaluationException;
 }

@@ -263,6 +263,10 @@ public class WelcomeWindow extends javax.swing.JFrame {
         });
     }
     
+    public Object clone() throws CloneNotSupportedException {
+	throw new CloneNotSupportedException();
+    }    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExercise;
     private javax.swing.JButton btnExit;
