@@ -417,6 +417,13 @@ public abstract class Expr {
         return createFreshVar(Var.X, this.getAllVars());
     }
 
+    /**
+     * Returns a new expression that is the result of replacing any subexpressions 
+     * of this expression that are equal to expr1
+     * by expr2. If this expression is equal to expr1 then expr2 is returned.
+     */
+    public abstract Expr replace(Expr expr1, Expr expr2);
+    
    /**
     * This method creates an alphabetical variant by altering the variables used by
     * each of the binders in bindersToChange to a fresh variable.  Binders implement
