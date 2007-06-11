@@ -6,6 +6,7 @@
 
 package lambdacalc.gui;
 
+import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
@@ -119,17 +120,26 @@ public class TrainingWindow extends JFrame {
     
     
     public void switchViewTo(int view) {
-//        switch (view) {
-//            case TYPES_AND_CONVERSIONS:
+        GridLayout layout = (GridLayout) jPanelDirectionsOrTrees.getLayout();
+        switch (view) {
+            case TREES:
+                layout.setRows(2);
+                jPanelDirectionsOrTrees.add(jScrollPaneTreeDisplay);
 //                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
-//                break;
-//            case TREES:
+                break;
+            case TYPES_AND_CONVERSIONS:
+                jPanelDirectionsOrTrees.remove(jScrollPaneTreeDisplay);
+                layout.setRows(1);
 //                jSplitPaneMain.setRightComponent(jPanelTrees);
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Don't know this view");
-//        }
-//        
+                break;
+            default:
+                throw new IllegalArgumentException("Don't know this view");
+                
+        }
+        jPanelDirectionsOrTrees.validate();
+        //jPanelDirectionsOrTrees.repaint();
+        //repaint();
+               
     }
     
     
@@ -282,11 +292,6 @@ public class TrainingWindow extends JFrame {
         return exFile.getGroup(currentGroup).getItem(currentEx);
     }
     
-    private void showExercise() {
-        
-        showLambdaConversionOrTypeExercise();
-    }
-    
     
     // called in:
     // showFirstExercise()
@@ -294,15 +299,21 @@ public class TrainingWindow extends JFrame {
     // onExerciseTreeValueChanged()
     // btnNextActionPerformed()
     // btnPrevActionPerformed()
-    private void showLambdaConversionOrTypeExercise() {
+    private void showExercise() {
         lblDirections.setText(exFile.getGroup(currentGroup).getDirections());
         ex = getCurrentExercise();
         
-        if (ex instanceof TypeExercise) {
+        if (ex instanceof TypeExercise) { 
             btnTransfer.setEnabled(false);
+            switchViewTo(TYPES_AND_CONVERSIONS);
         } else if (ex instanceof LambdaConversionExercise) {
             btnTransfer.setEnabled(true);
-        }
+            switchViewTo(TYPES_AND_CONVERSIONS);
+        } else if (ex instanceof TreeExercise) {
+            btnTransfer.setEnabled(false);
+            System.out.println("switching view to trees");
+            switchViewTo(TREES);
+       }
 
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);
         btnNext.setEnabled(currentEx+1 < exFile.getGroup(currentGroup).size() || currentGroup+1 < exFile.size() );
@@ -336,8 +347,6 @@ public class TrainingWindow extends JFrame {
         }
 
         wrongInARowCount = 0;
-        
-        switchViewTo(TYPES_AND_CONVERSIONS);
         
         txtUserAnswer.requestFocusInWindow();
     }
@@ -412,8 +421,8 @@ public class TrainingWindow extends JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jFileChooser1 = new javax.swing.JFileChooser();
-        jScrollPaneTree = new javax.swing.JScrollPane();
-        jPanelTree = new javax.swing.JPanel();
+        jScrollPaneTreeDisplay = new javax.swing.JScrollPane();
+        treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
         jScrollPaneUpperLeft = new javax.swing.JScrollPane();
@@ -454,18 +463,9 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
-        jScrollPaneTree.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
-        org.jdesktop.layout.GroupLayout jPanelTreeLayout = new org.jdesktop.layout.GroupLayout(jPanelTree);
-        jPanelTree.setLayout(jPanelTreeLayout);
-        jPanelTreeLayout.setHorizontalGroup(
-            jPanelTreeLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 0, Short.MAX_VALUE)
-        );
-        jPanelTreeLayout.setVerticalGroup(
-            jPanelTreeLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 0, Short.MAX_VALUE)
-        );
-        jScrollPaneTree.setViewportView(jPanelTree);
+        jScrollPaneTreeDisplay.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
+        treeDisplay.setBackground(java.awt.Color.white);
+        jScrollPaneTreeDisplay.setViewportView(treeDisplay);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -742,7 +742,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
-        jPanelDirectionsOrTrees.setLayout(new java.awt.GridBagLayout());
+        jPanelDirectionsOrTrees.setLayout(new java.awt.GridLayout(1, 1));
 
         jScrollPaneDirections.setBorder(null);
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
@@ -755,14 +755,7 @@ public class TrainingWindow extends JFrame {
         lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
         jScrollPaneDirections.setViewportView(lblDirections);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanelDirectionsOrTrees.add(jScrollPaneDirections, gridBagConstraints);
+        jPanelDirectionsOrTrees.add(jScrollPaneDirections);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1186,11 +1179,10 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelLexicon;
     private javax.swing.JPanel jPanelNavigationButtons;
     private javax.swing.JPanel jPanelQuestion;
-    private javax.swing.JPanel jPanelTree;
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
-    private javax.swing.JScrollPane jScrollPaneTree;
+    private javax.swing.JScrollPane jScrollPaneTreeDisplay;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
@@ -1212,6 +1204,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JMenuItem menuItemScratchPad;
     private javax.swing.JMenuItem menuItemTeacherTool;
     private javax.swing.JMenu menuTools;
+    private lambdacalc.gui.TreeExerciseWidget treeDisplay;
     private javax.swing.JTextArea txtFeedback;
     private lambdacalc.gui.LambdaEnabledTextField txtQuestion;
     private lambdacalc.gui.LambdaEnabledTextField txtUserAnswer;
