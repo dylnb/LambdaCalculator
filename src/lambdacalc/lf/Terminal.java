@@ -10,7 +10,8 @@ public class Terminal extends LFNode {
         this.meaning = meaning;
     }
 
-    public Expr getMeaning() throws MeaningEvaluationException {
+    public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
+        //TODO don't ignore g
         if (meaning == null)
             throw new TerminalLacksMeaningException(this);
         return meaning;

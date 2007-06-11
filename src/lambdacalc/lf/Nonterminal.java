@@ -36,7 +36,8 @@ public class Nonterminal extends LFNode {
         compositor = rule;
     }
 
-    public Expr getMeaning() throws MeaningEvaluationException {
+    public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
+        //TODO don't ignore g
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
         return compositor.applyTo(this);
