@@ -52,7 +52,8 @@ public class PredicateModificationRule extends CompositionRule {
         return result;
     }
     
-    public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {
+    public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
+        //TODO don't ignore g
         if (!this.isApplicableTo(node)) {
             throw new MeaningEvaluationException
                     ("The predicate modification rule is not " +

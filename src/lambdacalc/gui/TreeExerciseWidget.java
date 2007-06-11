@@ -117,7 +117,7 @@ public class TreeExerciseWidget extends JPanel {
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
-        Panel label = new Panel(); // this is the control made the node label for this node
+        JPanel label = new JPanel(); // this is the control made the node label for this node
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
         label.setLayout(bl);
         

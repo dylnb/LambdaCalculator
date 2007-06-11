@@ -11,9 +11,11 @@ package lambdacalc.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * An expression in the Lambda calculus.  This is the abstract
@@ -419,10 +421,49 @@ public abstract class Expr {
 
     /**
      * Returns a new expression that is the result of replacing any subexpressions 
-     * of this expression that are equal to expr1
-     * by expr2. If this expression is equal to expr1 then expr2 is returned.
+     * of this expression that are equal to thisExpr
+     * by byExpr. If this expression is equal to thisExpr then byExpr is returned.
      */
-    //public abstract Expr replace(Expr expr1, Expr expr2);
+    public Expr replace(Expr thisExpr, Expr byExpr) {
+        
+        if (this.equals(thisExpr)) return byExpr;
+        
+        Iterator subExpressions = this.getSubExpressions().iterator();
+        List newSubExpr = new Vector();
+        while (subExpressions.hasNext()) {
+            Expr next = (Expr) subExpressions.next();
+            if (next.equals(thisExpr)) next = byExpr;
+            newSubExpr.add(next);
+        }
+        return createFromSubExpressions(newSubExpr);
+    }
+    
+    /**
+     * Returns a new expression that is the result of replacing any subexpressions
+     * of this expression that are equal to one of the keys in the given map to
+     * that value in the map. If this expression is equal to any of the keys in the map
+     * then the value of that key is returned. 
+     * Typically (i.e. in the case of lambda abstraction), 
+     * the map argument will be a function from GApps to variables, but this need not
+     * be the case.
+     *
+     * The replacements are performed in the order of traversal inherent to the map.
+     * If the map is unsorted then no guarantee is given as to the order of replacements.
+     *
+     * @param assignmentFunction a map from expressions to expressions
+     * @return an expression
+     */
+    public Expr replaceAll(Map assignmentFunction) {
+        Iterator iter = assignmentFunction.entrySet().iterator();
+        Expr result = this;
+        while (iter.hasNext()) {
+            Map.Entry next = (Map.Entry) iter.next();
+            Expr oldExpr = (Expr) next.getKey();
+            Expr newExpr = (Expr) next.getValue();
+            result = result.replace(oldExpr, newExpr);
+        }
+        return result;
+    }
     
     /**
      * Returns a List of all the subexpressions of this expression.
@@ -443,6 +484,9 @@ public abstract class Expr {
      */
     public abstract Expr createFromSubExpressions(List subExpressions)
      throws IllegalArgumentException;
+    
+    
+    
     
    /**
     * This method creates an alphabetical variant by altering the variables used by

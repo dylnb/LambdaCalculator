@@ -45,7 +45,7 @@ public class TreeCanvas extends JComponent {
         getRoot().layoutControls();
     }
     
-    public class JTreeNode extends Panel implements ComponentListener {
+    public class JTreeNode extends JPanel implements ComponentListener {
         static final int NODE_VERTICAL_SPACING = 10;
         static final int NODE_HORIZONTAL_SPACING = 10;
         
