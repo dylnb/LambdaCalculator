@@ -16,13 +16,18 @@ import javax.swing.*;
  */
 public class TreeCanvas extends JComponent {
     JTreeNode root;
-    
+    TreeLayoutMethod layout;
+
+    boolean animated = true;    
     javax.swing.Timer timer;
-    
+    boolean hadPositionChange = false;
+
     /**
      * Creates a new instance of TreeCanvas
      */
     public TreeCanvas() {
+        timer = new javax.swing.Timer(100, new TimerHandler()); // not started yet
+        layout = new MonospaceLayoutMethod();
         root = new JTreeNode(null, this);
         add(root);
         setLayout(new GridLayout()); // TODO: Size ourself to be the size of the root
@@ -42,28 +47,196 @@ public class TreeCanvas extends JComponent {
     }
     
     public void doLayout() {
-        getRoot().layoutControls();
+        layout.layoutTree(getRoot());
+        if (!animated)
+            positionControls(getRoot(), false);
+        else
+            timer.start();
     }
     
-    public class JTreeNode extends JPanel implements ComponentListener {
+    public abstract class TreeLayoutMethod {
+        public abstract void layoutTree(JTreeNode root);
+    }
+    
+    public class MonospaceLayoutMethod extends TreeLayoutMethod {
         static final int NODE_VERTICAL_SPACING = 10;
         static final int NODE_HORIZONTAL_SPACING = 10;
         
+        class NodeInfo {
+            public Dimension subtreeSize;
+        
+            // relative to parent
+            public int subtreeLeft, subtreeTop;
+            
+            // relative to subtreeLeft
+            public int labelCenter;
+        }
+
+        public void layoutTree(JTreeNode root) {
+            layoutSubtree(root);
+            setNodePositions(root, 0, 0);
+        }
+
+        public void layoutSubtree(JTreeNode subtree) {
+            if (subtree.layoutInfo == null || !(subtree.layoutInfo instanceof NodeInfo))
+                subtree.layoutInfo = new NodeInfo();
+                
+            NodeInfo ni = (NodeInfo)subtree.layoutInfo;
+            
+            // Layout the label itself.
+            if (subtree.getLabel() != null) {
+                subtree.getLabel().doLayout();
+                subtree.getLabel().setSize(subtree.getLabel().getPreferredSize());
+                subtree.setSize(subtree.getLabel().getSize());
+                subtree.getLabel().setLocation(0,0); // relative to the panel that contains just that node
+            } else {
+                subtree.setSize(new Dimension(0,0));
+            }
+            
+            if (subtree.children.size() == 0) {
+                if (subtree.getLabel() != null) {
+                    ni.subtreeSize = subtree.getLabel().getSize();
+                    ni.labelCenter = subtree.getWidth() / 2;
+                } else {
+                    ni.subtreeSize = new Dimension(0,0);
+                    ni.labelCenter = 0;
+                }
+            } else {
+                // Do layouts on the children so we get their sizes, and position
+                // them one after the other.
+                int tops = 0;
+                if (subtree.getLabel() != null && subtree.getLabel().isVisible()) {
+                    tops = subtree.getLabel().getHeight();
+                }
+                
+                tops = tops + NODE_VERTICAL_SPACING;
+                
+                int left = 0;
+                int maxHeight = 0;
+                for (int i = 0; i < subtree.children.size(); i++) {
+                    JTreeNode c = (JTreeNode)subtree.children.get(i);
+                    layoutSubtree(c);
+                    NodeInfo nic = (NodeInfo)c.layoutInfo;
+                    
+                    nic.subtreeLeft = left;
+                    nic.subtreeTop = tops;
+                    
+                    left = left + nic.subtreeSize.width + NODE_HORIZONTAL_SPACING;
+                    if (nic.subtreeSize.height > maxHeight) maxHeight = nic.subtreeSize.height;
+                }
+                
+                int width = left;
+                
+                // The root position is where we put the center of our label, which
+                // is centered between the first and last root positions of the children.
+                NodeInfo nic1 = (NodeInfo)((JTreeNode)subtree.children.get(0)).layoutInfo;
+                NodeInfo nic2 = (NodeInfo)((JTreeNode)subtree.children.get(subtree.children.size()-1)).layoutInfo;
+                
+                int rootPosition = ((nic1.subtreeLeft + nic1.labelCenter) + (nic2.subtreeLeft + nic2.labelCenter)) / 2;                
+                
+                // Position the label at the root position.
+                if (subtree.getLabel() != null) {
+                    // Center the label around the rootPosition
+                    ni.labelCenter = rootPosition;
+                    
+                    // If that puts the left edge before the left edge of the subtree,
+                    // put the label flush on the left edge.
+                    if (ni.labelCenter - subtree.getLabel().getWidth()/2 < 0)
+                        ni.labelCenter = subtree.getLabel().getWidth()/2;
+                        
+                    // If that puts the right edge beyond the right edge of the last
+                    // child, expand the width of this subtree and center the children.
+                    if (ni.labelCenter + subtree.getLabel().getWidth()/2 > width) {
+                        int oldwidth = width;
+                        width = ni.labelCenter + subtree.getLabel().getWidth()/2;
+                        
+                        // Move all of the children over by half the expanded length
+                        for (int i = 0; i < subtree.children.size(); i++) {
+                            JTreeNode c = (JTreeNode)subtree.children.get(i);
+                            NodeInfo nic = (NodeInfo)c.layoutInfo;
+                            nic.subtreeLeft += (width-oldwidth)/2;
+                        }
+                    }
+                }
+                
+                ni.subtreeSize = new Dimension(width, tops + maxHeight);
+            }
+            
+        }
+        
+        public void setNodePositions(JTreeNode subtree, int parentLeft, int parentTop) {
+            NodeInfo ni = (NodeInfo)subtree.layoutInfo;
+            subtree.positionX = parentLeft + ni.subtreeLeft + ni.labelCenter - subtree.getWidth()/2;
+            subtree.positionY = parentTop + ni.subtreeTop;
+            for (int i = 0; i < subtree.children.size(); i++) {
+                JTreeNode c = (JTreeNode)subtree.children.get(i);
+                setNodePositions(c, parentLeft + ni.subtreeLeft, subtree.positionY + ni.subtreeTop);
+            }
+        }
+    }
+    
+    private void positionControls(JTreeNode node, boolean incremental) {
+        if (!incremental) {
+            node.setLocation(node.positionX, node.positionY);
+        } else {
+            hadPositionChange = (node.positionX != node.getLocation().x) || (node.positionY != node.getLocation().y);
+            node.setLocation((node.positionX + node.getLocation().x)/2, (node.positionY + node.getLocation().y)/2);
+        }
+            
+        for (int i = 0; i < node.children.size(); i++) {
+            JTreeNode c = (JTreeNode)node.children.get(i);
+            positionControls(c, incremental);
+        }
+    }
+    
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+            
+        Graphics2D gg = (Graphics2D)g;
+        gg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+        // Draw lines from the root position to the roots of the children.
+        g.setColor(Color.BLACK);
+        
+        paintLines(g, getRoot());
+    }
+   
+    private void paintLines(Graphics g, JTreeNode node) {   
+        for (int i = 0; i < node.children.size(); i++) {
+            JTreeNode c = (JTreeNode)node.children.get(i);
+            g.drawLine(node.getLocation().x + node.getWidth()/2, node.getLocation().y + node.getHeight(),
+                c.getLocation().x + c.getWidth()/2, c.getLocation().y);
+            paintLines(g, c);
+        }
+    }
+    
+    class TimerHandler implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            hadPositionChange = false; // changed by positionControls
+            positionControls(getRoot(), true);
+            if (!hadPositionChange)
+                timer.stop();
+        }
+    }
+        
+    public class JTreeNode extends JPanel implements ComponentListener {
         JTreeNode parent;
         TreeCanvas container;
         
         Component label = null;
         ArrayList children = new ArrayList();
         
-        int rootPosition;
+        Object layoutInfo;
+        int positionX, positionY;
         
-        boolean invalidLayout;
-        
+        /**
+         * @param parent null if this is the root node
+         */
         JTreeNode(JTreeNode parent, TreeCanvas container) {
             this.container = container;
             this.parent = parent;
             setLayout(null);
-            invalidLayout = true;
         }
         
         public Component getLabel() {
@@ -79,7 +252,6 @@ public class TreeCanvas extends JComponent {
             if (this.label != null) {
                 add(label);
                 label.addComponentListener(this);
-                invalidateLayout();
                 container.doLayout();
             }
         }
@@ -92,18 +264,16 @@ public class TreeCanvas extends JComponent {
         public JTreeNode addChild() {
             JTreeNode n = new JTreeNode(this, container);
             children.add(n);
-            add(n); // to our own container layout
-            invalidateLayout();
+            container.add(n); // to our own container layout
             container.doLayout();
             return n;
         }
         
         public void clearChildren() {
-            // remove from AWT layout
+            // remove from layout
             for (int i = 0; i < children.size(); i++)
-                remove((JTreeNode)children.get(i));
+                container.remove((JTreeNode)children.get(i));
             children.clear();
-            invalidateLayout();
             container.doLayout();
         }
         
@@ -115,105 +285,17 @@ public class TreeCanvas extends JComponent {
             return (JTreeNode)children.get(index);
         }
         
-        void invalidateLayout() {
-            JTreeNode n = this;
-            while (n != null) {
-                n.invalidLayout = true;
-                n = n.parent;
-            }
-        }
-        
-        void layoutControls() {
-            /*if (!invalid_layout)
-                return;*/
-            invalidLayout = false;
-            
-            if (getLabel() != null) {
-                getLabel().doLayout();
-                getLabel().setSize(getLabel().getPreferredSize());
-            }
-            
-            if (children.size() == 0) {
-                if (getLabel() != null) {
-                    getLabel().setLocation(0, 0);
-                    setSize(getLabel().getSize());
-                    rootPosition = getWidth() / 2;
-                } else {
-                    setSize(new Dimension(0,0));
-                    rootPosition = 0;
-                }
-            } else {
-                // Do layouts on the children so we get their sizes, and position
-                // them one after the other.
-                int tops = 0;
-                if (getLabel() != null && getLabel().isVisible()) {
-                    tops = getLabel().getHeight();
-                }
-                
-                tops = tops + NODE_VERTICAL_SPACING;
-                
-                int left = 0;
-                int maxHeight = 0;
-                for (int i = 0; i < children.size(); i++) {
-                    JTreeNode c = (JTreeNode)children.get(i);
-                    c.layoutControls();
-                    c.setLocation(new Point(left, tops));
-                    left = left + c.getWidth() + NODE_HORIZONTAL_SPACING;
-                    if (c.getHeight() > maxHeight) maxHeight = c.getHeight();
-                }
-                
-                int width = left;
-                
-                // The root position is where we put the center of our label, which
-                // is centered between the first and last root positions of the children.
-                rootPosition = (((JTreeNode) children.get(0)).getLocation().x + ((JTreeNode) children.get(0)).rootPosition
-                        + ((JTreeNode) children.get(children.size()-1)).getLocation().x + ((JTreeNode) children.get(children.size()-1)).rootPosition) / 2;
-                
-                // Position the label at the root position.
-                if (getLabel() != null) {
-                    int labelleft = rootPosition - getLabel().getWidth()/2;
-                    if (labelleft < 0)
-                        labelleft = 0;
-                    getLabel().setLocation(labelleft, 0);
-                    if (labelleft + getLabel().getWidth() > width)
-                        width = labelleft + getLabel().getWidth();
-                }
-                
-                setSize(width, tops + maxHeight);
-            }
-        }
-        
-        public void paint(Graphics g) {
-            super.paint(g);
-            
-            Graphics2D gg = (Graphics2D)g;
-            gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            // Draw lines from the root position to the roots of the children.
-            g.setColor(Color.BLACK);
-            
-            int rootY = getLabel() == null ? 0 : getLabel().getHeight() + 1;
-            
-            for (int i = 0; i < children.size(); i++) {
-                JTreeNode c = (JTreeNode)children.get(i);
-                g.drawLine(rootPosition, rootY, c.getLocation().x + c.rootPosition, c.getLocation().y);
-            }
-        }
-        
         // When a change is made to the label, relayout everything.
         public void componentResized(ComponentEvent e) {
-            invalidateLayout();
             container.doLayout();
         }
         public void componentMoved(ComponentEvent e) {
             // ignore this--we're responsible for moving controls
         }
         public void componentShown(ComponentEvent e) {
-            invalidateLayout();
             container.doLayout();
         }
         public void componentHidden(ComponentEvent e) {
-            invalidateLayout();
             container.doLayout();
         }
     }

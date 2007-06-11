@@ -29,15 +29,18 @@ public class TreeExerciseWidget extends JPanel {
     Nonterminal lftree; // this is the tree we're displaying
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
+    Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
     Map lfToOrthoLabel = new HashMap(); // orthographic label
     Map lfToMeaningLabel = new HashMap(); // propositional content label
     Map lfToMeaningState = new HashMap(); // state of the propositional label, or null if node is not evaluated yet
     Map lfToParent = new HashMap(); // parent LFNode
     
+    JLabel errorLabel = new JLabel(); // label containing error messages
+    
     // At any given time, at most one LFNode is the current
     // evaluation node, which is highlighted and represents
     // the node that is affected by pressing space or enter.
-    // This is null if no node is the curret evaluation node.
+    // This is null if no node is the current evaluation node.
     LFNode curEvaluationNode = null;
     
     // This class encapsulates the evaluated/simplified state of a node.
@@ -80,6 +83,8 @@ public class TreeExerciseWidget extends JPanel {
         canvas = new TreeCanvas();
         add(canvas, BorderLayout.CENTER);
         
+        add(errorLabel, BorderLayout.PAGE_END);
+        
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
         
@@ -90,7 +95,9 @@ public class TreeExerciseWidget extends JPanel {
         benter.addActionListener(new EnterActionListener());
         buttons.add(benter);
 
-        add(buttons, BorderLayout.PAGE_END);
+        add(buttons, BorderLayout.PAGE_START);
+        
+        canvas.setBackground(java.awt.Color.WHITE);
         
         try {
             ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
@@ -105,6 +112,7 @@ public class TreeExerciseWidget extends JPanel {
         lftree = ex.getTree();
         lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
         
+        lfToTreeLabelPanel.clear();
         lfToOrthoLabel.clear();
         lfToMeaningLabel.clear();
         lfToMeaningState.clear();
@@ -120,14 +128,17 @@ public class TreeExerciseWidget extends JPanel {
         JPanel label = new JPanel(); // this is the control made the node label for this node
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
         label.setLayout(bl);
+        lfToTreeLabelPanel.put(lfnode, label);
         
         JLabel orthoLabel = new JLabel(lfnode.getLabel());
         label.add(orthoLabel);
+        orthoLabel.setAlignmentX(.5F);
         lfToOrthoLabel.put(lfnode, orthoLabel);
         
         JLabel meaningLabel = new JLabel();
         meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
         label.add(meaningLabel);
+        meaningLabel.setAlignmentX(.5F);
         lfToMeaningLabel.put(lfnode, meaningLabel);
         
         treenode.setLabel(label);
@@ -157,12 +168,30 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
-    // Update the visual display of the node.
+    void curNodeChanged() {
+        String evalError = "";
+        if (curEvaluationNode != null && lfToMeaningState.containsKey(curEvaluationNode)) { // has the node been evaluated?
+            MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
+            if (ms.evaluationError != null)
+                evalError = ms.evaluationError;
+        }
+        
+        errorLabel.setText(evalError);
+    }
+    
+    // Update the visual display of the node. Called to
+    // update the label, meaning, and focus state of a node
+    // when it changes.
     void updateNode(LFNode node) {
+        JPanel nodePanel = (JPanel)lfToTreeLabelPanel.get(node);
+
         // Change the label if it's the current evaluation node.
         String label = node.getLabel();
-        if (node == curEvaluationNode)
-            label = ">>" + label + "<<";
+        if (node == curEvaluationNode) {
+            nodePanel.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLUE, 2, true));
+        } else {
+            nodePanel.setBorder(null);
+        }
     
         JLabel orthoLabel = (JLabel)lfToOrthoLabel.get(node);
         orthoLabel.setText(label);
@@ -176,7 +205,7 @@ public class TreeExerciseWidget extends JPanel {
             if (ms.evaluationError == null) // was there an error?
                 meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
             else
-                meaningLabel.setText(ms.evaluationError);
+                meaningLabel.setText("Problem!");
         }
         
         // Ensure tree layout is adjusted due to changes to node label.
@@ -199,6 +228,7 @@ public class TreeExerciseWidget extends JPanel {
         // If we're not making any new node current, end here.
         if (node == null) {
             curEvaluationNode = null;
+            curNodeChanged();
             return;
         }
         
@@ -230,9 +260,17 @@ public class TreeExerciseWidget extends JPanel {
         // to this node.
         curEvaluationNode = node;
         updateNode(curEvaluationNode);
+        curNodeChanged();
     }
     
     void doSpace() {
+        /*long start = System.currentTimeMillis();
+        int runs = 10000;
+        for (int count = 0; count < runs; count++)
+            canvas.doLayout();
+        long end = System.currentTimeMillis();
+        System.out.println((double)(end-start)/(double)runs);*/
+
         // This evaluates the meaning of a node, if it hasn't been evaluated,
         // and steps through the simplifications of the meaning, but never
         // moves on to another node.
