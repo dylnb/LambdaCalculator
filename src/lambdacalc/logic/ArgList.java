@@ -6,7 +6,9 @@
 
 package lambdacalc.logic;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -124,6 +126,26 @@ public class ArgList extends Expr {
         return new ArgList(e);
     }
  
+    /**
+     * Returns a List of all the subexpressions of this expression.
+     * @return a list
+     */
+    public List getSubExpressions() {
+        return Arrays.asList(this.getArgs());
+    }
+    
+    /**
+     * Creates a new ArgList using all the subexpressions given.
+     *
+     * @param subExpressions the list of subexpressions
+     * @throws IllegalArgumentException not implemented
+     * @return a new ArgList
+     */
+    public Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException {
+        return new ArgList((Expr[]) subExpressions.toArray(new Expr[]{}));
+    }
+    
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         Expr[] e = new Expr[exprs.length];
         for (int i = 0; i < exprs.length; i++)

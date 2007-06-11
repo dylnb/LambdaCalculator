@@ -6,16 +6,16 @@
 
 package lambdacalc.logic;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * The abstract base class of constants (Const) and variables (Var).
  */
 public abstract class Identifier extends Expr {
-    /*
-     * The unicode prime character.
-     */
+    
     /**
      * The prime symbol.
      */
@@ -87,6 +87,37 @@ public abstract class Identifier extends Expr {
     
     public boolean isTypeExplicit() {
         return typeIsExplicit;
+    }
+    
+    /**
+     * Overriden in derived classes to create a new instance of this
+     * type of identifier, that is, to clone it.
+     *
+     * @return a copy of this
+     */
+    protected abstract Identifier create();
+    
+    /**
+     * Returns an (empty) List representing the fact that identifiers
+     * have no subexpressions.
+     * @return an empty list
+     */
+    public List getSubExpressions() {
+        return new Vector(0);
+    }
+    
+    /**
+     * Returns a copy of this Identifier.
+     *
+     * @param subExpressions the list of subexpressions (must be null or empty)
+     * @throws IllegalArgumentException if the list is nonnull and nonempty
+     * @return a copy of this
+     */
+    public Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException {
+        if (subExpressions != null && subExpressions.size() != 0) 
+            throw new IllegalArgumentException("List is nonempty");
+        return create();
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {

@@ -18,11 +18,12 @@ public class Const extends Identifier {
   
     /**
      * Creates a constant.
-     * @param repr the name of the constant
+     * 
+     * @param symbol the name of the constant
      * @param type the type of the constant
      */
-    public Const(String repr, Type type, boolean isTypeExplicit) {
-        super(repr, type, isTypeExplicit); 
+    public Const(String symbol, Type type, boolean isTypeExplicit) {
+        super(symbol, type, isTypeExplicit); 
     }    
 
     protected Set getVars(boolean unboundOnly) {
@@ -44,6 +45,15 @@ public class Const extends Identifier {
         return this;
     }
 
+    /**
+     * Creates a new instance of this constant, that is, shallowly copies it.
+     *
+     * @return a copy of this
+     */    
+    protected Identifier create() {
+        return new Const(this.getSymbol(), this.getType(), this.isTypeExplicit());
+    }
+    
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return this;
     }

@@ -11,7 +11,7 @@ package lambdacalc.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -422,7 +422,27 @@ public abstract class Expr {
      * of this expression that are equal to expr1
      * by expr2. If this expression is equal to expr1 then expr2 is returned.
      */
-    public abstract Expr replace(Expr expr1, Expr expr2);
+    //public abstract Expr replace(Expr expr1, Expr expr2);
+    
+    /**
+     * Returns a List of all the subexpressions of this expression.
+     * @return a list
+     */
+    public abstract List getSubExpressions();
+    
+    /**
+     * Creates a new expression using all the subexpressions given. If
+     * the constructor of the concrete subclass takes any additional 
+     * arguments besides the subexpressions, the values for these are taken from
+     * this instance.
+     *
+     * @param subExpressions the list of subexpressions
+     * @throws IllegalArgumentException if the list does not contain exactly the
+     * number of subexpressions needed for the constructor of the concrete subclass
+     * @return a new expression of the same runtime type as this
+     */
+    public abstract Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException;
     
    /**
     * This method creates an alphabetical variant by altering the variables used by

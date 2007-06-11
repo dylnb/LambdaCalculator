@@ -8,8 +8,10 @@
 package lambdacalc.logic;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Represents the application of the variable-assignment function g
@@ -136,6 +138,38 @@ public class GApp extends Expr {
     protected Expr createAlphabeticalVariant
             (Set bindersToChange, Set variablesInUse, Map updates) {
         return this;
+    }
+    
+    /**
+     * Returns an (empty) List representing the fact that GApps
+     * have no subexpressions.
+     * @return an empty list
+     */
+    public List getSubExpressions() {
+        return new Vector(0);
+    }
+    
+    /**
+     * Returns a copy of this GApp.
+     *
+     * @param subExpressions the list of subexpressions (must be null or empty)
+     * @throws IllegalArgumentException if the list is nonnull and nonempty
+     * @return a copy of this
+     */
+    public Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException {
+        if (subExpressions != null && subExpressions.size() != 0) 
+            throw new IllegalArgumentException("List is nonempty");
+        return create();
+    }    
+    
+    /**
+     * Creates a new instance of this variable, that is, shallowly copies it.
+     *
+     * @return a copy of this
+     */    
+    protected GApp create() {
+        return new GApp(this.getIndex());
     }
     
     public String toString() {

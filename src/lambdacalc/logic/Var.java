@@ -94,6 +94,15 @@ public class Var extends Identifier {
         return this;
     }
 
+    /**
+     * Creates a new instance of this variable, that is, shallowly copies it.
+     *
+     * @return a copy of this
+     */    
+    protected Identifier create() {
+        return new Var(this.getSymbol(), this.getType(), this.isTypeExplicit());
+    }
+    
     Var(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }

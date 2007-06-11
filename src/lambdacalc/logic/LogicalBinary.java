@@ -6,7 +6,9 @@
 
 package lambdacalc.logic;
 
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Abstract base class of the logical binary connectives
@@ -32,6 +34,8 @@ public abstract class LogicalBinary extends Binary {
         if (((this instanceof And || this instanceof Or)) && expr.getClass() == getClass()) return expr.toString();
         return nestedToString(expr);
     }
+    
+
     
     /**
      * Gets the unicode symbol associated with the binary connective.

@@ -6,10 +6,11 @@
 
 package lambdacalc.logic;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Abstract base class of the binary connectives, including
@@ -82,6 +83,41 @@ public abstract class Binary extends Expr {
      */
     protected abstract Binary create(Expr left, Expr right);
 
+    public Expr replace(Expr expr1, Expr expr2) {
+        if (this.equals(expr1)) return expr2;
+        Expr newLeft = this.getLeft();
+        if (newLeft.equals(expr1)) newLeft = expr2;
+        Expr newRight = this.getRight();
+        if (newRight.equals(expr1)) newRight = expr2;
+        return create(newLeft, newRight);
+    }
+    
+    /**
+     * Returns a List of the two subexpressions of this expression.
+     * @return a list
+     */
+    public List getSubExpressions() {
+        Vector result = new Vector(2);
+        result.add(this.getLeft());
+        result.add(this.getRight());
+        return result;
+    }
+    
+    /**
+     * Creates a new binary expression using all the subexpressions given.
+     *
+     * @param subExpressions the list of subexpressions
+     * @throws IllegalArgumentException if the list does not contain exactly two
+     * subexpressions
+     * @return a new expression of the same runtime type as this
+     */
+    public Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException {
+        if (subExpressions.size() != 2) 
+            throw new IllegalArgumentException("List does not contain exactly two arguments");
+        return create((Expr) subExpressions.get(0), (Expr) subExpressions.get(1));
+    }
+    
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getLeft().createAlphabeticalVariant(bindersToChange, variablesInUse, updates),
                 getRight().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));

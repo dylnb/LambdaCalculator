@@ -8,8 +8,10 @@ package lambdacalc.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Abstract base class of the binders, including the propositional binders 
@@ -86,6 +88,34 @@ public abstract class Binder extends Expr {
      * and the same value as hasPeriod.
      */
     protected abstract Binder create(Identifier variable, Expr innerExpr);
+    
+    /**
+     * Returns a List of all the subexpressions of this binder,
+     * that is, the variable and the inner expression.
+     * @return a list
+     */
+    public List getSubExpressions() {
+        Vector result = new Vector(2);
+        result.add(this.getVariable());
+        result.add(this.getInnerExpr());
+        return result;
+    }
+    
+    /**
+     * Creates a new Binder  using all the subexpressions given, taking the
+     * value of the hasPeriod argument from this instance
+     *
+     * @param subExpressions the list of subexpressions
+     * @throws IllegalArgumentException if the list does not contain exactly two
+     * subexpressions 
+     * @return a new expression of the same runtime type as this
+     */
+    public Expr createFromSubExpressions(List subExpressions)
+     throws IllegalArgumentException {
+        if (subExpressions.size() != 2) 
+            throw new IllegalArgumentException("List does not contain exactly two arguments");
+        return create((Identifier) subExpressions.get(0), (Expr) subExpressions.get(1));
+    }    
     
     /**
      * Gets the variable bound by the identifier.
