@@ -36,6 +36,10 @@ public class GApp extends Expr {
         this.index=index;
     }
     
+    public GApp(Integer index) {
+        new GApp(index.intValue());
+    }
+    
     public int getIndex() {
         return this.index;
     }
