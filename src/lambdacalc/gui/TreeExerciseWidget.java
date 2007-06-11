@@ -25,6 +25,9 @@ import lambdacalc.gui.tree.TreeCanvas;
  *    The node has a composition rule assigned
  */
 public class TreeExerciseWidget extends JPanel {
+    
+    boolean inFullScreenMode = false;
+    
     TreeCanvas canvas; // this is the display widget
     Nonterminal lftree; // this is the tree we're displaying
     Lexicon lexicon; // from which to draw choices for terminal nodes
@@ -81,6 +84,19 @@ public class TreeExerciseWidget extends JPanel {
         
         setLayout(new BorderLayout());
         
+        addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent event) {}
+                public void keyReleased(KeyEvent event) {
+                    if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                        if (inFullScreenMode) {
+                            System.exit(0); //TODO change
+                        }
+                    }
+                }
+                public void keyTyped(KeyEvent event) {}
+            }
+            );
+        
         canvas = new TreeCanvas();
         add(canvas, BorderLayout.CENTER);
         
@@ -95,6 +111,9 @@ public class TreeExerciseWidget extends JPanel {
         JButton benter = new JButton("Enter");
         benter.addActionListener(new EnterActionListener());
         buttons.add(benter);
+        JButton bfullScreen = new JButton("Full Screen");
+        bfullScreen.addActionListener(new FullScreenActionListener());
+        buttons.add(bfullScreen);
 
         add(buttons, BorderLayout.PAGE_START);
         
@@ -108,6 +127,8 @@ public class TreeExerciseWidget extends JPanel {
             e.printStackTrace();
         }
     }
+    
+    
     
     void initialize(ExerciseFile file, TreeExercise ex) {
         lexicon = file.getLexicon();
@@ -427,6 +448,35 @@ public class TreeExerciseWidget extends JPanel {
     class EnterActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             doEnter();
+        }
+    }
+    class FullScreenActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            enterFullScreenMode();
+        }
+    }    
+
+    public void enterFullScreenMode() {
+        
+        JFrame frame = new JFrame();
+        frame.setUndecorated(true);
+        frame.getContentPane().add(this);
+        
+        GraphicsDevice theScreen =
+                GraphicsEnvironment.
+                getLocalGraphicsEnvironment().
+                getDefaultScreenDevice();
+        if (!theScreen.isFullScreenSupported()) {
+            System.err.println("Warning: Full screen mode not supported," +
+                    "emulating by maximizing the window...");
+        }
+        
+        try {
+            theScreen.setFullScreenWindow(frame);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            theScreen.setFullScreenWindow(null);
         }
     }
     

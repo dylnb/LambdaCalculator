@@ -19,7 +19,7 @@ import java.util.Vector;
 
 /**
  * An expression in the Lambda calculus.  This is the abstract
- * base class of all expression subclasses.
+ * base class of all expression subclasses. All expressions are immutable.
  */
 public abstract class Expr {
     

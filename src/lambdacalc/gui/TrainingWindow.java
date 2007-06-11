@@ -117,7 +117,7 @@ public class TrainingWindow extends JFrame {
         
         //loadExerciseFile("tests/example1.txt");
     }
-    
+        
     
     public void switchViewTo(int view) {
         GridLayout layout = (GridLayout) jPanelDirectionsOrTrees.getLayout();
@@ -311,7 +311,6 @@ public class TrainingWindow extends JFrame {
             switchViewTo(TYPES_AND_CONVERSIONS);
         } else if (ex instanceof TreeExercise) {
             btnTransfer.setEnabled(false);
-            System.out.println("switching view to trees");
             switchViewTo(TREES);
        }
 

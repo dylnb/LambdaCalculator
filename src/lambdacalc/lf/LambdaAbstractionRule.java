@@ -74,8 +74,12 @@ public class LambdaAbstractionRule extends CompositionRule {
  
         Var var = bodyMeaning.createFreshVar();
         
-        return new Lambda(var, bodyMeaning, true);
+        // update assignment function
+        g.put(index, var);
         
+        // apply it
+        bodyMeaning = bodyMeaning.replaceAll(g);
+        return new Lambda(var, bodyMeaning, true);
     }
 }
 
