@@ -186,6 +186,15 @@ public abstract class Expr {
      * same Object marker -- although the variables themselves may be different.
      */
     
+    public int hashCode() {
+        Iterator iter = this.getSubExpressions().iterator();
+        int result = this.getClass().hashCode();
+        while (iter.hasNext()) {
+            result = result^((Expr)iter.next()).hashCode();
+        }
+        return result;
+    }
+    
     /**
      * Gets the variables of this expression.
      * @return a set of all of the variables used within this expression

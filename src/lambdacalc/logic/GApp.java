@@ -44,6 +44,10 @@ public class GApp extends Expr {
         return this.index;
     }
     
+    public int hashCode() {
+        return new Integer(this.getIndex()).hashCode() ^ super.hashCode();
+    }
+    
     /**
      * Returns zero since g(1) has the strongest operator precedence.
      * @return 0

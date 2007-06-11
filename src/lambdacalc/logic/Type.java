@@ -97,7 +97,8 @@ public abstract class Type implements Comparable {
         }
         throw new RuntimeException(); // unreachable
     }
-
+    
+    
     /**
      * Writes a serialization of the type to a DataOutputStream.
      * In implementations of this method in subclasses, the first thing written

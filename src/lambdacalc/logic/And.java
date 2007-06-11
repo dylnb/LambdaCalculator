@@ -37,4 +37,5 @@ public class And extends LogicalBinary {
     And(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }
+    
 }

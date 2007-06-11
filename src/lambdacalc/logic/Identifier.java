@@ -56,15 +56,15 @@ public abstract class Identifier extends Expr {
         }
     }
     
+    public int hashCode() {
+        return this.symbol.hashCode()^super.hashCode();
+    }
+    
     protected abstract boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap);
     
     protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda. None here.
         return null;
-    }
-
-    public int hashCode() {
-        return symbol.hashCode();
     }
     
     public String toString() {

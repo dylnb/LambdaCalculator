@@ -56,6 +56,11 @@ public abstract class Binder extends Expr {
         }
     }
     
+    
+    public int hashCode() {
+        return this.getVariable().hashCode() ^ super.hashCode();
+    }    
+    
     private boolean equals(Binder b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
         if (useMaps) {
             thisMap = (thisMap == null) ? new HashMap() : new HashMap(thisMap);
