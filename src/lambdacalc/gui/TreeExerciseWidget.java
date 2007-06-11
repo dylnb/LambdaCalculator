@@ -27,11 +27,12 @@ import lambdacalc.gui.tree.TreeCanvas;
 public class TreeExerciseWidget extends JPanel {
     TreeCanvas canvas; // this is the display widget
     Nonterminal lftree; // this is the tree we're displaying
+    Lexicon lexicon; // from which to draw choices for terminal nodes
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
     Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
     Map lfToOrthoLabel = new HashMap(); // orthographic label
-    Map lfToMeaningLabel = new HashMap(); // propositional content label
+    Map lfToMeaningLabel = new HashMap(); // propositional content label: JLabel for nonterminals, JComboBox for terminals
     Map lfToMeaningState = new HashMap(); // state of the propositional label, or null if node is not evaluated yet
     Map lfToParent = new HashMap(); // parent LFNode
     
@@ -109,6 +110,8 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     void initialize(ExerciseFile file, TreeExercise ex) {
+        lexicon = file.getLexicon();
+        
         lftree = ex.getTree();
         lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
         
@@ -135,25 +138,25 @@ public class TreeExerciseWidget extends JPanel {
         orthoLabel.setAlignmentX(.5F);
         lfToOrthoLabel.put(lfnode, orthoLabel);
         
-        JLabel meaningLabel = new JLabel();
-        meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
-        label.add(meaningLabel);
-        meaningLabel.setAlignmentX(.5F);
-        lfToMeaningLabel.put(lfnode, meaningLabel);
+        // For terminals, give them comboboxes to choose the lexical entry.
+        if (lfnode instanceof Terminal) {
+            JComboBox lexicalChoices = new JComboBox();
+            lexicalChoices.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
+            label.add(lexicalChoices);
+            lexicalChoices.setAlignmentX(.5F);
+            lfToMeaningLabel.put(lfnode, lexicalChoices);
+            updateTerminalLexicalChoices((Terminal)lfnode);
+            
+        // For nonterminals, give them JLabels for their meanings.
+        } else {
+            JLabel meaningLabel = new JLabel();
+            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
+            label.add(meaningLabel);
+            meaningLabel.setAlignmentX(.5F);
+            lfToMeaningLabel.put(lfnode, meaningLabel);
+        }
         
         treenode.setLabel(label);
-        
-        // If we're adding a terminal node, and if a lexical entry
-        // has been assigned to it, then make that node immediately
-        // "evaluated".
-        if (lfnode instanceof Terminal) {
-           Terminal t = (Terminal)lfnode;
-           try {
-               Expr m = t.getMeaning();
-               lfToMeaningState.put(t, new MeaningState(m));
-           } catch (Exception e) {
-           }
-        }
         
         // Update the display of the node.
         updateNode(lfnode);
@@ -168,7 +171,72 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
+    private void updateTerminalLexicalChoices(Terminal node) {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        
+        int selectIndex = -1;
+        if (node.getLabel() != null) {
+            Expr[] meanings = lexicon.getMeanings(node.getLabel());
+            if (meanings.length > 0)
+                selectIndex = 0;
+            for (int i = 0; i < meanings.length; i++) {
+                model.addElement(meanings[i]);
+            }
+        }
+        
+        JComboBox lexicalChoices = (JComboBox)lfToMeaningLabel.get(node);
+        lexicalChoices.setModel(model);
+        
+        lexicalChoices.setSelectedIndex(selectIndex);
+        lexicalChoices.addActionListener(new LexicalChoiceActionListener(node, lexicalChoices));
+    }
+    /*       Terminal t = (Terminal)lfnode;
+           try {
+               Expr m = t.getMeaning();
+               lfToMeaningState.put(t, new MeaningState(m));
+           } catch (Exception e) {
+           }
+        }*/
+        
+    private class LexicalChoiceActionListener implements ActionListener {
+        Terminal terminal;
+        JComboBox combobox;
+        
+        public LexicalChoiceActionListener(Terminal terminal, JComboBox combobox) {
+            this.terminal = terminal;
+            this.combobox = combobox;
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            // If no choices are in the box, the event might fire with index -1.
+            if (combobox.getSelectedIndex() == -1)
+                return;
+                
+            // Initialize the meaning state of the node.
+            Expr selection = (Expr)combobox.getSelectedItem();
+            terminal.setMeaning(selection);
+            lfToMeaningState.put(terminal, new MeaningState(selection));
+            onUserChangedNodeMeaning(terminal);
+        }
+    }
+    
+    private void onUserChangedNodeMeaning(LFNode node) {
+        updateNode(node);
+    
+        // Clear the meaning states of the parent nodes.
+        LFNode ancestor = (LFNode)lfToParent.get(node);
+        while (ancestor != null) {
+            lfToMeaningState.put(ancestor, null);
+            updateNode(ancestor);
+            ancestor = (LFNode)lfToParent.get(ancestor);
+        }
+    }
+    
     void curNodeChanged() {
+        curErrorChanged();
+    }
+    
+    void curErrorChanged() {
         String evalError = "";
         if (curEvaluationNode != null && lfToMeaningState.containsKey(curEvaluationNode)) { // has the node been evaluated?
             MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
@@ -196,16 +264,18 @@ public class TreeExerciseWidget extends JPanel {
         JLabel orthoLabel = (JLabel)lfToOrthoLabel.get(node);
         orthoLabel.setText(label);
         
-        // Update the lambda expression displayed, if it's been evaluated.
-        // If an error ocurred during evaluation, display it. Otherwise
-        // display the lambda expression.
-        JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
-        if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
-            MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-            if (ms.evaluationError == null) // was there an error?
-                meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
-            else
-                meaningLabel.setText("Problem!");
+        if (node instanceof Nonterminal) {
+            // Update the lambda expression displayed, if it's been evaluated.
+            // If an error ocurred during evaluation, display it. Otherwise
+            // display the lambda expression.
+            JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
+            if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
+                MeaningState ms = (MeaningState)lfToMeaningState.get(node);
+                if (ms.evaluationError == null) // was there an error?
+                    meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
+                else
+                    meaningLabel.setText("Problem!");
+            }
         }
         
         // Ensure tree layout is adjusted due to changes to node label.
@@ -287,6 +357,7 @@ public class TreeExerciseWidget extends JPanel {
                 lfToMeaningState.put(curEvaluationNode, new MeaningState(e.getMessage()));
             }
             updateNode(curEvaluationNode);
+            curErrorChanged();
             return;
         }
 

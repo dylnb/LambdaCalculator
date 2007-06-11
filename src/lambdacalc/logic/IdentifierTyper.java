@@ -93,8 +93,18 @@ public class IdentifierTyper {
         // For single-letter trivial ranges, like x-x, we have to only look at the
         // first letter of identifier, because if identifier has primes and such,
         // we want that to still count as x.
+
+	boolean isSingleLetter = identifier.length() == 1 ||
+            !Character.isLetterOrDigit(identifier.charAt(1));
+
         for (int i = entries.size() - 1; i >= 0; i--) {
             Entry e = (Entry)entries.get(i);
+
+            if (!isSingleLetter) {
+                if (e.start.equals(identifier))
+                    return e;
+                continue;
+            }
             
             boolean startOK, endOK;
 
