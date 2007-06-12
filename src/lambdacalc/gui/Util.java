@@ -1,12 +1,13 @@
 package lambdacalc.gui;
 
 import java.awt.*;
-import java.io.*;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 public class Util {
     static Font unicodeFont;
     static float fontSizeFactor;
-
+    
     private static Font getUnicodeFont() {
         if (unicodeFont == null) {
             // fall back
@@ -23,11 +24,45 @@ public class Util {
                 e.printStackTrace();
             }*/
         }
-
+        
         return unicodeFont;
     }
-
+    
     public static Font getUnicodeFont(int size) {
-       return getUnicodeFont().deriveFont(fontSizeFactor * (float)size);
+        return getUnicodeFont().deriveFont(fontSizeFactor * (float)size);
+    }
+    
+    public static void displayWarningMessage
+            (Component parentComponent, String message, String windowTitle) {
+        
+        displayMessage
+                (parentComponent,
+                message,
+                windowTitle,
+                JOptionPane.WARNING_MESSAGE);
+    }
+    
+    public static void displayErrorMessage
+            (Component parentComponent, String message, String windowTitle) {
+        
+        displayMessage
+                (parentComponent,
+                message,
+                windowTitle,
+                JOptionPane.ERROR_MESSAGE);
+    }
+    
+    private static void displayMessage(Component parentComponent, String message, String windowTitle,
+            int messageType) {
+        JOptionPane p = new JOptionPane(message,
+                messageType){
+            public int getMaxCharactersPerLineCount() {
+                return 72;
+            }
+            
+        };
+        p.setMessage(message);
+        JDialog dialog = p.createDialog(parentComponent, windowTitle);
+        dialog.setVisible(true);
     }
 }
