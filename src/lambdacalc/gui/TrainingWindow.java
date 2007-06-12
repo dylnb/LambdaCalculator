@@ -121,14 +121,32 @@ public class TrainingWindow extends JFrame {
     public void switchViewTo(int view) {
         switch (view) {
             case TREES:
+                
+                jSplitPaneUpperRight.removeAll();
+                jSplitPaneLowerRight.removeAll();
+
                 jSplitPaneUpperRight.setTopComponent(jScrollPaneDirections);
                 jSplitPaneUpperRight.setBottomComponent(jScrollPaneTreeDisplay);
                 
+                jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
+                jSplitPaneLowerRight.setRightComponent(jScrollPaneInfoBox);
+                
                 jSplitPaneRightHalf.setTopComponent(jSplitPaneUpperRight);
+                jSplitPaneRightHalf.setBottomComponent(jSplitPaneLowerRight);
+
+             
+                jSplitPaneRightHalf.setDividerLocation(-1); // instructs it to set itself automatically
+                
                 break;
             case TYPES_AND_CONVERSIONS:
                 jSplitPaneUpperRight.removeAll();
+                jSplitPaneLowerRight.removeAll();
+                jSplitPaneRightHalf.removeAll();
+                
                 jSplitPaneRightHalf.setTopComponent(jScrollPaneDirections);
+                jSplitPaneRightHalf.setBottomComponent(jPanelTypesAndConversions);
+                
+                jSplitPaneRightHalf.setDividerLocation(0.4); // a little bit higher than the middle
                 break;
             default:
                 throw new IllegalArgumentException("Don't know this view");
@@ -196,6 +214,8 @@ public class TrainingWindow extends JFrame {
         
         menuItemSave.setEnabled(false);
         menuItemSaveAs.setEnabled(false);
+        
+        switchViewTo(TYPES_AND_CONVERSIONS);
     }
     
     private void loadExerciseFile(String filename) {
@@ -577,7 +597,7 @@ public class TrainingWindow extends JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -629,7 +649,6 @@ public class TrainingWindow extends JFrame {
         lblDirections.setRows(5);
         lblDirections.setWrapStyleWord(true);
         lblDirections.setBorder(null);
-        lblDirections.setPreferredSize(new java.awt.Dimension(220, 75));
         jScrollPaneDirections.setViewportView(lblDirections);
 
         jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);
@@ -777,13 +796,13 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
 
-        jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Placeholder for lexicon"));
+        jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
         org.jdesktop.layout.GroupLayout jPanelInfoBoxLayout = new org.jdesktop.layout.GroupLayout(jPanelInfoBox);
         jPanelInfoBox.setLayout(jPanelInfoBoxLayout);
         jPanelInfoBoxLayout.setHorizontalGroup(
             jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 253, Short.MAX_VALUE)
+            .add(0, 183, Short.MAX_VALUE)
         );
         jPanelInfoBoxLayout.setVerticalGroup(
             jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
