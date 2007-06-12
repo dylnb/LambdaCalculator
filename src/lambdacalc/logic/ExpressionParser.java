@@ -373,7 +373,7 @@ public class ExpressionParser {
      * @return whether it is a letter
      */
     private static boolean isLetter(char c) {
-        return Character.isLetter(c) && c != Lambda.SYMBOL && c != Identifier.PRIME;
+        return Character.isLetter(c) && c != Lambda.SYMBOL && !isPrime(c);
     }
     
     /**
@@ -786,8 +786,11 @@ public class ExpressionParser {
      * @return whether the character can be used in an identifier
      */
     public static boolean isIdentifierChar(char ic) {
-        return isLetter(ic) || Character.isDigit(ic)
-                || ic == '\''
+        return isLetter(ic) || Character.isDigit(ic) || isPrime(ic);
+    }
+
+    public static boolean isPrime(char ic) {
+        return ic == '\''
                 || ic == '`' // alternate prime character
                 || ic == '"' // as if double prime
                 || ic == Identifier.PRIME;

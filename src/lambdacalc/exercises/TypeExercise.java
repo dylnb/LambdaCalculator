@@ -30,6 +30,8 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
         expr = expression;
         type = expr.getType();
         this.types = types;
+
+        expr.getType(); // make sure it is well typed; will throw if not
     }
     
     public TypeExercise(String expression, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {

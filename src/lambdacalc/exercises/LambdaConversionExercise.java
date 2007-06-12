@@ -49,6 +49,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         this.expr = expr;
         this.types = types;
         
+        this.expr.getType(); // make sure it is well typed; will throw if not
+
         initialize();
     }
     
