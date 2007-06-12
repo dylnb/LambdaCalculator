@@ -94,7 +94,14 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     public interface SelectionListener {
-        void selectionChanged();
+        void selectionChanged(SelectionEvent evt);
+    }
+    
+    public class SelectionEvent extends EventObject {
+        
+        public SelectionEvent(Object source) {
+            super(source);
+        }
     }
 
     public TreeExerciseWidget() {
@@ -360,7 +367,7 @@ public class TreeExerciseWidget extends JPanel {
         // Notidy listeners that the selected node changed.
         for (int i = 0; i < listeners.size(); i++) {
             SelectionListener sl = (SelectionListener)listeners.get(i);
-            sl.selectionChanged();
+            sl.selectionChanged(new SelectionEvent(selectedNode));
         }
     }
     
