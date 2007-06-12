@@ -186,6 +186,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
         jPanelLeftButtons.setLayout(new java.awt.GridBagLayout());
 
+        jPanelLeftButtons.setPreferredSize(new java.awt.Dimension(320, 29));
         jButtonDoAnotherProblem.setText("Do Another Problem");
         jButtonDoAnotherProblem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,7 +194,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        jPanelLeftButtons.add(jButtonDoAnotherProblem, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanelLeftButtons.add(jButtonDoAnotherProblem, gridBagConstraints);
 
         jButtonDoAgain.setText("Do Problem Again");
         jButtonDoAgain.addActionListener(new java.awt.event.ActionListener() {
@@ -202,7 +205,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        jPanelLeftButtons.add(jButtonDoAgain, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanelLeftButtons.add(jButtonDoAgain, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
