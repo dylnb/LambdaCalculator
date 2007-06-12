@@ -127,20 +127,13 @@ public class TreeExerciseWidget extends JPanel {
 
         add(buttons, BorderLayout.PAGE_START);
         
-        canvas.setBackground(java.awt.Color.WHITE);
+        canvas.setBackground(getBackground());
         
-        try {
-            ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
-            initialize(file, (TreeExercise)file.getGroup(0).getItem(0));
-            moveTo(lftree);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     
     
-    void initialize(ExerciseFile file, TreeExercise ex) {
+    public void initialize(ExerciseFile file, TreeExercise ex) {
         lexicon = file.getLexicon();
         rules = file.getRules();
         
@@ -154,14 +147,17 @@ public class TreeExerciseWidget extends JPanel {
         lfToMeaningState.clear();
         lfToParent.clear();
         
-        canvas.getRoot().clearChildren();
+        canvas.clear();
         buildTree(canvas.getRoot(), lftree);
+        
+        moveTo(lftree);
     }
     
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
         JPanel label = new JPanel(); // this is the control made the node label for this node
+        label.setBackground(getBackground());
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
         label.setLayout(bl);
         lfToTreeLabelPanel.put(lfnode, label);
@@ -667,9 +663,16 @@ public class TreeExerciseWidget extends JPanel {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                TreeExerciseWidget w = new TreeExerciseWidget();
+                try {
+                    ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
+                    w.initialize(file, (TreeExercise)file.getGroup(0).getItem(0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 JFrame frame = new JFrame();
                 frame.setSize(640, 480);
-                frame.getContentPane().add(new TreeExerciseWidget());
+                frame.getContentPane().add(w);
                 frame.setVisible(true);
             }
         });

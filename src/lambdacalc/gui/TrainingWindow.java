@@ -312,6 +312,7 @@ public class TrainingWindow extends JFrame {
         } else if (ex instanceof TreeExercise) {
             btnTransfer.setEnabled(false);
             switchViewTo(TREES);
+            treeDisplay.initialize(exFile, (TreeExercise)ex);
        }
 
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);

@@ -46,6 +46,15 @@ public class TreeCanvas extends JComponent {
         return root.getSize();
     }
     
+    public void clear() {
+        getRoot().clearChildren();
+        
+        // replace the root with a fresh instance to clear its state
+        remove(root);
+        root = new JTreeNode(null, this);
+        add(root);
+    }
+    
     public void doLayout() {
         // Before adjusting the tree layout, we must
         // reposition all nodes according to the existing
@@ -323,8 +332,11 @@ public class TreeCanvas extends JComponent {
         
         public void clearChildren() {
             // remove from layout
-            for (int i = 0; i < children.size(); i++)
-                container.remove((JTreeNode)children.get(i));
+            for (int i = 0; i < children.size(); i++) {
+                JTreeNode child = (JTreeNode)children.get(i);
+                container.remove(child);
+                child.clearChildren();
+            }
             children.clear();
             container.doLayout();
         }
