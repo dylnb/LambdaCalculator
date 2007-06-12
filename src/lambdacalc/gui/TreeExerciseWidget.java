@@ -166,6 +166,7 @@ public class TreeExerciseWidget extends JPanel {
         lexicon = null;
         rules = null;
         lftree = null;
+        selectedNode = null;
         
         lfToTreeLabelPanel.clear();
         lfToOrthoLabel.clear();
@@ -175,6 +176,8 @@ public class TreeExerciseWidget extends JPanel {
         lfToParent.clear();
         
         canvas.clear();
+        
+        updateButtonEnabledState();
     }
     
     public void initialize(ExerciseFile file, TreeExercise ex) {
@@ -364,11 +367,21 @@ public class TreeExerciseWidget extends JPanel {
         
         curErrorChanged();
         
+        updateButtonEnabledState();
+        
         // Notify listeners that the selected node changed.
         for (int i = 0; i < listeners.size(); i++) {
             SelectionListener sl = (SelectionListener)listeners.get(i);
             sl.selectionChanged(new SelectionEvent(selectedNode));
         }
+    }
+    
+    void updateButtonEnabledState() {
+        // Check what buttons should be enabled now
+        btnSimplify.setEnabled(doSimplify(true));
+        btnUnsimplify.setEnabled(doUnsimplify(true));
+        btnNextStep.setEnabled(doNextStep(true));
+        btnPrevStep.setEnabled(doPrevStep(true));
     }
     
     void curErrorChanged() {
@@ -480,7 +493,7 @@ public class TreeExerciseWidget extends JPanel {
             if (node == selectedNode) return true;
             
             // We must be at a child that isn't fully evaluated.
-            if (!isNodeEvaluated())
+            if (!isNodeEvaluated(selectedNode))
                 evaluateNode();
                 
             if (nodeHasError())
@@ -495,43 +508,53 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
-    void doSimplify() {
+    boolean doSimplify(boolean testOnly) {
         // This evaluates the meaning of a node, if it hasn't been evaluated,
         // and steps through the simplifications of the meaning, but never
-        // moves on to another node.
+        // moves on to another node. If testOnly, just check whether there
+        // is any simplification to be done and return that.
         
         if (selectedNode == null) // nothing is selected?
-            return;
+            return false;
         
         // Make all of the children fully evaluated, and if that's not possible,
-        // don't do anything further here.
-        if (!ensureChildrenEvaluated())
-            return;
+        // don't do anything further here. If we're just testing, don't perform
+        // it.
+        if (!testOnly && !ensureChildrenEvaluated())
+            return false;
         
         // Node hasn't been evaluated yet. Evaluate it.
-        if (!isNodeEvaluated()) {
+        if (!isNodeEvaluated(selectedNode)) {
+            if (testOnly) return true;
             evaluateNode();
         } else if (nodeHasError()) {
-            return; // can't go further
+            return false; // can't go further
         } else if (!isNodeFullyEvaluated()) {
             // Node is evaluated but not fully simplified, so go to the next
             // simplification step.
+            if (testOnly) return true;
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             ms.curexpr++;
             updateNode(selectedNode);
         }
+        
+        return false;
     }
     
-    void doUnsimplify() {
+    boolean doUnsimplify(boolean testOnly) {
         if (selectedNode == null) // nothing is selected?
-            return;
+            return false;
         
-        if (!isNodeEvaluated()) {
+        if (!isNodeEvaluated(selectedNode)) {
             // nothing to do
+            return false;
         } else if (nodeHasError()) {
+            if (testOnly) return true;
             lfToMeaningState.remove(selectedNode);
             updateNode(selectedNode);
         } else {
+            if (testOnly) return true;
+            
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             if (ms.curexpr > 0) {
                 ms.curexpr--;
@@ -540,27 +563,32 @@ public class TreeExerciseWidget extends JPanel {
             }
             updateNode(selectedNode);
         }
+        
+        return false;
     }
 
-    void doNextStep() {
+    boolean doNextStep(boolean testOnly) {
         // This fully evaluates the current node, if it has not been
         // evaluated yet, but if it has been fully evaluated, then
         // we move to the next node and evaluate it, but don't
         // simplify it.
         if (selectedNode == null)
-            return;
+            return false;
             
         // Make all of the children fully evaluated, and if that's not possible,
-        // don't do anything further here.
-        if (!ensureChildrenEvaluated())
-            return;
+        // don't do anything further here. If we're just testing, don't actually
+        // do it.
+        if (!testOnly && !ensureChildrenEvaluated())
+            return false;
         
         if (!isNodeFullyEvaluated()) {
-            if (!isNodeEvaluated())
+            if (testOnly) return !nodeHasError();
+        
+            if (!isNodeEvaluated(selectedNode))
                 evaluateNode();
                 
             if (nodeHasError())
-                return;
+                return false;
         
             // Move the simplification state to the last step.
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
@@ -568,22 +596,25 @@ public class TreeExerciseWidget extends JPanel {
                 // Move the evaluation to the end.
                 ms.curexpr = ms.exprs.size()-1;
                 updateNode(selectedNode);
-                return;
             }
         } else {
             // This expression is fully evaluated. 
             if (lfToParent.containsKey(selectedNode)) {
+                if (testOnly) return true;
                 Nonterminal parent = (Nonterminal)lfToParent.get(selectedNode);
                 moveTo(parent);
             }
+            return false;
         }
+        
+        return false;
     }
             
-    void doPrevStep() {
+    boolean doPrevStep(boolean testOnly) {
         if (selectedNode == null)
-            return;
+            return false;
             
-        if (!isNodeEvaluated()) {
+        if (!isNodeEvaluated(selectedNode)) {
             // move to last evaluable child that is evaluated
             if (selectedNode instanceof Nonterminal) {
                 Nonterminal n = (Nonterminal)selectedNode;
@@ -591,13 +622,14 @@ public class TreeExerciseWidget extends JPanel {
                     LFNode child = n.getChild(i);
                     if (child instanceof BareIndex)
                         continue;
+                    if (testOnly) return true;
                     selectNode(child);
-                    if (isNodeEvaluated())
-                        return;
+                    if (isNodeEvaluated(selectedNode))
+                        return false;
                 }
             }
             
-            // no children are evaluated, so we go to the first, ahm,
+            // no children are evaluated, so we go to the first, ehm,
             // preceding c-commanding node, which is (I hope) the
             // previous one we evaluated
             // Move to previous sibling
@@ -613,35 +645,40 @@ public class TreeExerciseWidget extends JPanel {
                 }
                 i--;
                 while (i >= 0) {
-                    selectNode(parent.getChild(i));
-                    if (isNodeEvaluated())
-                        return;
+                    if (isNodeEvaluated(parent.getChild(i))) {
+                        if (testOnly) return true;
+                        selectNode(parent.getChild(i));
+                        return false;
+                    }
                     i--;
                 }
                 child = parent;
                 parent = (Nonterminal)lfToParent.get(parent);
             }
             
-            return;
+            return false;
         }
         
+        if (testOnly) return true;
         lfToMeaningState.remove(selectedNode);
         updateNode(selectedNode);
+        
+        return false;
     }
     
-    boolean isNodeEvaluated() {
-        return lfToMeaningState.containsKey(selectedNode);
+    boolean isNodeEvaluated(LFNode node) {
+        return lfToMeaningState.containsKey(node);
     }
     
     boolean nodeHasError() {
-        if (!isNodeEvaluated())
+        if (!isNodeEvaluated(selectedNode))
             return false; // definitely not if it hasn't been evaluated at all
         MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
         return ms.evaluationError != null;
     }
         
     boolean isNodeFullyEvaluated() {
-        if (!isNodeEvaluated())
+        if (!isNodeEvaluated(selectedNode))
             return false; // definitely not fully evaluated if it hasn't been evaluated at all
         
         MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
@@ -661,22 +698,26 @@ public class TreeExerciseWidget extends JPanel {
         
     class SimplifyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doSimplify();
+            doSimplify(false);
+            updateButtonEnabledState();
         }
     }
     class UnsimplifyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doUnsimplify();
+            doUnsimplify(false);
+            updateButtonEnabledState();
         }
     }
     class NextStepActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doNextStep();
+            doNextStep(false);
+            updateButtonEnabledState();
         }
     }
     class PrevStepActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doPrevStep();
+            doPrevStep(false);
+            updateButtonEnabledState();
         }
     }
     class FullScreenActionListener implements ActionListener {
@@ -691,6 +732,7 @@ public class TreeExerciseWidget extends JPanel {
                 updateNode((LFNode)e.getSource());
             else if (e.getPropertyName().equals("meaning") || e.getPropertyName().equals("compositionRule"))
                 onUserChangedNodeMeaning((LFNode)e.getSource());
+            updateButtonEnabledState();
         }
     }
 
