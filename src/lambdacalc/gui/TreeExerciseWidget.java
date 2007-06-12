@@ -364,7 +364,7 @@ public class TreeExerciseWidget extends JPanel {
         
         curErrorChanged();
         
-        // Notidy listeners that the selected node changed.
+        // Notify listeners that the selected node changed.
         for (int i = 0; i < listeners.size(); i++) {
             SelectionListener sl = (SelectionListener)listeners.get(i);
             sl.selectionChanged(new SelectionEvent(selectedNode));
