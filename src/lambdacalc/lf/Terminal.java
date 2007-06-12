@@ -7,7 +7,9 @@ public class Terminal extends LFNode {
     protected Expr meaning;
     
     public void setMeaning(Expr meaning) {
+        Expr oldMeaning = this.meaning;
         this.meaning = meaning;
+        changes.firePropertyChange("meaning", oldMeaning, this.meaning);
     }
 
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {

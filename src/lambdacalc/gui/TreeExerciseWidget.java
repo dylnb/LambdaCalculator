@@ -55,6 +55,11 @@ public class TreeExerciseWidget extends JPanel {
     JButton btnNextStep = new JButton("Next Step");
     JButton btnPrevStep = new JButton("Previous Step");
     
+    // Selection listeners
+    Vector listeners = new Vector();
+    
+    NodePropertyChangeListener nodeListener = new NodePropertyChangeListener();
+    
     // This class encapsulates the evaluated/simplified state of a node.
     // If the evaluation resulted in an error, evaluationError is set
     // to a message and the other fields are unfilled. Otherwise,
@@ -86,6 +91,10 @@ public class TreeExerciseWidget extends JPanel {
                 }
             }
         }
+    }
+    
+    public interface SelectionListener {
+        void selectionChanged();
     }
 
     public TreeExerciseWidget() {
@@ -131,14 +140,25 @@ public class TreeExerciseWidget extends JPanel {
         
     }
     
+    public void addSelectionListener(SelectionListener sl) {
+        if (!listeners.contains(sl))
+            listeners.add(sl);
+    }
     
+    public void removeSelectionListener(SelectionListener sl) {
+        listeners.remove(sl);
+    }
     
-    public void initialize(ExerciseFile file, TreeExercise ex) {
-        lexicon = file.getLexicon();
-        rules = file.getRules();
+    public void clear() {
+        // Remove us as a property change listener from all nodes
+        for (Iterator lfnodes = lfToTreeLabelPanel.keySet().iterator(); lfnodes.hasNext(); ) {
+            LFNode node = (LFNode)lfnodes.next();
+            node.removePropertyChangeListener(nodeListener);
+        }
         
-        lftree = ex.getTree();
-        lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
+        lexicon = null;
+        rules = null;
+        lftree = null;
         
         lfToTreeLabelPanel.clear();
         lfToOrthoLabel.clear();
@@ -148,6 +168,17 @@ public class TreeExerciseWidget extends JPanel {
         lfToParent.clear();
         
         canvas.clear();
+    }
+    
+    public void initialize(ExerciseFile file, TreeExercise ex) {
+        clear();
+        
+        lexicon = file.getLexicon();
+        rules = file.getRules();
+        
+        lftree = ex.getTree();
+        lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
+        
         buildTree(canvas.getRoot(), lftree);
         
         moveTo(lftree);
@@ -156,6 +187,8 @@ public class TreeExerciseWidget extends JPanel {
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
+        lfnode.addPropertyChangeListener(nodeListener);
+    
         JPanel label = new JPanel(); // this is the control made the node label for this node
         label.setBackground(getBackground());
         BoxLayout bl = new BoxLayout(label, BoxLayout.Y_AXIS);
@@ -302,6 +335,10 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
+    public LFNode getSelectedNode() {
+        return selectedNode;
+    }
+    
     public void selectNode(LFNode node) {
         // Update the display of the previous current node so that
         // it dislays as non-current.
@@ -319,6 +356,12 @@ public class TreeExerciseWidget extends JPanel {
         }
         
         curErrorChanged();
+        
+        // Notidy listeners that the selected node changed.
+        for (int i = 0; i < listeners.size(); i++) {
+            SelectionListener sl = (SelectionListener)listeners.get(i);
+            sl.selectionChanged();
+        }
     }
     
     void curErrorChanged() {
@@ -633,7 +676,16 @@ public class TreeExerciseWidget extends JPanel {
         public void actionPerformed(ActionEvent e) {
             enterFullScreenMode();
         }
-    }    
+    }
+    
+    class NodePropertyChangeListener implements java.beans.PropertyChangeListener {
+        public void propertyChange(java.beans.PropertyChangeEvent e) {
+            if (e.getPropertyName().equals("label") || e.getPropertyName().equals("index"))
+                updateNode((LFNode)e.getSource());
+            else if (e.getPropertyName().equals("meaning") || e.getPropertyName().equals("compositionRule"))
+                onUserChangedNodeMeaning((LFNode)e.getSource());
+        }
+    }
 
     public void enterFullScreenMode() {
         

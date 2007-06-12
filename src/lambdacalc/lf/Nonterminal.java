@@ -26,6 +26,7 @@ public class Nonterminal extends LFNode {
     
     public void addChild(LFNode node) {
         children.add(node);
+        changes.firePropertyChange("children", null, null);
     }
     
     public CompositionRule getCompositionRule() {
@@ -33,7 +34,9 @@ public class Nonterminal extends LFNode {
     }
     
     public void setCompositionRule(CompositionRule rule) {
+        CompositionRule oldRule = compositor;
         compositor = rule;
+        changes.firePropertyChange("compositionRule", oldRule, compositor);
     }
 
     public Expr getMeaning(AssignmentFunction g) 

@@ -1,8 +1,10 @@
 package lambdacalc.lf;
 
 import lambdacalc.logic.Expr;
+import java.beans.*;
 
 public abstract class LFNode {
+    protected PropertyChangeSupport changes = new PropertyChangeSupport(this);
     
     /**
      * The symbol used for separating the label from its index (if any)
@@ -19,7 +21,9 @@ public abstract class LFNode {
     }
     
     public void setLabel(String label) {
+        String oldLabel = this.label;
         this.label = label;
+        changes.firePropertyChange("label", oldLabel, label);
     }
     
     /**
@@ -30,7 +34,9 @@ public abstract class LFNode {
     }
     
     public void setIndex(int index) {
+        int oldIndex = this.index;
         this.index = index;
+        changes.firePropertyChange("index", oldIndex, index);
     }
     
     public void removeIndex() {
@@ -38,7 +44,7 @@ public abstract class LFNode {
     }
     
     public boolean hasIndex() {
-        return this.index!=-1;
+        return this.index != -1;
     }
 
     public String toString() {
@@ -48,7 +54,7 @@ public abstract class LFNode {
         } 
         return result;
     }
-        
+    
     public Expr getMeaning() throws MeaningEvaluationException {
         return getMeaning(new AssignmentFunction());
     }
@@ -58,5 +64,11 @@ public abstract class LFNode {
     
     public abstract void guessLexicalEntriesAndRules
             (Lexicon lexicon, RuleList rules);
-    
+
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        changes.addPropertyChangeListener(l);
+    }
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        changes.removePropertyChangeListener(l);
+    }    
 }
