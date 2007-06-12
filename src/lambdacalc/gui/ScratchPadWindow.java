@@ -184,12 +184,16 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 108, 0, 0);
         jPanelButtons.add(jButtonCloseWindow, gridBagConstraints);
 
+        jPanelLeftButtons.setLayout(new java.awt.GridBagLayout());
+
         jButtonDoAnotherProblem.setText("Do Another Problem");
         jButtonDoAnotherProblem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonDoAnotherProblemActionPerformed(evt);
             }
         });
+
+        jPanelLeftButtons.add(jButtonDoAnotherProblem, new java.awt.GridBagConstraints());
 
         jButtonDoAgain.setText("Do Problem Again");
         jButtonDoAgain.addActionListener(new java.awt.event.ActionListener() {
@@ -198,21 +202,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             }
         });
 
-        org.jdesktop.layout.GroupLayout jPanelLeftButtonsLayout = new org.jdesktop.layout.GroupLayout(jPanelLeftButtons);
-        jPanelLeftButtons.setLayout(jPanelLeftButtonsLayout);
-        jPanelLeftButtonsLayout.setHorizontalGroup(
-            jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelLeftButtonsLayout.createSequentialGroup()
-                .add(jButtonDoAgain)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButtonDoAnotherProblem))
-        );
-        jPanelLeftButtonsLayout.setVerticalGroup(
-            jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelLeftButtonsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(jButtonDoAgain)
-                .add(jButtonDoAnotherProblem))
-        );
+        jPanelLeftButtons.add(jButtonDoAgain, new java.awt.GridBagConstraints());
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
