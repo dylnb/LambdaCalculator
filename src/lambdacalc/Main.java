@@ -14,6 +14,14 @@ import lambdacalc.gui.*;
  */
 public class Main {
 
+    public static String breakIntoLines(String s, int n) {
+        for (int i = 0; i < s.length(); i = i + n) {
+            while (s.charAt(i) != ' ' && i < s.length()) {i++;}
+            s = s.substring(i)+"\n"+s.substring(i,s.length()); 
+        }
+        return s;
+    }
+    
     /**
      * The main entry point.  Show the main GUI window.
      * @param args the command line arguments
@@ -29,11 +37,10 @@ public class Main {
                 }
             });
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
+            Util.displayErrorMessage(
                     WelcomeWindow.getSingleton(),
                     e.toString(),
-                    e.getMessage(),
-                    JOptionPane.ERROR_MESSAGE);
+                    e.getMessage());
         }
     }
 }

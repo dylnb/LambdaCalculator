@@ -117,30 +117,54 @@ public class TrainingWindow extends JFrame {
         
         //loadExerciseFile("tests/example1.txt");
     }
-        
-    
+
     public void switchViewTo(int view) {
-        GridLayout layout = (GridLayout) jPanelDirectionsOrTrees.getLayout();
         switch (view) {
             case TREES:
-                layout.setRows(2);
-                jPanelDirectionsOrTrees.add(jScrollPaneTreeDisplay);
-//                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
+                jSplitPaneUpperRight.setTopComponent(jScrollPaneDirections);
+                jSplitPaneUpperRight.setBottomComponent(jScrollPaneTreeDisplay);
+                
+                jSplitPaneRightHalf.setTopComponent(jSplitPaneUpperRight);
                 break;
             case TYPES_AND_CONVERSIONS:
-                jPanelDirectionsOrTrees.remove(jScrollPaneTreeDisplay);
-                layout.setRows(1);
-//                jSplitPaneMain.setRightComponent(jPanelTrees);
+                jSplitPaneUpperRight.removeAll();
+                jSplitPaneRightHalf.setTopComponent(jScrollPaneDirections);
                 break;
             default:
                 throw new IllegalArgumentException("Don't know this view");
                 
         }
-        jPanelDirectionsOrTrees.validate();
+        //jPanelDirectionsOrTrees.validate();
+        //jSplitPaneRightHalf.setResizeWeight(1);
         //jPanelDirectionsOrTrees.repaint();
         //repaint();
                
     }
+    
+    
+//    public void switchViewTo(int view) {
+//        GridLayout layout = (GridLayout) jPanelDirectionsOrTrees.getLayout();
+//        switch (view) {
+//            case TREES:
+//                layout.setRows(2);
+//                jPanelDirectionsOrTrees.add(jScrollPaneTreeDisplay);
+////                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
+//                break;
+//            case TYPES_AND_CONVERSIONS:
+//                jPanelDirectionsOrTrees.remove(jScrollPaneTreeDisplay);
+//                layout.setRows(1);
+////                jSplitPaneMain.setRightComponent(jPanelTrees);
+//                break;
+//            default:
+//                throw new IllegalArgumentException("Don't know this view");
+//                
+//        }
+//        jPanelDirectionsOrTrees.validate();
+//        //jSplitPaneRightHalf.setResizeWeight(1);
+//        //jPanelDirectionsOrTrees.repaint();
+//        //repaint();
+//               
+//    }
     
     
     // called by TrainingWindow constructor
@@ -223,22 +247,22 @@ public class TrainingWindow extends JFrame {
             menuItemSave.setEnabled(false);
         } catch (IOException e) { // thrown by deserialize and parse
             e.printStackTrace();
-            JOptionPane.showMessageDialog
+            Util.displayErrorMessage
                     (this, "There was an error opening the exercise file: " + (e.getMessage() == null ? "Unknown read error." : e.getMessage()),
-                    "Error loading exercise file", JOptionPane.ERROR_MESSAGE);
+                    "Error loading exercise file");
             return;
         } catch (ExerciseFileFormatException e) { // thrown by parse
             e.printStackTrace();
-            JOptionPane.showMessageDialog
-                    (this, "The exercise file couldn't be read: " + e.getMessage(), // e.g. typo 
-                    "Error loading exercise file", JOptionPane.ERROR_MESSAGE);
+            Util.displayErrorMessage
+                    (this, "The exercise file couldn't be read: " + e.getMessage(), // e.g. typo
+                    "Error loading exercise file");
             return;
         }
         
         if (this.exFile.hasBeenCompleted()) {
-            JOptionPane.showMessageDialog
+            Util.displayInformationMessage
                     (this, "All the exercises in this file have already been solved.",
-                    "File already completed", JOptionPane.INFORMATION_MESSAGE);
+                    "File already completed");
         }
         
         if (isWorkFile) {
@@ -420,6 +444,8 @@ public class TrainingWindow extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jSplitPaneUpperRight = new javax.swing.JSplitPane();
+        jPanelDirectionsOrTrees = new javax.swing.JPanel();
         jFileChooser1 = new javax.swing.JFileChooser();
         jScrollPaneTreeDisplay = new javax.swing.JScrollPane();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
@@ -436,6 +462,10 @@ public class TrainingWindow extends JFrame {
         lblHelpNot = new javax.swing.JLabel();
         lblHelpConditionals = new javax.swing.JLabel();
         lblIdentifierTypes = new javax.swing.JTextArea();
+        jSplitPaneRightHalf = new javax.swing.JSplitPane();
+        jScrollPaneDirections = new javax.swing.JScrollPane();
+        lblDirections = new javax.swing.JTextArea();
+        jSplitPaneLowerRight = new javax.swing.JSplitPane();
         jPanelTypesAndConversions = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
         jPanelNavigationButtons = new javax.swing.JPanel();
@@ -445,13 +475,11 @@ public class TrainingWindow extends JFrame {
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
-        jPanelLexicon = new javax.swing.JPanel();
         jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnTransfer = new javax.swing.JButton();
-        jPanelDirectionsOrTrees = new javax.swing.JPanel();
-        jScrollPaneDirections = new javax.swing.JScrollPane();
-        lblDirections = new javax.swing.JTextArea();
+        jScrollPaneInfoBox = new javax.swing.JScrollPane();
+        jPanelInfoBox = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -463,6 +491,11 @@ public class TrainingWindow extends JFrame {
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
 
+        jSplitPaneUpperRight.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jPanelDirectionsOrTrees.setLayout(new java.awt.GridLayout(1, 1));
+
+        jPanelDirectionsOrTrees.setMinimumSize(new java.awt.Dimension(19, 50));
+        jPanelDirectionsOrTrees.setPreferredSize(new java.awt.Dimension(235, 150));
         jScrollPaneTreeDisplay.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
         treeDisplay.setBackground(java.awt.Color.white);
         jScrollPaneTreeDisplay.setViewportView(treeDisplay);
@@ -481,6 +514,7 @@ public class TrainingWindow extends JFrame {
         jSplitPaneMain.setOneTouchExpandable(true);
         jSplitPaneLeftHalf.setDividerLocation(300);
         jSplitPaneLeftHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPaneLeftHalf.setOneTouchExpandable(true);
         jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14));
         jTreeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
@@ -543,7 +577,7 @@ public class TrainingWindow extends JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -580,6 +614,27 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneMain.setLeftComponent(jSplitPaneLeftHalf);
 
+        jSplitPaneRightHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPaneRightHalf.setResizeWeight(1.0);
+        jSplitPaneRightHalf.setOneTouchExpandable(true);
+        jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
+        jScrollPaneDirections.setMinimumSize(new java.awt.Dimension(19, 90));
+        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(235, 90));
+        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblDirections.setColumns(20);
+        lblDirections.setEditable(false);
+        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblDirections.setLineWrap(true);
+        lblDirections.setRows(5);
+        lblDirections.setWrapStyleWord(true);
+        lblDirections.setBorder(null);
+        lblDirections.setPreferredSize(new java.awt.Dimension(220, 75));
+        jScrollPaneDirections.setViewportView(lblDirections);
+
+        jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);
+
+        jSplitPaneLowerRight.setOneTouchExpandable(true);
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         btnCheckAnswer.setText("Check Answer");
@@ -591,8 +646,7 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 15;
         gridBagConstraints.weightx = 1.0;
@@ -646,7 +700,7 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelNavigationButtons, gridBagConstraints);
@@ -667,9 +721,10 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         jPanelTypesAndConversions.add(jScrollPaneFeedback, gridBagConstraints);
 
         txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
@@ -681,32 +736,10 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(txtUserAnswer, gridBagConstraints);
-
-        jPanelLexicon.setBorder(javax.swing.BorderFactory.createTitledBorder("Placeholder for lexicon"));
-        jPanelLexicon.setMinimumSize(new java.awt.Dimension(250, 160));
-        jPanelLexicon.setPreferredSize(new java.awt.Dimension(250, 160));
-        org.jdesktop.layout.GroupLayout jPanelLexiconLayout = new org.jdesktop.layout.GroupLayout(jPanelLexicon);
-        jPanelLexicon.setLayout(jPanelLexiconLayout);
-        jPanelLexiconLayout.setHorizontalGroup(
-            jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 238, Short.MAX_VALUE)
-        );
-        jPanelLexiconLayout.setVerticalGroup(
-            jPanelLexiconLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 151, Short.MAX_VALUE)
-        );
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelTypesAndConversions.add(jPanelLexicon, gridBagConstraints);
 
         jPanelQuestion.setLayout(new java.awt.GridBagLayout());
 
@@ -737,36 +770,32 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
-        jPanelDirectionsOrTrees.setLayout(new java.awt.GridLayout(1, 1));
+        jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
 
-        jScrollPaneDirections.setBorder(null);
-        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        lblDirections.setColumns(20);
-        lblDirections.setEditable(false);
-        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
-        lblDirections.setLineWrap(true);
-        lblDirections.setRows(5);
-        lblDirections.setWrapStyleWord(true);
-        lblDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
-        jScrollPaneDirections.setViewportView(lblDirections);
+        jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Placeholder for lexicon"));
+        jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
+        org.jdesktop.layout.GroupLayout jPanelInfoBoxLayout = new org.jdesktop.layout.GroupLayout(jPanelInfoBox);
+        jPanelInfoBox.setLayout(jPanelInfoBoxLayout);
+        jPanelInfoBoxLayout.setHorizontalGroup(
+            jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 253, Short.MAX_VALUE)
+        );
+        jPanelInfoBoxLayout.setVerticalGroup(
+            jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 276, Short.MAX_VALUE)
+        );
+        jScrollPaneInfoBox.setViewportView(jPanelInfoBox);
 
-        jPanelDirectionsOrTrees.add(jScrollPaneDirections);
+        jSplitPaneLowerRight.setRightComponent(jScrollPaneInfoBox);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weighty = 1.0;
-        jPanelTypesAndConversions.add(jPanelDirectionsOrTrees, gridBagConstraints);
+        jSplitPaneRightHalf.setRightComponent(jSplitPaneLowerRight);
 
-        jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
+        jSplitPaneMain.setRightComponent(jSplitPaneRightHalf);
 
         getContentPane().add(jSplitPaneMain);
 
@@ -1053,9 +1082,9 @@ public class TrainingWindow extends JFrame {
             menuItemSave.setEnabled(false);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog
+            Util.displayErrorMessage
                     (this, "There was an error saving the exercise file: " + e.getMessage(),
-                    "Error saving exercise file", JOptionPane.ERROR_MESSAGE);         
+                    "Error saving exercise file");         
         }
     }
     
@@ -1176,17 +1205,21 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelDirectionsOrTrees;
     private javax.swing.JPanel jPanelEnterExpressions;
-    private javax.swing.JPanel jPanelLexicon;
+    private javax.swing.JPanel jPanelInfoBox;
     private javax.swing.JPanel jPanelNavigationButtons;
     private javax.swing.JPanel jPanelQuestion;
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneInfoBox;
     private javax.swing.JScrollPane jScrollPaneTreeDisplay;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
+    private javax.swing.JSplitPane jSplitPaneLowerRight;
     private javax.swing.JSplitPane jSplitPaneMain;
+    private javax.swing.JSplitPane jSplitPaneRightHalf;
+    private javax.swing.JSplitPane jSplitPaneUpperRight;
     private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
     private javax.swing.JLabel lblHelpBinaries;

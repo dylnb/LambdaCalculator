@@ -54,7 +54,7 @@ public class ExerciseTreeRenderer implements TreeCellRenderer {
                 //label.setFont(Font.decode("Arial Unicode MS"));
                 label.setFont(Font.decode("Serif 14 Plain"));
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getMessage());
+                Util.displayInformationMessage(this, e.getMessage(), "Error");
                 //label.setFont(tree.getFont());
             }
             add(label);

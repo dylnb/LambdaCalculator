@@ -51,7 +51,17 @@ public class Util {
                 windowTitle,
                 JOptionPane.ERROR_MESSAGE);
     }
-    
+
+        public static void displayInformationMessage
+            (Component parentComponent, String message, String windowTitle) {
+        
+        displayMessage
+                (parentComponent,
+                message,
+                windowTitle,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+        
     private static void displayMessage(Component parentComponent, String message, String windowTitle,
             int messageType) {
         JOptionPane p = new JOptionPane(message,

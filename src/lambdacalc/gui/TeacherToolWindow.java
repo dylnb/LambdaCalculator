@@ -524,9 +524,9 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             try {
                 entry.exFile.saveTo(entry.file);
             } catch (IOException e) {
-                javax.swing.JOptionPane.showMessageDialog
+                Util.displayErrorMessage
                         (TeacherToolWindow.this, "Could not save comments to exercise file: " + (e.getMessage() == null ? "Unknown write error." : e.getMessage()),
-                        "Error saving comments", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        "Error saving comments");
             }
         }
     }
