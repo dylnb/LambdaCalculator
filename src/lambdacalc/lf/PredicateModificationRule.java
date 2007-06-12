@@ -32,7 +32,7 @@ public class PredicateModificationRule extends CompositionRule {
             ExpressionParser.parseAndSuppressExceptions
             ("LX.LY.Lx.[X(x)&Y(x)]", options);
 
-    public PredicateModificationRule() {
+    private PredicateModificationRule() {
         super("Predicate Modification");
     }
     

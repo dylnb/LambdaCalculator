@@ -47,6 +47,12 @@ public class TreeCanvas extends JComponent {
     }
     
     public void doLayout() {
+        // Before adjusting the tree layout, we must
+        // reposition all nodes according to the existing
+        // layout in the event that a node's width changed
+        // and it must be re-centered.
+        recenterControls(getRoot());
+        
         layout.layoutTree(getRoot());
         if (!animated)
             positionControls(getRoot(), false);
@@ -165,29 +171,70 @@ public class TreeCanvas extends JComponent {
         }
         
         public void setNodePositions(JTreeNode subtree, int parentLeft, int parentTop) {
+            subtree.hasPosition = true;
             NodeInfo ni = (NodeInfo)subtree.layoutInfo;
-            subtree.positionX = parentLeft + ni.subtreeLeft + ni.labelCenter - subtree.getWidth()/2;
+            subtree.positionX = parentLeft + ni.subtreeLeft + ni.labelCenter;
             subtree.positionY = parentTop + ni.subtreeTop;
             for (int i = 0; i < subtree.children.size(); i++) {
                 JTreeNode c = (JTreeNode)subtree.children.get(i);
-                setNodePositions(c, parentLeft + ni.subtreeLeft, subtree.positionY + ni.subtreeTop);
+                setNodePositions(c, parentLeft + ni.subtreeLeft, parentTop + ni.subtreeTop);
             }
         }
     }
     
+    private void recenterControls(JTreeNode node) {
+        // For all nodes that have been placed onto the screen,
+        // redo their internal layouts and then make them centered
+        // around the coordinate they should be centered on.
+        // We use currentX/Y and not positionX/Y here because in animation,
+        // positionX/Y may be changed to the desired location before
+        // we get a chance to recenter according to where the node
+        // actually is currently on screen.
+        
+        if (!node.hasPosition || !node.hasBeenPlaced) return; // a new node that has not been positioned yet
+        
+        if (node.getLabel() != null) {
+            node.getLabel().doLayout();
+            node.getLabel().setSize(node.getLabel().getPreferredSize());
+            node.setSize(node.getLabel().getSize());
+            node.getLabel().setLocation(0,0); // relative to the panel that contains just that node
+        }
+            
+        node.setLocation(node.currentX - node.getWidth()/2, node.currentY);
+            
+        for (int i = 0; i < node.children.size(); i++) {
+            JTreeNode c = (JTreeNode)node.children.get(i);
+            recenterControls(c);
+        }
+    }
+    
     private void positionControls(JTreeNode node, boolean incremental) {
-        if (!incremental) {
-            node.setLocation(node.positionX, node.positionY);
+        if (!incremental || !node.hasBeenPlaced) {
+            if (node.getLabel() != null) {
+                node.getLabel().doLayout();
+                node.getLabel().setSize(node.getLabel().getPreferredSize());
+                node.setSize(node.getLabel().getSize());
+                node.getLabel().setLocation(0,0); // relative to the panel that contains just that node
+            }
+            
+            node.setLocation(node.positionX - node.getWidth()/2, node.positionY);
         } else {
             hadPositionChange = (node.positionX != node.getLocation().x) || (node.positionY != node.getLocation().y);
-            node.setLocation((node.positionX + node.getLocation().x)/2, (node.positionY + node.getLocation().y)/2);
+            node.setLocation((node.positionX + (node.getLocation().x+node.getWidth()/2))/2 - node.getWidth()/2, (node.positionY + node.getLocation().y)/2);
         }
+        
+        node.currentX = node.getLocation().x + node.getWidth()/2;
+        node.currentY = node.getLocation().y;
             
         for (int i = 0; i < node.children.size(); i++) {
             JTreeNode c = (JTreeNode)node.children.get(i);
             positionControls(c, incremental);
         }
+        
+        node.hasBeenPlaced = true;
     }
+    
+    
     
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -215,6 +262,7 @@ public class TreeCanvas extends JComponent {
         public void actionPerformed(ActionEvent e) {
             hadPositionChange = false; // changed by positionControls
             positionControls(getRoot(), true);
+            repaint(); // clear previous lines that were drawn
             if (!hadPositionChange)
                 timer.stop();
         }
@@ -228,7 +276,10 @@ public class TreeCanvas extends JComponent {
         ArrayList children = new ArrayList();
         
         Object layoutInfo;
-        int positionX, positionY;
+        int positionX, positionY; // desired layout position (x is the center of the label, y is top)
+        boolean hasPosition = false, hasBeenPlaced = false;
+        
+        int currentX, currentY; // actual current on-screen position (x is at center of label, y is top)
         
         /**
          * @param parent null if this is the root node
@@ -237,6 +288,7 @@ public class TreeCanvas extends JComponent {
             this.container = container;
             this.parent = parent;
             setLayout(null);
+            setBackground(container.getBackground());
         }
         
         public Component getLabel() {

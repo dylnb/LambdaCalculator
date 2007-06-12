@@ -127,7 +127,7 @@ public class BracketedTreeParser {
                         throw new SyntaxException("A semicolon must terminate the end of a composition rule being assigned to a nonterminal node with '='.", i);
                     String rulename = tree.substring(i+1, semi);
                     if (rulename.equals("fa"))
-                        curnode.setCompositionRule(new FunctionApplicationRule());
+                        curnode.setCompositionRule(FunctionApplicationRule.INSTANCE);
                     else
                         throw new SyntaxException("The name '" + rulename + "' is invalid", i);
                     i = semi; // resume from next position (i is incremented at end of iteration)
@@ -246,12 +246,20 @@ public class BracketedTreeParser {
     }
     
     private static Terminal finishTerminal(Nonterminal parent, Terminal child) {
+        // If the terminal label was just an integer,
+        // load it as a BareIndex object.
         try {
             int idx = Integer.valueOf(child.getLabel()).intValue();
             child = new BareIndex(idx);
         } catch (NumberFormatException e) {
             // ignore parsing error: it's not a bare index
         }
+
+        // If the terminal label was "t" with an index,
+        // load it as a Trace object.
+        if (child.getLabel().equals("t") && child.getIndex() != -1)
+            child = new Trace(child.getIndex());
+
         parent.addChild(child);
         return child;
     }

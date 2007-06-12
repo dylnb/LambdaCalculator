@@ -33,14 +33,14 @@ public class RuleList extends Vector {
     
     public boolean add(Object o) {
         if (!(o instanceof CompositionRule)) throw new IllegalArgumentException();
+        if (contains(o)) return false;
         return super.add(o);
     }
     
     public boolean addAll(Collection c) {
-        if (!isCompositionRuleCollection(c)) {
-            throw new IllegalArgumentException();
-        }
-        return super.addAll(c);
+        for (Iterator i = c.iterator(); i.hasNext(); )
+            add(i.next());
+        return true;
     }
         
     public boolean contains(Object o) {

@@ -31,21 +31,29 @@ public class TreeExerciseWidget extends JPanel {
     TreeCanvas canvas; // this is the display widget
     Nonterminal lftree; // this is the tree we're displaying
     Lexicon lexicon; // from which to draw choices for terminal nodes
+    RuleList rules; // from which to draw choices for nonterminal nodes
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
     Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
     Map lfToOrthoLabel = new HashMap(); // orthographic label
-    Map lfToMeaningLabel = new HashMap(); // propositional content label: JLabel for nonterminals, JComboBox for terminals
+    Map lfToMeaningLabel = new HashMap(); // propositional content label (for nonterminals only if we're using dropdowns for terminals)
     Map lfToMeaningState = new HashMap(); // state of the propositional label, or null if node is not evaluated yet
+    //Map lfToMeaningChooser = new HashMap(); // meaning JComboBox: lexical entry for terminals, composition rule for nonterminals
     Map lfToParent = new HashMap(); // parent LFNode
     
     JLabel errorLabel = new JLabel(); // label containing error messages
     
-    // At any given time, at most one LFNode is the current
-    // evaluation node, which is highlighted and represents
-    // the node that is affected by pressing space or enter.
+    // At any given time, at most one LFNode is the currently
+    // selected node, which is highlighted and represents
+    // the node that is affected by the buttons.
     // This is null if no node is the current evaluation node.
-    LFNode curEvaluationNode = null;
+    LFNode selectedNode = null;
+    
+    // Buttons
+    JButton btnSimplify = new JButton("Simplify");
+    JButton btnUnsimplify = new JButton("Unsimplify");
+    JButton btnNextStep = new JButton("Next Step");
+    JButton btnPrevStep = new JButton("Previous Step");
     
     // This class encapsulates the evaluated/simplified state of a node.
     // If the evaluation resulted in an error, evaluationError is set
@@ -105,15 +113,17 @@ public class TreeExerciseWidget extends JPanel {
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
         
-        JButton bspace = new JButton("Space");
-        bspace.addActionListener(new SpaceActionListener());
-        buttons.add(bspace);
-        JButton benter = new JButton("Enter");
-        benter.addActionListener(new EnterActionListener());
-        buttons.add(benter);
-        JButton bfullScreen = new JButton("Full Screen");
-        bfullScreen.addActionListener(new FullScreenActionListener());
-        buttons.add(bfullScreen);
+        btnSimplify.addActionListener(new SimplifyActionListener());
+        buttons.add(btnSimplify);
+        
+        btnUnsimplify.addActionListener(new UnsimplifyActionListener());
+        buttons.add(btnUnsimplify);
+        
+        btnNextStep.addActionListener(new NextStepActionListener());
+        buttons.add(btnNextStep);
+
+        btnPrevStep.addActionListener(new PrevStepActionListener());
+        buttons.add(btnPrevStep);
 
         add(buttons, BorderLayout.PAGE_START);
         
@@ -132,6 +142,7 @@ public class TreeExerciseWidget extends JPanel {
     
     void initialize(ExerciseFile file, TreeExercise ex) {
         lexicon = file.getLexicon();
+        rules = file.getRules();
         
         lftree = ex.getTree();
         lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
@@ -139,6 +150,7 @@ public class TreeExerciseWidget extends JPanel {
         lfToTreeLabelPanel.clear();
         lfToOrthoLabel.clear();
         lfToMeaningLabel.clear();
+        //lfToMeaningChooser.clear();
         lfToMeaningState.clear();
         lfToParent.clear();
         
@@ -154,27 +166,49 @@ public class TreeExerciseWidget extends JPanel {
         label.setLayout(bl);
         lfToTreeLabelPanel.put(lfnode, label);
         
+        label.addMouseListener(new NodeClickListener(lfnode));
+        
         JLabel orthoLabel = new JLabel(lfnode.getLabel());
         label.add(orthoLabel);
         orthoLabel.setAlignmentX(.5F);
         lfToOrthoLabel.put(lfnode, orthoLabel);
         
+        /*
         // For terminals, give them comboboxes to choose the lexical entry.
         if (lfnode instanceof Terminal) {
             JComboBox lexicalChoices = new JComboBox();
             lexicalChoices.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
             label.add(lexicalChoices);
             lexicalChoices.setAlignmentX(.5F);
-            lfToMeaningLabel.put(lfnode, lexicalChoices);
+            lfToMeaningChooser.put(lfnode, lexicalChoices);
             updateTerminalLexicalChoices((Terminal)lfnode);
             
         // For nonterminals, give them JLabels for their meanings.
         } else {
+        */
             JLabel meaningLabel = new JLabel();
             meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
             label.add(meaningLabel);
             meaningLabel.setAlignmentX(.5F);
             lfToMeaningLabel.put(lfnode, meaningLabel);
+
+        /*    JComboBox compositionRuleChoices = new JComboBox();
+            compositionRuleChoices.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
+            label.add(compositionRuleChoices);
+            compositionRuleChoices.setAlignmentX(.5F);
+            lfToMeaningChooser.put(lfnode, compositionRuleChoices);
+            updateNonterminalCompositionRules((Nonterminal)lfnode);
+        }*/
+        
+        // If the Terminal already has a lexical entry assigned,
+        // initialize its meaning state.
+        if (lfnode instanceof Terminal) {
+           Terminal t = (Terminal)lfnode;
+           try {
+               Expr m = t.getMeaning();
+               lfToMeaningState.put(t, new MeaningState(m));
+           } catch (Exception e) {
+           }
         }
         
         treenode.setLabel(label);
@@ -192,6 +226,7 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
+    /*
     private void updateTerminalLexicalChoices(Terminal node) {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         
@@ -205,20 +240,27 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
         
-        JComboBox lexicalChoices = (JComboBox)lfToMeaningLabel.get(node);
+        JComboBox lexicalChoices = (JComboBox)lfToMeaningChooser.get(node);
         lexicalChoices.setModel(model);
         
-        lexicalChoices.setSelectedIndex(selectIndex);
+        lexicalChoices.setSelectedIndex(selectIndex); // TODO: If terminal is assiged a meaning, select it
         lexicalChoices.addActionListener(new LexicalChoiceActionListener(node, lexicalChoices));
     }
-    /*       Terminal t = (Terminal)lfnode;
-           try {
-               Expr m = t.getMeaning();
-               lfToMeaningState.put(t, new MeaningState(m));
-           } catch (Exception e) {
-           }
-        }*/
         
+    private void updateNonterminalCompositionRules(Nonterminal node) {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (int i = 0; i < rules.size(); i++) {
+            model.addElement(rules.get(i));
+        }
+        
+        JComboBox choices = (JComboBox)lfToMeaningChooser.get(node);
+        choices.setModel(model);
+        
+        if (rules.size() > 0) // TODO: If nonterminal is assiged a meaning, select it
+            choices.setSelectedIndex(0);
+        choices.addActionListener(new LexicalChoiceActionListener(node, lexicalChoices));
+    }
+    
     private class LexicalChoiceActionListener implements ActionListener {
         Terminal terminal;
         JComboBox combobox;
@@ -240,6 +282,7 @@ public class TreeExerciseWidget extends JPanel {
             onUserChangedNodeMeaning(terminal);
         }
     }
+    */
     
     private void onUserChangedNodeMeaning(LFNode node) {
         updateNode(node);
@@ -247,20 +290,45 @@ public class TreeExerciseWidget extends JPanel {
         // Clear the meaning states of the parent nodes.
         LFNode ancestor = (LFNode)lfToParent.get(node);
         while (ancestor != null) {
-            lfToMeaningState.put(ancestor, null);
+            lfToMeaningState.remove(ancestor);
             updateNode(ancestor);
             ancestor = (LFNode)lfToParent.get(ancestor);
         }
     }
     
-    void curNodeChanged() {
+    private class NodeClickListener extends MouseAdapter {
+        LFNode node;
+        
+        public NodeClickListener(LFNode node) { this.node = node; }
+    
+        public void mouseClicked(MouseEvent e) {
+            selectNode(node);
+        }
+    }
+    
+    public void selectNode(LFNode node) {
+        // Update the display of the previous current node so that
+        // it dislays as non-current.
+        if (selectedNode != null) {
+            LFNode oldselectedNode = selectedNode;
+            selectedNode = null;
+            updateNode(oldselectedNode);
+        }
+        
+        selectedNode = node;
+        
+        // Update the display of the newly selected node.
+        if (selectedNode != null) {
+            updateNode(selectedNode);
+        }
+        
         curErrorChanged();
     }
     
     void curErrorChanged() {
         String evalError = "";
-        if (curEvaluationNode != null && lfToMeaningState.containsKey(curEvaluationNode)) { // has the node been evaluated?
-            MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
+        if (selectedNode != null && lfToMeaningState.containsKey(selectedNode)) { // has the node been evaluated?
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             if (ms.evaluationError != null)
                 evalError = ms.evaluationError;
         }
@@ -276,27 +344,27 @@ public class TreeExerciseWidget extends JPanel {
 
         // Change the label if it's the current evaluation node.
         String label = node.getLabel();
-        if (node == curEvaluationNode) {
-            nodePanel.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLUE, 2, true));
-        } else {
-            nodePanel.setBorder(null);
-        }
+        java.awt.Color borderColor = getBackground();
+        if (node == selectedNode)
+            borderColor = java.awt.Color.BLUE;
+        nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
         JLabel orthoLabel = (JLabel)lfToOrthoLabel.get(node);
         orthoLabel.setText(label);
         
-        if (node instanceof Nonterminal) {
-            // Update the lambda expression displayed, if it's been evaluated.
-            // If an error ocurred during evaluation, display it. Otherwise
-            // display the lambda expression.
-            JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
-            if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
-                MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-                if (ms.evaluationError == null) // was there an error?
-                    meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
-                else
-                    meaningLabel.setText("Problem!");
-            }
+        // Update the lambda expression displayed, if it's been evaluated.
+        // If an error ocurred during evaluation, display it. Otherwise
+        // display the lambda expression.
+        JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
+        if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
+            MeaningState ms = (MeaningState)lfToMeaningState.get(node);
+            if (ms.evaluationError == null) // was there an error?
+                meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
+            else
+                meaningLabel.setText("Problem!");
+            meaningLabel.setVisible(true);
+        } else {
+            meaningLabel.setVisible(false);
         }
         
         // Ensure tree layout is adjusted due to changes to node label.
@@ -308,18 +376,9 @@ public class TreeExerciseWidget extends JPanel {
     // if all of its children have been fully evaluated and simplified. If they
     // haven't, move to the first not fully simplified child.
     void moveTo(LFNode node) {
-        if (curEvaluationNode != null) {
-            // Update the display of the previous current node so that
-            // it dislays as non-current.
-            LFNode oldcurEvaluationNode = curEvaluationNode;
-            curEvaluationNode = null;
-            updateNode(oldcurEvaluationNode);
-        }
-        
         // If we're not making any new node current, end here.
         if (node == null) {
-            curEvaluationNode = null;
-            curNodeChanged();
+            selectNode(null);
             return;
         }
         
@@ -328,6 +387,11 @@ public class TreeExerciseWidget extends JPanel {
             // meaning simplifications, move to them.
             for (int i = 0; i < ((Nonterminal)node).size(); i++) {
                 LFNode child = ((Nonterminal)node).getChild(i);
+                
+                // BareIndex nodes dont have meanings.
+                if (child instanceof BareIndex)
+                    continue;
+                
                 if (!lfToMeaningState.containsKey(child)) {
                     // Child not evaluated yet: move to the child
                     moveTo(child);
@@ -349,105 +413,224 @@ public class TreeExerciseWidget extends JPanel {
         
         // All of the children are fully computed, so we can move
         // to this node.
-        curEvaluationNode = node;
-        updateNode(curEvaluationNode);
-        curNodeChanged();
+        selectNode(node);
     }
     
-    void doSpace() {
-        /*long start = System.currentTimeMillis();
-        int runs = 10000;
-        for (int count = 0; count < runs; count++)
-            canvas.doLayout();
-        long end = System.currentTimeMillis();
-        System.out.println((double)(end-start)/(double)runs);*/
-
+    boolean ensureChildrenEvaluated() {
+        // Make sure all of the children of the selected node
+        // are fully evaluated, and move to the first unevaluated
+        // node if there is one. To do this, we make use of
+        // the moveTo method. If we moveTo the selected node
+        // and any of its children are unevaluated, it will
+        // take us there.
+        
+        LFNode node = selectedNode;
+        
+        while (true) {
+            moveTo(node);
+            
+            // If we didn't move, that's because all children are
+            // evaluated, so we are good to go.
+            if (node == selectedNode) return true;
+            
+            // We must be at a child that isn't fully evaluated.
+            if (!isNodeEvaluated())
+                evaluateNode();
+                
+            if (nodeHasError())
+                return false;
+        
+            // Move the simplification state to the last step.
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+            ms.curexpr = ms.exprs.size()-1;
+            updateNode(selectedNode);
+            
+            // Try again to move to the node we want to be at...
+        }
+    }
+    
+    void doSimplify() {
         // This evaluates the meaning of a node, if it hasn't been evaluated,
         // and steps through the simplifications of the meaning, but never
         // moves on to another node.
         
-        if (curEvaluationNode == null) // nothing is selected?
+        if (selectedNode == null) // nothing is selected?
+            return;
+        
+        // Make all of the children fully evaluated, and if that's not possible,
+        // don't do anything further here.
+        if (!ensureChildrenEvaluated())
             return;
         
         // Node hasn't been evaluated yet. Evaluate it.
-        if (!lfToMeaningState.containsKey(curEvaluationNode)) {
-            try {
-                Expr m = curEvaluationNode.getMeaning();
-                lfToMeaningState.put(curEvaluationNode, new MeaningState(m)); // no error ocurred
-            } catch (MeaningEvaluationException e) {
-                lfToMeaningState.put(curEvaluationNode, new MeaningState(e.getMessage()));
-            }
-            updateNode(curEvaluationNode);
-            curErrorChanged();
-            return;
-        }
-
-        MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
-        if (ms.evaluationError != null) {
-            // Can't resolve error. User must probably edit something
-            // in the tree.
-            return;
-        }
-        
-        // Node is evaluated but not fully simplified, so go to the next
-        // simplification step.
-        if (ms.curexpr < ms.exprs.size()-1) {
+        if (!isNodeEvaluated()) {
+            evaluateNode();
+        } else if (nodeHasError()) {
+            return; // can't go further
+        } else if (!isNodeFullyEvaluated()) {
+            // Node is evaluated but not fully simplified, so go to the next
+            // simplification step.
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             ms.curexpr++;
-            updateNode(curEvaluationNode);
-            return;
+            updateNode(selectedNode);
         }
-        
-        // This expression is fully evaluated. 
     }
     
-    void doEnter() {
+    void doUnsimplify() {
+        if (selectedNode == null) // nothing is selected?
+            return;
+        
+        if (!isNodeEvaluated()) {
+            // nothing to do
+        } else if (nodeHasError()) {
+            lfToMeaningState.remove(selectedNode);
+            updateNode(selectedNode);
+        } else {
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+            if (ms.curexpr > 0) {
+                ms.curexpr--;
+            } else {
+                lfToMeaningState.remove(selectedNode);
+            }
+            updateNode(selectedNode);
+        }
+    }
+
+    void doNextStep() {
         // This fully evaluates the current node, if it has not been
         // evaluated yet, but if it has been fully evaluated, then
         // we move to the next node and evaluate it, but don't
         // simplify it.
-        if (curEvaluationNode == null)
+        if (selectedNode == null)
             return;
             
-        if (!lfToMeaningState.containsKey(curEvaluationNode)) {
-            // Start the evaluation of this node.
-            doSpace();
-
-            MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
-            if (ms.evaluationError != null) {
-                // Can't resolve error. User must probably edit something
-                // in the tree.
+        // Make all of the children fully evaluated, and if that's not possible,
+        // don't do anything further here.
+        if (!ensureChildrenEvaluated())
+            return;
+        
+        if (!isNodeFullyEvaluated()) {
+            if (!isNodeEvaluated())
+                evaluateNode();
+                
+            if (nodeHasError())
                 return;
-            } else {
+        
+            // Move the simplification state to the last step.
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+            if (ms.curexpr < ms.exprs.size()-1) {
                 // Move the evaluation to the end.
                 ms.curexpr = ms.exprs.size()-1;
-                updateNode(curEvaluationNode);
+                updateNode(selectedNode);
                 return;
             }
+        } else {
+            // This expression is fully evaluated. 
+            if (lfToParent.containsKey(selectedNode)) {
+                Nonterminal parent = (Nonterminal)lfToParent.get(selectedNode);
+                moveTo(parent);
+            }
         }
-        
-        MeaningState ms = (MeaningState)lfToMeaningState.get(curEvaluationNode);
-        if (ms.curexpr < ms.exprs.size()-1) {
-            // Move the evaluation to the end.
-            ms.curexpr = ms.exprs.size()-1;
-            updateNode(curEvaluationNode);
+    }
+            
+    void doPrevStep() {
+        if (selectedNode == null)
+            return;
+            
+        if (!isNodeEvaluated()) {
+            // move to last evaluable child that is evaluated
+            if (selectedNode instanceof Nonterminal) {
+                Nonterminal n = (Nonterminal)selectedNode;
+                for (int i = n.size()-1; i >= 0; i--) {
+                    LFNode child = n.getChild(i);
+                    if (child instanceof BareIndex)
+                        continue;
+                    selectNode(child);
+                    if (isNodeEvaluated())
+                        return;
+                }
+            }
+            
+            // no children are evaluated, so we go to the first, ahm,
+            // preceding c-commanding node, which is (I hope) the
+            // previous one we evaluated
+            // Move to previous sibling
+            LFNode child = selectedNode;
+            Nonterminal parent = (Nonterminal)lfToParent.get(child);
+            while (parent != null) {
+                // look at the siblings before child
+                int i = parent.size() - 1;
+                while (i >= 0) {
+                    if (parent.getChild(i) == child)
+                        break;
+                    i--;
+                }
+                i--;
+                while (i >= 0) {
+                    selectNode(parent.getChild(i));
+                    if (isNodeEvaluated())
+                        return;
+                    i--;
+                }
+                child = parent;
+                parent = (Nonterminal)lfToParent.get(parent);
+            }
+            
             return;
         }
         
-        // This expression is fully evaluated. 
-        if (lfToParent.containsKey(curEvaluationNode)) {
-            Nonterminal parent = (Nonterminal)lfToParent.get(curEvaluationNode);
-            moveTo(parent);
-        }
+        lfToMeaningState.remove(selectedNode);
+        updateNode(selectedNode);
     }
     
-    class SpaceActionListener implements ActionListener {
+    boolean isNodeEvaluated() {
+        return lfToMeaningState.containsKey(selectedNode);
+    }
+    
+    boolean nodeHasError() {
+        if (!isNodeEvaluated())
+            return false; // definitely not if it hasn't been evaluated at all
+        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+        return ms.evaluationError != null;
+    }
+        
+    boolean isNodeFullyEvaluated() {
+        if (!isNodeEvaluated())
+            return false; // definitely not fully evaluated if it hasn't been evaluated at all
+        
+        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+        return ms.curexpr == ms.exprs.size()-1;
+    }
+    
+    void evaluateNode() {
+        try {
+            Expr m = selectedNode.getMeaning();
+            lfToMeaningState.put(selectedNode, new MeaningState(m)); // no error ocurred
+        } catch (MeaningEvaluationException e) {
+            lfToMeaningState.put(selectedNode, new MeaningState(e.getMessage()));
+        }
+        updateNode(selectedNode);
+        curErrorChanged();
+    }
+        
+    class SimplifyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doSpace();
+            doSimplify();
         }
     }
-    class EnterActionListener implements ActionListener {
+    class UnsimplifyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            doEnter();
+            doUnsimplify();
+        }
+    }
+    class NextStepActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            doNextStep();
+        }
+    }
+    class PrevStepActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            doPrevStep();
         }
     }
     class FullScreenActionListener implements ActionListener {

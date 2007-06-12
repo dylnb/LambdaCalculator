@@ -9,7 +9,7 @@ public class FunctionApplicationRule extends CompositionRule {
     public static final FunctionApplicationRule INSTANCE 
             = new FunctionApplicationRule();
 
-    public FunctionApplicationRule() {
+    private FunctionApplicationRule() {
         super("Function Application");
     }
     

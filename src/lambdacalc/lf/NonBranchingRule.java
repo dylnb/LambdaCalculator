@@ -18,7 +18,7 @@ public class NonBranchingRule extends CompositionRule {
     public static final NonBranchingRule INSTANCE 
             = new NonBranchingRule();
 
-    public NonBranchingRule() {
+    private NonBranchingRule() {
         super("Non-Branching Node");
     }
     

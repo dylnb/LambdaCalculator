@@ -21,7 +21,7 @@ public class LambdaAbstractionRule extends CompositionRule {
     public static final LambdaAbstractionRule INSTANCE
             = new LambdaAbstractionRule();
     
-    public LambdaAbstractionRule() {
+    private LambdaAbstractionRule() {
         super("Lambda abstraction");
     }
     
