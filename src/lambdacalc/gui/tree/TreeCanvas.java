@@ -239,8 +239,11 @@ public class TreeCanvas extends JComponent {
             JTreeNode c = (JTreeNode)node.children.get(i);
             positionControls(c, incremental);
         }
-        
-        node.hasBeenPlaced = true;
+
+        if (!node.hasBeenPlaced) {
+            node.setVisible(true);        
+            node.hasBeenPlaced = true;
+        }
     }
     
     
@@ -258,9 +261,12 @@ public class TreeCanvas extends JComponent {
         paintLines(g, getRoot());
     }
    
-    private void paintLines(Graphics g, JTreeNode node) {   
+    private void paintLines(Graphics g, JTreeNode node) {
+        if (!node.hasBeenPlaced) return;   
         for (int i = 0; i < node.children.size(); i++) {
             JTreeNode c = (JTreeNode)node.children.get(i);
+            if (!c.isVisible())
+                continue;
             g.drawLine(node.getLocation().x + node.getWidth()/2, node.getLocation().y + node.getHeight(),
                 c.getLocation().x + c.getWidth()/2, c.getLocation().y);
             paintLines(g, c);
@@ -298,6 +304,7 @@ public class TreeCanvas extends JComponent {
             this.parent = parent;
             setLayout(null);
             setBackground(container.getBackground());
+            setVisible(false); // not shown until first placed
         }
         
         public Component getLabel() {
