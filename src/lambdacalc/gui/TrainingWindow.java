@@ -6,6 +6,7 @@
 
 package lambdacalc.gui;
 
+import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
@@ -15,6 +16,7 @@ import javax.swing.tree.*;
 import javax.swing.border.TitledBorder;
 import java.io.*;
 import lambdacalc.lf.LFNode;
+import lambdacalc.lf.LexicalTerminal;
 
 /**
  *
@@ -47,6 +49,9 @@ public class TrainingWindow extends JFrame {
     boolean hasUnsavedWork; // true iff the user has entered any unsaved work
     File usersWorkFile = null;
 
+    LexiconList lexiconList = new LexiconList();
+    
+    
     private static final ExerciseFileFilter onlyTextFiles = new ExerciseFileFilter
             ("txt", "Exercise files");
     private static final ExerciseFileFilter onlySerializedFiles = new ExerciseFileFilter
@@ -119,18 +124,33 @@ public class TrainingWindow extends JFrame {
               updateInfoBox((LFNode) evt.getSource());
           }
         });
+        
+        lexiconList.initialize(treeDisplay);
                 
         clearAllControls();
         
         //loadExerciseFile("tests/example1.txt");
     }
     
+    
+    
     void updateInfoBox(LFNode selectedNode) {
+        
+        //jPanelInfoBox contains jScrollPaneInfoBox, which contains jTableInfoBox
+        
+        jTableInfoBox.setModel
+                (new NodePropertiesTableModel(selectedNode.getProperties()));
+        
         jPanelInfoBox.removeAll();
-        jPanelInfoBox.add
-                (new JTable
-                (new NodePropertiesTableModel
-                (selectedNode.getProperties())));
+        GridLayout layout = (GridLayout) jPanelInfoBox.getLayout();
+        if (selectedNode instanceof LexicalTerminal) {
+            layout.setRows(2);
+            jPanelInfoBox.add(jScrollPaneInfoBox);
+            jPanelInfoBox.add(lexiconList);
+        } else {
+            layout.setRows(1);
+            jPanelInfoBox.add(jScrollPaneInfoBox);
+        }
         jPanelInfoBox.validate();
     }
 
@@ -145,7 +165,7 @@ public class TrainingWindow extends JFrame {
                 jSplitPaneUpperRight.setBottomComponent(jScrollPaneTreeDisplay);
                 
                 jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
-                jSplitPaneLowerRight.setRightComponent(jScrollPaneInfoBox);
+                jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
                 
                 jSplitPaneRightHalf.setTopComponent(jSplitPaneUpperRight);
                 jSplitPaneRightHalf.setBottomComponent(jSplitPaneLowerRight);
@@ -482,6 +502,8 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneUpperRight = new javax.swing.JSplitPane();
         jPanelDirectionsOrTrees = new javax.swing.JPanel();
+        jScrollPaneInfoBox = new javax.swing.JScrollPane();
+        jTableInfoBox = new javax.swing.JTable();
         jFileChooser1 = new javax.swing.JFileChooser();
         jScrollPaneTreeDisplay = new javax.swing.JScrollPane();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
@@ -514,7 +536,6 @@ public class TrainingWindow extends JFrame {
         jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnTransfer = new javax.swing.JButton();
-        jScrollPaneInfoBox = new javax.swing.JScrollPane();
         jPanelInfoBox = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
@@ -532,6 +553,20 @@ public class TrainingWindow extends JFrame {
 
         jPanelDirectionsOrTrees.setMinimumSize(new java.awt.Dimension(19, 50));
         jPanelDirectionsOrTrees.setPreferredSize(new java.awt.Dimension(235, 150));
+        jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
+        jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPaneInfoBox.setViewportView(jTableInfoBox);
+
         jScrollPaneTreeDisplay.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
         treeDisplay.setBackground(java.awt.Color.white);
         jScrollPaneTreeDisplay.setViewportView(treeDisplay);
@@ -812,13 +847,11 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
 
-        jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 1));
+        jPanelInfoBox.setLayout(new java.awt.GridLayout());
 
         jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
-        jScrollPaneInfoBox.setViewportView(jPanelInfoBox);
-
-        jSplitPaneLowerRight.setRightComponent(jScrollPaneInfoBox);
+        jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
 
         jSplitPaneRightHalf.setRightComponent(jSplitPaneLowerRight);
 
@@ -1247,6 +1280,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
     private javax.swing.JSplitPane jSplitPaneUpperRight;
+    private javax.swing.JTable jTableInfoBox;
     private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
     private javax.swing.JLabel lblHelpBinaries;
