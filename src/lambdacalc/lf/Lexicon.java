@@ -50,6 +50,28 @@ public class Lexicon {
         }
         return (Expr[])exprs.toArray(new Expr[0]);
     }
+    
+    public void removeEntry(String orthoForm, Expr meaning) {
+        for (int i = 0; i < entries.size(); i++) {
+            Entry entry = (Entry)entries.get(i);
+            if (!entry.meaning.equals(meaning))
+                continue;
+            
+            Vector newOrthoForms = new Vector();
+            for (int j = 0; j < entry.orthoForms.length; j++)
+                if (!entry.orthoForms[j].equals(orthoForm)) 
+                    newOrthoForms.add(entry.orthoForms[j]);
+            
+            if (newOrthoForms.size() == 0) {
+                // remove this lexical entry
+                entries.removeElementAt(i);
+                i--; // resume at this index again next iteration
+            } else if (newOrthoForms.size() != entry.orthoForms.length) {
+                // update the list of orthoforms for this entry
+                entries.set(i, new Entry((String[])newOrthoForms.toArray(new String[0]), entry.meaning));
+            }
+        }
+    }
 
     public class Entry {
         public final String[] orthoForms;

@@ -124,8 +124,6 @@ public class TrainingWindow extends JFrame {
               updateInfoBox((LFNode) evt.getSource());
           }
         });
-        
-        lexiconList.initialize(treeDisplay);
                 
         clearAllControls();
         
@@ -392,7 +390,8 @@ public class TrainingWindow extends JFrame {
         } else if (ex instanceof TreeExercise) {
             btnTransfer.setEnabled(false);
             switchViewTo(TREES);
-            treeDisplay.initialize(exFile, (TreeExercise)ex);
+            treeDisplay.initialize((TreeExercise)ex);
+            lexiconList.initialize(exFile, ex, treeDisplay);
        }
 
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);

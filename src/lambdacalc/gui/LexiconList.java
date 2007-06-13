@@ -9,6 +9,8 @@
 
 package lambdacalc.gui;
 
+import java.awt.event.*;
+import java.awt.BorderLayout;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.*;
@@ -17,6 +19,7 @@ import javax.swing.event.ListSelectionListener;
 
 import lambdacalc.logic.*;
 import lambdacalc.lf.*;
+import lambdacalc.exercises.*;
 
 /**
  *
@@ -24,57 +27,86 @@ import lambdacalc.lf.*;
  */
 public class LexiconList extends JPanel
         implements TreeExerciseWidget.SelectionListener, ListSelectionListener, PropertyChangeListener {
+    
+    ExerciseFile exFile;
+    Exercise exercise;
     TreeExerciseWidget tewidget;
     
     JList listbox = new JList();
     DefaultComboBoxModel entries = new DefaultComboBoxModel();
     
-    LFNode propChangeRegisteredNode;
+    LambdaEnabledTextField lambdaEditor = new LambdaEnabledTextField();
+    JButton buttonAdd = new JButton("Add");
+
+    LexicalTerminal currentNode;
     
     public LexiconList() {
-        add(listbox);
+        setLayout(new BorderLayout());
+        
+        add(listbox, BorderLayout.CENTER);
         listbox.setModel(entries);
+        listbox.addListSelectionListener(this);
+        
+        JPanel addpanel = new JPanel();
+        add(addpanel, BorderLayout.SOUTH);
+        addpanel.setLayout(new BorderLayout());
+        addpanel.add(lambdaEditor, BorderLayout.CENTER);
+        addpanel.add(buttonAdd, BorderLayout.EAST);
+        
+        lambdaEditor.addActionListener(new AddButtonListener());
+        buttonAdd.addActionListener(new AddButtonListener());
     }
     
-    public void initialize(TreeExerciseWidget widget) {
+    public void initialize(ExerciseFile exFile, Exercise exercise, TreeExerciseWidget widget) {
+        if (this.tewidget != null)
+            this.tewidget.removeSelectionListener(this);
+        
+        this.exFile = exFile;
+        this.exercise = exercise;
         this.tewidget = widget;
         
         tewidget.addSelectionListener(this);
-        listbox.addListSelectionListener(this);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-    }
-    
     public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
         // Fired when the selected node in the TreeExerciseWidget changes.
         
-        if (propChangeRegisteredNode != null)
-            propChangeRegisteredNode.removePropertyChangeListener(this);
+        if (currentNode != null)
+            currentNode.removePropertyChangeListener(this);
         
         LFNode curNode = tewidget.getSelectedNode();
-        if (curNode == null)
-            showLexiconForWord(null, null);
-        else if (curNode instanceof LexicalTerminal)
-            showLexiconForWord(curNode.getLabel(), (LexicalTerminal)curNode);
-        else
-            showLexiconForWord(null, null);
+        if (curNode == null
+                || !(curNode instanceof LexicalTerminal)
+                || ((LexicalTerminal)curNode).getLabel() == null) {
+            showLexiconForWord(null);
+            buttonAdd.setEnabled(false);
+            lambdaEditor.setEnabled(false);
+            return;
+        }
         
-        propChangeRegisteredNode = curNode;
-        propChangeRegisteredNode.addPropertyChangeListener(this);
+        showLexiconForWord((LexicalTerminal)curNode);
         
+        currentNode = (LexicalTerminal)curNode;
+        currentNode.addPropertyChangeListener(this);
+
+        buttonAdd.setEnabled(true);
+        lambdaEditor.setEnabled(true);
     }
     
-    private void showLexiconForWord(String orthoForm, LexicalTerminal node) {
+    private void showLexiconForWord(LexicalTerminal node) {
         if (tewidget == null)
             throw new IllegalStateException("Widget has not been set.");
         
         entries.removeAllElements();
         
+        if (node == null)
+            return;
+
+        String orthoForm = node.getLabel();
         if (orthoForm == null)
             return;
         
-        Expr[] meanings = tewidget.getLexicon().getMeanings(orthoForm);
+        Expr[] meanings = exFile.getLexicon().getMeanings(orthoForm);
         for (int i = 0; i < meanings.length; i++)
             entries.addElement(meanings[i]);
         
@@ -98,7 +130,8 @@ public class LexiconList extends JPanel
     
     
     public void valueChanged(ListSelectionEvent e) {
-        // listening to the change event on our list
+        // Fired when the selected item in the list changes
+        
         if (listbox.getSelectedValue() == null) return;
         
         LFNode node = tewidget.getSelectedNode();
@@ -107,5 +140,36 @@ public class LexiconList extends JPanel
         
         Expr item = (Expr)listbox.getSelectedValue();
         ((LexicalTerminal)node).setMeaning(item);
+    }
+    
+    class AddButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (currentNode == null)
+                return;
+            
+            ExpressionParser.ParseOptions opts = new ExpressionParser.ParseOptions();
+            opts.ASCII = false;
+            opts.singleLetterIdentifiers = false; // TODO!
+            opts.typer = ((HasIdentifierTyper)exercise).getIdentifierTyper();
+            
+            try {
+                Expr ex = ExpressionParser.parse(lambdaEditor.getText(), opts);
+                ex.getType(); // just checking if an exception is thrown
+
+                exFile.getLexicon().addLexicalEntry(currentNode.getLabel(), ex);
+                showLexiconForWord(currentNode);
+
+                currentNode.setMeaning(ex);
+            
+            } catch (SyntaxException se) {
+                Util.displayErrorMessage(LexiconList.this, se.getMessage(), "Add Lexical Entry");
+                if (se.getPosition() != -1)
+                    lambdaEditor.setCaretPosition(se.getPosition());
+            } catch (TypeEvaluationException tee) {
+                Util.displayErrorMessage(LexiconList.this, tee.getMessage(), "Add Lexical Entry");
+            }
+            
+            lambdaEditor.requestFocus();
+        }
     }
 }

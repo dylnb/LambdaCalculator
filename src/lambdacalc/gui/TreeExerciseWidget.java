@@ -30,8 +30,6 @@ public class TreeExerciseWidget extends JPanel {
     
     TreeCanvas canvas; // this is the display widget
     Nonterminal lftree; // this is the tree we're displaying
-    Lexicon lexicon; // from which to draw choices for terminal nodes
-    RuleList rules; // from which to draw choices for nonterminal nodes
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
     Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
@@ -163,8 +161,6 @@ public class TreeExerciseWidget extends JPanel {
             node.removePropertyChangeListener(nodeListener);
         }
         
-        lexicon = null;
-        rules = null;
         lftree = null;
         selectedNode = null;
         
@@ -180,22 +176,14 @@ public class TreeExerciseWidget extends JPanel {
         updateButtonEnabledState();
     }
     
-    public void initialize(ExerciseFile file, TreeExercise ex) {
+    public void initialize(TreeExercise ex) {
         clear();
         
-        lexicon = file.getLexicon();
-        rules = file.getRules();
-        
         lftree = ex.getTree();
-        lftree.guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
         
         buildTree(canvas.getRoot(), lftree);
         
         moveTo(lftree);
-    }
-    
-    public Lexicon getLexicon() {
-        return lexicon;
     }
     
     // Recursively construct the TreeCanvas structure to reflect
@@ -795,7 +783,7 @@ public class TreeExerciseWidget extends JPanel {
                 TreeExerciseWidget w = new TreeExerciseWidget();
                 try {
                     ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
-                    w.initialize(file, (TreeExercise)file.getGroup(0).getItem(0));
+                    w.initialize((TreeExercise)file.getGroup(0).getItem(0));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
