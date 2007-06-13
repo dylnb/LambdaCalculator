@@ -60,7 +60,8 @@ public class ExerciseFileParser {
         boolean hasreadtitle = false;
         String extype = null;
         String title = null;
-        String directions = "";
+        String directions = ""; // group level
+        String instructions = ""; // exercise level
         ExerciseGroup group = null;
         java.math.BigDecimal pointage = java.math.BigDecimal.valueOf(1);
         
@@ -72,8 +73,7 @@ public class ExerciseFileParser {
         while ((line = b.readLine()) != null) {
             linectr++;
             
-            line = line.trim();
-            if (line.equals("") || line.startsWith("#"))  continue;
+            if (line.trim().equals("") || line.startsWith("#"))  continue;
             
             if (!hasreadtitle) {
                 file.setTitle(line);
@@ -107,6 +107,7 @@ public class ExerciseFileParser {
                     throw new ExerciseFileFormatException("An exercise type must be 'semantic types', 'lambda conversion', or 'tree'", linectr, line);
                 group = null;
                 exindex = 0;
+                instructions = "";
             
             } else if (line.startsWith("title ")) {
                 title = line.substring("title ".length()).trim();
@@ -116,10 +117,16 @@ public class ExerciseFileParser {
                 exindex = 0;
                 
             } else if (line.startsWith("directions ")) {
-                directions += line.substring("directions ".length()).trim() + " ";
+                // replaceAll's first argument is a regular expression, so "\\" is
+                // complicated to represent. Each slash is escaped in the regex,
+                // and then escaped again to represent in source code.
+                directions += line.substring("directions ".length()).trim().replaceAll("\\\\\\\\", "\n") + " ";
                 group = null;
                 exindex = 0;
 
+            } else if (line.startsWith("instructions ")) {
+                instructions += line.substring("instructions ".length()).trim().replaceAll("\\\\\\\\", "\n") + " ";
+                
             } else if (line.equals("single letter identifiers")) {
                 exprParseOpts.singleLetterIdentifiers = true;
             } else if (line.equals("multiple letter identifiers")) {
@@ -190,6 +197,12 @@ public class ExerciseFileParser {
                     group.addItem(ex);
                     
                     ex.setPoints(pointage);
+                    
+                    if (instructions.trim().equals(""))
+                        ex.setInstructions(null);
+                    else
+                        ex.setInstructions(instructions.trim());
+                    instructions = "";
                 }
             }
         }

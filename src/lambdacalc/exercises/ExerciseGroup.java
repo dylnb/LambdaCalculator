@@ -111,6 +111,9 @@ public class ExerciseGroup {
             e.writeToStream(output);
             output.writeBoolean(e.isDone());
             output.writeUTF(e.getPoints().toString());
+            output.writeBoolean(e.getInstructions() != null);
+            if (e.getInstructions() != null)
+                output.writeUTF(e.getInstructions());
         }
     }
     
@@ -118,7 +121,7 @@ public class ExerciseGroup {
      * Initializes this instance with the serialized group data from a stream.
      */
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
-        if (input.readShort() != 1) throw new ExerciseFileVersionException();
+        if (input.readShort() != 2) throw new ExerciseFileVersionException();
         
         title = input.readUTF();
         directions = input.readUTF();
@@ -142,6 +145,11 @@ public class ExerciseGroup {
                 ex.setDone();
             
             ex.setPoints(new java.math.BigDecimal(input.readUTF()));
+            
+            if (input.readBoolean())
+                ex.setInstructions(input.readUTF());
+            else
+                ex.setInstructions(null);
         }
     }
 }
