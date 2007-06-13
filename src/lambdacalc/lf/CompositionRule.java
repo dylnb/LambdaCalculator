@@ -18,6 +18,12 @@ public abstract class CompositionRule {
         return name;
     }
        
+    /**
+     * Returns whether this composition rule is applicable
+     * to the given nonterminal node. If it cannot be determined
+     * whether the rule is applicable, for instance because any
+     * children cannot be evaluated, then false is returned.
+     */
     public abstract boolean isApplicableTo(Nonterminal node);
     
     public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {

@@ -37,19 +37,17 @@ public class PredicateModificationRule extends CompositionRule {
     }
     
     public boolean isApplicableTo(Nonterminal node) {
-        boolean result = false;
         try {
-            result = (node.size() == 2
+            return (node.size() == 2
                 && node.getLeftChild().getMeaning().getType().equals(Type.ET)
                 && node.getRightChild().getMeaning().getType().equals(Type.ET));
+                
+        // If either child could not be evaluated, then we
+        // just return false.
         } catch (TypeEvaluationException t) {
-            // TODO what do we do? There is a semantic type mismatch
-            t.printStackTrace();
         } catch (MeaningEvaluationException m) {
-            // TODO maybe we want to compute the types before the meanings
-            m.printStackTrace();
         }
-        return result;
+        return false;
     }
     
     public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
