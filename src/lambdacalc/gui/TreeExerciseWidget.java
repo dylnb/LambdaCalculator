@@ -194,6 +194,10 @@ public class TreeExerciseWidget extends JPanel {
         moveTo(lftree);
     }
     
+    public Lexicon getLexicon() {
+        return lexicon;
+    }
+    
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
@@ -324,6 +328,22 @@ public class TreeExerciseWidget extends JPanel {
     */
     
     private void onUserChangedNodeMeaning(LFNode node) {
+        // If the node was a terminal, its lexical value
+        // may have changed, so we have to reset its
+        // meaning state to the beginning.
+        if (node instanceof Terminal) {
+           Terminal t = (Terminal)node;
+           try {
+               Expr m = t.getMeaning();
+               lfToMeaningState.put(t, new MeaningState(m));
+           } catch (Exception e) {
+           }
+           
+        } else {
+           // For nonterminals, we just clear the meaning state.
+            lfToMeaningState.remove(node);
+        }
+
         updateNode(node);
     
         // Clear the meaning states of the parent nodes.
@@ -403,6 +423,8 @@ public class TreeExerciseWidget extends JPanel {
 
         // Change the label if it's the current evaluation node.
         String label = node.getLabel();
+        if (node.getIndex() != -1)
+            label += "_" + node.getIndex();
         java.awt.Color borderColor = getBackground();
         if (node == selectedNode)
             borderColor = java.awt.Color.BLUE;
