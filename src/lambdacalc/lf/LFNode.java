@@ -2,6 +2,10 @@ package lambdacalc.lf;
 
 import lambdacalc.logic.Expr;
 import java.beans.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import lambdacalc.logic.Type;
+import lambdacalc.logic.TypeEvaluationException;
 
 public abstract class LFNode {
     protected PropertyChangeSupport changes = new PropertyChangeSupport(this);
@@ -46,7 +50,33 @@ public abstract class LFNode {
     public boolean hasIndex() {
         return this.index != -1;
     }
+    
+    /**
+     * Returns a map of properties. Keys are Strings and values are Objects.
+     * Each entry represents a property-value pair. Properties include orthographic
+     * strings, meanings, types, etc.
+     *
+     * @return a sorted map of properties
+     */
+    public SortedMap getProperties() {
+        SortedMap m = new TreeMap();
+        m.put("Text", this.getLabel());
+        Type t = null;
+        try {
+            t = this.getMeaning().getType();
+        } catch (TypeEvaluationException ex) {
+            //ex.printStackTrace();
+        } catch (MeaningEvaluationException ex) {
+            //ex.printStackTrace();
+        }
+        m.put("Type", t); 
+        Integer index = null;
+        if (this.hasIndex()) { index = new Integer(this.getIndex()); }
+        m.put("Index", index);
+        return m;
+    }
 
+    
     public String toString() {
         String result = getLabel();
         if (hasIndex()) {

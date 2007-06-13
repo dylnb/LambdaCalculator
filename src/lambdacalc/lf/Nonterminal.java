@@ -1,7 +1,11 @@
 package lambdacalc.lf;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Vector;
 import lambdacalc.logic.Expr;
+import lambdacalc.logic.Type;
+import lambdacalc.logic.TypeEvaluationException;
 
 public class Nonterminal extends LFNode {
 
@@ -47,6 +51,19 @@ public class Nonterminal extends LFNode {
             throw new NonterminalLacksCompositionRuleException(this);
         return compositor.applyTo(this, g);
     }
+    
+    /**
+     * Returns a map of properties. Keys are Strings and values are Objects.
+     * Each entry represents a property-value pair. Properties include orthographic
+     * strings, meanings, types, etc.
+     *
+     * @return a sorted map of properties
+     */
+    public SortedMap getProperties() {
+        SortedMap m = super.getProperties();
+        m.put("Composition rule", this.getCompositionRule());
+        return m;
+    }    
     
     /**
      * Calls itself recursively on the children nodes, then
