@@ -1,44 +1,141 @@
+# One can write arbitrary comments in this file after hashes,
+# but keep in mind that students will be able to see such comments.
+
+# The first non-comment line of the file is the title of the
+# assignment.
+
 Homework 2
 
-# one can write arbitrary comments in this file after hashes
+# Next, typing conventions are entered. If no typing conventions
+# are given, some defaults are used.
 
-constants of type e : a b-c j m
-constants of type <e,t> : P-Q
-constants of type <e*e,t> : R
+constants of type e : c p r s
 variables of type e : x-z
-variables of type <et> : X Y
+variables of type <e,t> : P-Q X-Z
+variables of type <e*e,t> : R-S
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
 
 multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
 
 use rule function application
 use rule non-branching nodes
 use rule predicate modification
 use rule lambda abstraction
 
-define sleep,sleeps : Lx[sleep(x)]
-define happy : Lx[happy(x)]
-define guy : Lx[guy(x)]
-define love, loves : LyLx[love(x,y)]
-define someone : LX[Ex[X(x)]]
-# TODO when we define "someone" as  LP[Ex[P(x)]],
-# we should get an immediate warning because P is declared above to 
-# be a constant
-define a : LX.LY.[Ex[X(x)&Y(x)]]
-define is : LX.Lx.[X(x)]
-# can we define "is" as LX.X?
-define John : j	
-define Mary : m
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
 
+define Carlos : c
+define Paco : p
+define Ron : r
+define Sue : s
+define Philadelphia : p
+define shaves : LxLy[shaves(y,x)]
+define shaves : Lx[shaves(x)]
+define introduces : LxLyLz[introduces(z,x,y)]
+define hug : Lx.HUGGING(x)
+
+# Finally, the exercises themselves are entered.
+
+exercise tree
+title Formulating NatLg denotations as lambda-expressions
+directions In some languages, there is a morpheme (e.g., Middle Voice in Ancient 
+directions Greek, reflexivizing affix in Kannada, Passive Voice in Finnish, etc.) 
+directions that attaches to the verb stem and reduces its n-arity by one. Let us 
+directions take the following imaginary morphemes alpha, beta, gamma, and delta. 
+directions Assuming the syntactic structure given, give a denotation for each of 
+directions these morphemes (in lambda-notation, for any arbitrary situation).
+
+# [.IP [NPsu [.VP [.V' [.V0 alpha Vstem] NPdo] NPio]]]
+
+instructions Carlos-SU alpha-shaves \\
+instructions “Carlos shaves Carlos” (i.e., Carlos shaves, or Carlos shaves himself)
+[.IP Carlos [.VP alpha shaves]]
+
+instructions Carlos-SU  beta-introduces  Paco-DO. \\
+instructions “Carlos introduces Paco to Carlos (himself).”
+[.IP Carlos [.VP [.V0 beta introduces] Paco ]]
+
+instructions Carlos-SU  gamma-introduces  Paco-DO. \\
+instructions “Carlos introduces Paco to Paco (himself).”
+[.IP Carlos [.VP [.V0 gamma introduces] Paco ]]
+
+instructions Carlos-SU  delta-introduces  Paco-IO. \\
+instructions “Carlos introduces nobody but Carlos (himself) to Paco.”
+[.IP Carlos [.VP [.V0 delta introduces] Paco ]]
+
+exercise tree
+title More NatLg denotations as lambda-expressions.
+directions We have assumed that, in the formal translation of a sentence,
+directions a predicate combines with its Agent, Patient, Goal, etc., directly,
+directions as shown in (2)-(3) (as in PrL): \\
+directions  \\
+directions (1)	Ron hugged Sue. \\
+directions (2)	[[(1)]] = 1 iff HUG(r,s) \\
+directions (3)	[[hug]] = LxLy.HUG(y,x) \\
+directions \\
+directions An alternative view posits that the formal predicate combines only to
+directions its event argument, while the theta roles are introduced as separate
+directions formal predicates relating the event to the relevant argument. This
+directions approach, called neo-Davidsonian, is exemplified in (4), where e is
+directions an event variable, type v.  To achieve the truth conditions in (4),
+directions two compositional approaches have been pursued: (5) and (6). \\
+directions (4)	[[(1)]] = 1 iff Ee_v.[HUGGING(e) & AG(e,r) & PAT(e,s)] \\
+directions (5)	[[hug]] = LxLyLe_v.HUGGING(e) & AG(e,y) & PAT(e,x)  \\
+directions (6)	[[hug]]	= Le_v.HUGGING(e) \\
+directions In this exercise we’ll concentrate in the second version of the
+directions neo-Davidsonian approach, in (6).
+
+instructions Ron hugged Sue in Philadelphia. \\
+instructions 1) Spell out the denotations of the functional head Ag0 and Pat0
+instructions as lambda-expressions of type <<v,t>,<e,<v,t>>>, 2) spell out the
+instructions denotation of the preposition in as a lambda-expression of type
+instructions <e,<v,t>>, and 3) do the semantic computation of the sentence step
+instructions by step.
+[.AgP [.NP Ron] [.Ag' Ag0 [.PatP [.PatP [.Pat' [.V hug] Pat0] [.NP Sue] ] [.PP in Philadelphia] ]]]
+
+instructions Your second task is the following. Assuming the partial syntactic
+instructions structure below for example (1), provide the denotation of the
+instructions applicative el morpheme. Do the semantic interpretation of the entire
+instructions tree step by step, using the lexical entries you proposed in the
+instructions previous question. [NOTES: Conveniently ignore any other morphology.
+instructions Also, assume that khali denotes this particular pot.] \\
+instructions \\
+instructions (1) Nd-o-far-el-a		         Mukasa   khali \\
+instructions     1sg-PAST-hold-APPL-FV  Mukasa    pot \\
+instructions    “I held the pot for Mukasa.”
+
+[.PatP [.Pat' [.ApplP [.Appl' [.Vstem far el] Appl0] Mukasa] Pat0] khali]
 
 
 exercise tree
-title Full Derivations
-directions Derive the semantic value of each nonterminal node of the tree.
-points per exercise 20
+title Top-Down Semantic Computations
 
-#[.S John [.VP sleeps]]
-#[.S John [.VP loves Mary]]
-#[.S [.NBAR a guy] [.VP loves Mary]]
-#[.NP a guy]
-[.S [.NP a [.N' happy guy]] [.VP sleeps]]
-#[.S John [.LAMBDA 1 [.VP t_1 sleeps]]]
+instructions Do the semantic computation of (1) top-down, spelling
+instructions out the denotation of topmost. [You can use the PrL predicates
+instructions OVER (“to be over or on top of”) and UNDER (“to be under”),
+instructions but not the PrL predicate TOPMOST.] \\
+instructions \\
+instructions (1) the woman the topmost portrait of whom1 please her1 husband
+
+[.DP1 the [.NP1 woman [.CP who_1 [.IP [.DP2 the [.NP2 topmost [portrait-of t_1]]] [.VP pleased [.DP3 the [.NP3 husband-of her_1]]]]]]]
+
+
+instructions Do the semantic computation of (1) bottom-up. Ignore index
+instructions 2 on DP2 during the computation, but comment on how we could
+instructions ensure the intended coreference between [her niece]2 and her2. \\
+instructions \\
+instructions (1) the woman which1 introduced [her1 niece]2 to the rock-star (which3) she2 liked t3
+
+[.DP1 the [.NP1 woman [.CP1 which_1 [.IP1 t1 [.VP1 [.VP introduced [.DP3 the [.NP3 niece-of hers_1]]] [.PP (to) [.DP3 the [.NP3 rock-star [.CP3 which_3 [.IP3 she_2 [.VP liked t_3] ] ]] ]]]]]]]
+
