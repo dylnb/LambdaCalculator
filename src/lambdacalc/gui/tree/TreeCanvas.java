@@ -62,7 +62,11 @@ public class TreeCanvas extends JComponent {
         // and it must be re-centered.
         recenterControls(getRoot());
         
+        // Ask layout method to assign positionX/Y values
+        // to each node.
         layout.layoutTree(getRoot());
+        
+        // Move nodes.
         if (!animated)
             positionControls(getRoot(), false);
         else

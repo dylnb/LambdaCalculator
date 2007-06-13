@@ -416,11 +416,17 @@ public class TreeExerciseWidget extends JPanel {
         // display the lambda expression.
         JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
+            java.awt.Color meaningColor;
+
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-            if (ms.evaluationError == null) // was there an error?
+            if (ms.evaluationError == null) { // was there an error?
                 meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
-            else
+                meaningColor = java.awt.Color.BLUE;
+            } else {
                 meaningLabel.setText("Problem!");
+                meaningColor = java.awt.Color.RED;
+            }
+            meaningLabel.setForeground(meaningColor);
             meaningLabel.setVisible(true);
         } else {
             meaningLabel.setVisible(false);
