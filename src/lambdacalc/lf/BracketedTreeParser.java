@@ -38,7 +38,7 @@ public class BracketedTreeParser {
         
         // The terminal node currently being processed while parseMode==2,
         // i.e. when we're reading a terminal label. null if parseMode!=2.
-        Terminal curterminal = null;
+        LexicalTerminal curterminal = null;
         
         // The node that we're currently setting the index of.
         LFNode curNodeForIndex = null;
@@ -146,7 +146,7 @@ public class BracketedTreeParser {
                     // this is the start of a terminal
                     if (curnode == null)
                         throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
-                    curterminal = new Terminal();
+                    curterminal = new LexicalTerminal();
                     curterminal.setLabel(String.valueOf(c));
                     parseMode = 2;
                     break;

@@ -7,6 +7,9 @@
 
 package lambdacalc.lf;
 
+import lambdacalc.logic.Expr;
+import lambdacalc.logic.GApp;
+
 /**
  *
  * @author champoll
@@ -18,6 +21,13 @@ public class Trace extends Terminal {
     /** Creates a new instance of Trace */
     private Trace() {
     }
+    
+    
+    public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
+        //TODO don't ignore g
+        //return (Expr) g.get(this.getIndex());
+        return new GApp(this.getIndex());
+    }    
     
     public Trace(int index) {
         this.index = index;
@@ -41,6 +51,17 @@ public class Trace extends Terminal {
     
     public void removeIndex() {
         throw new UnsupportedOperationException("Tried to remove the index of a trace.");
+    }
+
+    /**
+     * Nothing to do on a Trace.
+     *
+     * @param lexicon the lexicon
+     * @param rules this parameter is ignored 
+     * (maybe later it can be used for type-shifting rules)
+     */
+    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
+    
     }
     
 }

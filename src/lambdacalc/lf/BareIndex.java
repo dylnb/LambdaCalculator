@@ -7,6 +7,8 @@
 
 package lambdacalc.lf;
 
+import lambdacalc.logic.Expr;
+
 /**
  *
  * @author champoll
@@ -40,4 +42,19 @@ public class BareIndex extends Terminal {
     public void removeIndex() {
         throw new UnsupportedOperationException("Tried to remove the index of a bare index.");
     }
+    
+    public Expr getMeaning(AssignmentFunction g) {
+        throw new UnsupportedOperationException("Tried to get the meaning of a BareIndex");
+    }
+    
+    /**
+     * Nothing to do on a BareIndex.
+     *
+     * @param lexicon the lexicon
+     * @param rules this parameter is ignored 
+     * (maybe later it can be used for type-shifting rules)
+     */
+    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
+     // nothing to do on a BareIndex
+    }    
 }
