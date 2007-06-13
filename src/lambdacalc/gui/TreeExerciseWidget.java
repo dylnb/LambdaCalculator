@@ -99,7 +99,7 @@ public class TreeExerciseWidget extends JPanel {
     
     public class SelectionEvent extends EventObject {
         
-        public SelectionEvent(Object source) {
+        public SelectionEvent(LFNode source) {
             super(source);
         }
     }

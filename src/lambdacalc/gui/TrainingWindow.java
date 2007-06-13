@@ -6,7 +6,6 @@
 
 package lambdacalc.gui;
 
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
@@ -15,6 +14,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.border.TitledBorder;
 import java.io.*;
+import lambdacalc.lf.LFNode;
 
 /**
  *
@@ -113,9 +113,25 @@ public class TrainingWindow extends JFrame {
         lblHelpNot.setText("Type the tilde (~) for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
 
+        treeDisplay.addSelectionListener
+                (new TreeExerciseWidget.SelectionListener()
+        { public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
+              updateInfoBox((LFNode) evt.getSource());
+          }
+        });
+                
         clearAllControls();
         
         //loadExerciseFile("tests/example1.txt");
+    }
+    
+    void updateInfoBox(LFNode selectedNode) {
+        jPanelInfoBox.removeAll();
+        jPanelInfoBox.add
+                (new JTable
+                (new NodePropertiesTableModel
+                (selectedNode.getProperties())));
+        jPanelInfoBox.validate();
     }
 
     public void switchViewTo(int view) {
@@ -796,18 +812,10 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
 
+        jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 1));
+
         jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
-        org.jdesktop.layout.GroupLayout jPanelInfoBoxLayout = new org.jdesktop.layout.GroupLayout(jPanelInfoBox);
-        jPanelInfoBox.setLayout(jPanelInfoBoxLayout);
-        jPanelInfoBoxLayout.setHorizontalGroup(
-            jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 183, Short.MAX_VALUE)
-        );
-        jPanelInfoBoxLayout.setVerticalGroup(
-            jPanelInfoBoxLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 276, Short.MAX_VALUE)
-        );
         jScrollPaneInfoBox.setViewportView(jPanelInfoBox);
 
         jSplitPaneLowerRight.setRightComponent(jScrollPaneInfoBox);
