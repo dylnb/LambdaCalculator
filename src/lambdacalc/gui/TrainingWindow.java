@@ -118,6 +118,8 @@ public class TrainingWindow extends JFrame {
         lblHelpNot.setText("Type the tilde (~) for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
 
+        //jSplitPaneLowerRight.setDividerLocation(0.7);
+        
         treeDisplay.addSelectionListener
                 (new TreeExerciseWidget.SelectionListener()
         { public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
@@ -141,7 +143,8 @@ public class TrainingWindow extends JFrame {
         
         jPanelInfoBox.removeAll();
         GridLayout layout = (GridLayout) jPanelInfoBox.getLayout();
-        if (selectedNode instanceof LexicalTerminal) {
+        if (true) {
+//        if (selectedNode instanceof LexicalTerminal) {
             layout.setRows(2);
             jPanelInfoBox.add(jScrollPaneInfoBox);
             jPanelInfoBox.add(lexiconList);
@@ -150,6 +153,7 @@ public class TrainingWindow extends JFrame {
             jPanelInfoBox.add(jScrollPaneInfoBox);
         }
         jPanelInfoBox.validate();
+        //jSplitPaneLowerRight.setDividerLocation(0.7);
     }
 
     public void switchViewTo(int view) {
@@ -160,7 +164,7 @@ public class TrainingWindow extends JFrame {
                 jSplitPaneLowerRight.removeAll();
 
                 jSplitPaneUpperRight.setTopComponent(jScrollPaneDirections);
-                jSplitPaneUpperRight.setBottomComponent(jScrollPaneTreeDisplay);
+                jSplitPaneUpperRight.setBottomComponent(treeDisplay);
                 
                 jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
                 jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
@@ -170,6 +174,8 @@ public class TrainingWindow extends JFrame {
 
              
                 jSplitPaneRightHalf.setDividerLocation(-1); // instructs it to set itself automatically
+                
+                //jSplitPaneLowerRight.setDividerLocation(0.7);
                 
                 break;
             case TYPES_AND_CONVERSIONS:
@@ -504,7 +510,6 @@ public class TrainingWindow extends JFrame {
         jScrollPaneInfoBox = new javax.swing.JScrollPane();
         jTableInfoBox = new javax.swing.JTable();
         jFileChooser1 = new javax.swing.JFileChooser();
-        jScrollPaneTreeDisplay = new javax.swing.JScrollPane();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
@@ -566,9 +571,7 @@ public class TrainingWindow extends JFrame {
         ));
         jScrollPaneInfoBox.setViewportView(jTableInfoBox);
 
-        jScrollPaneTreeDisplay.setBorder(javax.swing.BorderFactory.createTitledBorder("LF Tree"));
         treeDisplay.setBackground(java.awt.Color.white);
-        jScrollPaneTreeDisplay.setViewportView(treeDisplay);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -846,9 +849,10 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
 
-        jPanelInfoBox.setLayout(new java.awt.GridLayout());
+        jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
+        jPanelInfoBox.setMinimumSize(new java.awt.Dimension(180, 28));
         jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
         jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
 
@@ -1271,7 +1275,6 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneInfoBox;
-    private javax.swing.JScrollPane jScrollPaneTreeDisplay;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
