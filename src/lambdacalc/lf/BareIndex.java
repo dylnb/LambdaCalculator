@@ -15,9 +15,9 @@ import lambdacalc.logic.Expr;
  */
 public class BareIndex extends Terminal {
     
-    
-    /** Creates a new instance of BareIndex */
-    private BareIndex() {
+    public BareIndex(String label, int i) {
+        this.setLabel(label);
+        this.setIndex(i);
     }
     
     public BareIndex(int i) {

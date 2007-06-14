@@ -258,13 +258,27 @@ public class BracketedTreeParser {
             // ignore parsing error: it's not a bare index
         }
 
-        // If the terminal label was "t" with an index,
-        // load it as a Trace object.
-        if ((child.getLabel() != null) 
-        && (child.getLabel().equals(Trace.SYMBOL))
-        && child.getIndex() != -1) {
-            child = new Trace(child.getIndex());
+        if (child.getIndex() != -1 && child.getLabel() != null) {
+            // If the terminal label was "t" with an index,
+            // load it as a Trace object.
+            if (child.getLabel().equals(Trace.SYMBOL))
+                child = new Trace(child.getIndex());
+            
+            // If the label was a personal pronoun and it has an index,
+            // load it as a trace too.
+            else if (child.getLabel().equals("he") || child.getLabel().equals("she") || child.getLabel().equals("it")
+                || child.getLabel().equals("him") || child.getLabel().equals("her")
+                || child.getLabel().equals("himself") || child.getLabel().equals("herself") || child.getLabel().equals("itself"))
+                child = new Trace(child.getIndex());
+
+            // If the label was a relative pronoun and it has an index,
+            // return it as a BareIndex.
+            else if (child.getLabel().equals("that") || child.getLabel().equals("such")
+                || child.getLabel().equals("which") || child.getLabel().equals("who")
+                || child.getLabel().equals("what"))
+                child = new BareIndex(child.getLabel(), child.getIndex());
         }
+        
         parent.addChild(child);
         return child;
     }
