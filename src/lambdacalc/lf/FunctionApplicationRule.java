@@ -44,6 +44,9 @@ public class FunctionApplicationRule extends CompositionRule {
         LFNode left = node.getChild(0);
         LFNode right = node.getChild(1);
         
+        if (left instanceof BareIndex || right instanceof BareIndex)
+            throw new MeaningEvaluationException("The left and right children of a function application node must not be lambda-abstraction indices.");
+        
         Expr leftMeaning = left.getMeaning();
         Expr rightMeaning = right.getMeaning();
         

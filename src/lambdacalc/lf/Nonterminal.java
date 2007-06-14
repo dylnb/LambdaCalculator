@@ -49,6 +49,11 @@ public class Nonterminal extends LFNode {
 
     public Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException {
+        // TODO: For now, we will always try to guess the
+        // nonterminal composition rule because we have no
+        // way of choosing it.
+        if (compositor == null || !compositor.isApplicableTo(this))
+            guessCompositionRule(RuleList.HEIM_KRATZER);
 
         //TODO don't ignore g
         if (compositor == null)
@@ -83,7 +88,11 @@ public class Nonterminal extends LFNode {
         
         if (compositor != null)
             return;
-        
+
+        guessCompositionRule(rules);
+    }
+    
+    private void guessCompositionRule(RuleList rules) {
         for (int i = 0; i < rules.size(); i++) {
             CompositionRule rule = (CompositionRule) rules.get(i);
             if (rule.isApplicableTo(this)) {
