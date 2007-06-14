@@ -558,7 +558,7 @@ public class ExpressionParser {
                         if (infixes.Exception != null) return infixes; // return any fatal errors immediately
                     }
                 } else {
-                    insides = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false);
+                    insides = parseFunctionApplicationExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false);
                     if (insides.Exception != null) return insides; // return any fatal errors immediately
                 }
                 
@@ -1108,7 +1108,7 @@ public class ExpressionParser {
      * @return a set of possible parses of function application expressions or something lesser as fallback,
      * or an error condition
      */
-    private static ParseResultSet parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
+    private static ParseResultSet parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected, boolean allowSpace) {
         // Parse the left-hand side of the function application, which can be
         // any type of expression besides function application.
         ParseResultSet lefts = parseInfixExpression(expression, start, context, whatIsExpected, false);
@@ -1121,7 +1121,7 @@ public class ExpressionParser {
         // after it as its argument.
         for (int i = 0; i < lefts.Parses.size(); i++) {
             ParseResult left = (ParseResult)lefts.Parses.get(i);
-            parseFunctionApplicationRemainder(expression, context, left, results);
+            parseFunctionApplicationRemainder(expression, context, left, results, allowSpace);
         }
         
         return new ParseResultSet(results);    
@@ -1143,7 +1143,7 @@ public class ExpressionParser {
      * @param results the list into which possible parses of function application (ending at
      * any point) are added
      */
-    private static void parseFunctionApplicationRemainder(String expression, ParseOptions context, ParseResult left, Vector results) {
+    private static void parseFunctionApplicationRemainder(String expression, ParseOptions context, ParseResult left, Vector results, boolean allowSpace) {
         // Attempt to parse a second expression, and if we get one,
         // we create a FunApp between the first (left) and second.
 
@@ -1152,6 +1152,13 @@ public class ExpressionParser {
         // record the possible parse of just the left hand expression and then break out.
         int start = skipWhitespace(expression, left.Next);
         if (start == -1) {
+            results.add(left);
+            return;
+        }
+        
+        // If we don't allow spaces between the function and argument,
+        // but a space was encountered, we're done.'
+        if (!allowSpace && left.Next != start) {
             results.add(left);
             return;
         }
@@ -1164,15 +1171,15 @@ public class ExpressionParser {
             expected = expected + ", but if a logical connective was desired there, surround the left side with parentheses";
         ParseResultSet rights = parsePrefixExpression(expression, start, context, expected);
         
-        // If we couldn't parse anything to our right,
-        // we return the nondeterministic path up to
+        // We return the nondeterministic path up to
         // the left expression and note in its HowToContinue
         // field the error that prevents us from continuing
         // it with the text that follows.
-        if (rights.Exception != null) {
-            results.add(new ParseResult(left.Expression, left.Next, rights.Exception));
+        results.add(new ParseResult(left.Expression, left.Next, rights.Exception));
+        
+        // And if indeed we had an error getting the argument, we have to stop.
+        if (rights.Exception != null)
             return;
-        }
         
         // For each possible parse to our right, assemble a FunApp, and then
         // recursively attempt to parse yet another argument to our right.
@@ -1183,7 +1190,7 @@ public class ExpressionParser {
         for (int j = 0; j < rights.Parses.size(); j++) {
             ParseResult right = (ParseResult)rights.Parses.get(j);
             Expr expr = new FunApp(left.Expression, right.Expression); // left associativity
-            parseFunctionApplicationRemainder(expression, context, new ParseResult(expr, right.Next), results);
+            parseFunctionApplicationRemainder(expression, context, new ParseResult(expr, right.Next), results, allowSpace);
         }
     }
 
@@ -1201,6 +1208,6 @@ public class ExpressionParser {
      * or an error condition
      */
     private static ParseResultSet parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
-        return parseFunctionApplicationExpression(expression, start, context, whatIsExpected);
+        return parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
     }
 }

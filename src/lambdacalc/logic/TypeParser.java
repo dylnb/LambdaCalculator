@@ -66,7 +66,7 @@ public class TypeParser {
                 continue;
             }
             
-            if (c == '<') {
+            if (c == '<' || c == CompositeType.LEFT_BRACKET) {
                 if (current.Left == null) { // still on the left side
                     if (!current.ReadBracket) {
                         current.ReadBracket = true;
@@ -95,7 +95,7 @@ public class TypeParser {
                     current.ReadBracket = true;
                 }
                             
-            } else if (c == '>') {
+            } else if (c == '>' || c == CompositeType.RIGHT_BRACKET) {
                 if (current.Left == null) { // still on the left side
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket at the beginning of a type.", i);

@@ -10,6 +10,9 @@ package lambdacalc.logic;
  * Represents a composite (function) type, like &lt;et&gt;.
  */
 public class CompositeType extends Type {
+    public final static char LEFT_BRACKET = '<'; // '\u27E8'; // '\u2329'; '\u3008';
+    public final static char RIGHT_BRACKET = '>'; // '\u232A';
+    public final static char SEPARATOR = ',';
     
     private Type left;
     private Type right;
@@ -63,13 +66,13 @@ public class CompositeType extends Type {
             +String.valueOf(right)
             +String.valueOf(Type.RIGHTBRACKET);
         } else*/ {
-            return String.valueOf(Type.LEFTBRACKET)
+            return String.valueOf(LEFT_BRACKET)
             + left.toString()
             + (left instanceof ProductType ? " " : "")
-            + String.valueOf(Type.SEPARATOR)
+            + String.valueOf(SEPARATOR)
             + (left instanceof ProductType ? " " : "")
             + right.toString()
-            + String.valueOf(Type.RIGHTBRACKET);
+            + String.valueOf(RIGHT_BRACKET);
         }
     }
     

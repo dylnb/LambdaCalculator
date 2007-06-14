@@ -14,10 +14,6 @@ import java.util.*;
  */
 public abstract class Type implements Comparable {
     
-    public static final char LEFTBRACKET    = '<';
-    public static final char RIGHTBRACKET   = '>';
-    public static final char SEPARATOR      = ',';
-    
     /**
      * The type of entities, e.
      */
