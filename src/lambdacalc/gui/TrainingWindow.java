@@ -829,12 +829,12 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weighty = 1.0;
         jPanelTrees.add(treeDisplay, gridBagConstraints);
 
-        jPanelNodeProperties.setLayout(new java.awt.GridBagLayout());
+        jPanelNodeProperties.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 28));
         jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 160));
-        jPanelInfoBox.setLayout(new java.awt.GridLayout());
+        jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
 
         jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
         jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
@@ -852,15 +852,12 @@ public class TrainingWindow extends JFrame {
 
         jPanelInfoBox.add(jScrollPaneInfoBox);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelNodeProperties.add(jPanelInfoBox, gridBagConstraints);
+        jPanelNodeProperties.add(jPanelInfoBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
         jPanelTrees.add(jPanelNodeProperties, gridBagConstraints);
 
         jPanelLowerRight.add(jPanelTrees, "treesCard");
