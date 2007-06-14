@@ -73,12 +73,10 @@ public class WelcomeWindow extends javax.swing.JFrame {
         menuItemExercise = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
         menuItemTeacherTool = new javax.swing.JMenuItem();
-        menuItemTrees = new javax.swing.JMenuItem();
         menuItemExit = new javax.swing.JMenuItem();
         btnExercise = new javax.swing.JButton();
         btnScratchPad = new javax.swing.JButton();
         btnTeacherTool = new javax.swing.JButton();
-        btnTrees = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -120,16 +118,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
 
         jMenuMenu.add(menuItemTeacherTool);
 
-        menuItemTrees.setMnemonic('r');
-        menuItemTrees.setText("Show Trees");
-        menuItemTrees.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemTreesActionPerformed(evt);
-            }
-        });
-
-        jMenuMenu.add(menuItemTrees);
-
         menuItemExit.setMnemonic('x');
         menuItemExit.setText("Exit Program");
         menuItemExit.addActionListener(new java.awt.event.ActionListener() {
@@ -165,8 +153,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
             }
         });
 
-        btnTrees.setText("MYSTERY BUTTON: DO NOT CLICK");
-
         btnExit.setText("Exit Program");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,11 +173,13 @@ public class WelcomeWindow extends javax.swing.JFrame {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, btnScratchPad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, btnExercise, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnTeacherTool, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnTrees, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-                    .add(btnExit))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnTeacherTool, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE))
                 .addContainerGap())
-            .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+            .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(275, Short.MAX_VALUE)
+                .add(btnExit)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -203,8 +191,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
                 .add(btnScratchPad, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnTeacherTool, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(btnTrees, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnExit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -224,10 +210,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private void menuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExitActionPerformed
         btnExit.doClick();
     }//GEN-LAST:event_menuItemExitActionPerformed
-
-    private void menuItemTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTreesActionPerformed
-        btnTrees.doClick();
-    }//GEN-LAST:event_menuItemTreesActionPerformed
 
     private void menuItemScratchPadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemScratchPadActionPerformed
         btnScratchPad.doClick();
@@ -276,7 +258,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnScratchPad;
     private javax.swing.JButton btnTeacherTool;
-    private javax.swing.JButton btnTrees;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuMenu;
@@ -284,7 +265,6 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemScratchPad;
     private javax.swing.JMenuItem menuItemTeacherTool;
-    private javax.swing.JMenuItem menuItemTrees;
     // End of variables declaration//GEN-END:variables
     
 }
