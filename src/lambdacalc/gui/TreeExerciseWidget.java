@@ -28,6 +28,7 @@ public class TreeExerciseWidget extends JPanel {
     
     boolean inFullScreenMode = false;
     
+    JScrollPane scrollpane;
     TreeCanvas canvas; // this is the display widget
     Nonterminal lftree; // this is the tree we're displaying
     
@@ -119,8 +120,10 @@ public class TreeExerciseWidget extends JPanel {
             }
             );
         
+        scrollpane = new JScrollPane();
         canvas = new TreeCanvas();
-        add(canvas, BorderLayout.CENTER);
+        scrollpane.setViewportView(canvas);
+        add(scrollpane, BorderLayout.CENTER);
         
         add(errorLabel, BorderLayout.PAGE_END);
         
@@ -140,9 +143,14 @@ public class TreeExerciseWidget extends JPanel {
         buttons.add(btnPrevStep);
 
         add(buttons, BorderLayout.PAGE_START);
-        
-        canvas.setBackground(getBackground());
-        
+    }
+    
+    public void setBackground(java.awt.Color color) {
+        super.setBackground(color);
+        if (scrollpane == null) return;
+        scrollpane.setBackground(color);
+        scrollpane.getViewport().setBackground(color);
+        canvas.setBackground(color);
     }
     
     public void addSelectionListener(SelectionListener sl) {
@@ -409,15 +417,22 @@ public class TreeExerciseWidget extends JPanel {
     void updateNode(LFNode node) {
         JPanel nodePanel = (JPanel)lfToTreeLabelPanel.get(node);
 
-        // Change the label if it's the current evaluation node.
-        String label = node.getLabel();
-        if (node.getIndex() != -1)
-            label += "_" + node.getIndex();
         java.awt.Color borderColor = getBackground();
         if (node == selectedNode)
             borderColor = java.awt.Color.BLUE;
         nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
+        // Change the label if it's the current evaluation node.
+        String label = node.getLabel();
+        if (label != null) {
+            if (node.getIndex() != -1)
+                label += "_" + node.getIndex();
+        } else {
+            if (node.getIndex() != -1) // no label but an index -> show the index alone
+                label = "" + node.getIndex();
+            else // no label and no index: empty label
+                label = "";
+        }
         JLabel orthoLabel = (JLabel)lfToOrthoLabel.get(node);
         orthoLabel.setText(label);
         
@@ -444,7 +459,7 @@ public class TreeExerciseWidget extends JPanel {
         
         // Ensure tree layout is adjusted due to changes to node label.
         // This ought to be automatic, but isn't.
-        canvas.doLayout();
+        canvas.invalidate();
     }
     
     // Move the current evaluation node to the node indicated, but only
@@ -568,6 +583,8 @@ public class TreeExerciseWidget extends JPanel {
             if (testOnly) return true;
             lfToMeaningState.remove(selectedNode);
             updateNode(selectedNode);
+        } else if (selectedNode instanceof Terminal) {
+            return false;
         } else {
             if (testOnly) return true;
             
@@ -631,12 +648,12 @@ public class TreeExerciseWidget extends JPanel {
             return false;
             
         if (!isNodeEvaluated(selectedNode)) {
-            // move to last evaluable child that is evaluated
+            // move to last nonterminal child that is evaluated
             if (selectedNode instanceof Nonterminal) {
                 Nonterminal n = (Nonterminal)selectedNode;
                 for (int i = n.size()-1; i >= 0; i--) {
                     LFNode child = n.getChild(i);
-                    if (child instanceof BareIndex)
+                    if (child instanceof Terminal)
                         continue;
                     if (testOnly) return true;
                     selectNode(child);
@@ -674,6 +691,9 @@ public class TreeExerciseWidget extends JPanel {
             
             return false;
         }
+        
+        if (selectedNode instanceof Terminal)
+            return false;
         
         if (testOnly) return true;
         lfToMeaningState.remove(selectedNode);
@@ -776,6 +796,8 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
     
+
+                                      
     public static void main(String[] args) {
         
         java.awt.EventQueue.invokeLater(new Runnable() {

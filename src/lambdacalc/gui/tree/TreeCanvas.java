@@ -14,13 +14,15 @@ import javax.swing.*;
 /**
  * A widget that displays a tree.
  */
-public class TreeCanvas extends JComponent {
+public class TreeCanvas extends JComponent implements Scrollable {
     JTreeNode root;
     TreeLayoutMethod layout;
 
     boolean animated = true;    
     javax.swing.Timer timer;
     boolean hadPositionChange = false;
+    
+    Dimension preferredSize = new Dimension(0,0);
 
     /**
      * Creates a new instance of TreeCanvas
@@ -39,11 +41,15 @@ public class TreeCanvas extends JComponent {
     }
     
     public Dimension getMaximumSize() {
-        return root.getSize();
+        return getPreferredSize();
     }
 
     public Dimension getMinimumSize() {
-        return root.getSize();
+        return getPreferredSize();
+    }
+    
+    public Dimension getPreferredSize() {
+        return preferredSize;
     }
     
     public void clear() {
@@ -71,6 +77,8 @@ public class TreeCanvas extends JComponent {
             positionControls(getRoot(), false);
         else
             timer.start();
+        
+        preferredSize = getPreferredSize(getRoot());
     }
     
     public abstract class TreeLayoutMethod {
@@ -104,7 +112,7 @@ public class TreeCanvas extends JComponent {
             
             // Layout the label itself.
             if (subtree.getLabel() != null) {
-                subtree.getLabel().doLayout();
+                subtree.getLabel().validate();
                 subtree.getLabel().setSize(subtree.getLabel().getPreferredSize());
                 subtree.setSize(subtree.getLabel().getSize());
                 subtree.getLabel().setLocation(0,0); // relative to the panel that contains just that node
@@ -207,7 +215,7 @@ public class TreeCanvas extends JComponent {
         if (!node.hasPosition || !node.hasBeenPlaced) return; // a new node that has not been positioned yet
         
         if (node.getLabel() != null) {
-            node.getLabel().doLayout();
+            node.getLabel().validate();
             node.getLabel().setSize(node.getLabel().getPreferredSize());
             node.setSize(node.getLabel().getSize());
             node.getLabel().setLocation(0,0); // relative to the panel that contains just that node
@@ -224,7 +232,7 @@ public class TreeCanvas extends JComponent {
     private void positionControls(JTreeNode node, boolean incremental) {
         if (!incremental || !node.hasBeenPlaced) {
             if (node.getLabel() != null) {
-                node.getLabel().doLayout();
+                node.getLabel().validate();
                 node.getLabel().setSize(node.getLabel().getPreferredSize());
                 node.setSize(node.getLabel().getSize());
                 node.getLabel().setLocation(0,0); // relative to the panel that contains just that node
@@ -251,7 +259,21 @@ public class TreeCanvas extends JComponent {
     }
     
     
-    
+     private Dimension getPreferredSize(JTreeNode node) {
+        int width = 0, height = 0;
+        int right = node.getLocation().x + node.getWidth();
+        int bottom = node.getLocation().y + node.getHeight();
+        if (right > width) width = right;
+        if (bottom > height) height = bottom;
+        for (int i = 0; i < node.arity(); i++) {
+            Dimension d = getPreferredSize(node.getChild(i));
+            if (d.width > width) width = d.width;
+            if (d.height > height) height = d.height;
+        }
+        return new Dimension(width, height);
+    }
+
+   
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
             
@@ -324,7 +346,7 @@ public class TreeCanvas extends JComponent {
             if (this.label != null) {
                 add(label);
                 label.addComponentListener(this);
-                container.doLayout();
+                container.invalidate();
             }
         }
         
@@ -337,7 +359,7 @@ public class TreeCanvas extends JComponent {
             JTreeNode n = new JTreeNode(this, container);
             children.add(n);
             container.add(n); // to our own container layout
-            container.doLayout();
+            container.invalidate();
             return n;
         }
         
@@ -349,7 +371,7 @@ public class TreeCanvas extends JComponent {
                 child.clearChildren();
             }
             children.clear();
-            container.doLayout();
+            container.invalidate();
         }
         
         public int arity() {
@@ -362,17 +384,37 @@ public class TreeCanvas extends JComponent {
         
         // When a change is made to the label, relayout everything.
         public void componentResized(ComponentEvent e) {
-            container.doLayout();
+            container.invalidate();
         }
         public void componentMoved(ComponentEvent e) {
             // ignore this--we're responsible for moving controls
         }
         public void componentShown(ComponentEvent e) {
-            container.doLayout();
+            container.invalidate();
         }
         public void componentHidden(ComponentEvent e) {
-            container.doLayout();
+            container.invalidate();
         }
     }
     
+    // Scrollable interface implementation
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+    public int getScrollableUnitIncrement(Rectangle visibleRect,
+                                      int orientation,
+                                      int direction) {
+        return 10; // TODO
+    }
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+                                       int orientation,
+                                       int direction) {
+        return 40; // TODO
+    }
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
 }
