@@ -24,7 +24,7 @@ public class Trace extends Terminal {
     
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-        //TODO don't ignore g
+
         //return (Expr) g.get(this.getIndex());
         return new GApp(this.getIndex());
     }    

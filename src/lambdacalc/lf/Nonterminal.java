@@ -55,7 +55,6 @@ public class Nonterminal extends LFNode {
         if (compositor == null || !compositor.isApplicableTo(this))
             guessCompositionRule(RuleList.HEIM_KRATZER);
 
-        //TODO don't ignore g
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
         return compositor.applyTo(this, g);

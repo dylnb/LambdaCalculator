@@ -44,7 +44,7 @@ public class BareIndex extends Terminal {
     }
     
     public String getDisplayName() {
-        return "Lambda-abstraction index";
+        return "Bare index";
     }
     
     public Expr getMeaning(AssignmentFunction g) 

@@ -81,7 +81,7 @@ public abstract class LFNode {
         if (this.hasIndex()) { index = new Integer(this.getIndex()); }
         m.put("Index", index);
         
-        m.put("toString()", this.toString());
+        //m.put("toString()", this.toString());
         return m;
     }
 

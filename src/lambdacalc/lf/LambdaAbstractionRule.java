@@ -40,7 +40,7 @@ public class LambdaAbstractionRule extends CompositionRule {
     }
     
     public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
-        //TODO don't ignore g
+     
         if (!this.isApplicableTo(node)) {
             throw new MeaningEvaluationException
                     ("The lambda abstraction rule is only " +
