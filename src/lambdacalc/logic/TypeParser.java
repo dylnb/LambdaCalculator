@@ -107,7 +107,7 @@ public class TypeParser {
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket here.", i);
                     current = CloseType(stack, current);
-                    if (stopSoon && stack.size() == 0)
+                    if (stopSoon && stack.size() == 0 && current.Right == null)
                         return new ParseResult(current.Left, i);
                 }
                 
