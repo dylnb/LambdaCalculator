@@ -129,7 +129,8 @@ public class TrainingWindow extends JFrame {
                 
         clearAllControls();
         
-        //loadExerciseFile("tests/example1.txt");
+        loadExerciseFile("examples/tests.txt");
+        //TODO comment out previous line
     }
     
     
@@ -174,7 +175,7 @@ public class TrainingWindow extends JFrame {
 
              
                 jSplitPaneRightHalf.setDividerLocation(-1); // instructs it to set itself automatically
-                
+             
                 //jSplitPaneLowerRight.setDividerLocation(0.7);
                 
                 break;
@@ -192,6 +193,11 @@ public class TrainingWindow extends JFrame {
                 throw new IllegalArgumentException("Don't know this view");
                 
         }
+        jSplitPaneUpperRight.validate();
+        jSplitPaneLowerRight.validate();
+        jSplitPaneRightHalf.validate();
+        
+        
         //jPanelDirectionsOrTrees.validate();
         //jSplitPaneRightHalf.setResizeWeight(1);
         //jPanelDirectionsOrTrees.repaint();

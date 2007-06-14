@@ -121,7 +121,7 @@ public class Nonterminal extends LFNode {
         }
         ret += "]";
         if (this.hasIndex()) {
-            ret += LFNode.INDEX_SEPARATOR+this.getIndex();
+            ret += String.valueOf(LFNode.INDEX_SEPARATOR)+this.getIndex();
         }
         return ret;
     }

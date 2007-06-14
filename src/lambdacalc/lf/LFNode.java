@@ -66,9 +66,7 @@ public abstract class LFNode {
      */
     public SortedMap getProperties() {
         SortedMap m = new TreeMap();
-        String name = this.getDisplayName();
-        name = name.substring(name.lastIndexOf(".")+1, name.length());
-        m.put("Kind", name);
+        m.put("Kind", this.getDisplayName());
         m.put("Text", this.getLabel());
         Type t = null;
         try {
@@ -82,6 +80,8 @@ public abstract class LFNode {
         Integer index = null;
         if (this.hasIndex()) { index = new Integer(this.getIndex()); }
         m.put("Index", index);
+        
+        m.put("toString()", this.toString());
         return m;
     }
 
@@ -89,7 +89,7 @@ public abstract class LFNode {
     public String toString() {
         String result = getLabel();
         if (hasIndex()) {
-            result += INDEX_SEPARATOR + getIndex();
+            result += String.valueOf(INDEX_SEPARATOR) + getIndex();
         } 
         return result;
     }

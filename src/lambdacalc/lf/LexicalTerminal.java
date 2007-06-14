@@ -42,6 +42,11 @@ public class LexicalTerminal extends Terminal {
             meaning = meanings[0];
     
     }
+
+    
+    public String toString() {
+        return super.toString();
+    }
     
 
     
