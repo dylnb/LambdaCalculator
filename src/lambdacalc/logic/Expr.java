@@ -309,7 +309,7 @@ public abstract class Expr {
         // We need to make an alphabetical variant by fixing the binders in the
         // accidentalBinders set. We rename these binders' variables so they do
         // not bind anything accidentally after lambda conversion.
-        Set varsInUse = result.getAllVars();
+        Set varsInUse = getAllVars();
         Map varMap = new HashMap(); // scratch space for createAlphabeticalVariant
         Expr alphaVary = createAlphabeticalVariant(accidentalBinders, varsInUse, varMap);
         
