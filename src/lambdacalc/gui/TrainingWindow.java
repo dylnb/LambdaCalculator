@@ -129,7 +129,7 @@ public class TrainingWindow extends JFrame {
                 
         clearAllControls();
         
-        loadExerciseFile("examples/tests.txt");
+        //loadExerciseFile("examples/tests.txt");
         //TODO comment out previous line
     }
     
@@ -373,8 +373,24 @@ public class TrainingWindow extends JFrame {
     // btnNextActionPerformed()
     // btnPrevActionPerformed()
     private void showExercise() {
-        lblDirections.setText(exFile.getGroup(currentGroup).getDirections());
         ex = getCurrentExercise();
+        
+        // Show the directions for this exercise. If there are both
+        // group-level directions and exercise-level instructions,
+        // only display both together for the first exercise in the
+        // group so that when the user goes on to the next problem,
+        // it is very obvious that the directions displayed have changed.
+        String directions = "There are no directions for this exercise.";
+        if (!exFile.getGroup(currentGroup).getDirections().trim().equals("")
+            && (ex.getIndex() == 0 || ex.getInstructions() == null)) {
+            directions = exFile.getGroup(currentGroup).getDirections();
+            if (ex.getInstructions() != null)
+                directions += "\n\n" + ex.getInstructions();
+        } else if (ex.getInstructions() != null) {
+            directions = ex.getInstructions();
+        }
+        lblDirections.setText(directions);
+        lblDirections.setCaretPosition(0);
         
         if (ex instanceof TypeExercise) { 
             btnTransfer.setEnabled(false);

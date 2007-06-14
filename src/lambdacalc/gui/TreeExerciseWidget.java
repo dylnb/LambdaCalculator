@@ -243,7 +243,7 @@ public class TreeExerciseWidget extends JPanel {
         } else {
         */
             JLabel meaningLabel = new JLabel();
-            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(12));
+            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
             label.add(meaningLabel);
             meaningLabel.setAlignmentX(.5F);
             //meaningLabel.addMouseListener(new NodeClickListener(lfnode));

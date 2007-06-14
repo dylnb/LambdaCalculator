@@ -66,10 +66,12 @@ public class LexiconList extends JPanel
         this.tewidget = widget;
         
         tewidget.addSelectionListener(this);
+        selectionChanged(null);
     }
 
     public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
         // Fired when the selected node in the TreeExerciseWidget changes.
+        // Ignore 'evt': We call it with null above.
         
         if (currentNode != null)
             currentNode.removePropertyChangeListener(this);
