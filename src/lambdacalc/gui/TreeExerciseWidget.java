@@ -194,6 +194,10 @@ public class TreeExerciseWidget extends JPanel {
         
         buildTree(canvas.getRoot(), lftree);
         
+        // Ensure tree layout is adjusted due to changes to node label.
+        // This ought to be automatic, but isn't.
+        canvas.invalidate();
+        
         moveTo(lftree);
     }
     
@@ -238,11 +242,11 @@ public class TreeExerciseWidget extends JPanel {
         // For nonterminals, give them JLabels for their meanings.
         } else {
         */
-            JHTMLLabel meaningLabel = new JHTMLLabel();
+            JLabel meaningLabel = new JLabel();
             meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(12));
             label.add(meaningLabel);
             meaningLabel.setAlignmentX(.5F);
-            meaningLabel.addMouseListener(new NodeClickListener(lfnode));
+            //meaningLabel.addMouseListener(new NodeClickListener(lfnode));
             lfToMeaningLabel.put(lfnode, meaningLabel);
 
         /*    JComboBox compositionRuleChoices = new JComboBox();
@@ -363,6 +367,11 @@ public class TreeExerciseWidget extends JPanel {
             updateNode(ancestor);
             ancestor = (LFNode)lfToParent.get(ancestor);
         }
+
+            
+        // Ensure tree layout is adjusted due to changes to node label.
+        // This ought to be automatic, but isn't.
+        canvas.invalidate();
     }
     
     private class NodeClickListener extends MouseAdapter {
@@ -443,17 +452,16 @@ public class TreeExerciseWidget extends JPanel {
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
         // display the lambda expression.
-        JHTMLLabel meaningLabel = (JHTMLLabel)lfToMeaningLabel.get(node);
+        JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
-            java.awt.Color meaningColor;
-
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
+            java.awt.Color meaningColor;
             if (ms.evaluationError == null) { // was there an error?
-                meaningLabel.setContentType("text/html");
-                meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
+                //meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
+                meaningLabel.setText(((Expr)ms.exprs.get(ms.curexpr)).toString());
                 meaningColor = java.awt.Color.BLUE;
             } else {
-                meaningLabel.setContentType("text/plain");
+                //meaningLabel.setText("<center><font color=red>Problem!</font></center>");
                 meaningLabel.setText("Problem!");
                 meaningColor = java.awt.Color.RED;
             }
@@ -461,11 +469,8 @@ public class TreeExerciseWidget extends JPanel {
             meaningLabel.setVisible(true);
         } else {
             meaningLabel.setVisible(false);
+            meaningLabel.setText("");
         }
-        
-        // Ensure tree layout is adjusted due to changes to node label.
-        // This ought to be automatic, but isn't.
-        canvas.invalidate();
     }
     
     // Move the current evaluation node to the node indicated, but only
@@ -564,6 +569,7 @@ public class TreeExerciseWidget extends JPanel {
         if (!isNodeEvaluated(selectedNode)) {
             if (testOnly) return true;
             evaluateNode();
+            canvas.invalidate();
         } else if (nodeHasError()) {
             return false; // can't go further
         } else if (!isNodeFullyEvaluated()) {
@@ -573,6 +579,7 @@ public class TreeExerciseWidget extends JPanel {
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             ms.curexpr++;
             updateNode(selectedNode);
+            canvas.invalidate();
         } else {
             // Node is fully evaluated, so move to the next node.
             if (!lfToParent.containsKey(selectedNode))
@@ -595,6 +602,7 @@ public class TreeExerciseWidget extends JPanel {
             if (testOnly) return true;
             lfToMeaningState.remove(selectedNode);
             updateNode(selectedNode);
+            canvas.invalidate();
         } else if (selectedNode instanceof Terminal) {
             return false;
         } else {
@@ -607,6 +615,7 @@ public class TreeExerciseWidget extends JPanel {
                 lfToMeaningState.remove(selectedNode);
             }
             updateNode(selectedNode);
+            canvas.invalidate();
         }
         
         return false;
@@ -632,6 +641,8 @@ public class TreeExerciseWidget extends JPanel {
             if (!isNodeEvaluated(selectedNode))
                 evaluateNode();
                 
+            canvas.invalidate();
+            
             if (nodeHasError())
                 return false;
         
@@ -641,6 +652,7 @@ public class TreeExerciseWidget extends JPanel {
                 // Move the evaluation to the end.
                 ms.curexpr = ms.exprs.size()-1;
                 updateNode(selectedNode);
+                canvas.invalidate();
             }
         } else {
             // This expression is fully evaluated. 
@@ -710,6 +722,7 @@ public class TreeExerciseWidget extends JPanel {
         if (testOnly) return true;
         lfToMeaningState.remove(selectedNode);
         updateNode(selectedNode);
+        canvas.invalidate();
         
         return false;
     }
@@ -741,6 +754,7 @@ public class TreeExerciseWidget extends JPanel {
             lfToMeaningState.put(selectedNode, new MeaningState(e.getMessage()));
         }
         updateNode(selectedNode);
+        canvas.invalidate();
         curErrorChanged();
     }
         
