@@ -6,6 +6,7 @@
 
 package lambdacalc.gui;
 
+import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
@@ -16,7 +17,6 @@ import javax.swing.tree.*;
 import javax.swing.border.TitledBorder;
 import java.io.*;
 import lambdacalc.lf.LFNode;
-import lambdacalc.lf.LexicalTerminal;
 
 /**
  *
@@ -158,44 +158,51 @@ public class TrainingWindow extends JFrame {
     }
 
     public void switchViewTo(int view) {
+        CardLayout cardLayout = (CardLayout) jPanelLowerRight.getLayout();
         switch (view) {
             case TREES:
-                
-                jSplitPaneUpperRight.removeAll();
-                jSplitPaneLowerRight.removeAll();
-
-                jSplitPaneUpperRight.setTopComponent(jScrollPaneDirections);
-                jSplitPaneUpperRight.setBottomComponent(treeDisplay);
-                
-                jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
-                jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
-                
-                jSplitPaneRightHalf.setTopComponent(jSplitPaneUpperRight);
-                jSplitPaneRightHalf.setBottomComponent(jSplitPaneLowerRight);
-
-             
-                jSplitPaneRightHalf.setDividerLocation(-1); // instructs it to set itself automatically
-             
-                //jSplitPaneLowerRight.setDividerLocation(0.7);
-                
+                cardLayout.show(jPanelLowerRight, "treesCard");
                 break;
             case TYPES_AND_CONVERSIONS:
-                jSplitPaneUpperRight.removeAll();
-                jSplitPaneLowerRight.removeAll();
-                jSplitPaneRightHalf.removeAll();
-                
-                jSplitPaneRightHalf.setTopComponent(jScrollPaneDirections);
-                jSplitPaneRightHalf.setBottomComponent(jPanelTypesAndConversions);
-                
-                jSplitPaneRightHalf.setDividerLocation(0.4); // a little bit higher than the middle
+                cardLayout.show(jPanelLowerRight, "typesAndConversionsCard");
                 break;
+                
+//                
+//                jSplitPaneUpperRight.removeAll();
+//                jSplitPaneLowerRight.removeAll();
+//
+//                jSplitPaneUpperRight.setTopComponent(jScrollPaneDirections);
+//                jSplitPaneUpperRight.setBottomComponent(treeDisplay);
+//                
+//                jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
+//                jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
+//                
+//                jSplitPaneRightHalf.setTopComponent(jSplitPaneUpperRight);
+//                jSplitPaneRightHalf.setBottomComponent(jSplitPaneLowerRight);
+//
+//             
+//                jSplitPaneRightHalf.setDividerLocation(-1); // instructs it to set itself automatically
+//             
+//                //jSplitPaneLowerRight.setDividerLocation(0.7);
+//                
+//                break;
+//            case TYPES_AND_CONVERSIONS:
+//                jSplitPaneUpperRight.removeAll();
+//                jSplitPaneLowerRight.removeAll();
+//                jSplitPaneRightHalf.removeAll();
+//                
+//                jSplitPaneRightHalf.setTopComponent(jScrollPaneDirections);
+//                jSplitPaneRightHalf.setBottomComponent(jPanelTypesAndConversions);
+//                
+//                jSplitPaneRightHalf.setDividerLocation(0.4); // a little bit higher than the middle
+//                break;
             default:
                 throw new IllegalArgumentException("Don't know this view");
                 
         }
-        jSplitPaneUpperRight.validate();
-        jSplitPaneLowerRight.validate();
-        jSplitPaneRightHalf.validate();
+//        jSplitPaneUpperRight.validate();
+//        jSplitPaneLowerRight.validate();
+//        jSplitPaneRightHalf.validate();
         
         
         //jPanelDirectionsOrTrees.validate();
@@ -205,30 +212,6 @@ public class TrainingWindow extends JFrame {
                
     }
     
-    
-//    public void switchViewTo(int view) {
-//        GridLayout layout = (GridLayout) jPanelDirectionsOrTrees.getLayout();
-//        switch (view) {
-//            case TREES:
-//                layout.setRows(2);
-//                jPanelDirectionsOrTrees.add(jScrollPaneTreeDisplay);
-////                jSplitPaneMain.setRightComponent(jPanelTypesAndConversions);
-//                break;
-//            case TYPES_AND_CONVERSIONS:
-//                jPanelDirectionsOrTrees.remove(jScrollPaneTreeDisplay);
-//                layout.setRows(1);
-////                jSplitPaneMain.setRightComponent(jPanelTrees);
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Don't know this view");
-//                
-//        }
-//        jPanelDirectionsOrTrees.validate();
-//        //jSplitPaneRightHalf.setResizeWeight(1);
-//        //jPanelDirectionsOrTrees.repaint();
-//        //repaint();
-//               
-//    }
     
     
     // called by TrainingWindow constructor
@@ -512,11 +495,9 @@ public class TrainingWindow extends JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jSplitPaneUpperRight = new javax.swing.JSplitPane();
-        jPanelDirectionsOrTrees = new javax.swing.JPanel();
         jScrollPaneInfoBox = new javax.swing.JScrollPane();
         jTableInfoBox = new javax.swing.JTable();
         jFileChooser1 = new javax.swing.JFileChooser();
-        treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
         jScrollPaneUpperLeft = new javax.swing.JScrollPane();
@@ -533,7 +514,7 @@ public class TrainingWindow extends JFrame {
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
         jScrollPaneDirections = new javax.swing.JScrollPane();
         lblDirections = new javax.swing.JTextArea();
-        jSplitPaneLowerRight = new javax.swing.JSplitPane();
+        jPanelLowerRight = new javax.swing.JPanel();
         jPanelTypesAndConversions = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
         jPanelNavigationButtons = new javax.swing.JPanel();
@@ -546,6 +527,8 @@ public class TrainingWindow extends JFrame {
         jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnTransfer = new javax.swing.JButton();
+        jPanelTrees = new javax.swing.JPanel();
+        treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelInfoBox = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
@@ -559,10 +542,6 @@ public class TrainingWindow extends JFrame {
         menuItemScratchPad = new javax.swing.JMenuItem();
 
         jSplitPaneUpperRight.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jPanelDirectionsOrTrees.setLayout(new java.awt.GridLayout(1, 1));
-
-        jPanelDirectionsOrTrees.setMinimumSize(new java.awt.Dimension(19, 50));
-        jPanelDirectionsOrTrees.setPreferredSize(new java.awt.Dimension(235, 150));
         jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
         jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -576,8 +555,6 @@ public class TrainingWindow extends JFrame {
             }
         ));
         jScrollPaneInfoBox.setViewportView(jTableInfoBox);
-
-        treeDisplay.setBackground(java.awt.Color.white);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -694,25 +671,26 @@ public class TrainingWindow extends JFrame {
         jSplitPaneMain.setLeftComponent(jSplitPaneLeftHalf);
 
         jSplitPaneRightHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPaneRightHalf.setResizeWeight(1.0);
         jSplitPaneRightHalf.setOneTouchExpandable(true);
         jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
         jScrollPaneDirections.setMinimumSize(new java.awt.Dimension(19, 90));
-        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(235, 90));
+        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(235, 100));
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblDirections.setColumns(20);
         lblDirections.setEditable(false);
         lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
         lblDirections.setLineWrap(true);
-        lblDirections.setRows(5);
+        lblDirections.setRows(2);
         lblDirections.setWrapStyleWord(true);
         lblDirections.setBorder(null);
+        lblDirections.setPreferredSize(new java.awt.Dimension(220, 30));
         jScrollPaneDirections.setViewportView(lblDirections);
 
         jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);
 
-        jSplitPaneLowerRight.setOneTouchExpandable(true);
+        jPanelLowerRight.setLayout(new java.awt.CardLayout());
+
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         btnCheckAnswer.setText("Check Answer");
@@ -853,16 +831,34 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
-        jSplitPaneLowerRight.setLeftComponent(jPanelTypesAndConversions);
+        jPanelLowerRight.add(jPanelTypesAndConversions, "typesAndConversionsCard");
+
+        jPanelTrees.setLayout(new java.awt.GridBagLayout());
+
+        jPanelTrees.setMinimumSize(new java.awt.Dimension(19, 50));
+        jPanelTrees.setPreferredSize(new java.awt.Dimension(235, 150));
+        treeDisplay.setBackground(java.awt.Color.white);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTrees.add(treeDisplay, gridBagConstraints);
 
         jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelInfoBox.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelInfoBox.setMinimumSize(new java.awt.Dimension(180, 28));
         jPanelInfoBox.setPreferredSize(new java.awt.Dimension(180, 160));
-        jSplitPaneLowerRight.setRightComponent(jPanelInfoBox);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTrees.add(jPanelInfoBox, gridBagConstraints);
 
-        jSplitPaneRightHalf.setRightComponent(jSplitPaneLowerRight);
+        jPanelLowerRight.add(jPanelTrees, "treesCard");
+
+        jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
 
         jSplitPaneMain.setRightComponent(jSplitPaneRightHalf);
 
@@ -1275,11 +1271,12 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanelDirectionsOrTrees;
     private javax.swing.JPanel jPanelEnterExpressions;
     private javax.swing.JPanel jPanelInfoBox;
+    private javax.swing.JPanel jPanelLowerRight;
     private javax.swing.JPanel jPanelNavigationButtons;
     private javax.swing.JPanel jPanelQuestion;
+    private javax.swing.JPanel jPanelTrees;
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
@@ -1287,7 +1284,6 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
-    private javax.swing.JSplitPane jSplitPaneLowerRight;
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
     private javax.swing.JSplitPane jSplitPaneUpperRight;

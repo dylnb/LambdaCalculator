@@ -31,7 +31,14 @@ define is : LX.Lx.[X(x)]
 define John : j	
 define Mary : m
 
+exercise lambda conversion
+title Lambda Conversion
+directions After checking that the type of the function and the type of the
+directions argument(s) match, simplify the following expressions performing
+directions one lambda-conversion at a time.
+points per exercise 10
 
+Lx[P(x) & Q(x)] (a)
 
 exercise tree
 title Full Derivations
