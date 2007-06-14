@@ -25,18 +25,19 @@ import lambdacalc.gui.tree.TreeCanvas;
  *    The node has a composition rule assigned
  */
 public class TreeExerciseWidget extends JPanel {
+    TreeExercise exercise; // this is the exercise we're displaying
+    Nonterminal lftree; // this is the tree we're displaying
     
     boolean inFullScreenMode = false;
     
     JScrollPane scrollpane;
     TreeCanvas canvas; // this is the display widget
-    Nonterminal lftree; // this is the tree we're displaying
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
     Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
     Map lfToOrthoLabel = new HashMap(); // orthographic label
     Map lfToMeaningLabel = new HashMap(); // propositional content label (for nonterminals only if we're using dropdowns for terminals)
-    Map lfToMeaningState = new HashMap(); // state of the propositional label, or null if node is not evaluated yet
+    Map lfToMeaningState; // state of the propositional label, or null if node is not evaluated yet
     //Map lfToMeaningChooser = new HashMap(); // meaning JComboBox: lexical entry for terminals, composition rule for nonterminals
     Map lfToParent = new HashMap(); // parent LFNode
     
@@ -176,7 +177,7 @@ public class TreeExerciseWidget extends JPanel {
         lfToOrthoLabel.clear();
         lfToMeaningLabel.clear();
         //lfToMeaningChooser.clear();
-        lfToMeaningState.clear();
+        lfToMeaningState = null;
         lfToParent.clear();
         
         canvas.clear();
@@ -187,7 +188,9 @@ public class TreeExerciseWidget extends JPanel {
     public void initialize(TreeExercise ex) {
         clear();
         
+        exercise = ex;
         lftree = ex.getTree();
+        lfToMeaningState = ex.derivationDisplayState;
         
         buildTree(canvas.getRoot(), lftree);
         
