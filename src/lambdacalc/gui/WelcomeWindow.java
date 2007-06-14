@@ -47,14 +47,18 @@ public class WelcomeWindow extends javax.swing.JFrame {
     }
     
     public static void exit() {
-        
         disposeWindow();
         
+        // In some cases, the program doesn't exit properly. 
+        // This system call is not essential. It can be commented out
+        // if necessary.
+        System.exit(0);
     }
     
     static void disposeWindow() {
         if (singleton != null)
             singleton.dispose();
+            
     }    
     
     /** This method is called from within the constructor to

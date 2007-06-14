@@ -69,7 +69,7 @@ public class Nonterminal extends LFNode {
      */
     public SortedMap getProperties() {
         SortedMap m = super.getProperties();
-        m.put("Composition rule", this.getCompositionRule());
+        m.put("Rule", this.getCompositionRule());
         return m;
     }    
     

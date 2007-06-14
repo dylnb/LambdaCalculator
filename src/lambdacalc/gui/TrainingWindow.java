@@ -1169,14 +1169,17 @@ public class TrainingWindow extends JFrame {
     // onWindowClosed()
     // menuItemQuitActionPerformed()
     void doExit() {
-        if (this.exFile != null && this.exFile.hasBeenStarted() && hasUnsavedWork) {
+        if  
+        (this.exFile != null 
+                && this.exFile.hasBeenStarted() 
+                && this.hasUnsavedWork) {
             
            Object[] options = {"Save and quit",
                     "Quit without saving",
                     "Cancel"};
 
            int n = JOptionPane.showOptionDialog(this,
-            "Some of your answers are not yet saved. What should I do?",
+            "Some of your answers have not yet been saved. What should I do?",
             "Lambda Calculator",
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE,
