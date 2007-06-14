@@ -567,6 +567,12 @@ public class TreeExerciseWidget extends JPanel {
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             ms.curexpr++;
             updateNode(selectedNode);
+        } else {
+            // Node is fully evaluated, so move to the next node.
+            if (!lfToParent.containsKey(selectedNode))
+                return false;
+            if (testOnly) return true;
+            moveTo((LFNode)lfToParent.get(selectedNode));
         }
         
         return false;
