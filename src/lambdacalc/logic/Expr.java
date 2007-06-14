@@ -441,7 +441,7 @@ public abstract class Expr {
         List newSubExpr = new Vector();
         while (subExpressions.hasNext()) {
             Expr next = (Expr) subExpressions.next();
-            if (next.equals(thisExpr)) next = byExpr;
+            next = next.replace(thisExpr, byExpr);
             newSubExpr.add(next);
         }
         return createFromSubExpressions(newSubExpr);

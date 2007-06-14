@@ -19,7 +19,8 @@ define sleep,sleeps : Lx[sleep(x)]
 define happy : Lx[happy(x)]
 define guy : Lx[guy(x)]
 define love, loves : LyLx[love(x,y)]
-define someone : LX[Ex[X(x)]]
+define someone, somebody : LX[Ex[X(x)]]
+define everyone, everybody : LX[Ax[X(x)]]
 # TODO when we define "someone" as  LP[Ex[P(x)]],
 # we should get an immediate warning because P is declared above to 
 # be a constant
@@ -42,5 +43,10 @@ points per exercise 20
 #[.S [.NBAR a guy] [.VP loves Mary]]
 #[.NP a guy]
 #[.S [.NP a [.N' happy guy]] [.VP sleeps]]
-[.S John [ such_320 [.VP t_1034 sleeps]]]
+#[.S John [ 1 [.VP t_1 sleeps]]]
+[.S' John [ 1 [.S Mary [.VP loves t_1]]]]
+[.S everybody [ 1 [.VP t_1 sleeps]]]
+[.S everybody [ 1 [ somebody [ 2 [.VP t_1 [ loves t_2]]]]]]
+[.S somebody [ 2 [ everybody [ 1 [.VP t_1 [ loves t_2]]]]]]
+[.S everybody [ 1 [.VP t_1 sleeps]]]
 #[ t_1 sleeps]

@@ -83,14 +83,6 @@ public abstract class Binary extends Expr {
      */
     protected abstract Binary create(Expr left, Expr right);
 
-    public Expr replace(Expr expr1, Expr expr2) {
-        if (this.equals(expr1)) return expr2;
-        Expr newLeft = this.getLeft();
-        if (newLeft.equals(expr1)) newLeft = expr2;
-        Expr newRight = this.getRight();
-        if (newRight.equals(expr1)) newRight = expr2;
-        return create(newLeft, newRight);
-    }
     
     /**
      * Returns a List of the two subexpressions of this expression.
