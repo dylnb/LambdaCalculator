@@ -303,7 +303,7 @@ public class BracketedTreeParser {
             // load it as a trace too.
             else if (isPronoun(child.getLabel())) {
                 //child = new Trace(child.getIndex());
-                child = new Trace(0);
+                child = new Trace(child.getLabel(), 0);
                 // we temporarily set the index to zero --
                 // index arithmetic will take care of setting the actual index for us later
             

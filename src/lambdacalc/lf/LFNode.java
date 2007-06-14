@@ -16,9 +16,17 @@ public abstract class LFNode {
      */
     public static final char INDEX_SEPARATOR = '_'; 
 
-    protected String label;
+    private String label;
     
-    protected int index = -1;
+    private int index = -1;
+    
+    protected LFNode() {
+    }
+    
+    protected LFNode(String label, int index) {
+        this.label = label;
+        this.index = index;
+    }
     
     public String getLabel() {
         return label;

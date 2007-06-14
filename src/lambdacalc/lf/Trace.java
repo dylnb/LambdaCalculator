@@ -18,26 +18,19 @@ public class Trace extends Terminal {
     
     public static final String SYMBOL = "t";
     
-    /** Creates a new instance of Trace */
-    private Trace() {
+    public Trace(String label, int index) {
+        super(label, index);
     }
     
+    public Trace(int index) {
+        this(SYMBOL, index);
+    }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-
         //return (Expr) g.get(this.getIndex());
         return new GApp(this.getIndex());
     }    
-    
-    public Trace(int index) {
-        this.index = index;
-        this.label = SYMBOL;
-    }
-    
-    public String getLabel() {
-        return SYMBOL;
-    }
-    
+
     public void setLabel(String label) {
         throw new UnsupportedOperationException("Tried to set the label of a trace.");
     }
