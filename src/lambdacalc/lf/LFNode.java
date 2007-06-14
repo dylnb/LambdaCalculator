@@ -89,9 +89,31 @@ public abstract class LFNode {
     public String toString() {
         String result = getLabel();
         if (hasIndex()) {
-            result += String.valueOf(INDEX_SEPARATOR) + getIndex();
+            if (result != null)
+                result += String.valueOf(INDEX_SEPARATOR);
+            result += getIndex();
         } 
         return result;
+    }
+    
+    public String toHTMLString() {
+        if (getLabel() != null) {
+            String result = escapeHTML(getLabel());
+            int caret = result.indexOf('^');
+            if (caret != -1)
+                result = result.substring(0, caret) + "<sup>" + result.substring(caret+1) + "</sup>";
+            if (hasIndex())
+                result += "<sub>" + getIndex() + "</sub>";
+            return result;
+        } else if (hasIndex()) {
+            return "" + getIndex();
+        } else {
+            return "";
+        }
+    }
+    private String escapeHTML(String text) {
+        // remember first arg to replaceAll is a regular expression
+        return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
     
     public Expr getMeaning() throws MeaningEvaluationException {

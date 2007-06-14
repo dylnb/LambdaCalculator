@@ -26,7 +26,7 @@ import lambdacalc.logic.SyntaxException;
 public class BracketedTreeParser {
     
     public static final String[] PRONOUNS = {
-        "he", "she", "it", "him", "her", "himself", "herself", "itself"
+        "he", "she", "it", "him", "her", "himself", "herself", "itself", "his", "hers", "its", "theirs"
     };
     
     public static final String[] INDEX_WORDS = {
@@ -194,11 +194,16 @@ public class BracketedTreeParser {
                              // we haven't moved)
                         break;
                         
+                    case LFNode.INDEX_SEPARATOR:
+                        curNodeForIndex = curnode;
+                        parseMode = 3;
+                        break;
+                        
                     default:
                         String curlabel = curnode.getLabel();
                         if (curlabel == null)
                             curlabel = "";
-                        curnode.setLabel(curlabel + c);
+                        curnode.setLabel(curlabel + transformChar(c));
                         break;
                 }
             
@@ -244,7 +249,7 @@ public class BracketedTreeParser {
                         break;
                         
                     default:
-                        curterminal.setLabel(curterminal.getLabel() + c);
+                        curterminal.setLabel(curterminal.getLabel() + transformChar(c));
                         break;
                 }
                 
@@ -270,6 +275,11 @@ public class BracketedTreeParser {
         // root node. If we get here, the tree is bad.
         throw new SyntaxException("Not enough close-brackets at the end of the tree.", tree.length() - 1);
         
+    }
+    
+    private static char transformChar(char c) {
+        if (c == '\'') return lambdacalc.logic.Identifier.PRIME;
+        return c;
     }
     
     private static Terminal finishTerminal
