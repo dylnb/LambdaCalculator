@@ -42,6 +42,10 @@ public class Nonterminal extends LFNode {
         compositor = rule;
         changes.firePropertyChange("compositionRule", oldRule, compositor);
     }
+    
+    public String getDisplayName() {
+        return "Nonterminal";
+    }
 
     public Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException {

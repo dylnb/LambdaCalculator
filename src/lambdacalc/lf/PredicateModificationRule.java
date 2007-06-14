@@ -44,10 +44,9 @@ public class PredicateModificationRule extends CompositionRule {
                 
         // If either child could not be evaluated, then we
         // just return false.
-        } catch (TypeEvaluationException t) {
-        } catch (MeaningEvaluationException m) {
-        }
-        return false;
+        } catch (Exception e) {
+            return false;
+        }            
     }
     
     public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {

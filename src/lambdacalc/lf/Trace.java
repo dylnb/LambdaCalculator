@@ -52,6 +52,10 @@ public class Trace extends Terminal {
     public void removeIndex() {
         throw new UnsupportedOperationException("Tried to remove the index of a trace.");
     }
+    
+    public String getDisplayName() {
+        return "Trace";
+    }
 
     /**
      * Nothing to do on a Trace.
@@ -63,5 +67,7 @@ public class Trace extends Terminal {
     public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
     
     }
+    
+
     
 }

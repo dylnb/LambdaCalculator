@@ -19,6 +19,10 @@ public class LexicalTerminal extends Terminal {
         return meaning;
     }
     
+    public String getDisplayName() {
+        return "Lexical terminal";
+    }
+    
     /**
      * If the meaning of this terminal hasn't been set yet, 
      * and if the terminal is unambiguous in the lexicon,

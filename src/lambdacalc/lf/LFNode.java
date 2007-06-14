@@ -52,6 +52,12 @@ public abstract class LFNode {
     }
     
     /**
+     * Returns a user-friendly version of the name of this class
+     * (e.g. "terminal", "nonterminal", etc.)
+     */
+    public abstract String getDisplayName();
+    
+    /**
      * Returns a map of properties. Keys are Strings and values are Objects.
      * Each entry represents a property-value pair. Properties include orthographic
      * strings, meanings, types, etc.
@@ -60,6 +66,9 @@ public abstract class LFNode {
      */
     public SortedMap getProperties() {
         SortedMap m = new TreeMap();
+        String name = this.getDisplayName();
+        name = name.substring(name.lastIndexOf(".")+1, name.length());
+        m.put("Kind", name);
         m.put("Text", this.getLabel());
         Type t = null;
         try {

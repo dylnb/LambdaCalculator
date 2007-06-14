@@ -30,20 +30,30 @@ public class AssignmentFunction extends HashMap {
         return super.put(new GApp((Integer) key), value);
     }
     
+    public Object put(BareIndex key, Var value) {
+        if (key == null || value == null) throw new IllegalArgumentException();
+        return super.put(new GApp(key.getIndex()), value);
+    }
+
     public Object put(GApp key, Var value) {
         if (key == null || value == null) throw new IllegalArgumentException();
         return super.put(key, value);
     }
     public Object put(Object key, Object value) {
         if (key == null || value == null) throw new IllegalArgumentException();
-        if (!(key instanceof Integer) && !(key instanceof GApp)) throw new IllegalArgumentException();
+        if (!(key instanceof Integer) 
+        && !(key instanceof GApp)
+        && !(key instanceof BareIndex)) throw new IllegalArgumentException();
         if (!(value instanceof Var)) throw new IllegalArgumentException();
         
         if (key instanceof Integer) {
             return this.put((Integer) key, (Var) value);
         } else if (key instanceof GApp) {
             return this.put((GApp) key, (Var) value);
-        } else { // can't get here
+        } else if (key instanceof BareIndex) {
+            return this.put((BareIndex) key, (Var) value);
+        }
+            { // can't get here
             throw new RuntimeException(); 
         }
     }
@@ -51,6 +61,8 @@ public class AssignmentFunction extends HashMap {
     public boolean containsKey(Object key) {
         if (key instanceof Integer) {
             return super.containsKey(new GApp((Integer) key));
+        } else if (key instanceof BareIndex) {
+            return super.containsKey(new GApp(((BareIndex) key).getIndex()));
         } else {
             return super.containsKey(key);
         }
@@ -77,7 +89,7 @@ public class AssignmentFunction extends HashMap {
     }
     
     public String toString() {
-        return "Not yet implemented";
+        return "toString() not yet implemented";
     }
     
 }

@@ -24,13 +24,13 @@ public class BareIndex extends Terminal {
         this.setIndex(i);
     }
     
-    public String getLabel() {
-        return this.getIndex()+"";
-    }
-    
-    public void setLabel(String label) {
-        throw new UnsupportedOperationException("Tried to set the label of a bare index.");
-    }
+//    public String getLabel() {
+//        return this.getIndex()+"";
+//    }
+//    
+//    public void setLabel(String label) {
+//        throw new UnsupportedOperationException("Tried to set the label of a bare index.");
+//    }
     
     public void setIndex(int index) {
         if (index == -1) {
@@ -43,8 +43,13 @@ public class BareIndex extends Terminal {
         throw new UnsupportedOperationException("Tried to remove the index of a bare index.");
     }
     
-    public Expr getMeaning(AssignmentFunction g) {
-        throw new UnsupportedOperationException("Tried to get the meaning of a BareIndex");
+    public String getDisplayName() {
+        return "Lambda-abstraction index";
+    }
+    
+    public Expr getMeaning(AssignmentFunction g) 
+    throws MeaningEvaluationException {
+        throw new MeaningEvaluationException("Tried to get the meaning of a BareIndex");
     }
     
     /**
@@ -57,4 +62,12 @@ public class BareIndex extends Terminal {
     public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
      // nothing to do on a BareIndex
     }    
+    
+    public String toString() {
+        if (this.getLabel() == null) {
+            return Integer.toString(this.getIndex());
+        } else {
+            return super.toString();
+        }
+    }
 }

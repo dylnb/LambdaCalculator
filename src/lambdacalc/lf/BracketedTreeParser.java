@@ -146,7 +146,10 @@ public class BracketedTreeParser {
                     // this is the start of a terminal
                     if (curnode == null)
                         throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
-                    curterminal = new LexicalTerminal();
+                    curterminal = new LexicalTerminal(); 
+                    // we always start by assuming that the current terminal is
+                    // a lexical terminal; if necessary, we convert it later
+                    // (in finishTerminal)
                     curterminal.setLabel(String.valueOf(c));
                     parseMode = 2;
                     break;
@@ -257,9 +260,11 @@ public class BracketedTreeParser {
 
         // If the terminal label was "t" with an index,
         // load it as a Trace object.
-        if (child.getLabel().equals("t") && child.getIndex() != -1)
+        if ((child.getLabel() != null) 
+        && (child.getLabel().equals(Trace.SYMBOL))
+        && child.getIndex() != -1) {
             child = new Trace(child.getIndex());
-
+        }
         parent.addChild(child);
         return child;
     }
