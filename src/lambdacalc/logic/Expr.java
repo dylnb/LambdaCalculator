@@ -48,12 +48,28 @@ public abstract class Expr {
      * @returns the result of toString() on nestedExpr, except that when nestedExpr
      * has a higher or equal operator precedence than this, it is wrapped with parens.
      */
-    protected final String nestedToString(Expr nestedExpr) {
+    protected final String nestedToString(Expr nestedExpr, boolean html) {
         if (nestedExpr.getOperatorPrecedence() >= this.getOperatorPrecedence())
-            return "(" + nestedExpr.toString() + ")";
-        return nestedExpr.toString();
+            return "(" + nestedExpr.toString(html) + ")";
+        return nestedExpr.toString(html);
     }
     
+    public final String toString() {
+        return toString(false);
+    }
+    
+    public final String toHTMLString() {
+        return toString(true);
+    }
+    
+    protected abstract String toString(boolean html);
+
+    protected String escapeHTML(String text, boolean html) {
+        if (!html) return text;
+        // remember first arg to replaceAll is a regular expression
+        return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
     /**
      * Gets the semantic type of the expression, or throws a
      * TypeEvaluationException if there is a type mismatch.

@@ -67,11 +67,13 @@ public abstract class Identifier extends Expr {
         return null;
     }
     
-    public String toString() {
+    protected String toString(boolean html) {
         if (!isTypeExplicit())
-            return symbol;
-        else
+            return escapeHTML(symbol, html);
+        else if (!html)
             return symbol + "_" + type.toString();
+        else
+            return escapeHTML(symbol, true) + "<sub>" + escapeHTML(type.toString(), true) + "</sub>";
     }
     
     /**

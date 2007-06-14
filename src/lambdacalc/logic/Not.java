@@ -31,12 +31,12 @@ public class Not extends Unary {
         return 3;
     }
     
-    public String toString() {
+    protected String toString(boolean html) {
         // As a special case, we don't need to put parens around binders since it's unambiguous.
         if (getInnerExpr() instanceof Binder)
-            return SYMBOL + getInnerExpr().toString();
+            return SYMBOL + getInnerExpr().toString(html);
         else
-            return SYMBOL + nestedToString(getInnerExpr());
+            return SYMBOL + nestedToString(getInnerExpr(), html);
     }
     
     public Type getType() throws TypeEvaluationException {

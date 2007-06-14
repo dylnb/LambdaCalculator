@@ -207,15 +207,15 @@ public abstract class Binder extends Expr {
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
     
-    public String toString() {
-        String inner = innerExpr.toString();
+    protected String toString(boolean html) {
+        String inner = innerExpr.toString(html);
         if (!(innerExpr instanceof Binder) 
           && innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
             inner = "[" + inner + "]";
         } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {
             inner = "." + inner;
         }
-        return getSymbol() + ident.toString() + inner;
+        return getSymbol() + escapeHTML(ident.toString(), html) + inner;
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {

@@ -180,7 +180,7 @@ public class GApp extends Expr {
         return new GApp(this.getIndex());
     }
     
-    public String toString() {
+    protected String toString(boolean html) {
         return SYMBOL + OPEN_BRACKET + this.getIndex() + CLOSE_BRACKET;
     }
     

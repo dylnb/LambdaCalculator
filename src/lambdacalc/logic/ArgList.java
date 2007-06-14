@@ -53,12 +53,12 @@ public class ArgList extends Expr {
         return exprs.length;
     }
     
-    public String toString() {
+    protected String toString(boolean html) {
         String ret = null;
         for (int i = 0; i < exprs.length; i++) {
             if (ret == null) ret = "(";
             else ret += ",";
-            ret += exprs[i].toString(); // note that we don't ever wrap it with parens because the comma separator here makes this unambiguous
+            ret += exprs[i].toString(html); // note that we don't ever wrap it with parens because the comma separator here makes this unambiguous
         }
         ret += ")";
         return ret;

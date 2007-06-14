@@ -238,10 +238,11 @@ public class TreeExerciseWidget extends JPanel {
         // For nonterminals, give them JLabels for their meanings.
         } else {
         */
-            JLabel meaningLabel = new JLabel();
-            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
+            JHTMLLabel meaningLabel = new JHTMLLabel();
+            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(12));
             label.add(meaningLabel);
             meaningLabel.setAlignmentX(.5F);
+            meaningLabel.addMouseListener(new NodeClickListener(lfnode));
             lfToMeaningLabel.put(lfnode, meaningLabel);
 
         /*    JComboBox compositionRuleChoices = new JComboBox();
@@ -442,15 +443,17 @@ public class TreeExerciseWidget extends JPanel {
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
         // display the lambda expression.
-        JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
+        JHTMLLabel meaningLabel = (JHTMLLabel)lfToMeaningLabel.get(node);
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
             java.awt.Color meaningColor;
 
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
             if (ms.evaluationError == null) { // was there an error?
-                meaningLabel.setText(ms.exprs.get(ms.curexpr).toString());
+                meaningLabel.setContentType("text/html");
+                meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
                 meaningColor = java.awt.Color.BLUE;
             } else {
+                meaningLabel.setContentType("text/plain");
                 meaningLabel.setText("Problem!");
                 meaningColor = java.awt.Color.RED;
             }

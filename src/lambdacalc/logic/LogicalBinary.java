@@ -25,17 +25,15 @@ public abstract class LogicalBinary extends Binary {
         super(left, right);
     }
     
-    public String toString() {
-        return partToString(getLeft()) + " " + getSymbol() + " " + partToString(getRight());
+    protected String toString(boolean html) {
+        return partToString(getLeft(), html) + " " + getSymbol() + " " + partToString(getRight(), html);
     }
     
-    private String partToString(Expr expr) {
+    private String partToString(Expr expr, boolean html) {
         // And and Or are associative, so we omit parens for nested Ands within Ands and Ors within Ors.
-        if (((this instanceof And || this instanceof Or)) && expr.getClass() == getClass()) return expr.toString();
-        return nestedToString(expr);
+        if (((this instanceof And || this instanceof Or)) && expr.getClass() == getClass()) return expr.toString(html);
+        return nestedToString(expr, html);
     }
-    
-
     
     /**
      * Gets the unicode symbol associated with the binary connective.

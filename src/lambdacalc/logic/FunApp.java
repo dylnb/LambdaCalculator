@@ -58,13 +58,13 @@ public class FunApp extends Binary {
         return getRight();
     }
     
-    public String toString() {
-        String arg = getArg().toString();
+    protected String toString(boolean html) {
+        String arg = getArg().toString(html);
         if (!(getArg() instanceof Parens) && !(getArg() instanceof ArgList))
             arg = "(" + arg + ")";
         if (!(getFunc() instanceof Identifier))
             arg = " " + arg;
-        return getFunc().toString() + arg;
+        return getFunc().toString(html) + arg;
     }
     
     protected Binary create(Expr left, Expr right) {
