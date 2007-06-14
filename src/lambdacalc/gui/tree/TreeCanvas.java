@@ -18,6 +18,8 @@ public class TreeCanvas extends JComponent implements Scrollable {
     JTreeNode root;
     TreeLayoutMethod layout;
 
+    int margin = 5; // space in pixels between nodes and component edge
+    
     boolean animated = true;    
     javax.swing.Timer timer;
     boolean hadPositionChange = false;
@@ -73,12 +75,14 @@ public class TreeCanvas extends JComponent implements Scrollable {
         layout.layoutTree(getRoot());
         
         // Move nodes.
-        if (!animated)
+        if (!animated) {
             positionControls(getRoot(), false);
-        else
+            preferredSize = getPreferredSize(getRoot());
+            setSize(preferredSize);
+        } else {
             timer.start();
-        
-        preferredSize = getPreferredSize(getRoot());
+            // size, preferredSize gets updated during animation
+        }
     }
     
     public abstract class TreeLayoutMethod {
@@ -238,10 +242,10 @@ public class TreeCanvas extends JComponent implements Scrollable {
                 node.getLabel().setLocation(0,0); // relative to the panel that contains just that node
             }
             
-            node.setLocation(node.positionX - node.getWidth()/2, node.positionY);
+            node.setLocation(margin + node.positionX - node.getWidth()/2, margin + node.positionY);
         } else {
-            hadPositionChange = (node.positionX != node.getLocation().x) || (node.positionY != node.getLocation().y);
-            node.setLocation((node.positionX + (node.getLocation().x+node.getWidth()/2))/2 - node.getWidth()/2, (node.positionY + node.getLocation().y)/2);
+            hadPositionChange = (margin + node.positionX != node.getLocation().x) || (margin + node.positionY != node.getLocation().y);
+            node.setLocation((margin + node.positionX + (node.getLocation().x+node.getWidth()/2))/2 - node.getWidth()/2, (margin + node.positionY + node.getLocation().y)/2);
         }
         
         node.currentX = node.getLocation().x + node.getWidth()/2;
@@ -261,8 +265,8 @@ public class TreeCanvas extends JComponent implements Scrollable {
     
      private Dimension getPreferredSize(JTreeNode node) {
         int width = 0, height = 0;
-        int right = node.getLocation().x + node.getWidth();
-        int bottom = node.getLocation().y + node.getHeight();
+        int right = node.getLocation().x + node.getWidth() + margin;
+        int bottom = node.getLocation().y + node.getHeight() + margin;
         if (right > width) width = right;
         if (bottom > height) height = bottom;
         for (int i = 0; i < node.arity(); i++) {
@@ -306,6 +310,8 @@ public class TreeCanvas extends JComponent implements Scrollable {
             repaint(); // clear previous lines that were drawn
             if (!hadPositionChange)
                 timer.stop();
+            preferredSize = getPreferredSize(getRoot());
+            setSize(preferredSize);
         }
     }
         
@@ -317,10 +323,10 @@ public class TreeCanvas extends JComponent implements Scrollable {
         ArrayList children = new ArrayList();
         
         Object layoutInfo;
-        int positionX, positionY; // desired layout position (x is the center of the label, y is top)
+        int positionX, positionY; // desired layout position (x is the center of the label, y is top), not including margins
         boolean hasPosition = false, hasBeenPlaced = false;
         
-        int currentX, currentY; // actual current on-screen position (x is at center of label, y is top)
+        int currentX, currentY; // actual current on-screen position (x is at center of label, y is top), including margins
         
         /**
          * @param parent null if this is the root node
@@ -404,12 +410,12 @@ public class TreeCanvas extends JComponent implements Scrollable {
     public int getScrollableUnitIncrement(Rectangle visibleRect,
                                       int orientation,
                                       int direction) {
-        return 10; // TODO
+        return 20; // TODO
     }
     public int getScrollableBlockIncrement(Rectangle visibleRect,
                                        int orientation,
                                        int direction) {
-        return 40; // TODO
+        return 80; // TODO
     }
     public boolean getScrollableTracksViewportWidth() {
         return false;

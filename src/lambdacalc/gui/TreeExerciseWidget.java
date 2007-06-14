@@ -194,6 +194,15 @@ public class TreeExerciseWidget extends JPanel {
         moveTo(lftree);
     }
     
+    private class JHTMLLabel extends JTextPane {
+        public JHTMLLabel() {
+            setEditable(false);
+            setContentType("text/html");
+            setFocusable(false);
+            setMargin(new Insets(0,0,0,0));
+        }
+    }
+    
     // Recursively construct the TreeCanvas structure to reflect
     // the structure of the LFNode subtree.
     void buildTree(TreeCanvas.JTreeNode treenode, LFNode lfnode) {
@@ -207,9 +216,10 @@ public class TreeExerciseWidget extends JPanel {
         
         label.addMouseListener(new NodeClickListener(lfnode));
         
-        JLabel orthoLabel = new JLabel(lfnode.getLabel());
+        JHTMLLabel orthoLabel = new JHTMLLabel();
         label.add(orthoLabel);
         orthoLabel.setAlignmentX(.5F);
+        orthoLabel.addMouseListener(new NodeClickListener(lfnode));
         lfToOrthoLabel.put(lfnode, orthoLabel);
         
         /*
@@ -423,18 +433,8 @@ public class TreeExerciseWidget extends JPanel {
         nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
         // Change the label if it's the current evaluation node.
-        String label = node.getLabel();
-        if (label != null) {
-            if (node.getIndex() != -1)
-                label += "_" + node.getIndex();
-        } else {
-            if (node.getIndex() != -1) // no label but an index -> show the index alone
-                label = "" + node.getIndex();
-            else // no label and no index: empty label
-                label = "";
-        }
-        JLabel orthoLabel = (JLabel)lfToOrthoLabel.get(node);
-        orthoLabel.setText(label);
+        JTextPane orthoLabel = (JTextPane)lfToOrthoLabel.get(node);
+        orthoLabel.setText("<center>" + node.toHTMLString() + "</center>");
         
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
