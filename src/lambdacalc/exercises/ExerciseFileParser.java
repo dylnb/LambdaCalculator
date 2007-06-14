@@ -179,6 +179,7 @@ public class ExerciseFileParser {
                         ex = new TreeExercise(line, exindex++, typer.cloneTyper());
                         ((TreeExercise)ex).getTree().guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
                     } catch (Exception e) {
+                        e.printStackTrace();
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
                     }
                 }

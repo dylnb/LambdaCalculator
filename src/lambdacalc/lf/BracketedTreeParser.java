@@ -24,6 +24,28 @@ import lambdacalc.logic.SyntaxException;
  * the root to the node currently being processed.
  */
 public class BracketedTreeParser {
+    
+    public static final String[] PRONOUNS = {
+        "he", "she", "it", "him", "her", "himself", "herself", "itself"
+    };
+    
+    public static final String[] INDEX_WORDS = {
+        "such", "that", "what", "which", "who"
+    };
+    
+    public static boolean isPronoun(String word) {
+        for (int i = 0; i < PRONOUNS.length; i++) {
+            if (PRONOUNS[i].equals(word)) return true;
+        }
+        return false;
+    }
+
+    public static boolean isIndexWord(String word) {
+        for (int i = 0; i < INDEX_WORDS.length; i++) {
+            if (INDEX_WORDS[i].equals(word)) return true;
+        }
+        return false;
+    }    
 
     public static Nonterminal parse(String tree) throws SyntaxException {
         // A quick and dirty recurive cfg parser.
@@ -189,7 +211,7 @@ public class BracketedTreeParser {
                     case ' ':
                     case ']':
                     case '[':
-                        finishTerminal(curnode, curterminal);
+                        finishTerminal(curnode, curterminal, c);
                         parseMode = 0;
                         curterminal = null;
                         i--; // back track so they are parsed in parseMode 0
@@ -210,13 +232,13 @@ public class BracketedTreeParser {
                         } catch (lambdacalc.logic.SyntaxException ex) {
                             throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
                         }
-                        finishTerminal(curnode, curterminal);
+                        finishTerminal(curnode, curterminal, c);
                         i = semi; // resume from next position (i is incremented at end of iteration)
                         parseMode = 0; // reading of terminal label is complete
                         break;
                         
                     case LFNode.INDEX_SEPARATOR:
-                        curNodeForIndex = finishTerminal(curnode, curterminal);
+                        curNodeForIndex = finishTerminal(curnode, curterminal, c);
                         parseMode = 3;
                         curterminal = null;
                         break;
@@ -230,10 +252,12 @@ public class BracketedTreeParser {
                 // Reading the index of a node.
                 if (Character.isDigit(c)) {
                     int idx = Integer.valueOf(String.valueOf(c)).intValue();
-                    if (curNodeForIndex.getIndex() == -1)
+                    if (curNodeForIndex.getIndex() == -1) {
                         curNodeForIndex.setIndex(idx);
-                    else // perform arithmetic to do string concatenation
+                                               
+                    } else // perform arithmetic to do string concatenation
                         curNodeForIndex.setIndex(curNodeForIndex.getIndex() * 10 + idx);
+                        
                 } else {
                     parseMode = 0;
                     i--; // make sure to re-read this character on the next iteration
@@ -248,7 +272,8 @@ public class BracketedTreeParser {
         
     }
     
-    private static Terminal finishTerminal(Nonterminal parent, Terminal child) {
+    private static Terminal finishTerminal
+            (Nonterminal parent, Terminal child, char lastCharacterRead) {
         // If the terminal label was just an integer,
         // load it as a BareIndex object.
         try {
@@ -258,25 +283,26 @@ public class BracketedTreeParser {
             // ignore parsing error: it's not a bare index
         }
 
-        if (child.getIndex() != -1 && child.getLabel() != null) {
-            // If the terminal label was "t" with an index,
+        if (child.getLabel() != null && lastCharacterRead == LFNode.INDEX_SEPARATOR) {
+            // If the terminal label was "t" and we expect to read an index,
             // load it as a Trace object.
             if (child.getLabel().equals(Trace.SYMBOL))
                 child = new Trace(child.getIndex());
             
-            // If the label was a personal pronoun and it has an index,
+            // If the label was a personal pronoun and we expect to read an index,
             // load it as a trace too.
-            else if (child.getLabel().equals("he") || child.getLabel().equals("she") || child.getLabel().equals("it")
-                || child.getLabel().equals("him") || child.getLabel().equals("her")
-                || child.getLabel().equals("himself") || child.getLabel().equals("herself") || child.getLabel().equals("itself"))
-                child = new Trace(child.getIndex());
-
-            // If the label was a relative pronoun and it has an index,
+            else if (isPronoun(child.getLabel())) {
+                //child = new Trace(child.getIndex());
+                child = new Trace(0);
+                // we temporarily set the index to zero --
+                // index arithmetic will take care of setting the actual index for us later
+            
+            // If the label was a relative pronoun and we expect to read an index,
             // return it as a BareIndex.
-            else if (child.getLabel().equals("that") || child.getLabel().equals("such")
-                || child.getLabel().equals("which") || child.getLabel().equals("who")
-                || child.getLabel().equals("what"))
-                child = new BareIndex(child.getLabel(), child.getIndex());
+            } else if (isIndexWord(child.getLabel())) {  
+                child = new BareIndex(child.getLabel(), 0);
+//                child = new BareIndex(child.getLabel(), child.getIndex());
+            }
         }
         
         parent.addChild(child);

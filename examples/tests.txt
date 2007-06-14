@@ -42,5 +42,5 @@ points per exercise 20
 #[.S [.NBAR a guy] [.VP loves Mary]]
 #[.NP a guy]
 #[.S [.NP a [.N' happy guy]] [.VP sleeps]]
-[.S John [ 1 [.VP t_1 sleeps]]]
-#[ 1 sleeps]
+[.S John [ such_320 [.VP t_1034 sleeps]]]
+#[ t_1 sleeps]
