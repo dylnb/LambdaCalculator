@@ -154,6 +154,11 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // let's check up front whether the user answered without changing
         // the question.  if the expression is not reducible, that's fine,
         // otherwise we need to tell the user to try to reduce the expression
+        
+        // TODO: Probably compare with last_answer, not prev_step, if last_answer
+        // is not null, because the user's actual previous answer may be different
+        // if any alphabetical variants have been made.
+        
         if (users_answer.equals(prev_step)) {
             // the user didn't do anything
             if (steptypes.get(0).equals("notreducible")) { // and that was the right thing to do

@@ -290,7 +290,7 @@ public class ExpressionParser {
         // want to read to the end of the string.) We'll just take the first error message
         // we can find in a HowToContinue field, or throw a generic one if there aren't any
         // prepared messages.
-        if (readFully && maxParse != expression.length()) {
+        if (readFully && maxParse != expression.length() && skipWhitespace(expression, maxParse) != -1) {
             for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-maximal parses
                 ParseResult r = (ParseResult)rs.Parses.get(i);
                 if (r.HowToContinue != null)
@@ -716,7 +716,7 @@ public class ExpressionParser {
                 if (!first) {
                     // With parentheses, we need commas between the arguments.
                     if (getChar(expression, start, context) != ',')
-                        return new ParseResultSet(new SyntaxException("A comma must be used to separate arguments to a predicate.", start));
+                        return new ParseResultSet(new SyntaxException("If another argument to the predicate " + id + " starts at the indicated location, use a comma to separate it from the previous argument. Otherwise, close your parentheses.", start));
                     start++;
                 }
                 first = false;
@@ -853,10 +853,10 @@ public class ExpressionParser {
      * care of. The operator precendence is:
      *   Not Equal -- binds strongest
      *   Equal
-     *   If
-     *   Iff
      *   And
-     *   Or -- binds weakest
+     *   Or
+     *   If
+     *   Iff -- binds weakest
      *
      * Ambiguity of expressions like Lx.P & Q as Vx.[P & Q] or [Vx.P] & Q
      * are handled by returning not a single result, but for expressions
@@ -1022,10 +1022,10 @@ public class ExpressionParser {
             char[] operator_precedence = {
                 Equality.NEQ_SYMBOL,
                 Equality.EQ_SYMBOL,
-                If.SYMBOL,
-                Iff.SYMBOL,
                 And.SYMBOL,
-                Or.SYMBOL };
+                Or.SYMBOL,
+                If.SYMBOL,
+                Iff.SYMBOL };
                
             for (int i = 0; i < operator_precedence.length; i++) {
                 SyntaxException ex = groupOperands(operands, operators, operator_precedence[i]);
@@ -1157,7 +1157,7 @@ public class ExpressionParser {
         }
         
         // If we don't allow spaces between the function and argument,
-        // but a space was encountered, we're done.'
+        // but a space was encountered, we're done.
         if (!allowSpace && left.Next != start) {
             results.add(left);
             return;
@@ -1175,7 +1175,14 @@ public class ExpressionParser {
         // the left expression and note in its HowToContinue
         // field the error that prevents us from continuing
         // it with the text that follows.
-        results.add(new ParseResult(left.Expression, left.Next, rights.Exception));
+        // If !allowSpace, which means we're right in the scope of a binder,
+        // an if there wasn't space (there wasn't, we checked already) and we
+        // were able to parse the next argument, then
+        // we always parse the function application low, so we *don't* allow
+        // the nondeterministic parsing path that ends after the function, which
+        // allows the argument to be parsed higher up.
+        if (allowSpace || rights.Exception != null)
+            results.add(new ParseResult(left.Expression, left.Next, rights.Exception));
         
         // And if indeed we had an error getting the argument, we have to stop.
         if (rights.Exception != null)
