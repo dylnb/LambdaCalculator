@@ -148,8 +148,8 @@ public class TrainingWindow extends JFrame {
         GridLayout layout = (GridLayout) jPanelInfoBox.getLayout();
         if (true) {
 //        if (selectedNode instanceof LexicalTerminal) {
-            layout.setRows(2);
-            jPanelInfoBox.add(jScrollPaneInfoBox);
+            layout.setRows(1);
+            //jPanelInfoBox.add(jScrollPaneInfoBox);
             jPanelInfoBox.add(lexiconList);
         } else {
             layout.setRows(1);
@@ -851,7 +851,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
         jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 28));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 160));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 100));
         jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
 
         jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
