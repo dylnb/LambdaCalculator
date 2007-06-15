@@ -1,4 +1,4 @@
-Training Assignment
+Training Assignment 1
 
 constants of type e : a b c
 constants of type <e,t> : P-Q
