@@ -50,8 +50,8 @@ public class TreeExerciseWidget extends JPanel {
     LFNode selectedNode = null;
     
     // Buttons
-    JButton btnSimplify = new JButton("Simplify");
-    JButton btnUnsimplify = new JButton("Unsimplify");
+    JButton btnSimplify = new JButton("Compute");
+    JButton btnUnsimplify = new JButton("Undo compute");
     JButton btnNextStep = new JButton("Next Node");
     JButton btnPrevStep = new JButton("Previous Node");
     
@@ -139,11 +139,11 @@ public class TreeExerciseWidget extends JPanel {
         btnUnsimplify.addActionListener(new UnsimplifyActionListener());
         buttons.add(btnUnsimplify);
         
-        btnNextStep.addActionListener(new NextStepActionListener());
-        buttons.add(btnNextStep);
+        //btnNextStep.addActionListener(new NextStepActionListener());
+        //buttons.add(btnNextStep);
 
-        btnPrevStep.addActionListener(new PrevStepActionListener());
-        buttons.add(btnPrevStep);
+        //btnPrevStep.addActionListener(new PrevStepActionListener());
+        //buttons.add(btnPrevStep);
 
         add(buttons, BorderLayout.PAGE_START);
     }

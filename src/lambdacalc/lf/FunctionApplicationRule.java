@@ -63,7 +63,7 @@ public class FunctionApplicationRule extends CompositionRule {
             return apply(rightMeaning, leftMeaning);
 
         throw new MeaningEvaluationException("The children of the nonterminal "
-                + node.toString() + " are not of compatible types for function " +
+                + (node.getLabel() == null ? node.toString() : node.getLabel())+ " are not of compatible types for function " +
                 "application.");
     }
     
@@ -79,7 +79,7 @@ public class FunctionApplicationRule extends CompositionRule {
             }
             return false;
         } catch (TypeEvaluationException ex) {
-            throw new MeaningEvaluationException("A type mismatch exists: " 
+            throw new MeaningEvaluationException("A type mismatch has occurred: " 
                     + ex.getMessage());
         }
     }

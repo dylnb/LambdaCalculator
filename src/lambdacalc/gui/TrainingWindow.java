@@ -160,13 +160,13 @@ public class TrainingWindow extends JFrame {
     }
 
     public void switchViewTo(int view) {
-        CardLayout cardLayout = (CardLayout) jPanelLowerRight.getLayout();
+        CardLayout cardLayout = (CardLayout) jPanelCardLayout.getLayout();
         switch (view) {
             case TREES:
-                cardLayout.show(jPanelLowerRight, "treesCard");
+                cardLayout.show(jPanelCardLayout, "treesCard");
                 break;
             case TYPES_AND_CONVERSIONS:
-                cardLayout.show(jPanelLowerRight, "typesAndConversionsCard");
+                cardLayout.show(jPanelCardLayout, "typesAndConversionsCard");
                 break;
                 
 //                
@@ -512,6 +512,8 @@ public class TrainingWindow extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jScrollPaneInfoBox = new javax.swing.JScrollPane();
+        jTableInfoBox = new javax.swing.JTable();
         jFileChooser1 = new javax.swing.JFileChooser();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
@@ -530,12 +532,9 @@ public class TrainingWindow extends JFrame {
         jScrollPaneDirections = new javax.swing.JScrollPane();
         lblDirections = new javax.swing.JTextArea();
         jPanelLowerRight = new javax.swing.JPanel();
+        jPanelCardLayout = new javax.swing.JPanel();
         jPanelTypesAndConversions = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
-        jPanelNavigationButtons = new javax.swing.JPanel();
-        btnPrev = new javax.swing.JButton();
-        btnDoAgain = new javax.swing.JButton();
-        btnNext = new javax.swing.JButton();
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
@@ -546,8 +545,10 @@ public class TrainingWindow extends JFrame {
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelNodeProperties = new javax.swing.JPanel();
         jPanelInfoBox = new javax.swing.JPanel();
-        jScrollPaneInfoBox = new javax.swing.JScrollPane();
-        jTableInfoBox = new javax.swing.JTable();
+        jPanelNavigationButtons = new javax.swing.JPanel();
+        btnPrev = new javax.swing.JButton();
+        btnDoAgain = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -558,6 +559,20 @@ public class TrainingWindow extends JFrame {
         menuTools = new javax.swing.JMenu();
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
+
+        jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
+        jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPaneInfoBox.setViewportView(jTableInfoBox);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -692,7 +707,9 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);
 
-        jPanelLowerRight.setLayout(new java.awt.CardLayout());
+        jPanelLowerRight.setLayout(new java.awt.GridBagLayout());
+
+        jPanelCardLayout.setLayout(new java.awt.CardLayout());
 
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
@@ -706,63 +723,9 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 15;
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(btnCheckAnswer, gridBagConstraints);
-
-        jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
-
-        btnPrev.setText("< Previous Problem");
-        btnPrev.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrevActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
-
-        btnDoAgain.setText("Do Problem Again");
-        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDoAgainActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
-
-        btnNext.setText("Next Problem >");
-        btnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNextActionPerformed(evt);
-            }
-        });
-        btnNext.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                btnNextKeyPressed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        jPanelNavigationButtons.add(btnNext, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanelTypesAndConversions.add(jPanelNavigationButtons, gridBagConstraints);
 
         jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneFeedback.setBorder(javax.swing.BorderFactory.createTitledBorder("Feedback"));
@@ -834,7 +797,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
-        jPanelLowerRight.add(jPanelTypesAndConversions, "typesAndConversionsCard");
+        jPanelCardLayout.add(jPanelTypesAndConversions, "typesAndConversionsCard");
 
         jPanelTrees.setLayout(new java.awt.GridBagLayout());
 
@@ -849,26 +812,10 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.setLayout(new java.awt.GridLayout(1, 0));
 
-        jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Node properties"));
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 28));
+        jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Lexical entries"));
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 100));
         jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 100));
         jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
-
-        jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
-        jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPaneInfoBox.setViewportView(jTableInfoBox);
-
-        jPanelInfoBox.add(jScrollPaneInfoBox);
 
         jPanelNodeProperties.add(jPanelInfoBox);
 
@@ -878,7 +825,67 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanelTrees.add(jPanelNodeProperties, gridBagConstraints);
 
-        jPanelLowerRight.add(jPanelTrees, "treesCard");
+        jPanelCardLayout.add(jPanelTrees, "treesCard");
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelLowerRight.add(jPanelCardLayout, gridBagConstraints);
+
+        jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
+
+        btnPrev.setText("< Previous Problem");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
+
+        btnDoAgain.setText("Do Problem Again");
+        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoAgainActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
+
+        btnNext.setText("Next Problem >");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+        btnNext.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnNextKeyPressed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanelNavigationButtons.add(btnNext, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanelLowerRight.add(jPanelNavigationButtons, gridBagConstraints);
 
         jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
 
@@ -1293,6 +1300,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelEnterExpressions;
     private javax.swing.JPanel jPanelInfoBox;
     private javax.swing.JPanel jPanelLowerRight;

@@ -43,9 +43,9 @@ public class LexiconList extends JPanel
     public LexiconList() {
         setLayout(new BorderLayout());
         
-        add(new JLabel("Lexicon"), BorderLayout.NORTH);
+        //add(new JLabel("Lexicon"), BorderLayout.NORTH);
         
-        add(listbox, BorderLayout.CENTER);
+        add(new JScrollPane(listbox), BorderLayout.CENTER);
         listbox.setModel(entries);
         listbox.addListSelectionListener(this);
         
