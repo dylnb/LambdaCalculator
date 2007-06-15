@@ -1,17 +1,17 @@
 Training Assignment
 
-constants of type e : a b-c
+constants of type e : a b c
 constants of type <e,t> : P-Q
 constants of type <e*e,t> : R
-variables of type e : x-z
-variables of type <et> : X Y
+variables of type e : u-z
+variables of type <e,t> : X Y
 
 exercise semantic types
 title Semantic Types
 directions Give the semantic type of the following lambda-expressions.
 directions For instance, the type of "x" is e, and the type of "P(x)"
 directions is t.
-points per exercise 20
+points per exercise 5
 
 P(a) -> Q(b)
 Lx[P(x) & Q(x)]
@@ -30,9 +30,13 @@ directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.
 points per exercise 10
 
-Lx[P(x) & Q(x)] (a)
-LxLy[R(a,y) & Q(x)] (a) (b)
-Lx.Ey[R(y,x)] (y)
-Lx[a] (b)
-Lx[P(x) -> Ex[R(x,b)]] (a)
-LxLx[P(x) -> R(x,c)] (a) (b)
+Lx.Ly.[R(x,y) & R(y,x)]   (a)  (b)
+Lx.Ly.Lz.[R(y,y) | R(x,z)]    (a)    (b)   
+Lx.Ly.Ey[R(x,y) & Q(x)] (a) (b)
+Ly.[Q(b) | R(b,b)]    (a)
+Ly.Lx.Az[R(x,z) -> Ex(R(y,x))]   (a)   (b)
+Ly.Lx.~Ey[Q(y) & Ax(R(x,y))]   (a)   (b)
+Lx.Ly.Lx.[R(x,b) & T(y)]   (a)  (b)  (c)
+Lx.Ey[Q(x) | T(y)]    (y)
+Lx.Ly.[ExEy[R(x,y)] -> P(x) & Q(y)]  (a)  (b)
+Lx.Ly.[T(x) & Az[P(z) -> R(x,y)]]  (z) (z)

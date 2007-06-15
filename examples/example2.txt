@@ -11,6 +11,7 @@ Homework 2
 
 constants of type e : c p r s
 variables of type e : x-z
+variables of type v : e
 variables of type <e,t> : P-Q X-Z
 variables of type <e*e,t> : R-S
 
@@ -41,9 +42,8 @@ define Ron : r
 define Sue : s
 define Philadelphia : p
 define shaves : LxLy[shaves(y,x)]
-define shaves : Lx[shaves(x)]
 define introduces : LxLyLz[introduces(z,x,y)]
-define hug : Lx.HUGGING(x)
+define hug : Le.HUGGING(e)
 
 # Finally, the exercises themselves are entered.
 
@@ -56,7 +56,7 @@ directions take the following imaginary morphemes alpha, beta, gamma, and delta.
 directions Assuming the syntactic structure given, give a denotation for each of 
 directions these morphemes (in lambda-notation, for any arbitrary situation).
 
-# [.IP [NPsu [.VP [.V' [.V0 alpha Vstem] NPdo] NPio]]]
+# [.IP [NPsu [.VP [.V' [.V^0 alpha Vstem] NPdo] NPio]]]
 
 instructions Carlos-SU alpha-shaves \\
 instructions “Carlos shaves Carlos” (i.e., Carlos shaves, or Carlos shaves himself)
@@ -64,15 +64,15 @@ instructions “Carlos shaves Carlos” (i.e., Carlos shaves, or Carlos shaves h
 
 instructions Carlos-SU  beta-introduces  Paco-DO. \\
 instructions “Carlos introduces Paco to Carlos (himself).”
-[.IP Carlos [.VP [.V0 beta introduces] Paco ]]
+[.IP Carlos [.VP [.V^0 beta introduces] Paco ]]
 
 instructions Carlos-SU  gamma-introduces  Paco-DO. \\
 instructions “Carlos introduces Paco to Paco (himself).”
-[.IP Carlos [.VP [.V0 gamma introduces] Paco ]]
+[.IP Carlos [.VP [.V^0 gamma introduces] Paco ]]
 
 instructions Carlos-SU  delta-introduces  Paco-IO. \\
 instructions “Carlos introduces nobody but Carlos (himself) to Paco.”
-[.IP Carlos [.VP [.V0 delta introduces] Paco ]]
+[.IP Carlos [.VP [.V^0 delta introduces] Paco ]]
 
 exercise tree
 title More NatLg denotations as lambda-expressions.
@@ -102,7 +102,7 @@ instructions as lambda-expressions of type <<v,t>,<e,<v,t>>>, 2) spell out the
 instructions denotation of the preposition in as a lambda-expression of type
 instructions <e,<v,t>>, and 3) do the semantic computation of the sentence step
 instructions by step.
-[.AgP [.NP Ron] [.Ag' Ag0 [.PatP [.PatP [.Pat' [.V hug] Pat0] [.NP Sue] ] [.PP in Philadelphia] ]]]
+[.AgP [.NP Ron] [.Ag' Ag^0 [.PatP [.PatP [.Pat' [.V hug] Pat^0] [.NP Sue] ] [.PP in Philadelphia] ]]]
 
 instructions Your second task is the following. Assuming the partial syntactic
 instructions structure below for example (1), provide the denotation of the
@@ -115,7 +115,7 @@ instructions (1) Nd-o-far-el-a		         Mukasa   khali \\
 instructions     1sg-PAST-hold-APPL-FV  Mukasa    pot \\
 instructions    “I held the pot for Mukasa.”
 
-[.PatP [.Pat' [.ApplP [.Appl' [.Vstem far el] Appl0] Mukasa] Pat0] khali]
+[.PatP [.Pat' [.ApplP [.Appl' [.Vstem far el] Appl^0] Mukasa] Pat^0] khali]
 
 
 exercise tree
@@ -128,7 +128,7 @@ instructions but not the PrL predicate TOPMOST.] \\
 instructions \\
 instructions (1) the woman the topmost portrait of whom1 please her1 husband
 
-[.DP1 the [.NP1 woman [.CP who_1 [.IP [.DP2 the [.NP2 topmost [portrait-of t_1]]] [.VP pleased [.DP3 the [.NP3 husband-of her_1]]]]]]]
+[.DP_1 the [.NP_1 woman [.CP who_1 [.IP [.DP_2 the [.NP_2 topmost [portrait-of t_1]]] [.VP pleased [.DP_3 the [.NP_3 husband-of her_1]]]]]]]
 
 
 instructions Do the semantic computation of (1) bottom-up. Ignore index
@@ -137,5 +137,5 @@ instructions ensure the intended coreference between [her niece]2 and her2. \\
 instructions \\
 instructions (1) the woman which1 introduced [her1 niece]2 to the rock-star (which3) she2 liked t3
 
-[.DP1 the [.NP1 woman [.CP1 which_1 [.IP1 t1 [.VP1 [.VP introduced [.DP3 the [.NP3 niece-of hers_1]]] [.PP (to) [.DP3 the [.NP3 rock-star [.CP3 which_3 [.IP3 she_2 [.VP liked t_3] ] ]] ]]]]]]]
+[.DP_1 the [.NP_1 woman [.CP_1 which_1 [.IP_1 t_1 [.VP_1 [.VP introduced [.DP_3 the [.NP_3 niece-of hers_1]]] [.PP (to) [.DP_3 the [.NP_3 rock-star [.CP_3 which_3 [.IP_3 she_1 [.VP liked t_3] ] ]] ]]]]]]]
 
