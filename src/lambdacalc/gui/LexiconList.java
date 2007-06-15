@@ -36,7 +36,7 @@ public class LexiconList extends JPanel
     DefaultComboBoxModel entries = new DefaultComboBoxModel();
     
     LambdaEnabledTextField lambdaEditor = new LambdaEnabledTextField();
-    JButton buttonAdd = new JButton("Add");
+    JButton buttonAdd = new JButton("Add lexical entry");
 
     LexicalTerminal currentNode;
     

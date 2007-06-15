@@ -131,7 +131,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
         jMenuBar1.add(jMenuMenu);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Lambda");
+        setTitle("Lambda Calculator");
         btnExercise.setText("Use the Interactive Exercise Solver");
         btnExercise.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -52,8 +52,8 @@ public class TreeExerciseWidget extends JPanel {
     // Buttons
     JButton btnSimplify = new JButton("Simplify");
     JButton btnUnsimplify = new JButton("Unsimplify");
-    JButton btnNextStep = new JButton("Next Step");
-    JButton btnPrevStep = new JButton("Previous Step");
+    JButton btnNextStep = new JButton("Next Node");
+    JButton btnPrevStep = new JButton("Previous Node");
     
     // Selection listeners
     Vector listeners = new Vector();
@@ -125,6 +125,8 @@ public class TreeExerciseWidget extends JPanel {
         canvas = new TreeCanvas();
         scrollpane.setViewportView(canvas);
         add(scrollpane, BorderLayout.CENTER);
+        
+        errorLabel.setForeground(java.awt.Color.RED);
         
         add(errorLabel, BorderLayout.PAGE_END);
         

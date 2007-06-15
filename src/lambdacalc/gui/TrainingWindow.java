@@ -28,6 +28,8 @@ public class TrainingWindow extends JFrame {
     // If you edit this, don't add a dot, it messes up the ExerciseFileFilter
     public static final String SERIALIZED_FILE_SUFFIX = "lbd"; 
     
+    public static final String ENCODING = "utf-8";
+    
     public static final ImageIcon UNSOLVED_FILE_ICON = new ImageIcon("images/logo.gif");
     public static final ImageIcon SOLVED_FILE_ICON   = new ImageIcon("images/logo_green.gif");
 
@@ -253,7 +255,7 @@ public class TrainingWindow extends JFrame {
     
     // used in loadExerciseFile()
     private ExerciseFile parse(File f) throws IOException, ExerciseFileFormatException {
-        return ExerciseFileParser.parse(new FileReader(f));
+        return ExerciseFileParser.parse(new InputStreamReader (new FileInputStream(f), ENCODING));
     }
     
     
@@ -560,7 +562,7 @@ public class TrainingWindow extends JFrame {
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Lambda");
+        setTitle("Interactive Exercise Solver");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 onWindowClosed(evt);
