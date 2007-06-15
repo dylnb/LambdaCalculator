@@ -43,6 +43,8 @@ public class LexiconList extends JPanel
     public LexiconList() {
         setLayout(new BorderLayout());
         
+        add(new JLabel("Lexicon"), BorderLayout.NORTH);
+        
         add(listbox, BorderLayout.CENTER);
         listbox.setModel(entries);
         listbox.addListSelectionListener(this);
@@ -55,6 +57,8 @@ public class LexiconList extends JPanel
         
         lambdaEditor.addActionListener(new AddButtonListener());
         buttonAdd.addActionListener(new AddButtonListener());
+        
+        lambdaEditor.setTemporaryText("enter a new lexical entry");
     }
     
     public void initialize(ExerciseFile exFile, Exercise exercise, TreeExerciseWidget widget) {
