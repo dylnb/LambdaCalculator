@@ -1,0 +1,107 @@
+Training Window
+    Clicking Next Problem when on the last problem of a group takes you to the next-numbered problem (not problem 1) of the next group
+    Difference between opening lbd and txt files not clear. Put into two menus? Open Assignment, Open Saved Work
+    Tutorial screen
+    Make the layout clearer; Prev/Next problem buttons are too low
+    When an exercise in the exercise tree gets highlighted (after clicking next problem), it should scroll into view
+    Be consistent in the capitalization of label text
+    Is there a white background on the Current Problem frame?
+    When Next Problem'ing to the next group, that we are in a new group is not obvious. We need an intermediate screen with just the new directions.
+    Something weird with the font metrics in the lambda text field on the library Mac
+    Scrollbars on directions
+    After a hard line break in directions, we get a space at the beginning of the next paragraph.
+    L's for lambdas in directions and e_v looks weird everywhere. We must HTMLify directins, either with LaTeX conventions about _ and ^, or escape lambda expressions surrounded in { }.
+    The node properties, lexicon pane does not resize. Disappears.
+    Should indicate in main area the problem # being worked on, original expression being simplified
+    Check whether NotSoFast works
+    Give Paste Below an icon, move to left
+    Buttons don't look like buttons
+    Show student's name from saved work somewhere in main area
+    If user enters an answer and tries to go onto another exercise without Check Answer, do we stop them?
+
+Scratch pad
+    Should get multiple letter identifier option from existing exercise
+
+Lambda Exercises
+    Telling the user he needs an alphabetical variant may be too much help? What's the motivation to figure it out?
+    If you do two lambda conversions at once but make a mistake, program assumes you did one and gives strange help.
+
+Tree Exercises
+    user wants to have more e-type variables to play with (u, v, etc.).
+    When a tree node's label is so large it gets pushed to the right, recenter the child nodes under it.
+    What does the Simplify (and etc.) buttons do? Not clear they operate on the selected node. Add a label, tooltips, pop-up help, or something.
+       Simplify should say "Evaluate" when it does the first evaluation on a nonterminal
+       Next Node should be "Simplify Fully" when it does that, and it should always move to the next node
+       All buttons should be disabled on terminals.
+    Types on nonterminals
+       Knowing them ahead of time helps students: Can we put them on the tree somewhere?
+       Having a place for the student to enter them before giving lexical entries
+       A general-use way to annotate nodes?
+    When we guess composition rule and none apply, we need to say we tried function application but it was not applicable, for whatever reason, etc.
+    Prev Node button takes you to the first terminal if there is no where else to go, but it should never go to a terminal
+    When simplifying Carlos alpha-shaves, did we lose the lambda's dot?
+    Not clear that the lexical entry field does what it does; people think it edits selected node.
+    Not clear that with God Mode, no more user input is needed after entering terminal meanings
+    Not clear when the end of the problem is reached
+    Expect to enter nonterminal information where the terminal lexical entry is entered
+    Previous Node should clear later evaluations too.
+    Lexical entry field got frozen on a terminal.
+    Pre-provided, already-entered lexical entries not clear.
+    An empty lexicon list box looks like a text box.
+    Labelless nonterminals need a larger selection box.
+    Automatic lambda abstraction is confusing, not expected computer will actually do it
+    The node info table looks like it is a choice for the user to make
+    Backspace key should do Unsimplify or something; delete should clear
+    People think you have to Prev Node to redo previous work
+    What actually is expected in the lex entry field? An expression?
+
+Fonts:
+   Use a uniform font throughout the training window
+   Is it too small?
+   Make the font in trees adjustable.
+   
+Typing instructions & Conventions about letters
+   Sometimes gets cut off
+   When cut off, text strangely overlaps the border.
+   People want to type little 'v' for OR, big 'V' for FORALL
+   People are puzzled why the pipe is OR
+   Should we use ALT to get special characters?
+   "Conventions about letters" => "Typing conventions" for consistency with error messages
+   
+TypeParser
+   When it says brackets are unnecessary for <<et>>, it should say why.   
+   When it says brackets are unnecessary for <e>, it should say that the brackets are only used for composite types.
+   Did we accidentally parse <<et>,<<et>,e> ? Not sure.
+   
+ExpressionParser
+   When the type of an identifier could not be determined, refer to typing conventions and suggest underscore notation.
+   When we suggest adding brackets, say around what.
+   Hyphens inside identifiers
+   How to type capital A, E, I?
+   Function application should be possible in the scope of infix expressions
+   Everyone wonders whether dots are necessary after, between lambdas
+   Function application without space should still be scopally ambiguous, but we have to revise the ToString somewhere so that the abiguity message that results is clearer
+   Like hypens, unrecognized characters that terminate an identifier and result in its type being unknown is confusing
+   Lx.[....](a) must get high funapp scope!
+
+Error messages
+   In all error messages, be sure to put quote marks around expressions, node labels.
+   FunApp's "because it is not a function" has an pronominal binding issue; automatic typing and conventions confuse user here: they expect what they want, not what program assumes
+   R(x)(x) is perhaps not quite one-place. In error messages, don't call it one place. Say that it takes first just an e-type thing alone.
+   The error about a binder being followed by a variable, not a constant, doesn't position the cursor properly
+   When user turns a lambda variable into a constant during conversion, a strange error message results
+   The substituting just bound variables message should say "Check that you didn't make any substitutions of variables not bound by the lambda."
+   Dont' use the word identifier in error messages
+   When there are type errors, suggest adding spaces/brackets
+
+Bugs/Notes
+   Lu_e[R(u_e)] (a) got reduced to R(u_e), possibly after user first entered u_e not in a place marked as a variable, and then it got put into the typing conventions incorrectly??
+   Some people find lambdas without dots hard.
+   When a lambda enabled text field is empty and loses its focus, the temporary text should reappear
+   After closing training window, scratch pad, all state must reset for when they are opened up again
+   Not clear <e,et> is different from <e*e,t>
+   An lbd file we just created couldn't be opened up again
+   When saving, tell user we put things in lbd files
+   In type exercises, typing conventions are important, but not obvious that they exist
+   In OSX, down arrow in a text field takes you to end
+   Click a paren to highlight corresponding bracket in expression entry; color code expression brackets?
