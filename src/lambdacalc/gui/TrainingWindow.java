@@ -550,6 +550,7 @@ public class TrainingWindow extends JFrame {
         btnPrev = new javax.swing.JButton();
         btnDoAgain = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
+        jSeparatorBelowNavButtons = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -814,7 +815,7 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -873,6 +874,13 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         jPanelLowerRight.add(jPanelNavigationButtons, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        jPanelLowerRight.add(jSeparatorBelowNavButtons, gridBagConstraints);
 
         jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
 
@@ -1304,6 +1312,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparatorBelowNavButtons;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
