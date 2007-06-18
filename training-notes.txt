@@ -1,34 +1,35 @@
 Training Window
-    Clicking Next Problem when on the last problem of a group takes you to the next-numbered problem (not problem 1) of the next group
+    DONE Clicking Next Problem when on the last problem of a group takes you to the next-numbered problem (not problem 1) of the next group
     Difference between opening lbd and txt files not clear. Put into two menus? Open Assignment, Open Saved Work
     Tutorial screen
     Make the layout clearer; Prev/Next problem buttons are too low
-    When an exercise in the exercise tree gets highlighted (after clicking next problem), it should scroll into view
+    DONE When an exercise in the exercise tree gets highlighted (after clicking next problem), it should scroll into view
     Be consistent in the capitalization of label text
     Is there a white background on the Current Problem frame?
     When Next Problem'ing to the next group, that we are in a new group is not obvious. We need an intermediate screen with just the new directions.
     Something weird with the font metrics in the lambda text field on the library Mac
     Scrollbars on directions
-    After a hard line break in directions, we get a space at the beginning of the next paragraph.
-    L's for lambdas in directions and e_v looks weird everywhere. We must HTMLify directins, either with LaTeX conventions about _ and ^, or escape lambda expressions surrounded in { }.
+    DONE After a hard line break in directions, we get a space at the beginning of the next paragraph.
+    L's for lambdas in directions and e_v looks weird everywhere. We must HTMLify directins, either with LaTeX conventions about _ and ^, or DONE escape lambda expressions surrounded in { }.
     The node properties, lexicon pane does not resize. Disappears.
     Should indicate in main area the problem # being worked on, original expression being simplified
     Check whether NotSoFast works
     Give Paste Below an icon, move to left
     Buttons don't look like buttons
     Show student's name from saved work somewhere in main area
-    If user enters an answer and tries to go onto another exercise without Check Answer, do we stop them?
+    If user enters an answer and tries to go onto another exercise without Check Answer, should we stop them?
 
 Scratch pad
     Should get multiple letter identifier option from existing exercise
+    On syntax error, position cursor to indicated position
 
 Lambda Exercises
     Telling the user he needs an alphabetical variant may be too much help? What's the motivation to figure it out?
     If you do two lambda conversions at once but make a mistake, program assumes you did one and gives strange help.
 
 Tree Exercises
-    user wants to have more e-type variables to play with (u, v, etc.).
-    When a tree node's label is so large it gets pushed to the right, recenter the child nodes under it.
+    user wants to have more e-type variables to play with (u, v, etc.). Suggest underscore notation in conventions box?
+    DONE When a tree node's label is so large it gets pushed to the right, recenter the child nodes under it.
     What does the Simplify (and etc.) buttons do? Not clear they operate on the selected node. Add a label, tooltips, pop-up help, or something.
        Simplify should say "Evaluate" when it does the first evaluation on a nonterminal
        Next Node should be "Simplify Fully" when it does that, and it should always move to the next node
@@ -105,3 +106,6 @@ Bugs/Notes
    In type exercises, typing conventions are important, but not obvious that they exist
    In OSX, down arrow in a text field takes you to end
    Click a paren to highlight corresponding bracket in expression entry; color code expression brackets?
+   Get issues Maribel mentioned in her email with the training examples.
+   Make sure that we check that lbd files correspond with assignment, i.e. that user didn't alter .txt file.
+   
