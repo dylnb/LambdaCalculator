@@ -817,7 +817,7 @@ public class ExpressionParser {
      * @return whether the character can be used in an identifier
      */
     public static boolean isIdentifierChar(char ic) {
-        return isLetter(ic) || Character.isDigit(ic) || isPrime(ic);
+        return isLetter(ic) || Character.isDigit(ic) || isPrime(ic) || ic == '-';
     }
 
     public static boolean isPrime(char ic) {

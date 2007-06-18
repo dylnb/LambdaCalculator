@@ -83,9 +83,9 @@ MEDIUM   When it says brackets are unnecessary for <e>, it should say that the b
 HIGH   Did we accidentally parse <<et>,<<et>,e> ? Not sure.
    
 ExpressionParser
-HIGH   When the type of an identifier could not be determined, refer to typing conventions and suggest underscore notation.
+DONE   When the type of an identifier could not be determined, refer to typing conventions and suggest underscore notation.
 HIGH   When we suggest adding brackets, say around what.
-HIGH   Hyphens inside identifiers
+DONE   Hyphens inside identifiers
 HIGH   How to type capital A, E, I?
 DONE   Function application should be possible in the scope of infix expressions
 MEDIUM   Everyone wonders whether dots are necessary after, between lambdas
