@@ -104,7 +104,7 @@ HIGH   Dont' use the word identifier in error messages
 HIGH   When there are type errors, suggest adding spaces/brackets
 
 Bugs/Notes
-HIGH   Lu_e[R(u_e)] (a) got reduced to R(u_e), possibly after user first entered u_e not in a place marked as a variable, and then it got put into the typing conventions incorrectly??
+DONE   Lu_e[R(u_e)] (a) got reduced to R(u_e), possibly after user first entered u_e not in a place marked as a variable, and then it got put into the typing conventions incorrectly??
 MEDIUM   Some people find lambdas without dots hard.
 LOW   When a lambda enabled text field is empty and loses its focus, the temporary text should reappear (I think Swing has a "onFocusLost" event listener for this kind of thing -- Lucas)
 MEDIUM   After closing training window, scratch pad, all state must reset for when they are opened up again

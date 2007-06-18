@@ -855,6 +855,14 @@ public class ExpressionParser {
         } else {
             type = specifiedType;
             isvar = isRightAfterBinder;
+            if (!isRightAfterBinder) {
+                // We're not after a binder, but that doesn't mean it's *not* a variable.
+                // Let's check our typing conventions for that.
+                try {
+                    isvar = context.typer.isVariable(id);
+                } catch (IdentifierTypeUnknownException e) {
+                }
+            }
         }
 
         Identifier ident;
