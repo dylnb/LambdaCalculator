@@ -31,6 +31,7 @@ public class TreeCanvas extends JComponent implements Scrollable {
      */
     public TreeCanvas() {
         timer = new javax.swing.Timer(100, new TimerHandler()); // not started yet
+        
         layout = new MonospaceLayoutMethod();
         root = new JTreeNode(null, this);
         add(root);
@@ -171,23 +172,23 @@ public class TreeCanvas extends JComponent implements Scrollable {
                     ni.labelCenter = rootPosition;
                     
                     // If that puts the left edge before the left edge of the subtree,
-                    // put the label flush on the left edge.
-                    if (ni.labelCenter - subtree.getLabel().getWidth()/2 < 0)
-                        ni.labelCenter = subtree.getLabel().getWidth()/2;
-                        
-                    // If that puts the right edge beyond the right edge of the last
-                    // child, expand the width of this subtree and center the children.
-                    if (ni.labelCenter + subtree.getLabel().getWidth()/2 > width) {
-                        int oldwidth = width;
-                        width = ni.labelCenter + subtree.getLabel().getWidth()/2;
-                        
-                        // Move all of the children over by half the expanded length
+                    // push the label and all of its children over so that the label
+                    // is flush on the left edge.
+                    if (ni.labelCenter - subtree.getLabel().getWidth()/2 < 0) {
+                        int push = subtree.getLabel().getWidth()/2 - ni.labelCenter;
+                        ni.labelCenter += push;
+                        width += push;
                         for (int i = 0; i < subtree.children.size(); i++) {
                             JTreeNode c = (JTreeNode)subtree.children.get(i);
                             NodeInfo nic = (NodeInfo)c.layoutInfo;
-                            nic.subtreeLeft += (width-oldwidth)/2;
+                            nic.subtreeLeft += push;
                         }
                     }
+                        
+                    // If the right edge of the label goes beyond the right edge of the last
+                    // child, expand the width of this subtree.
+                    if (ni.labelCenter + subtree.getLabel().getWidth()/2 > width)
+                        width = ni.labelCenter + subtree.getLabel().getWidth()/2;
                 }
                 
                 ni.subtreeSize = new Dimension(width, tops + maxHeight);
@@ -308,8 +309,9 @@ public class TreeCanvas extends JComponent implements Scrollable {
             hadPositionChange = false; // changed by positionControls
             positionControls(getRoot(), true);
             repaint(); // clear previous lines that were drawn
-            if (!hadPositionChange)
+            if (!hadPositionChange) {
                 timer.stop();
+            }
             preferredSize = getPreferredSize(getRoot());
             setSize(preferredSize);
         }
