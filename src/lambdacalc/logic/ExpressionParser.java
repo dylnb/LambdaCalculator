@@ -528,15 +528,32 @@ public class ExpressionParser {
                 context2.typer.addEntry(varid.getSymbol(), varid instanceof Var, varid.getType());
                 
                 // Get the possible parses of the inner expression.
-                ParseResultSet insides;
+                // First look to see if we can parse parens right there, because parens
+                // always indicate the scope of the binder.
+                ParseResultSet insides = parsePrefixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder");
+                
+                // Check if any of the expressions we parse on the inside is a parenthesized expression.
+                boolean isInsideParen = false;
+                if (insides.Exception == null) {
+                    for (Iterator i = insides.Parses.iterator(); i.hasNext(); ) {
+                        ParseResult e = (ParseResult)i.next();
+                        if (e.Expression instanceof Parens) {
+                            isInsideParen = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (isInsideParen) {
+                    // this is the inner expression
                 
                 // If there was no space or period, then only prefix expressions may be
-                // in the scope of the binder,
-                if (!hadWhiteSpace && !hadPeriod) {
-                    insides = parsePrefixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder");
+                // in the scope of the binder. We've already parsed it, hopefully.
+                } else if (!hadWhiteSpace && !hadPeriod) {
                     if (insides.Exception != null) return insides; // return any fatal errors immediately
                     
-                    // However, unless a paren or bracket followed, in which case we can be sure
+                    // However, unless a paren or bracket followed (which we've already covered above),
+                    // in which case we can be sure
                     // that the scope of the binder was indicated by the bracketing, we want to
                     // make sure that the user hasn't given us something that might mean he
                     // wanted an infix expression in the scope of the binder. That is,
@@ -552,12 +569,12 @@ public class ExpressionParser {
                     // error, and we pass it on. If it succeeds, we discard the result because
                     // in fact we want the infix operator to have wide scope.
                       
-                    char n = getChar(expression, start, context);
-                    if (!(n == '(' || n == '[')) {
-                        ParseResultSet infixes = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", true);
-                        if (infixes.Exception != null) return infixes; // return any fatal errors immediately
-                    }
+                    ParseResultSet infixes = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", true);
+                    if (infixes.Exception != null) return infixes; // return any fatal errors immediately
                 } else {
+                    // Just parse anything inside the scope of the lambda, but don't allow function
+                    // application with a space between the function and the argument.
+                
                     insides = parseFunctionApplicationExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false);
                     if (insides.Exception != null) return insides; // return any fatal errors immediately
                 }

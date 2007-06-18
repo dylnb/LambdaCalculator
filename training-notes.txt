@@ -117,6 +117,6 @@ LOW   Click a paren to highlight corresponding bracket in expression entry; colo
 Get the issues Maribel emailed us in the training examples
 HIGH make sure that we check that the lbd files that the teacher gets in response correspond to the original assignment
 MEDIUM and/or needs to have same operator precedence 
-HIGH binder periods shouldn't affect scope
+DONE binder periods shouldn't affect scope
 Does lambda abstraction really work if we have nested lambda abstractions?
 HIGH The first step of a tree computation expansion is to show the meaning brackets
