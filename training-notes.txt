@@ -87,11 +87,11 @@ HIGH   When the type of an identifier could not be determined, refer to typing c
 HIGH   When we suggest adding brackets, say around what.
 HIGH   Hyphens inside identifiers
 HIGH   How to type capital A, E, I?
-HIGH   Function application should be possible in the scope of infix expressions
+DONE   Function application should be possible in the scope of infix expressions
 MEDIUM   Everyone wonders whether dots are necessary after, between lambdas
-HIGH   Function application without space should still be scopally ambiguous, but we have to revise the ToString somewhere so that the abiguity message that results is clearer
+IGNORED   Function application without space should still be scopally ambiguous, but we have to revise the ToString somewhere so that the abiguity message that results is clearer
 HIGH   Like hypens, unrecognized characters that terminate an identifier and result in its type being unknown is confusing
-HIGH   Lx.[....](a) must get high funapp scope!
+DONE   Lx.[....](a) must get high funapp scope!
 
 Error messages
 MEDIUM   In all error messages, be sure to put quote marks around expressions, node labels.

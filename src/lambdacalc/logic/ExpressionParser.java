@@ -22,12 +22,14 @@ import java.util.*;
  * P a b c, the callee returns P (the predicate alone), P a, (P a) b, and
  * ((P a) b) c. This allows for the scopes of infix operators to pop up.
  * For instance, Ax.P(x) & Q(x), two parsing paths are taken.
- * parseFunctionApplication calls parseInfixExpression which
+ * parseInfixExpression calls parseFunctionApplication which
  * calls parsePrefixExpression, which sees the binder and calls parseInfixExpression
  * to get its inner expression. parseInfixExpression returns a set comprising
  * the parses P(x) and P(x) & Q(x). parsePrefixExpression wraps each possibility
  * with the binder, so it returns the set: Ax.P(x) and Ax.P(x) & Q(x).
- * Above that, parseInfixExpression looks to the right of each possibility
+ * Above that, parseFunctionApplicationException scans to the right of each
+ * possiblity looking for an argument, but it finds none so it just passed up
+ * those two possibilities. parseInfixExpression looks to the right of each possibility
  * for a connective. In the first case, it finds the ampersand, so it creates
  * a conjunction yielding [Ax.P(x)] & Q(x). In the second case, it hits the
  * end of the string and just returns Ax.P(x) & Q(x) unchanged.
@@ -569,13 +571,13 @@ public class ExpressionParser {
                     // error, and we pass it on. If it succeeds, we discard the result because
                     // in fact we want the infix operator to have wide scope.
                       
-                    ParseResultSet infixes = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", true);
+                    ParseResultSet infixes = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", true, false);
                     if (infixes.Exception != null) return infixes; // return any fatal errors immediately
                 } else {
                     // Just parse anything inside the scope of the lambda, but don't allow function
                     // application with a space between the function and the argument.
                 
-                    insides = parseFunctionApplicationExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false);
+                    insides = parseInfixExpression(expression, start, context2, "the expression in the scope of the " + c + " binder", false, false);
                     if (insides.Exception != null) return insides; // return any fatal errors immediately
                 }
                 
@@ -902,12 +904,33 @@ public class ExpressionParser {
      * @return the possible infix expressions (or something lesser as fallback) that could be parsed
      * at this location
      */
-    private static ParseResultSet parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, boolean testSpaceRequired) {
-        // Parse the first operand
-        ParseResultSet firstConjuncts = parsePrefixExpression(expression, start, context, whatIsExpected);
-        if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
-        
+    private static ParseResultSet parseInfixExpression(String expression, int start, ParseOptions context, String whatIsExpected, boolean testSpaceRequired, boolean allowFunctionApplicationSpaceInTrivialReturn) {
         Vector results = new Vector();
+        
+        // The first thing to do is parse the first operand. However, if the
+        // allowFunctionApplicationSpaceInTrivialReturn parameter is false,
+        // this means that if we are returning a prefix expression directly and
+        // not within an infix expression, then we must have parsed the function
+        // application expression with allowSpace set to false.
+        
+        ParseResultSet trivialReturn, firstConjuncts;
+        
+        if (allowFunctionApplicationSpaceInTrivialReturn) {
+            firstConjuncts = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
+            if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
+            trivialReturn = firstConjuncts;
+        } else {
+            firstConjuncts = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
+            if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
+            
+            trivialReturn = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, false);
+            if (trivialReturn.Exception != null) return trivialReturn; // shouldn't happen if the first one succeeds
+        }
+        
+        
+        // Then, for the result set in trivialReturn, record those nondeterministic parsing paths.
+        for (Iterator i = trivialReturn.Parses.iterator(); i.hasNext(); )
+            results.add(i.next());
         
         // When we parse the first conjunct, we can get any number of possible parses back,
         // and for each we continue trying to parse the rest of the expression looking
@@ -920,12 +943,6 @@ public class ExpressionParser {
             ArrayList operands = new ArrayList();
 
             operands.add(firstConjunct.Expression);
-            
-            // Record the nondeterministic choice of ending the infix expression after
-            // the first conjunct. Return any failure conditions immediately.
-            SyntaxException err2 = parseInfixExpressionFinish(operators, operands, firstConjunct.Next, null, results);
-            if (err2 != null)
-                return new ParseResultSet(err2);
             
             // Continue parsing the rest and return any error conditions immediately.
             SyntaxException err = parseInfixExpressionRemainder(expression, firstConjunct.Next, context, operators, operands, results, testSpaceRequired);
@@ -994,7 +1011,7 @@ public class ExpressionParser {
             return new SyntaxException("Spaces are required around '" + c + "' connectives.", pstart);
 
         // Try to parse the right operand.
-        ParseResultSet nextoperands = parsePrefixExpression(expression, start, context, "another expression after the " + c + " connective");
+        ParseResultSet nextoperands = parseFunctionApplicationExpression(expression, start, context, "another expression after the " + c + " connective", true);
         
         // If parsing the right operand failed completely, then we return the reason. Because
         // a failure to parse that expression is fatal, since we've already gotten the connective,
@@ -1139,7 +1156,7 @@ public class ExpressionParser {
     private static ParseResultSet parseFunctionApplicationExpression(String expression, int start, ParseOptions context, String whatIsExpected, boolean allowSpace) {
         // Parse the left-hand side of the function application, which can be
         // any type of expression besides function application.
-        ParseResultSet lefts = parseInfixExpression(expression, start, context, whatIsExpected, false);
+        ParseResultSet lefts = parsePrefixExpression(expression, start, context, whatIsExpected);
         if (lefts.Exception != null) return lefts; // return any fatal errors immediately
         
         // Collect possible parses here. Delay adding the left expression until later.
@@ -1192,12 +1209,7 @@ public class ExpressionParser {
         }
 
         // Parse a prefix expression to our right.
-        String expected = "an argument to the function " + left.Expression.toString();
-        if (!(left.Expression instanceof FunApp))               // when picking up the first FunApp argument, the user might
-            expected = "a logical connective or " + expected;   // have meant a logical connective here, but after later
-        else                                                    // arguments, parens must be used if the user really wants one
-            expected = expected + ", but if a logical connective was desired there, surround the left side with parentheses";
-        ParseResultSet rights = parsePrefixExpression(expression, start, context, expected);
+        ParseResultSet rights = parsePrefixExpression(expression, start, context, "an argument to the function " + left.Expression.toString());
         
         // We return the nondeterministic path up to
         // the left expression and note in its HowToContinue
@@ -1243,6 +1255,6 @@ public class ExpressionParser {
      * or an error condition
      */
     private static ParseResultSet parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
-        return parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
+        return parseInfixExpression(expression, start, context, whatIsExpected, false, true);
     }
 }
