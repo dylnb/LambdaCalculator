@@ -424,6 +424,7 @@ public class TrainingWindow extends JFrame {
             updatingTree = true; // this prevents recursion when the event is
                                  // fired as if the user is clicking on this node
             jTreeExerciseFile.setSelectionPath(new TreePath(new Object[] { exFile, new ExerciseTreeModel.ExerciseGroupWrapper(exFile.getGroup(currentGroup)), new ExerciseTreeModel.ExerciseWrapper(ex) } ));
+            jTreeExerciseFile.scrollPathToVisible(jTreeExerciseFile.getSelectionPath());
         } finally {
             updatingTree = false;
         }
@@ -1038,18 +1039,22 @@ public class TrainingWindow extends JFrame {
     }//GEN-LAST:event_onCheckAnswer
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-        if (currentEx > 0)
+        if (currentEx > 0) {
             currentEx--;
-        else
+        } else {
             currentGroup--;
+            currentEx = exFile.getGroup(currentGroup).size();
+        }
         showExercise();
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        if (currentEx+1 < exFile.getGroup(currentGroup).size())
+        if (currentEx+1 < exFile.getGroup(currentGroup).size()) {
             currentEx++;
-        else
+        } else {
             currentGroup++;
+            currentEx = 0;
+        }
         showExercise();
     }//GEN-LAST:event_btnNextActionPerformed
 
