@@ -679,17 +679,15 @@ public class TrainingWindow extends JFrame {
         jSplitPaneRightHalf.setOneTouchExpandable(true);
         jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
-        jScrollPaneDirections.setMinimumSize(new java.awt.Dimension(19, 100));
-        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(235, 120));
+        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(100, 120));
+        jScrollPaneDirections.setViewport(null);
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblDirections.setColumns(20);
         lblDirections.setEditable(false);
         lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
         lblDirections.setLineWrap(true);
-        lblDirections.setRows(2);
         lblDirections.setWrapStyleWord(true);
         lblDirections.setBorder(null);
-        lblDirections.setPreferredSize(new java.awt.Dimension(220, 80));
         jScrollPaneDirections.setViewportView(lblDirections);
 
         jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);

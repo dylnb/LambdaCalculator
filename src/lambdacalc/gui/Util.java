@@ -1,8 +1,12 @@
 package lambdacalc.gui;
 
 import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 public class Util {
     static Font unicodeFont;
@@ -31,7 +35,7 @@ public class Util {
     public static Font getUnicodeFont(int size) {
         return getUnicodeFont().deriveFont(fontSizeFactor * (float)size);
     }
-    
+        
     public static void displayWarningMessage
             (Component parentComponent, String message, String windowTitle) {
         
