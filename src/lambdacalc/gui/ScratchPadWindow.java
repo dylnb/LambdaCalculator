@@ -101,14 +101,14 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jPanelRadioButtons = new javax.swing.JPanel();
         jRadioButtonType = new javax.swing.JRadioButton();
         jRadioButtonLambda = new javax.swing.JRadioButton();
-        jPanelEnterYourOwnProblem = new javax.swing.JPanel();
-        txtEnterYourOwnProblem = new lambdacalc.gui.LambdaEnabledTextField();
-        jButtonTransfer = new javax.swing.JButton();
         jPanelFeedbackAndTypes = new javax.swing.JPanel();
         jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
         lblIdentifierTypes = new javax.swing.JTextArea();
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
+        jPanelQuestion = new javax.swing.JPanel();
+        txtEnterYourOwnProblem = new lambdacalc.gui.LambdaEnabledTextField();
+        btnTransfer = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemClose = new javax.swing.JMenuItem();
@@ -148,8 +148,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 15;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         getContentPane().add(jButtonCheckAnswer, gridBagConstraints);
 
@@ -217,7 +215,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jPanelButtons.add(jPanelLeftButtons, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -241,6 +239,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         jPanelRadioButtons.add(jRadioButtonType, gridBagConstraints);
 
         buttonGroup1.add(jRadioButtonLambda);
@@ -259,53 +258,16 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanelRadioButtons.add(jRadioButtonLambda, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(3, 5, 0, 0);
-        getContentPane().add(jPanelRadioButtons, gridBagConstraints);
-
-        jPanelEnterYourOwnProblem.setLayout(new java.awt.GridBagLayout());
-
-        txtEnterYourOwnProblem.setBorder(javax.swing.BorderFactory.createTitledBorder("Enter Your Own Problem"));
-        txtEnterYourOwnProblem.setFont(new java.awt.Font("Serif", 0, 18));
-        txtEnterYourOwnProblem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEnterYourOwnProblemActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        jPanelEnterYourOwnProblem.add(txtEnterYourOwnProblem, gridBagConstraints);
-
-        jButtonTransfer.setText("Paste below");
-        jButtonTransfer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonTransferActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelEnterYourOwnProblem.add(jButtonTransfer, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 5);
-        getContentPane().add(jPanelEnterYourOwnProblem, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(3, 5, 0, 5);
+        getContentPane().add(jPanelRadioButtons, gridBagConstraints);
 
         jPanelFeedbackAndTypes.setLayout(new java.awt.GridBagLayout());
 
@@ -355,6 +317,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanelFeedbackAndTypes.add(jScrollPaneFeedback, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -364,6 +327,48 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanelFeedbackAndTypes, gridBagConstraints);
+
+        jPanelQuestion.setLayout(new java.awt.GridBagLayout());
+
+        jPanelQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Enter Your Own Problem", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
+        txtEnterYourOwnProblem.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        txtEnterYourOwnProblem.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.lightGray));
+        txtEnterYourOwnProblem.setEditable(false);
+        txtEnterYourOwnProblem.setFont(new java.awt.Font("Serif", 0, 18));
+        txtEnterYourOwnProblem.setPreferredSize(new java.awt.Dimension(460, 25));
+        txtEnterYourOwnProblem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEnterYourOwnProblemActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelQuestion.add(txtEnterYourOwnProblem, gridBagConstraints);
+
+        btnTransfer.setText("Paste");
+        btnTransfer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTransferActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        jPanelQuestion.add(btnTransfer, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 5);
+        getContentPane().add(jPanelQuestion, gridBagConstraints);
 
         menuFile.setMnemonic('F');
         menuFile.setText("File");
@@ -384,14 +389,18 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTransferActionPerformed
+    private void txtEnterYourOwnProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnterYourOwnProblemActionPerformed
+        jButtonEnterProblem.doClick();
+    }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
+
+    private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
         if (txtUserAnswer.isEnabled()) {
             txtUserAnswer.setText(txtEnterYourOwnProblem.getText());
             txtUserAnswer.requestFocusInWindow();
         } else if (txtEnterYourOwnProblem.isEnabled()) {
             txtEnterYourOwnProblem.requestFocusInWindow();
         }
-    }//GEN-LAST:event_jButtonTransferActionPerformed
+    }//GEN-LAST:event_btnTransferActionPerformed
 
     private void jButtonEnterProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterProblemActionPerformed
         
@@ -527,10 +536,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUserAnswerActionPerformed1
 
       
-    private void txtEnterYourOwnProblemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnterYourOwnProblemActionPerformed
-        jButtonEnterProblem.doClick();
-    }//GEN-LAST:event_txtEnterYourOwnProblemActionPerformed
-
     private void switchOn(javax.swing.JTextField j) {
         j.setEnabled(true);
         j.setEditable(true);
@@ -660,6 +665,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     }
         
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnTransfer;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton jButtonCheckAnswer;
@@ -667,12 +673,11 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonDoAgain;
     private javax.swing.JButton jButtonDoAnotherProblem;
     private javax.swing.JButton jButtonEnterProblem;
-    private javax.swing.JButton jButtonTransfer;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelButtons;
-    private javax.swing.JPanel jPanelEnterYourOwnProblem;
     private javax.swing.JPanel jPanelFeedbackAndTypes;
     private javax.swing.JPanel jPanelLeftButtons;
+    private javax.swing.JPanel jPanelQuestion;
     private javax.swing.JPanel jPanelRadioButtons;
     private javax.swing.JRadioButton jRadioButtonLambda;
     private javax.swing.JRadioButton jRadioButtonType;

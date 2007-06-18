@@ -82,7 +82,7 @@ public class ExerciseTreeModel implements TreeModel {
         listeners.remove(l);
     }
 
-    public void OnChange() {
+    public void onChange() {
         for (int i = 0; i < listeners.size(); i++)
             ((TreeModelListener)listeners.get(i)).treeNodesChanged(null);
     }
@@ -104,7 +104,8 @@ public class ExerciseTreeModel implements TreeModel {
         
         public String toString() {
                                // checkmark // empty ballot box
-            return (ex.isDone() ? CHECKMARK : BALLOTBOX) + "  " + (ex.getIndex()+1) + ". " + ex.getExerciseText();    
+ //           return (ex.isDone() ? CHECKMARK : BALLOTBOX) + "  " + (ex.getIndex()+1) + ". " + ex.getExerciseText();    
+            return (ex.isDone() ? CHECKMARK : BALLOTBOX) + "  " + (ex.getIndex()+1) + ". " + ex.getShortTitle();   
         }
     }
 }

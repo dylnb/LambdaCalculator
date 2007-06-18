@@ -49,6 +49,10 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
     public String getShortDirective() {
         return "Give the semantic type";
     }
+    
+    public String getShortTitle() {
+        return "Type";
+    }
 
     public void reset() {
         super.reset();

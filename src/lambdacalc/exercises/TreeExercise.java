@@ -40,7 +40,11 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     }
     
     public String getShortDirective() {
-        return "Do the right thing.";
+        return "Solve this tree"; // never used
+    }
+    
+    public String getShortTitle() {
+        return "Tree";
     }
 
     public void reset() {

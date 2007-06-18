@@ -84,6 +84,12 @@ public abstract class Exercise {
     public abstract String getShortDirective();
 
     /**
+     * Gets a very short title for the problem, to be displayed in the tree to the left
+     * of the TrainingWindow.
+     */
+    public abstract String getShortTitle();
+    
+    /**
      * Checks the status of an answer to the exercise.  Throws a SyntaxException
      * if the answer could not be understood at all.
      */

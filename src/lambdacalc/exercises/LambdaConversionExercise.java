@@ -115,6 +115,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     public String getShortDirective() {
         return "Simplify the expression";
     }
+    
+    public String getShortTitle() {
+        return "Lambda conversion";
+    }
 
     public void reset() {
         super.reset();
