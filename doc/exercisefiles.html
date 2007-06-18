@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>Lambda Calculator - Exercise File Format</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv=Content-Type" content="text/html; charset=UTF-8" />
 		<style>
 			pre {
 				border: 1px solid #CCCCCC;
@@ -98,17 +98,26 @@ variables of type &lt;et&gt; : U-Z
 <pre>points per exercise 15</pre></dd>
 
 <dt><tt>exercise ___</tt></dt>
-<dd><p>This directive begins a group of exercises and specifies the type of exercise in the group. The exercise type must be either <tt>semantic types</tt> or <tt>lambda conversion</tt>. These exercises are described below. The <tt>exercise ___</tt> directive <i>must</i> be followed by <tt>title ___</tt> and <tt>directions ___</tt> directives before any exercises are entered. Examples:</p><pre>exercise lambda conversion
-exercise semantic types</pre></dd>
+<dd><p>This directive begins a group of exercises and specifies the type of exercise in the group. The exercise type must be either <tt>semantic types</tt>, <tt>lambda conversion</tt>, or <tt>tree</tt>. These exercises are described below. The <tt>exercise ___</tt> directive <i>must</i> be followed by <tt>title ___</tt> and <tt>directions ___</tt> directives before any exercises are entered. Examples:</p><pre>exercise lambda conversion
+exercise semantic types
+exercise tree</pre></dd>
 
 <dt><tt>title ___</tt></dt>
 <dd><p>Specifies the title for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Example:</p><pre>title Lambda Conversion</pre></dd>
 
 <dt><tt>directions ___</tt></dt>
-<dd><p>Specifies the directions to provide to the student for the group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Directions can be split across multiple lines by repeating the <tt>directions ___</tt> directive. Example:</p>
+<dd><p>Specifies the directions to provide to the student for a group of exercises. This directive must be specified after an <tt>exercise ___</tt> directive and before the actual exercises. Directions can be split across multiple lines by repeating the <tt>directions ___</tt> directive. Example:</p>
 <pre>directions After checking that the type of the function and the type of the
 directions argument(s) match, simplify the following expressions performing
-directions one lambda-conversion at a time.</pre></dd>
+directions one lambda-conversion at a time.</pre>
+<p>You can include predicate logic expressions inside the directions. By writing the expressions according to the directions below, and surrounding them in curly braces, they will appear to the student rendered nicely with the appropriate symbols for lambdas, etc.</p>
+<pre>directions The expression {Lx.Iy[P(y,x)]} has type &lt;e,e&gt;.</pre>
+</dd>
+
+<dt><tt>instructions ___</tt></dt>
+<dd><p>Specifies instructions for the following exercise only. This directive must be specified immediately before the exercise to which it applies. Instructions can be split across multiple lines and can include expressions in the same way as with the <tt>directions</tt> directive, described above. Example:</p>
+<pre>instructions This exercise is a trick question!
+Lx[a] (b)</pre></dd>
 
 <dt><tt>multiple letter identifiers</tt></dt>
 <dt><tt>single letter identifiers</tt></dt>
@@ -119,6 +128,19 @@ logic expressions. For instance, "Pabc" may be used to abbreviate P(a,b,c).
 When <tt>multiple letter identifiers</tt>
 is used, "Pabc" is treated as a single identifier. If neither directive is
 specified, <tt>single letter identifiers</tt> is assumed.</p></dd>
+
+<dt><tt>define ___ : ___</tt></dt>
+<dd><p>Defines lexical entries for use in tree exercises provided to the student. The student will be able to enter other lexical entries as needed. Multiple words can be given the same lexical entry by separating the words with comma. A word may be given multiple lexical entries by repeating the <tt>define</tt> line multiple times. A single lexicon is used for all exercises in the file. Example:</p>
+<pre>define Sue : s
+define introduce, introduces : LxLyLz[introduces(z,x,y)]</pre></dd>
+
+<dt><tt>use rule ___</tt></dt>
+<dd><p>Indicates which composition rules are allowed to be used in tree exercises, including function application, non-branching nodes (copying the denotation of the single child node to the parent node), predicate modification, and lambda abstraction, based on the Heim &amp; Kratzer textbook. Example:</p>
+<pre>use rule function application
+use rule non-branching node
+use rule predicate modification
+use rule lambda abstraction</pre></dd>
+
 
 </dl>
 
@@ -184,17 +206,52 @@ Student's responses:
 <p>The Lambda program will read predicate logic expressions from exercise files. Predicate logic expressions may include:</p>
 
 <ul>
-<li>Constants and variables (which must be single letters unless the <tt>multiple letter identifiers</tt> directive is used)</li>
-<li>Constants and variable with explicit types using a colon to separate the name and the type, such as: x:e, X:&lt;e,t&gt;, etc. Composite types such as &lt;e,t&gt; must be written with brackets and cannot be abbreviated as "et". Explicit types are unnecessary when the typing conventions specified in the exercise file already provide a type for the identifier.</li>
-<li>Predicates, entered as P(a) or P(a,b,c) (or in abbreviated form Pabc unless the <tt>multiple letter identifiers</tt> directive is used).</li>
-<li>The logical connectives ¬, ∧, ∨, →, and ↔, which can be entered as ~, &amp;, | (the pipe character), -&gt;, and &lt;-&gt;.</li>
+<li>Constants and variables. Constants and variables must be single letters only, unless the <tt>multiple letter identifiers</tt> directive is used. Primes can be entered with the apostrophe. Some capital letters are treated specially by the Lambda program; see the note below on using these letters within constants and variables.</li>
+<li>Constants and variable with explicit types using an underscore to separate the name and the type, such as: x_e, X_&lt;e,t&gt;, etc. Composite types such as &lt;e,t&gt; must be written with brackets and cannot be abbreviated as "et". Explicit types are unnecessary when the typing conventions specified in the exercise file already provide a type for the identifier.</li>
+<li>Predicates, entered as P(a) or P(a,b,c) (or if the <tt>multiple letter identifiers</tt> has not been specified, in abbreviated form such as Pabc).</li>
+<li>The logical connectives, which can be entered according to the table below:
+  <table>
+  <tr><th>Connective</th> <th>You Type</th></tr>
+  <tr><td style="text-align: center">¬</td><td style="text-align: center">~</td></tr>
+  <tr><td style="text-align: center">=</td><td style="text-align: center">=</td></tr>
+  <tr><td style="text-align: center">≠</td><td style="text-align: center">!=</td></tr>
+  <tr><td style="text-align: center">∧</td><td style="text-align: center">&amp;</td></tr>
+  <tr><td style="text-align: center">∨</td><td style="text-align: center">|</td></tr>
+  <tr><td style="text-align: center">→</td><td style="text-align: center">-&gt;</td></tr>
+  <tr><td style="text-align: center">↔</td><td style="text-align: center">&lt;-&gt;</td></tr>
+  </table>
+  Operator precedence is as given in the table, except that the pairs →/↔ and =/≠ have the same operator precedence, so expressions like (a = b ≠ c) is not well formed.</li>
 <li>Parenthesized expressions, using parens () or brackets []</li>
-<li>The quantifiers ∀ and ∃, which can be entered as the capital letters A and E, entered for example as Ax[P(x)] or AxEy[P(x) &amp; Q(y)]. Periods may separate multiple consecutive quantifiers. After quantifiers, a bracketed expression must always follow to avoid ambiguity.</li>
-<li>lambda λ and iota ι binders, which can be entered as the captital letters L or I, entered as Lx[P(x)] or LxLy[P(x,y)], Iz[king(z)] etc. Periods may separate multiple consecutive binders. After binders, a bracketed expression must always follow to avoid ambiguity.</li>
-<li>function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx[P(x)] (b).</li>
+<li>Quantifiers and binders, which can be entered using capital Roman letters according to the table below:
+  <table>
+  <tr><th>Quantifier</th> <th>You Type</th></tr>
+  <tr><td style="text-align: center">∃</td><td style="text-align: center">E</td></tr>
+  <tr><td style="text-align: center">∀</td><td style="text-align: center">A</td></tr>
+  <tr><td style="text-align: center">λ</td><td style="text-align: center">L</td></tr>
+  <tr><td style="text-align: center">ι</td><td style="text-align: center">I</td></tr>
+  </table>
+For example, Ax[P(x)], AxEy[P(x) &amp; Q(y)], Lx[P(x)], LxLy.P(x,y) &amp; Q(y), Iz[king(z)]. Periods may separate multiple consecutive quantifiers/binders. After quantifiers and binders, a bracketed expression should follow to avoid scope ambiguity.</li>
+<li>To use capital E, A, L, and I as those letters in a constant or variable, precede the letter with a dollar sign ($) to indicate to the program to treat the letter following like normal, e.g. H$APPY.</li>
+<li>Function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx[P(x)] (b).</li>
 </ul>
 
-<p>Because the capital letters A, E, L, and I are used for special symbols, they cannot serve as constants or variables.</p>
+<h3>Tree Exercises</h3>
 
+<p>In tree exercises, the instructor provides a tree in labeled brackets notation. The student is presented with a graphical rendition of the tree and is expected to provide the denotations of the terminal nodes and to evaluate the denotations of the nonterminal nodes up to the root.</p>
+
+<p>To create a tree exercise, simply provide the brackets notation of the tree. To give nonterminal node labels, precede the label with a period. Nodes are not required to be labeled.</p>
+
+<pre>[.S [.NP John] [.VP [.V' loves] Mary] ]
+
+[ [the [fast man]] [ate [many apples]]]</pre>
+
+<p>Superscripts and subscripts may be indicated with the caret (^) and underscore (_). Only integer subscript indices are allowed. On nonterminals, these play no special role in the program. They are for pretty display purposes only.</p>
+
+<pre>[.DP_1 the [.NP_1 man [that_1 [I [ [.V^0 saw] t_1] ] ] ]]</pre>
+
+<p>Traces and pronouns with indices (t_<i>i</i>, he_<i>i</i>, she_<i>i</i>, it_<i>i</i>, him_<i>i</i>, her_<i>i</i>, himself_<i>i</i>, herself_<i>i</i>, itself_<i>i</i>, his_<i>i</i>, hers_<i>i</i>, its_<i>i</i>, theirs_<i>i</i>) are automatically given the denotation of g(1), g(2), etc. according to the index.</p>
+
+<p>Relative pronouns with indices (that_<i>i</i>, what_<i>i</i>, which_<i>i</i>, who_<i>i</i>, such_<i>i</i>) and bare indices (1, 2, 3, ...) are treated as "bare index" terminal nodes for lambda abstraction, following Heim &amp; Kratzer.</p>
+						
 	</body>
 </html>

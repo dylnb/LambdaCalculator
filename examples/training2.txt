@@ -78,8 +78,8 @@ directions a predicate combines with its Agent, Patient, Goal, etc., directly,
 directions as shown in (2)-(3) (as in PrL): \\
 directions  \\
 directions (1)	Ron hugged Sue. \\
-directions (2)	[[(1)]] = 1 iff HUG(r,s) \\
-directions (3)	[[hug]] = LxLy.HUG(y,x) \\
+directions (2)	[[(1)]] = 1 iff {HUG(r,s)} \\
+directions (3)	[[hug]] = {LxLy.HUG(y,x)} \\
 directions \\
 directions An alternative view posits that the formal predicate combines only to
 directions its event argument, while the theta roles are introduced as separate
@@ -87,9 +87,9 @@ directions formal predicates relating the event to the relevant argument. This
 directions approach, called neo-Davidsonian, is exemplified in (4), where e is
 directions an event variable, type v.  To achieve the truth conditions in (4),
 directions two compositional approaches have been pursued: (5) and (6). \\
-directions (4)	[[(1)]] = 1 iff Ee_v.[HUGGING(e) & AG(e,r) & PAT(e,s)] \\
-directions (5)	[[hug]] = LxLyLe_v.HUGGING(e) & AG(e,y) & PAT(e,x)  \\
-directions (6)	[[hug]]	= Le_v.HUGGING(e) \\
+directions (4)	[[(1)]] = 1 iff {Ee_v.[HUGG$ING(e) & $AG(e,r) & P$AT(e,s)]} \\
+directions (5)	[[hug]] = {LxLyLe_v.HUGG$ING(e) & $AG(e,y) & P$AT(e,x)}  \\
+directions (6)	[[hug]]	= {Le_v.HUGG$ING(e)} \\
 directions In this exercise we’ll concentrate in the second version of the
 directions neo-Davidsonian approach, in (6).
 
