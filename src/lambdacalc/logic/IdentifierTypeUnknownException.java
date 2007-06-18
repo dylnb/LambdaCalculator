@@ -15,7 +15,7 @@ public class IdentifierTypeUnknownException extends Exception {
     String id;
     
     public IdentifierTypeUnknownException(String identifier) {
-        super("The type of identifier " + identifier + " cannot be determined.");
+        super("The type of the constant or variable " + identifier + " is not known. Check the typing conventions that are in effect, or use subscript (underscore) notation to give the type of " + identifier + " explicitly, such as u_e for variable u of type e.");
         id = identifier;
     }
     

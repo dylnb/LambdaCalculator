@@ -95,12 +95,13 @@ DONE   Lx.[....](a) must get high funapp scope!
 
 Error messages
 MEDIUM   In all error messages, be sure to put quote marks around expressions, node labels.
-HIGH   FunApp's "because it is not a function" has an pronominal binding issue; automatic typing and conventions confuse user here: they expect what they want, not what program assumes
-HIGH   R(x)(x) is perhaps not quite one-place. In error messages, don't call it one place. Say that it takes first just an e-type thing alone.
+DONE   FunApp's "because it is not a function" has an pronominal binding issue
+MEDIUM In FunApp type checking, automatic typing and conventions confuse user here: they expect what they want, not what program assumes
+DONE   R(x)(x) is perhaps not quite one-place. In error messages, don't call it one place. Say that it takes first just an e-type thing alone.
 MEDIUM   The error about a binder being followed by a variable, not a constant, doesn't position the cursor properly
 HIGH   When user turns a lambda variable into a constant during conversion, a strange error message results
 HIGH   The substituting just bound variables message should say "Check that you didn't make any substitutions of variables not bound by the lambda."
-HIGH   Dont' use the word identifier in error messages
+DONE   Dont' use the word identifier in error messages
 HIGH   When there are type errors, suggest adding spaces/brackets
 
 Bugs/Notes
@@ -120,3 +121,7 @@ MEDIUM and/or needs to have same operator precedence
 DONE binder periods shouldn't affect scope
 Does lambda abstraction really work if we have nested lambda abstractions?
 HIGH The first step of a tree computation expansion is to show the meaning brackets
+We should go through all expression and type error messages and remove the presupposition that it was parsed as intended.
+
+scrollRectToVisible
+

@@ -73,8 +73,8 @@ public class FunApp extends Binary {
 
     public Type getType() throws TypeEvaluationException {
         if (!(getFunc().getType() instanceof CompositeType))
-            throw new TypeMismatchException(getFunc() + " cannot be applied as a function to what looks like an argument to its right (" + getArg().stripAnyParens() + ") because it is of type " +
-                    getFunc().getType() + " and therefore not a function.");
+            throw new TypeMismatchException(getFunc() + " cannot be applied as a function to what looks like an argument to its right (" + getArg().stripAnyParens() + ") because " + getFunc() + " is of type " +
+                    getFunc().getType() + " according to the typing conventions in effect and therefore is not a function.");
         
         CompositeType funcType = (CompositeType)getFunc().getType();
         Type domain = funcType.getLeft();
@@ -87,9 +87,9 @@ public class FunApp extends Binary {
             throw new TypeMismatchException(getFunc() + " is a " + functype + " that takes " + arity + " arguments but you provided only one argument.");
         } else if (getArg() instanceof ArgList && !(domain instanceof ProductType)) {
             if (functype.equals("predicate"))
-                throw new TypeMismatchException(getFunc() + " is a one-place predicate but you provided more than one argument.");
+                throw new TypeMismatchException(getFunc() + " is a predicate that takes (first) a single " + domain + "-type argument alone, but you provided more than one argument together.");
             else
-                throw new TypeMismatchException(getFunc() + " is a function which takes a single argument but you provided more than one argument.");
+                throw new TypeMismatchException(getFunc() + " is a function which takes a (first) a single " + domain + "-type argument alone, but you provided more than one argument.");
         } else if (getArg() instanceof ArgList && domain instanceof ProductType) {
             int actualarity = ((ArgList)getArg()).getArity();
             int formalarity = ((ProductType)domain).getArity();
@@ -151,7 +151,7 @@ public class FunApp extends Binary {
         } else if (func instanceof Lambda) {
             Lambda lambda = (Lambda)func;
             if (!(lambda.getVariable() instanceof Var))
-                throw new ConstInsteadOfVarException("The bound identifier " + lambda.getVariable() + " must be a variable.");
+                throw new ConstInsteadOfVarException("A variable must be bound by the " + Lambda.SYMBOL + ", but " + lambda.getVariable() + " is a constant according to the typing conventions in effect.");
             Var var = (Var)lambda.getVariable();
             
             Expr inside = lambda.getInnerExpr().stripAnyParens();

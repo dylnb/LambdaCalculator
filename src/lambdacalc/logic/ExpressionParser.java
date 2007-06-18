@@ -505,7 +505,7 @@ public class ExpressionParser {
                 if (vars.Exception != null) return vars; // return any fatal errors directly
                 ParseResult var = (ParseResult)vars.Parses.get(0); // parseIdentifier always returns a singleton, if anything
                 if (!(var.Expression instanceof Identifier)) // should never occur??
-                    return new ParseResultSet(new SyntaxException("After a binder, an identifier must come next: " + var.Expression + ".", start+1));
+                    return new ParseResultSet(new SyntaxException("After a binder, a variable must come next: " + var.Expression + ".", start+1));
                 int start1 = var.Next;
 
                 // See if a period follows and remember whether one does.
@@ -761,6 +761,7 @@ public class ExpressionParser {
             } else {
                 char cc = getChar(expression, start, context);
                 if (!isLetter(cc))
+                    // should not reach here...?
                     return new ParseResultSet(new SyntaxException("Invalid identifier as an argument to " + id + ".", start));
                 try {
                     arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false));
