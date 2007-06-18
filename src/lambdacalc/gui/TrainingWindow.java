@@ -119,7 +119,9 @@ public class TrainingWindow extends JFrame {
         lblHelpBinaries.setText("Type & for " + And.SYMBOL + " and | for " + Or.SYMBOL);
         lblHelpNot.setText("Type the tilde (~) for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
-
+      
+        txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+  
         //jSplitPaneLowerRight.setDividerLocation(0.7);
         
         treeDisplay.addSelectionListener
@@ -231,7 +233,7 @@ public class TrainingWindow extends JFrame {
         btnNext.setEnabled(false);
         btnDoAgain.setEnabled(false);
         
-        TitledBorder tb = (TitledBorder)txtQuestion.getBorder();
+        TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
         tb.setTitle("Current Problem");
         
         txtUserAnswer.setBackground(UIManager.getColor("TextField.inactiveBackground"));
@@ -410,7 +412,7 @@ public class TrainingWindow extends JFrame {
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);
         btnNext.setEnabled(currentEx+1 < exFile.getGroup(currentGroup).size() || currentGroup+1 < exFile.size() );
         
-        TitledBorder tb = (TitledBorder)txtQuestion.getBorder();
+        TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
         tb.setTitle("Current Problem: " + ex.getShortDirective());
         
         setAnswerEnabledState();
@@ -724,7 +726,6 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipady = 15;
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(btnCheckAnswer, gridBagConstraints);
 
@@ -766,19 +767,20 @@ public class TrainingWindow extends JFrame {
 
         jPanelQuestion.setLayout(new java.awt.GridBagLayout());
 
-        txtQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
+        jPanelQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
+        txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        txtQuestion.setBorder(null);
         txtQuestion.setEditable(false);
         txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
-        txtQuestion.setPreferredSize(new java.awt.Dimension(460, 60));
+        txtQuestion.setPreferredSize(new java.awt.Dimension(460, 50));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanelQuestion.add(txtQuestion, gridBagConstraints);
 
-        btnTransfer.setText("Paste below");
+        btnTransfer.setText("Paste");
         btnTransfer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTransferActionPerformed(evt);
@@ -786,9 +788,9 @@ public class TrainingWindow extends JFrame {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         jPanelQuestion.add(btnTransfer, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -829,6 +831,8 @@ public class TrainingWindow extends JFrame {
         jPanelCardLayout.add(jPanelTrees, "treesCard");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -885,7 +889,7 @@ public class TrainingWindow extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         jPanelLowerRight.add(jPanelNavigationButtons, gridBagConstraints);
 
         jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
@@ -996,7 +1000,7 @@ public class TrainingWindow extends JFrame {
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
                 if (btnNext.isEnabled() && !exFile.hasBeenCompleted()) {
-                    response += "Click the Next Problem button below to go on to the next exercise.";
+                    response += "Click the Next Problem button to go on to the next exercise.";
                     btnNext.requestFocusInWindow();
                 }
                 else if (!exFile.hasBeenCompleted())

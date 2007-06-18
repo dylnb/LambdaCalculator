@@ -25,10 +25,14 @@ import lambdacalc.gui.tree.TreeCanvas;
  *    The node has a composition rule assigned
  */
 public class TreeExerciseWidget extends JPanel {
-    TreeExercise exercise; // this is the exercise we're displaying
+    private TreeExercise exercise; // this is the exercise we're displaying
     Nonterminal lftree; // this is the tree we're displaying
     
     boolean inFullScreenMode = false;
+    
+    TreeExerciseWidget fullScreenWidget = null;
+    
+    JFrame fullScreenFrame = new JFrame();
     
     JScrollPane scrollpane;
     TreeCanvas canvas; // this is the display widget
@@ -54,11 +58,16 @@ public class TreeExerciseWidget extends JPanel {
     JButton btnUnsimplify = new JButton("Undo compute");
     JButton btnNextStep = new JButton("Next Node");
     JButton btnPrevStep = new JButton("Previous Node");
-    
+    JButton btnFullScreen = new JButton("Full Screen");
     // Selection listeners
     Vector listeners = new Vector();
     
     NodePropertyChangeListener nodeListener = new NodePropertyChangeListener();
+
+    GraphicsDevice theScreen =
+                GraphicsEnvironment.
+                getLocalGraphicsEnvironment().
+                getDefaultScreenDevice();    
     
     // This class encapsulates the evaluated/simplified state of a node.
     // If the evaluation resulted in an error, evaluationError is set
@@ -108,18 +117,7 @@ public class TreeExerciseWidget extends JPanel {
         
         setLayout(new BorderLayout());
         
-        addKeyListener(new KeyListener() {
-                public void keyPressed(KeyEvent event) {}
-                public void keyReleased(KeyEvent event) {
-                    if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                        if (inFullScreenMode) {
-                            System.exit(0); //TODO change
-                        }
-                    }
-                }
-                public void keyTyped(KeyEvent event) {}
-            }
-            );
+
         
         scrollpane = new JScrollPane();
         canvas = new TreeCanvas();
@@ -145,6 +143,9 @@ public class TreeExerciseWidget extends JPanel {
         //btnPrevStep.addActionListener(new PrevStepActionListener());
         //buttons.add(btnPrevStep);
 
+        btnFullScreen.addActionListener(new FullScreenActionListener());
+        buttons.add(btnFullScreen);
+        
         add(buttons, BorderLayout.PAGE_START);
     }
     
@@ -382,7 +383,7 @@ public class TreeExerciseWidget extends JPanel {
         public NodeClickListener(LFNode node) { this.node = node; }
     
         public void mouseClicked(MouseEvent e) {
-            selectNode(node);
+            setSelectedNode(node);
         }
     }
     
@@ -390,7 +391,7 @@ public class TreeExerciseWidget extends JPanel {
         return selectedNode;
     }
     
-    public void selectNode(LFNode node) {
+    public void setSelectedNode(LFNode node) {
         // Update the display of the previous current node so that
         // it dislays as non-current.
         if (selectedNode != null) {
@@ -481,7 +482,7 @@ public class TreeExerciseWidget extends JPanel {
     void moveTo(LFNode node) {
         // If we're not making any new node current, end here.
         if (node == null) {
-            selectNode(null);
+            setSelectedNode(null);
             return;
         }
         
@@ -516,7 +517,7 @@ public class TreeExerciseWidget extends JPanel {
         
         // All of the children are fully computed, so we can move
         // to this node.
-        selectNode(node);
+        setSelectedNode(node);
     }
     
     boolean ensureChildrenEvaluated() {
@@ -682,7 +683,7 @@ public class TreeExerciseWidget extends JPanel {
                     if (child instanceof Terminal)
                         continue;
                     if (testOnly) return true;
-                    selectNode(child);
+                    setSelectedNode(child);
                     if (isNodeEvaluated(selectedNode))
                         return false;
                 }
@@ -706,7 +707,7 @@ public class TreeExerciseWidget extends JPanel {
                 while (i >= 0) {
                     if (isNodeEvaluated(parent.getChild(i))) {
                         if (testOnly) return true;
-                        selectNode(parent.getChild(i));
+                        setSelectedNode(parent.getChild(i));
                         return false;
                     }
                     i--;
@@ -786,7 +787,7 @@ public class TreeExerciseWidget extends JPanel {
     }
     class FullScreenActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            enterFullScreenMode();
+            toggleFullScreenMode();
         }
     }
     
@@ -800,30 +801,65 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
 
-    public void enterFullScreenMode() {
+    public void openFullScreenWindow() {
         
-        JFrame frame = new JFrame();
-        frame.setUndecorated(true);
-        frame.getContentPane().add(this);
+//        if (inFullScreenMode) return;
         
-        GraphicsDevice theScreen =
-                GraphicsEnvironment.
-                getLocalGraphicsEnvironment().
-                getDefaultScreenDevice();
+        fullScreenFrame = new JFrame();
+        fullScreenFrame.setUndecorated(true);
+        //TrainingWindow.getSingleton().getContentPane().remove(this);
+        
+        fullScreenWidget = new TreeExerciseWidget();
+        fullScreenWidget.initialize(this.getExercise());
+        fullScreenWidget.inFullScreenMode = true;
+        fullScreenWidget.setBackground(this.getBackground());
+        fullScreenWidget.setSelectedNode(this.getSelectedNode());
+        
+        fullScreenFrame.getContentPane().add(fullScreenWidget);
+        
+        fullScreenWidget.btnFullScreen.setText("Exit full screen");
+
         if (!theScreen.isFullScreenSupported()) {
             System.err.println("Warning: Full screen mode not supported," +
                     "emulating by maximizing the window...");
         }
+//        fullScreenFrame.addKeyListener(new KeyListener() {
+//                public void keyPressed(KeyEvent event) {}
+//                public void keyReleased(KeyEvent event) {
+//                    if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
+//                        if (inFullScreenMode) {
+//                            theScreen.setFullScreenWindow(null);
+//                        }
+//                    }
+//                }
+//                public void keyTyped(KeyEvent event) {}
+//            }
+//        );
         
         try {
-            theScreen.setFullScreenWindow(frame);
+            theScreen.setFullScreenWindow(fullScreenFrame);
+  //          inFullScreenMode = true;
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             theScreen.setFullScreenWindow(null);
-        }
+        } 
     }
     
+    public void exitFullScreenMode() {
+//        if (!inFullScreenMode) return;
+        fullScreenFrame.removeAll();
+        fullScreenFrame.dispose();
+        theScreen.setFullScreenWindow(null);
+        inFullScreenMode = false;
+    }
+    
+    public void toggleFullScreenMode() {
+        if (!inFullScreenMode) {
+            openFullScreenWindow();
+        } else {
+            exitFullScreenMode();
+        }
+    }
 
                                       
     public static void main(String[] args) {
@@ -843,5 +879,9 @@ public class TreeExerciseWidget extends JPanel {
                 frame.setVisible(true);
             }
         });
+    }
+
+    public TreeExercise getExercise() {
+        return exercise;
     }
 }
