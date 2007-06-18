@@ -548,7 +548,7 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             for (int i = 0; i < exfile.size(); i++) {
                 ExerciseGroup g = exfile.getGroup(i);
                 
-                text += (char)('A' + i) + ". " + g.getTitle() + "\n";
+                text += g.getNumberedTitle() + "\n";
                 text += "\n";
                 
                 java.math.BigDecimal groupPointsTotal = java.math.BigDecimal.valueOf(0);

@@ -31,6 +31,10 @@ public class ExerciseGroup {
         return getTitle();
     }
     
+    public String getNumberedTitle() {
+            return (char)((int)'A' + getIndex()) + ". " + getTitle();
+    }
+    
     /**
      * Gets the title of the exercise group.
      */

@@ -93,8 +93,13 @@ public class ExerciseTreeModel implements TreeModel {
         public ExerciseGroupWrapper (ExerciseGroup g) { group = g; }
         
         public String toString() {
-            return (char)((int)'A' + group.getIndex()) + ". " + group.getTitle();
+            return group.getNumberedTitle();
         }
+    }
+    
+    private static String truncate(String s, int i) {
+        if (s.length() <= i) return s;
+        return s.substring(0, i) + "...";
     }
     
     public static class ExerciseWrapper {
@@ -105,7 +110,13 @@ public class ExerciseTreeModel implements TreeModel {
         public String toString() {
                                // checkmark // empty ballot box
  //           return (ex.isDone() ? CHECKMARK : BALLOTBOX) + "  " + (ex.getIndex()+1) + ". " + ex.getExerciseText();    
-            return (ex.isDone() ? CHECKMARK : BALLOTBOX) + "  " + (ex.getIndex()+1) + ". " + ex.getShortTitle();   
+            return (ex.isDone() ? CHECKMARK : BALLOTBOX) 
+                    + "  " 
+                    + (ex.getIndex()+1) 
+                    + ". " 
+                    + ex.getShortTitle()
+                    + ": "
+                    + truncate(ex.getExerciseText(), 8);
         }
     }
 }

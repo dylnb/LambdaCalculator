@@ -38,7 +38,7 @@ public class TrainingWindow extends JFrame {
     public static final int TYPES_AND_CONVERSIONS = 0;
     public static final int TREES = 1;
 
-    ExerciseFile exFile; // this is null if no file has been loaded yet
+    private ExerciseFile currentExFile; // this is null if no file has been loaded yet
     
     Exercise ex;
     int currentGroup = 0, currentEx = 0; // we start counting at zero
@@ -223,7 +223,7 @@ public class TrainingWindow extends JFrame {
         hasUserSaved = false;
         hasUnsavedWork = false;
         usersWorkFile = null;
-        exFile = null;
+        currentExFile = null;
         ex = null;
         
         this.jTreeExerciseFile.setModel(new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode("No exercise file opened")));
@@ -233,8 +233,11 @@ public class TrainingWindow extends JFrame {
         btnNext.setEnabled(false);
         btnDoAgain.setEnabled(false);
         
-        TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
-        tb.setTitle("Current Problem");
+        //TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
+        //tb.setTitle("Current Problem");
+        
+        jLabelAboveDirections.setText(" ");
+        jLabelAboveQuestion.setText(" ");
         
         txtUserAnswer.setBackground(UIManager.getColor("TextField.inactiveBackground"));
         txtUserAnswer.setEnabled(false);
@@ -291,10 +294,10 @@ public class TrainingWindow extends JFrame {
 
         try {
             if (isSerialized(f)) {
-                this.exFile = new ExerciseFile(f);
+                this.currentExFile = new ExerciseFile(f);
                 isWorkFile = true;
             } else {
-                this.exFile = parse(f);
+                this.currentExFile = parse(f);
             }
             menuItemSaveAs.setEnabled(true);
             menuItemSave.setEnabled(false);
@@ -312,7 +315,7 @@ public class TrainingWindow extends JFrame {
             return;
         }
         
-        if (this.exFile.hasBeenCompleted()) {
+        if (this.getCurrentExFile().hasBeenCompleted()) {
             Util.displayInformationMessage
                     (this, "All the exercises in this file have already been solved.",
                     "File already completed");
@@ -335,7 +338,7 @@ public class TrainingWindow extends JFrame {
             usersWorkFile = new File(fn);
         }
         
-        this.treemodel = new ExerciseTreeModel(this.exFile);
+        this.treemodel = new ExerciseTreeModel(this.getCurrentExFile());
         this.jTreeExerciseFile.setModel(this.treemodel);
         //this.jTreeExerciseFile.setCellRenderer(new ExerciseTreeRenderer());
         for (int i = 0; i < this.jTreeExerciseFile.getRowCount(); i++) {
@@ -347,6 +350,10 @@ public class TrainingWindow extends JFrame {
         
     }
     
+    private ExerciseGroup getCurrentGroup() {
+        if (this.getCurrentExFile() == null) return null;
+        return this.getCurrentExFile().getGroup(this.currentGroup);
+    }
     
     private String chopFileSuffix(String s) {
         int dotposition = s.lastIndexOf('.'); // last dot
@@ -365,8 +372,8 @@ public class TrainingWindow extends JFrame {
     }
     
     Exercise getCurrentExercise() {
-        if (exFile == null) return null;
-        return exFile.getGroup(currentGroup).getItem(currentEx);
+        if (getCurrentExFile() == null) return null;
+        return getCurrentGroup().getItem(currentEx);
     }
     
     
@@ -385,9 +392,9 @@ public class TrainingWindow extends JFrame {
         // group so that when the user goes on to the next problem,
         // it is very obvious that the directions displayed have changed.
         String directions = "There are no directions for this exercise.";
-        if (!exFile.getGroup(currentGroup).getDirections().trim().equals("")
+        if (!getCurrentGroup().getDirections().trim().equals("")
             && (ex.getIndex() == 0 || ex.getInstructions() == null)) {
-            directions = exFile.getGroup(currentGroup).getDirections();
+            directions = getCurrentGroup().getDirections();
             if (ex.getInstructions() != null)
                 directions += "\n\n" + ex.getInstructions();
         } else if (ex.getInstructions() != null) {
@@ -406,14 +413,18 @@ public class TrainingWindow extends JFrame {
             btnTransfer.setEnabled(false);
             switchViewTo(TREES);
             treeDisplay.initialize((TreeExercise)ex);
-            lexiconList.initialize(exFile, ex, treeDisplay);
+            lexiconList.initialize(getCurrentExFile(), ex, treeDisplay);
        }
 
         btnPrev.setEnabled(currentEx > 0 || currentGroup > 0);
-        btnNext.setEnabled(currentEx+1 < exFile.getGroup(currentGroup).size() || currentGroup+1 < exFile.size() );
+        btnNext.setEnabled(currentEx+1 < getCurrentGroup().size() || currentGroup+1 < getCurrentExFile().size() );
         
-        TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
-        tb.setTitle("Current Problem: " + ex.getShortDirective());
+        //TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
+        //tb.setTitle("Current Problem: " + ex.getShortDirective());
+        
+        jLabelAboveQuestion.setText(ex.getShortDirective());
+        
+        jLabelAboveDirections.setText(getCurrentGroup().getNumberedTitle());
         
         setAnswerEnabledState();
         setQuestionText();
@@ -425,7 +436,11 @@ public class TrainingWindow extends JFrame {
         try {
             updatingTree = true; // this prevents recursion when the event is
                                  // fired as if the user is clicking on this node
-            jTreeExerciseFile.setSelectionPath(new TreePath(new Object[] { exFile, new ExerciseTreeModel.ExerciseGroupWrapper(exFile.getGroup(currentGroup)), new ExerciseTreeModel.ExerciseWrapper(ex) } ));
+            jTreeExerciseFile.setSelectionPath
+                    (new TreePath
+                    (new Object[] { getCurrentExFile(), 
+                                    new ExerciseTreeModel.ExerciseGroupWrapper(getCurrentGroup()), 
+                                    new ExerciseTreeModel.ExerciseWrapper(ex) } ));
             jTreeExerciseFile.scrollPathToVisible(jTreeExerciseFile.getSelectionPath());
         } finally {
             updatingTree = false;
@@ -530,18 +545,17 @@ public class TrainingWindow extends JFrame {
         lblHelpConditionals = new javax.swing.JLabel();
         lblIdentifierTypes = new javax.swing.JTextArea();
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
-        jScrollPaneDirections = new javax.swing.JScrollPane();
-        lblDirections = new javax.swing.JTextArea();
         jPanelLowerRight = new javax.swing.JPanel();
         jPanelCardLayout = new javax.swing.JPanel();
         jPanelTypesAndConversions = new javax.swing.JPanel();
         btnCheckAnswer = new javax.swing.JButton();
         jScrollPaneFeedback = new javax.swing.JScrollPane();
         txtFeedback = new javax.swing.JTextArea();
-        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         jPanelQuestion = new javax.swing.JPanel();
         txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
         btnTransfer = new javax.swing.JButton();
+        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
+        jLabelAboveQuestion = new javax.swing.JLabel();
         jPanelTrees = new javax.swing.JPanel();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelNodeProperties = new javax.swing.JPanel();
@@ -551,6 +565,11 @@ public class TrainingWindow extends JFrame {
         btnDoAgain = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jSeparatorBelowNavButtons = new javax.swing.JSeparator();
+        jPanelUpperRight = new javax.swing.JPanel();
+        jScrollPaneDirections = new javax.swing.JScrollPane();
+        lblDirections = new javax.swing.JTextArea();
+        jLabelAboveDirections = new javax.swing.JLabel();
+        jSeparatorBelowDirections = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -678,21 +697,6 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneRightHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPaneRightHalf.setOneTouchExpandable(true);
-        jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        jScrollPaneDirections.setBorder(javax.swing.BorderFactory.createTitledBorder("Directions"));
-        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(100, 120));
-        jScrollPaneDirections.setViewport(null);
-        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        lblDirections.setColumns(20);
-        lblDirections.setEditable(false);
-        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
-        lblDirections.setLineWrap(true);
-        lblDirections.setWrapStyleWord(true);
-        lblDirections.setBorder(null);
-        jScrollPaneDirections.setViewportView(lblDirections);
-
-        jSplitPaneRightHalf.setLeftComponent(jScrollPaneDirections);
-
         jPanelLowerRight.setLayout(new java.awt.GridBagLayout());
 
         jPanelCardLayout.setLayout(new java.awt.CardLayout());
@@ -710,6 +714,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         jPanelTypesAndConversions.add(btnCheckAnswer, gridBagConstraints);
 
         jScrollPaneFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
@@ -734,23 +739,8 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weighty = 1.0;
         jPanelTypesAndConversions.add(jScrollPaneFeedback, gridBagConstraints);
 
-        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
-        txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUserAnswerActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        jPanelTypesAndConversions.add(txtUserAnswer, gridBagConstraints);
-
         jPanelQuestion.setLayout(new java.awt.GridBagLayout());
 
-        jPanelQuestion.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Problem"));
         txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtQuestion.setBorder(null);
         txtQuestion.setEditable(false);
@@ -763,7 +753,10 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelQuestion.add(txtQuestion, gridBagConstraints);
 
+        btnTransfer.setFont(new java.awt.Font("Lucida Grande", 0, 10));
         btnTransfer.setText("Paste");
+        btnTransfer.setMinimumSize(new java.awt.Dimension(55, 29));
+        btnTransfer.setPreferredSize(new java.awt.Dimension(55, 29));
         btnTransfer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTransferActionPerformed(evt);
@@ -773,15 +766,38 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 5);
         jPanelQuestion.add(btnTransfer, gridBagConstraints);
+
+        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
+        txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUserAnswerActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelQuestion.add(txtUserAnswer, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
+
+        jLabelAboveQuestion.setFont(new java.awt.Font("Lucida Grande", 1, 14));
+        jLabelAboveQuestion.setText(" ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        jPanelTypesAndConversions.add(jLabelAboveQuestion, gridBagConstraints);
 
         jPanelCardLayout.add(jPanelTypesAndConversions, "typesAndConversionsCard");
 
@@ -823,7 +839,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
 
-        btnPrev.setText("< Previous Problem");
+        btnPrev.setText("< Previous");
         btnPrev.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPrevActionPerformed(evt);
@@ -837,7 +853,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
 
-        btnDoAgain.setText("Do Problem Again");
+        btnDoAgain.setText("Repeat");
         btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDoAgainActionPerformed(evt);
@@ -851,7 +867,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
 
-        btnNext.setText("Next Problem >");
+        btnNext.setText("Next >");
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextActionPerformed(evt);
@@ -883,6 +899,44 @@ public class TrainingWindow extends JFrame {
         jPanelLowerRight.add(jSeparatorBelowNavButtons, gridBagConstraints);
 
         jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
+
+        jPanelUpperRight.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneDirections.setBorder(null);
+        jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(100, 100));
+        lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblDirections.setColumns(20);
+        lblDirections.setEditable(false);
+        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblDirections.setLineWrap(true);
+        lblDirections.setWrapStyleWord(true);
+        lblDirections.setBorder(null);
+        jScrollPaneDirections.setViewportView(lblDirections);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        jPanelUpperRight.add(jScrollPaneDirections, gridBagConstraints);
+
+        jLabelAboveDirections.setFont(new java.awt.Font("Lucida Grande", 1, 16));
+        jLabelAboveDirections.setText(" ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanelUpperRight.add(jLabelAboveDirections, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanelUpperRight.add(jSeparatorBelowDirections, gridBagConstraints);
+
+        jSplitPaneRightHalf.setLeftComponent(jPanelUpperRight);
 
         jSplitPaneMain.setRightComponent(jSplitPaneRightHalf);
 
@@ -989,11 +1043,11 @@ public class TrainingWindow extends JFrame {
             AnswerStatus status = ex.checkAnswer(string);
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
-                if (btnNext.isEnabled() && !exFile.hasBeenCompleted()) {
+                if (btnNext.isEnabled() && !getCurrentExFile().hasBeenCompleted()) {
                     response += "Click the Next Problem button to go on to the next exercise.";
                     btnNext.requestFocusInWindow();
                 }
-                else if (!exFile.hasBeenCompleted())
+                else if (!getCurrentExFile().hasBeenCompleted())
                     response += "Now go back and finish the exercises you haven't solved yet.";
                 else
                     response += "Congratulations! You've solved all the problems in this exercise file. Now save your work for submission.";
@@ -1026,7 +1080,7 @@ public class TrainingWindow extends JFrame {
         }
         if (txtUserAnswer.isEnabled()) {
             txtUserAnswer.requestFocusInWindow();
-        } else if (btnNext.isEnabled() && !exFile.hasBeenCompleted()) {
+        } else if (btnNext.isEnabled() && !getCurrentExFile().hasBeenCompleted()) {
             btnNext.requestFocusInWindow();
         }
         
@@ -1037,13 +1091,13 @@ public class TrainingWindow extends JFrame {
             currentEx--;
         } else {
             currentGroup--;
-            currentEx = exFile.getGroup(currentGroup).size();
+            currentEx = getCurrentGroup().size();
         }
         showExercise();
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        if (currentEx+1 < exFile.getGroup(currentGroup).size()) {
+        if (currentEx+1 < getCurrentGroup().size()) {
             currentEx++;
         } else {
             currentGroup++;
@@ -1074,7 +1128,7 @@ public class TrainingWindow extends JFrame {
         // we open the file chooser
         
         if (evt.getClickCount() >= 2) { // double click
-            if (exFile == null) {
+            if (getCurrentExFile() == null) {
                 menuItemOpen.doClick();
             }
         }
@@ -1122,13 +1176,13 @@ public class TrainingWindow extends JFrame {
 //            chooser.showOpenDialog(this);
 //        }
  
-        if (this.exFile.getStudentName() == null) {
+        if (this.getCurrentExFile().getStudentName() == null) {
             String studentName = JOptionPane.showInputDialog
                     (this, "Please enter your name (e.g. Noam Chomsky): ",
                     "Lambda", JOptionPane.QUESTION_MESSAGE);
             if (studentName == null) return; // cancelled
             if (studentName.trim().length() == 0) return; // treat as cancelled, not a valid student name, would cause setStudentName to throw
-            this.exFile.setStudentName(studentName);
+            this.getCurrentExFile().setStudentName(studentName);
         }
         
        jFileChooser1.setSelectedFile(usersWorkFile);
@@ -1168,7 +1222,7 @@ public class TrainingWindow extends JFrame {
     // onSaveAs()
     private void writeUsersWorkFile(File newfile) {
         try {
-            this.exFile.saveTo(newfile);
+            this.getCurrentExFile().saveTo(newfile);
             usersWorkFile = newfile;
             hasUserSaved = true;
             hasUnsavedWork = false;
@@ -1194,8 +1248,8 @@ public class TrainingWindow extends JFrame {
     // menuItemQuitActionPerformed()
     void doExit() {
         if  
-        (this.exFile != null 
-                && this.exFile.hasBeenStarted() 
+        (this.getCurrentExFile() != null 
+                && this.getCurrentExFile().hasBeenStarted() 
                 && this.hasUnsavedWork) {
             
            Object[] options = {"Save and quit",
@@ -1231,7 +1285,7 @@ public class TrainingWindow extends JFrame {
     }
 
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
-        if (this.exFile != null && this.exFile.hasBeenStarted() && hasUnsavedWork) {
+        if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
             int n = JOptionPane.showOptionDialog(this,
                 "Some of your answers are not yet saved.  Should I save your work before opening another file?",
                 "Lambda Calculator",
@@ -1264,7 +1318,7 @@ public class TrainingWindow extends JFrame {
     private void onExerciseTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_onExerciseTreeValueChanged
         if (this.updatingTree) return;
         TreePath path = jTreeExerciseFile.getSelectionPath();
-        if (path != null && exFile != null) {
+        if (path != null && getCurrentExFile() != null) {
             if (path.getPathCount() < 2)
                 currentGroup = 0;
             else
@@ -1289,6 +1343,10 @@ public class TrainingWindow extends JFrame {
     public Object clone() throws CloneNotSupportedException {
 	throw new CloneNotSupportedException();
     }
+
+    public ExerciseFile getCurrentExFile() {
+        return currentExFile;
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheckAnswer;
@@ -1297,6 +1355,8 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnTransfer;
     private javax.swing.JFileChooser jFileChooser1;
+    private javax.swing.JLabel jLabelAboveDirections;
+    private javax.swing.JLabel jLabelAboveQuestion;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelCardLayout;
@@ -1308,10 +1368,12 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelQuestion;
     private javax.swing.JPanel jPanelTrees;
     private javax.swing.JPanel jPanelTypesAndConversions;
+    private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparatorBelowDirections;
     private javax.swing.JSeparator jSeparatorBelowNavButtons;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
     private javax.swing.JSplitPane jSplitPaneMain;
