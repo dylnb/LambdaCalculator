@@ -584,6 +584,13 @@ public class ExpressionParser {
                 return insides;
                 //break
                 
+            case '$':
+                // Escape the next character. i.e., force the beginning of
+                // an identifier at the next character, and don't interpret it
+                // as a binder. We probably want to only do this if the ASCII
+                // option is turned on.
+                return parsePredicate(expression, start+1, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
+                
             default:
                 // Hope that it's an identifier or predicate. If not, a BadCharacterException is returned.
                 return parsePredicate(expression, start, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
@@ -645,6 +652,10 @@ public class ExpressionParser {
         start++;
         while (start < expression.length()) {
             char ic = getChar(expression, start, context);
+            if (ic == '$') {
+                // escape next character
+                ic = expression.charAt(++start);
+            }
             if (!isIdentifierChar(ic) || (context.singleLetterIdentifiers && isLetter(ic)))
                 break;
             id += expression.charAt(start++);

@@ -28,6 +28,8 @@ package lambdacalc.exercises;
  */
 
 import java.io.*;
+import java.text.*;
+import java.util.regex.*;
 import lambdacalc.logic.*;
 
 /**
@@ -117,15 +119,12 @@ public class ExerciseFileParser {
                 exindex = 0;
                 
             } else if (line.startsWith("directions ")) {
-                // replaceAll's first argument is a regular expression, so "\\" is
-                // complicated to represent. Each slash is escaped in the regex,
-                // and then escaped again to represent in source code.
-                directions += line.substring("directions ".length()).trim().replaceAll("\\\\\\\\", "\n") + " ";
+                directions += line.substring("directions ".length()).trim() + " ";
                 group = null;
                 exindex = 0;
 
             } else if (line.startsWith("instructions ")) {
-                instructions += line.substring("instructions ".length()).trim().replaceAll("\\\\\\\\", "\n") + " ";
+                instructions += line.substring("instructions ".length()).trim() + " ";
                 
             } else if (line.equals("single letter identifiers")) {
                 exprParseOpts.singleLetterIdentifiers = true;
@@ -191,7 +190,7 @@ public class ExerciseFileParser {
                         
                         group = file.addGroup();
                         group.setTitle(title);
-                        group.setDirections(directions);
+                        group.setDirections(escapeDirections(directions, exprParseOpts));
                         title = null;
                         directions = "";
                     }
@@ -203,7 +202,7 @@ public class ExerciseFileParser {
                     if (instructions.trim().equals(""))
                         ex.setInstructions(null);
                     else
-                        ex.setInstructions(instructions.trim());
+                        ex.setInstructions(escapeDirections(instructions, exprParseOpts));
                     instructions = "";
                 }
             }
@@ -264,7 +263,7 @@ public class ExerciseFileParser {
             String orthos = line.substring("define ".length(), colon).trim();
             String exprform = line.substring(colon+1).trim();
             
-            // Before the comma, we can have multiple orthographic
+            // Before the colon, we can have multiple orthographic
             // forms associated with the lexical entry, separated by
             // commas. After splitting it on the comma, trim each entry
             // to eliminate white space around commas and before the colon.
@@ -287,5 +286,37 @@ public class ExerciseFileParser {
             
             // Add this lexical entry into our database.
             file.getLexicon().addLexicalEntry(orthoForms, expr);
-    }            
+    }
+    
+    private static String escapeDirections(String directions, ExpressionParser.ParseOptions exprParseOpts) {
+        if (directions == null) return null;
+        
+        directions = directions.trim();
+        
+        // Turn two backslashes (plus any trailing whitespace) into a hard line break.
+        // replaceAll's first argument is a regular expression, so "\\" is
+        // complicated to represent. Each slash is escaped in the regex,
+        // and then escaped again to represent in source code.
+        directions = directions.replaceAll("\\\\\\\\ *", "\n");
+
+        // Allow formulas to be surrounded in braces, parse them, and then
+        // toString() them so that special symbols like lambdas are interpreted.
+        Pattern p = Pattern.compile("\\{([^}]+)\\}");
+        Matcher m = p.matcher(directions);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String exprstr = m.group(1);
+            try {
+                Expr expr = ExpressionParser.parse(exprstr, exprParseOpts);
+                // if successful...
+                m.appendReplacement(sb, expr.toString());
+            } catch (SyntaxException e) {
+                // if not successful, don't do any replacement; keep the braces
+            }
+        }
+        m.appendTail(sb);
+        directions = sb.toString();
+        
+        return directions;
+    }
 }
