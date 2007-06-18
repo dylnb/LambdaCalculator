@@ -124,12 +124,12 @@ public class TrainingWindow extends JFrame {
   
         //jSplitPaneLowerRight.setDividerLocation(0.7);
         
-        treeDisplay.addSelectionListener
-                (new TreeExerciseWidget.SelectionListener()
-        { public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
-              updateInfoBox((LFNode) evt.getSource());
-          }
-        });
+//        treeDisplay.addSelectionListener
+//                (new TreeExerciseWidget.SelectionListener()
+//        { public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
+//              updateInfoBox((LFNode) evt.getSource());
+//          }
+//        });
                 
         clearAllControls();
         
@@ -139,27 +139,27 @@ public class TrainingWindow extends JFrame {
     
     
     
-    void updateInfoBox(LFNode selectedNode) {
-        
-        //jPanelInfoBox contains jScrollPaneInfoBox, which contains jTableInfoBox
-        
-        jTableInfoBox.setModel
-                (new NodePropertiesTableModel(selectedNode.getProperties()));
-        
-        jPanelInfoBox.removeAll();
-        GridLayout layout = (GridLayout) jPanelInfoBox.getLayout();
-        if (true) {
-//        if (selectedNode instanceof LexicalTerminal) {
-            layout.setRows(1);
-            //jPanelInfoBox.add(jScrollPaneInfoBox);
-            jPanelInfoBox.add(lexiconList);
-        } else {
-            layout.setRows(1);
-            jPanelInfoBox.add(jScrollPaneInfoBox);
-        }
-        jPanelInfoBox.validate();
-        //jSplitPaneLowerRight.setDividerLocation(0.7);
-    }
+//    void updateInfoBox(LFNode selectedNode) {
+//        
+//        //jPanelInfoBox contains jScrollPaneInfoBox, which contains jTableInfoBox
+//        
+//        jTableInfoBox.setModel
+//                (new NodePropertiesTableModel(selectedNode.getProperties()));
+//        
+//        jPanelInfoBox.removeAll();
+//        GridLayout layout = (GridLayout) jPanelInfoBox.getLayout();
+//        if (true) {
+////        if (selectedNode instanceof LexicalTerminal) {
+//            layout.setRows(1);
+//            //jPanelInfoBox.add(jScrollPaneInfoBox);
+//            jPanelInfoBox.add(lexiconList);
+//        } else {
+//            layout.setRows(1);
+//            jPanelInfoBox.add(jScrollPaneInfoBox);
+//        }
+//        jPanelInfoBox.validate();
+//        //jSplitPaneLowerRight.setDividerLocation(0.7);
+//    }
 
     public void switchViewTo(int view) {
         CardLayout cardLayout = (CardLayout) jPanelCardLayout.getLayout();
@@ -515,8 +515,6 @@ public class TrainingWindow extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jScrollPaneInfoBox = new javax.swing.JScrollPane();
-        jTableInfoBox = new javax.swing.JTable();
         jFileChooser1 = new javax.swing.JFileChooser();
         jSplitPaneMain = new javax.swing.JSplitPane();
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
@@ -562,20 +560,6 @@ public class TrainingWindow extends JFrame {
         menuTools = new javax.swing.JMenu();
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
-
-        jScrollPaneInfoBox.setPreferredSize(new java.awt.Dimension(160, 100));
-        jTableInfoBox.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPaneInfoBox.setViewportView(jTableInfoBox);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -1320,13 +1304,11 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
-    private javax.swing.JScrollPane jScrollPaneInfoBox;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
-    private javax.swing.JTable jTableInfoBox;
     private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
     private javax.swing.JLabel lblHelpBinaries;
