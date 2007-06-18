@@ -7,4 +7,7 @@ public class NonterminalLacksCompositionRuleException extends MeaningEvaluationE
         + " cannot be computed. Check the denotations in its subtree for errors.");
     }
 
+    public NonterminalLacksCompositionRuleException(Nonterminal  nonterminal, String message) {
+        super(message);
+    }
 }

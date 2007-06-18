@@ -54,9 +54,12 @@ public class Nonterminal extends LFNode {
         // way of choosing it.
         if (compositor == null || !compositor.isApplicableTo(this))
             guessCompositionRule(RuleList.HEIM_KRATZER);
+        if (compositor == null)
+            throw new NonterminalLacksCompositionRuleException(this, "I do not know how to combine the children of the " + getLabel() + " node. For instance, function application does not apply because neither child's denotation is a function whose domain is the type of the denotation of the other child.");
 
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
+            
         return compositor.applyTo(this, g);
     }
     

@@ -45,7 +45,7 @@ public class TreeExerciseWidget extends JPanel {
     //Map lfToMeaningChooser = new HashMap(); // meaning JComboBox: lexical entry for terminals, composition rule for nonterminals
     Map lfToParent = new HashMap(); // parent LFNode
     
-    JLabel errorLabel = new JLabel(); // label containing error messages
+    JTextArea errorLabel = new JTextArea(); // label containing error messages
     
     // At any given time, at most one LFNode is the currently
     // selected node, which is highlighted and represents
@@ -125,6 +125,10 @@ public class TreeExerciseWidget extends JPanel {
         add(scrollpane, BorderLayout.CENTER);
         
         errorLabel.setForeground(java.awt.Color.RED);
+        errorLabel.setLineWrap(true);
+        errorLabel.setWrapStyleWord(true);
+        errorLabel.setEditable(false);
+        errorLabel.setMargin(new Insets(3,3,3,3));
         
         add(errorLabel, BorderLayout.PAGE_END);
         
@@ -448,7 +452,6 @@ public class TreeExerciseWidget extends JPanel {
             borderColor = java.awt.Color.BLUE;
         nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
-        // Change the label if it's the current evaluation node.
         JTextPane orthoLabel = (JTextPane)lfToOrthoLabel.get(node);
         orthoLabel.setText("<center>" + node.toHTMLString() + "</center>");
         
