@@ -102,7 +102,12 @@ public class TypeParser {
                     else
                         throw new SyntaxException("Insert a pair of types within the brackets.", i);
                 } else if (current.Right == null) {
-                    throw new SyntaxException("These brackets are unnecessary.  Remove them.", i);
+                    if (current.Left instanceof AtomicType)
+                        throw new SyntaxException("You cannot have brackets around an atomic type. Brackets only surround function types, like <e,t>. Remove these brackets.", i);
+                    else if (current.Left instanceof CompositeType)
+                        throw new SyntaxException("You have an extra pair of brackets around " + current.Left + " at the indicated location.  Remove these brackets.", i);
+                    else
+                        throw new SyntaxException("You cannot have brackets at the indicated location. Brackets only surround function types, like <e,t>.  Remove these brackets.", i);
                 } else {
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket here.", i);
