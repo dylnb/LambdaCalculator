@@ -567,6 +567,10 @@
                                 <Property name="columns" type="int" value="0"/>
                                 <Property name="rows" type="int" value="1"/>
                               </Layout>
+                              <SubComponents>
+                                <Component class="lambdacalc.gui.LexiconList" name="lexiconList">
+                                </Component>
+                              </SubComponents>
                             </Container>
                           </SubComponents>
                         </Container>

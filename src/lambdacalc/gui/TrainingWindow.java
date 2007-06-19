@@ -51,7 +51,6 @@ public class TrainingWindow extends JFrame {
     boolean hasUnsavedWork; // true iff the user has entered any unsaved work
     File usersWorkFile = null;
 
-    LexiconList lexiconList = new LexiconList();
     
     
     private static final ExerciseFileFilter onlyTextFiles = new ExerciseFileFilter
@@ -560,6 +559,7 @@ public class TrainingWindow extends JFrame {
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelNodeProperties = new javax.swing.JPanel();
         jPanelInfoBox = new javax.swing.JPanel();
+        lexiconList = new lambdacalc.gui.LexiconList();
         jPanelNavigationButtons = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnDoAgain = new javax.swing.JButton();
@@ -818,6 +818,8 @@ public class TrainingWindow extends JFrame {
         jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 100));
         jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 100));
         jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
+
+        jPanelInfoBox.add(lexiconList);
 
         jPanelNodeProperties.add(jPanelInfoBox);
 
@@ -1387,6 +1389,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel lblHelpLambda;
     private javax.swing.JLabel lblHelpNot;
     private javax.swing.JTextArea lblIdentifierTypes;
+    private lambdacalc.gui.LexiconList lexiconList;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenuItem menuItemClose;
     private javax.swing.JMenuItem menuItemOpen;

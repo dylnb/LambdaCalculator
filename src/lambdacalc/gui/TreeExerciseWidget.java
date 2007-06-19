@@ -45,7 +45,9 @@ public class TreeExerciseWidget extends JPanel {
     //Map lfToMeaningChooser = new HashMap(); // meaning JComboBox: lexical entry for terminals, composition rule for nonterminals
     Map lfToParent = new HashMap(); // parent LFNode
     
-    JTextArea errorLabel = new JTextArea(); // label containing error messages
+    JTextArea errorLabel = new JTextArea(" "); // label containing error messages
+    // we initialize it with a whitespace to make sure it takes the vertical place it needs later
+    // (not sure if this is really necessary but just to be on the safe side) 
     
     // At any given time, at most one LFNode is the currently
     // selected node, which is highlighted and represents
