@@ -1282,7 +1282,7 @@ public class TrainingWindow extends JFrame {
          }
         
         }
-
+        this.clearAllControls();
         this.dispose();
     }
 

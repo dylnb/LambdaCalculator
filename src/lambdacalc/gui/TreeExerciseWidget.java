@@ -858,7 +858,6 @@ public class TreeExerciseWidget extends JPanel {
         
         try {
             theScreen.setFullScreenWindow(fullScreenFrame);
-           inFullScreenMode = true;
         } catch (Exception e) {
             e.printStackTrace();
             theScreen.setFullScreenWindow(null);
@@ -870,16 +869,16 @@ public class TreeExerciseWidget extends JPanel {
         fullScreenFrame.removeAll();
         fullScreenFrame.dispose();
         theScreen.setFullScreenWindow(null);
-        inFullScreenMode = false;
+        
         TrainingWindow.getSingleton().requestFocusInWindow();
     }
     
     public void toggleFullScreenMode() {
         if (!inFullScreenMode) {
-            inFullScreenMode = true;
+            
             openFullScreenWindow();
         } else {
-            inFullScreenMode = false;
+            
             exitFullScreenMode();
         }
     }

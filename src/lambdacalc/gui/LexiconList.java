@@ -168,11 +168,11 @@ public class LexiconList extends JPanel
                 currentNode.setMeaning(ex);
             
             } catch (SyntaxException se) {
-                Util.displayErrorMessage(LexiconList.this, se.getMessage(), "Add Lexical Entry");
+                Util.displayErrorMessage(TrainingWindow.getSingleton(), se.getMessage(), "Add Lexical Entry");
                 if (se.getPosition() != -1)
                     lambdaEditor.setCaretPosition(se.getPosition());
             } catch (TypeEvaluationException tee) {
-                Util.displayErrorMessage(LexiconList.this, tee.getMessage(), "Add Lexical Entry");
+                Util.displayErrorMessage(TrainingWindow.getSingleton(), tee.getMessage(), "Add Lexical Entry");
             }
             
             lambdaEditor.requestFocus();
