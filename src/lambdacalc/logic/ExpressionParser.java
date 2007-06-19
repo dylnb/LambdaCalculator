@@ -890,12 +890,9 @@ public class ExpressionParser {
      * but rather as a simple list of expressions separated by operators
      * as in [X, &, Y, |, Z, -> , Q]. Then the operator precedence is taken
      * care of. The operator precendence is:
-     *   Not Equal -- binds strongest
-     *   Equal
-     *   And
-     *   Or
-     *   If
-     *   Iff -- binds weakest
+     *   Equal, Not Equal -- binds strongest
+     *   And, Or
+     *   If, Iff -- bind weakest
      *
      * Ambiguity of expressions like Lx.P & Q as Vx.[P & Q] or [Vx.P] & Q
      * are handled by returning not a single result, but for expressions
@@ -1073,13 +1070,14 @@ public class ExpressionParser {
         operators = new ArrayList(operators);
         
         if (operands.size() > 1) {
-            char[] operator_precedence = {
-                Equality.NEQ_SYMBOL,
-                Equality.EQ_SYMBOL,
-                And.SYMBOL,
-                Or.SYMBOL,
-                If.SYMBOL,
-                Iff.SYMBOL };
+            // Group first the eq/neq's, then the and/or's, and lastly the if/iffs.
+            // But we do them in pairs because if we find that and and or, for instance,
+            // are on the same level, then there's a problem because without an operator
+            // precedence convention, it is ambiguous.
+            char[][] operator_precedence = {
+                new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL },
+                new char[] { And.SYMBOL, Or.SYMBOL },
+                new char[] { If.SYMBOL, Iff.SYMBOL }  };
                
             for (int i = 0; i < operator_precedence.length; i++) {
                 SyntaxException ex = groupOperands(operands, operators, operator_precedence[i]);
@@ -1101,22 +1099,58 @@ public class ExpressionParser {
      * that represents the whole sequence of operands/operators.
      * @param operands the sequence of operand in the string
      * @param operators the sequence of operators in the string (one less than the number of operand)
-     * @param op the operator to group
+     * @param ops the operators to group: only one of these operators better be present,
+     * or else an exception is thrown for having an ambiguity, since these operators
+     * have the same precedence.
      * @throws SyntaxException when operators of the same precedence (-> and <->) are used
      * next to eachother.
      */
-    private static SyntaxException groupOperands(ArrayList operands, ArrayList operators, char op) {
+    private static SyntaxException groupOperands(ArrayList operands, ArrayList operators, char[] ops) {
+        // Make sure that only one of the operators in ops is used, since they
+        // are at the same precedence level and would have ambiguous bracketing.
+        int op_idx = -1;
         for (int i = 0; i+1 < operands.size(); i++) {
+           // Is this operator one that is listed in ops?
+           for (int j = 0; j < ops.length; j++) {
+               if (((String)operators.get(i)).charAt(0) == ops[j]) {
+                   if (op_idx == -1) {
+                       // This is the first operator in ops we found
+                       op_idx = j;
+                   } else {
+                       // We've encountered an operator in ops before.
+                       if (op_idx == j) {
+                           // The operator we encountered before is this one,
+                           // so we're ok.
+                       } else {
+                           // We encountered a different operator in the past,
+                           // which means we have an ambiguous bracketing situation.
+                           return new SyntaxException("Your expression is ambiguous because it has adjacent " + ops[op_idx] + " and " + ops[j] + " connectives without parenthesis. Add parenthesis.", -1);
+                       }
+                   }
+                   break;
+               }
+           }
+        }
+        
+        // If op_idx == -1, then we haven't found any instances of these operators.
+        if (op_idx == -1)
+            return null;
+            
+        // Otherwise, we found just one operator in ops, the one at op_idx.
+        char op = ops[op_idx];
+        
+        boolean associative = (op == And.SYMBOL || op == Or.SYMBOL);
+        
+        for (int i = 0; i+1 < operands.size(); i++) {
+            boolean groupedLast = false;
+            
             while (i+1 < operands.size() && ((String)operators.get(i)).charAt(0) == op) {
                 Expr left = (Expr)operands.get(i);
                 Expr right = (Expr)operands.get(i+1);
                 
-                if ((op == If.SYMBOL || op == Iff.SYMBOL) && (left instanceof If || left instanceof Iff))
-                    return new SyntaxException("Your expression is ambiguous because it has adjacent conditionals without parenthesis.", -1);
-                
-                if ((op == Equality.EQ_SYMBOL || op == Equality.NEQ_SYMBOL) && (left instanceof Equality))
-                    return new SyntaxException("Your expression is ambiguous because it has adjacent equality operators without parenthesis.", -1);
-                
+                if (!associative && groupedLast)
+                    return new SyntaxException("Your expression is ambiguous because it has adjacent " + op + " connectives without parenthesis, and this connective is not associative. Add parenthesis.", -1);
+                                
                 Expr binary;
                 switch (op) {
                     case And.SYMBOL: binary = new And(left, right); break;
@@ -1130,6 +1164,8 @@ public class ExpressionParser {
                 operands.set(i, binary);
                 operators.remove(i);
                 operands.remove(i+1);
+                
+                groupedLast = true;
             }
         }
         
