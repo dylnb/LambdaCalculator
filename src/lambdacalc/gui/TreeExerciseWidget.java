@@ -465,7 +465,10 @@ public class TreeExerciseWidget extends JPanel {
         nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
         JTextPane orthoLabel = (JTextPane)lfToOrthoLabel.get(node);
-        orthoLabel.setText("<center>" + node.toHTMLString() + "</center>");
+        String labeltext = node.toHTMLString();
+        if (labeltext == null || labeltext.trim().length() == 0)
+            labeltext = "&nbsp;-&nbsp;";
+        orthoLabel.setText("<center>" + labeltext + "</center>");
         
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
