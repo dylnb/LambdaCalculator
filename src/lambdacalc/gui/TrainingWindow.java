@@ -924,7 +924,7 @@ public class TrainingWindow extends JFrame {
         jPanelUpperRight.add(jScrollPaneDirections, gridBagConstraints);
 
         jLabelAboveDirections.setFont(new java.awt.Font("Lucida Grande", 1, 16));
-        jLabelAboveDirections.setText(" ");
+        jLabelAboveDirections.setText("Lambda Calculator");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanelUpperRight.add(jLabelAboveDirections, gridBagConstraints);
