@@ -88,6 +88,18 @@ public class TreeExerciseWidget extends JPanel {
         
         public MeaningState(Expr meaning) {
             // Add the expression and simplification steps of it to exprs.
+            
+            exprs.add(meaning);
+            try {
+                meaning = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
+            } catch (TypeEvaluationException tee) {
+                evaluationError = tee.getMessage();
+                return;
+            } catch (MeaningEvaluationException mee) {
+                evaluationError = mee.getMessage();
+                return;
+            }
+            
             while (true) {
                 exprs.add(meaning);
                 try {

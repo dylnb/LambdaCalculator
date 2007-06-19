@@ -34,20 +34,6 @@ public class NonBranchingRule extends CompositionRule {
                     "applicable on a nonterminal that does not have exactly " +
                     "one child.");
         
-        Expr childMeaning = node.getChild(0).getMeaning();
-        
-        
-        // Simplify the left and right before combining them.
-        // simplify() can throw TypeEvaluationException when
-        // a type mismatch occurs, but we don't expect this to
-        // happen within subnodes.
-        // TODO Josh: I copied this comment from FunctionApplication
-        // TODO: why don't we expect this to happen?
-        try { childMeaning = childMeaning.simplify(); 
-        } catch (TypeEvaluationException e) {
-        }
-
-        return childMeaning;
-        
+        return new MeaningBracketExpr(node.getChild(0), g);
     }
 }

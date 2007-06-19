@@ -57,21 +57,11 @@ public class PredicateModificationRule extends CompositionRule {
                     "applicable on a nonterminal that does not have exactly " +
                     "two children of type <e,t>.");
         }
-        Expr leftMeaning = node.getLeftChild().getMeaning();
-        Expr rightMeaning = node.getRightChild().getMeaning();
-        
-        
-        // Simplify the left and right before combining them.
-        // simplify() can throw TypeEvaluationException when
-        // a type mismatch occurs, but we don't expect this to
-        // happen within subnodes.
-        // TODO Josh: I copied this comment from FunctionApplication
-        // TODO: why don't we expect this to happen?
-        try { leftMeaning = leftMeaning.simplify(); } catch (TypeEvaluationException e) {}
-        try { rightMeaning = rightMeaning.simplify(); } catch (TypeEvaluationException e) {}
 
-        return new FunApp(new FunApp(engine, leftMeaning), rightMeaning);
+        return new FunApp(new FunApp(engine, new MeaningBracketExpr(node.getLeftChild(), g)),
+            new MeaningBracketExpr(node.getRightChild(), g));
         
     }
+
 }
 

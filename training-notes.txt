@@ -120,7 +120,7 @@ HIGH make sure that we check that the lbd files that the teacher gets in respons
 DONE and/or needs to have same operator precedence 
 DONE binder periods shouldn't affect scope
 Does lambda abstraction really work if we have nested lambda abstractions?
-HIGH The first step of a tree computation expansion is to show the meaning brackets
+DONE The first step of a tree computation expansion is to show the meaning brackets
 We should go through all expression and type error messages and remove the presupposition that it was parsed as intended.
 
 scrollRectToVisible

@@ -21,6 +21,11 @@ public class AssignmentFunction extends HashMap {
     public AssignmentFunction() {
     }
     
+    /** Creates a new instance of AssignmentFunction based on another AssignmentFunction. */
+    public AssignmentFunction(AssignmentFunction copyFrom) {
+        super(copyFrom);
+    }
+    
     public AssignmentFunction put(int key, Var value) {
         return (AssignmentFunction) put(new GApp(key), value);
     }

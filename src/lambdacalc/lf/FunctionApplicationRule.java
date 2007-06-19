@@ -53,14 +53,15 @@ public class FunctionApplicationRule extends CompositionRule {
         // Simplify the left and right before combining them.
         // simplify() can throw TypeEvaluationException when
         // a type mismatch occurs, but we don't expect this to
-        // happen within subnodes.
+        // happen within subnodes because we've already called
+        // getMeaning above successfully.
         try { leftMeaning = leftMeaning.simplify(); } catch (TypeEvaluationException e) { }
         try { rightMeaning = rightMeaning.simplify(); } catch (TypeEvaluationException e) { }
         
         if (isFunctionOf(leftMeaning, rightMeaning))
-            return apply(leftMeaning, rightMeaning);
+            return apply(left, right, g);
         if (isFunctionOf(rightMeaning, leftMeaning))
-            return apply(rightMeaning, leftMeaning);
+            return apply(right, left, g);
 
         throw new MeaningEvaluationException("The children of the nonterminal "
                 + (node.getLabel() == null ? node.toString() : node.getLabel())+ " are not of compatible types for function " +
@@ -84,8 +85,7 @@ public class FunctionApplicationRule extends CompositionRule {
         }
     }
     
-    private Expr apply(Expr left, Expr right) {
-        return new FunApp(left, right);
+    private Expr apply(LFNode left, LFNode right, AssignmentFunction g) {
+        return new FunApp(new MeaningBracketExpr(left, g), new MeaningBracketExpr(right, g));
     }
-
 }

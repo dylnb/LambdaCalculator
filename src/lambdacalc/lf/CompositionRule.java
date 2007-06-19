@@ -31,4 +31,5 @@ public abstract class CompositionRule {
     }
     public abstract Expr applyTo(Nonterminal node, 
             AssignmentFunction g) throws MeaningEvaluationException;
+            
 }

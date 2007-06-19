@@ -430,7 +430,7 @@ public abstract class Expr {
      * prime characters appended as needed until it does not appear
      * either bound or free in this expression.
      */
-    public Var createFreshVar(Var v) {
+    public final Var createFreshVar(Var v) {
         return createFreshVar(v, this.getAllVars());
     }
     
@@ -440,7 +440,7 @@ public abstract class Expr {
      * prime characters appended as needed until it does not appear
      * either bound or free in this expression.
      */    
-    public Var createFreshVar() {
+    public final Var createFreshVar() {
         return createFreshVar(Var.X, this.getAllVars());
     }
 

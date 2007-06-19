@@ -63,23 +63,16 @@ public class LambdaAbstractionRule extends CompositionRule {
         }
         
         Expr bodyMeaning = body.getMeaning();
-        
-        // Simplify the body.
-        // simplify() can throw TypeEvaluationException when
-        // a type mismatch occurs, but we don't expect this to
-        // happen within subnodes.
-        // TODO Josh: I copied this comment from FunctionApplication
-        // TODO: why don't we expect this to happen?
-        try { bodyMeaning = bodyMeaning.simplify(); } catch (TypeEvaluationException e) {}
+        try { bodyMeaning = bodyMeaning.simplify(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
  
         Var var = bodyMeaning.createFreshVar();
         
-        // update assignment function
-        g.put(index, var);
+        // Copy the assignment function being given to us and add the
+        // new mapping from the bare index to a fresh variable.
+        AssignmentFunction g2 = (g == null ? new AssignmentFunction() : new AssignmentFunction(g));
+        g2.put(index, var);
         
-        // apply it
-        bodyMeaning = bodyMeaning.replaceAll(g);
-        return new Lambda(var, bodyMeaning, true);
+        return new Lambda(var, new MeaningBracketExpr(body, g2), true);
     }
 }
 
