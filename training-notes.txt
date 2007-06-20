@@ -1,7 +1,7 @@
 General Tasks
 HIGH history
 DONE saving tree exercises 
-HIGH teacher tool displays saved tree exercises
+DONE(really badly) teacher tool displays saved tree exercises
 HIGH god mode vs nongod mode
 
 

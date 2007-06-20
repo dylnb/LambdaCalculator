@@ -559,7 +559,9 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                     
                     text += "   ";
                     
-                    if (!ex.isDone())
+                    if (ex instanceof TreeExercise)
+                        text += " "; // because we never know if these exercises are finished
+                    else if (!ex.isDone())
                         text += ExerciseTreeModel.BALLOT_EX;
                     else
                         text += ExerciseTreeModel.CHECKMARK;
@@ -575,6 +577,13 @@ public class TeacherToolWindow extends javax.swing.JFrame {
                     text += " [" + ex.getPoints() + " pt]";
                     
                     text += "\n";
+                    
+                    // For tree exercises, there is a lost of student-entered
+                    // data to be displayed for the teacher to grade on her own.
+                    if (ex instanceof TreeExercise) {
+                        text += ((TreeExercise)ex).getUserAnswers();
+                        text += "\n";
+                    }
                     
                     groupPointsTotal = groupPointsTotal.add(ex.getPoints());
                     if (ex.isDone())

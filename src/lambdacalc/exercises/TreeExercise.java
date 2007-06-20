@@ -72,6 +72,56 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         return treeroot.toString();
     }
     
+    public String getUserAnswers() {
+        StringBuilder sb = new StringBuilder();
+        writeUserChoicesToString(treeroot, sb);
+        return sb.toString();
+    }
+    
+    private void writeUserChoicesToString(LFNode node, StringBuilder output) {
+        if (node instanceof Nonterminal) {
+            Nonterminal nt = (Nonterminal)node;
+            
+            for (int i = 0; i < nt.size(); i++)
+                writeUserChoicesToString(nt.getChild(i), output);
+            
+            if (nt.getLabel() != null) {
+                output.append(nt.getLabel());
+                if (nt.hasIndex())
+                    output.append("_" + nt.getIndex());
+            } else {
+                output.append(nt.toString());
+            }
+            
+            output.append(": ");
+            
+            if (nt.getCompositionRule() == null) {
+                output.append("no composition rule selected");
+            } else {
+                output.append(nt.getCompositionRule().getName());
+            }
+            
+            output.append("\n");
+            
+        } else if (node instanceof LexicalTerminal) {
+            LexicalTerminal lt = (LexicalTerminal)node;
+            output.append(lt.toString() + ": ");
+            if (!lt.hasMeaning()) {
+                output.append("no denotation given");
+            } else {
+                try {
+                    output.append(lt.getMeaning().toString());
+                } catch (MeaningEvaluationException e) {
+                    // on a terminal, this can't be reached, since hasMeaning() is true
+                }
+            }
+            output.append("\n");
+            
+        } else {
+            // skip other node types since the user doesn't do anything for them
+        }
+    }
+        
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeShort(1); // for future use
         
