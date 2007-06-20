@@ -36,9 +36,13 @@ title Lambda Conversion
 directions After checking that the type of the function and the type of the
 directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.
+directions \alpha \beta \gamma \delta \Psi \Omega
 points per exercise 10
 
 Lx[P(x) & Q(x)] (a)
+
+multiple letter identifiers
+P_<e*e*e*e*e*e*t*t,t>(\alpha_e,\beta_e,\gamma_e,\delta_e,\Psi_e,\Omega_e,\L\AUGH_<et>(a),\L\ITT\L\E_<et>(b))
 
 exercise tree
 title Full Derivations

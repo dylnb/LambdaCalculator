@@ -14,7 +14,7 @@
 
 <h1>Lambda Calculator - Exercise File Format</h1>
 		
-<p>Exercise files created by the instructor are saved as plain-text files, usually with a <tt>.txt</tt> file extension. You can edit this files with, for instance, the Notepad program on Windows. When using Microsoft Word or another office suite, be sure to save the file as a Text Only-formatted file. When using special or international (non-ASCII) characters, files should be saved in the UTF-8 character encoding.</p>
+<p>Exercise files created by the instructor are saved as plain-text files, usually with a <tt>.txt</tt> file extension. You can edit this files with, for instance, the Notepad program on Windows. When using Microsoft Word or another office suite, be sure to save the file as a Text Only-formatted file. When using special or international (non-ASCII) characters, files should be saved in the UTF-8 Unicode character encoding.</p>
 
 <p>An example exercise file is given below.</p>
 
@@ -112,6 +112,11 @@ directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.</pre>
 <p>You can include predicate logic expressions inside the directions. By writing the expressions according to the directions below, and surrounding them in curly braces, they will appear to the student rendered nicely with the appropriate symbols for lambdas, etc.</p>
 <pre>directions The expression {Lx.Iy[P(y,x)]} has type &lt;e,e&gt;.</pre>
+<p>Greek letters may be included in two ways. 1) By preceding the name of the letter
+with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
+<!-- note something similar below within expressions -->
+2) By putting the special character directly within the text file (i.e. with
+Word's Insert Symbol), and saving the file in UTF-8 Unicode encoding.</p>
 </dd>
 
 <dt><tt>instructions ___</tt></dt>
@@ -206,7 +211,7 @@ Student's responses:
 <p>The Lambda program will read predicate logic expressions from exercise files. Predicate logic expressions may include:</p>
 
 <ul>
-<li>Constants and variables. Constants and variables must be single letters only, unless the <tt>multiple letter identifiers</tt> directive is used. Primes can be entered with the apostrophe. Some capital letters are treated specially by the Lambda program; see the note below on using these letters within constants and variables.</li>
+<li>Constants and variables. Constants and variables must be single letters only, unless the <tt>multiple letter identifiers</tt> directive is used. Primes can be entered with the apostrophe. Some capital letters (A, E, I, and L) are treated specially by the Lambda program; see the note below on using these letters within constants and variables.</li>
 <li>Constants and variable with explicit types using an underscore to separate the name and the type, such as: x_e, X_&lt;e,t&gt;, etc. Composite types such as &lt;e,t&gt; must be written with brackets and cannot be abbreviated as "et". Explicit types are unnecessary when the typing conventions specified in the exercise file already provide a type for the identifier.</li>
 <li>Predicates, entered as P(a) or P(a,b,c) (or if the <tt>multiple letter identifiers</tt> has not been specified, in abbreviated form such as Pabc).</li>
 <li>The logical connectives, which can be entered according to the table below:
@@ -231,8 +236,11 @@ Student's responses:
   <tr><td style="text-align: center">ι</td><td style="text-align: center">I</td></tr>
   </table>
 For example, Ax[P(x)], AxEy[P(x) &amp; Q(y)], Lx[P(x)], LxLy.P(x,y) &amp; Q(y), Iz[king(z)]. Periods may separate multiple consecutive quantifiers/binders. After quantifiers and binders, a bracketed expression should follow to avoid scope ambiguity.</li>
-<li>To use capital E, A, L, and I as those letters in a constant or variable, precede the letter with a dollar sign ($) to indicate to the program to treat the letter following like normal, e.g. H$APPY.</li>
+<li>To use capital E, A, L, and I as those letters in a constant or variable, precede the letter with a backslash (\) to indicate to the program to treat the letter following like normal, e.g. H\APPY, \L\ITT\L\E.</li>
 <li>Function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx[P(x)] (b).</li>
+<li>Single Greek letters may be used as constants or variables by preceding the name of the letter
+with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
+<!-- note use of Greek letters in directions --></li>
 </ul>
 
 <h3>Tree Exercises</h3>

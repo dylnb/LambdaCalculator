@@ -603,13 +603,6 @@ public class ExpressionParser {
                 return insides;
                 //break
                 
-            case '$':
-                // Escape the next character. i.e., force the beginning of
-                // an identifier at the next character, and don't interpret it
-                // as a binder. We probably want to only do this if the ASCII
-                // option is turned on.
-                return parsePredicate(expression, start+1, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
-                
             default:
                 // Hope that it's an identifier or predicate. If not, a BadCharacterException is returned.
                 return parsePredicate(expression, start, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
@@ -657,27 +650,55 @@ public class ExpressionParser {
         int realStart = start;
         char c = expression.charAt(start);
         
-        if (!isLetter(c)) {
+        if (!isLetter(c) && !(context.ASCII && c == '\\')) {
             if (isRightAfterBinder)
                 return new ParseResultSet(new BadCharacterException("I'm expecting a variable at the indicated location, but variables must start with a letter.", start));
             else
                 return new ParseResultSet(new BadCharacterException("You cannot have a '" + c + "' at the indicated location. I'm expecting to find " + whatIsExpected + ".", start));
         }
-    
+        
         // Read in the identifier until the first non-letter-or-number
         // If we're doing single letter identifiers, then stop before
         // the next letter too.
         String id = String.valueOf(c);
         start++;
+        
+        // If the first character was a backslash, we have to read
+        // in the next character literally. In the loop below, it is
+        // already translating characters according to our conventions.
+        // But we keep the backslash for later, since we're not sure if
+        // literal escaping of the next character was wanted, or else
+        // something like \alpha.
+        if (id.equals("\\"))
+            id += expression.charAt(start++);
+    
         while (start < expression.length()) {
             char ic = getChar(expression, start, context);
-            if (ic == '$') {
-                // escape next character
+            if (ic == '\\' && context.ASCII) {
+                // escape next character (and this time, trash the backslash!)
                 ic = expression.charAt(++start);
             }
             if (!isIdentifierChar(ic) || (context.singleLetterIdentifiers && isLetter(ic)))
                 break;
-            id += expression.charAt(start++);
+            id += ic;
+        }
+        
+        // If the identifier starts with a backslash, the user meant
+        // one of two things: either he is giving an escape code
+        // like \alpha, or he means to escape just the first letter,
+        // as in \LIKES to prevet the L from becomming a lambda.
+        // If the whole thing is a valid escape sequence, use it.
+        if (id.startsWith("\\")) {
+            String code = id.substring(1);
+            String decoded = translateEscapeCode(code);
+            if (decoded != code) {
+                id = decoded;
+            } else {
+                // it wasn't a valid escape sequence so just lop off
+                // the initial backslash, since it already did its job
+                // of escaping the next character.
+                id = code;
+            }
         }
         
         // If an underscore follows the name of the identifier, then the identifier's
@@ -1301,5 +1322,31 @@ public class ExpressionParser {
      */
     private static ParseResultSet parseExpression(String expression, int start, ParseOptions context, String whatIsExpected) {
         return parseInfixExpression(expression, start, context, whatIsExpected, false, true);
+    }
+    
+    public static String translateEscapeCode(String code) {
+        if (code.equals("alpha")) return "\u03B1";
+        if (code.equals("beta")) return "\u03B2";
+        if (code.equals("gamma")) return "\u03B3";
+        if (code.equals("delta")) return "\u03B4";
+        if (code.equals("epsilon")) return "\u03B5";
+        if (code.equals("theta")) return "\u03B8";
+        if (code.equals("pi")) return "\u03C0";
+        if (code.equals("rho")) return "\u03C1";
+        if (code.equals("sigma")) return "\u0C31";
+        if (code.equals("phi")) return "\u03C6";
+        if (code.equals("psi")) return "\u03C8";
+        if (code.equals("omega")) return "\u03C9";
+        
+        if (code.equals("Gamma")) return "\u03B1";
+        if (code.equals("Delta")) return "\u03B1";
+        if (code.equals("Theta")) return "\u0398";
+        if (code.equals("Pi")) return "\u03A0";
+        if (code.equals("Rho")) return "\u03A1";
+        if (code.equals("Sigma")) return "\u03A3";
+        if (code.equals("Phi")) return "\u03A6";
+        if (code.equals("Psi")) return "\u03A8";
+        if (code.equals("Omega")) return "\u03A9";
+        return code;
     }
 }
