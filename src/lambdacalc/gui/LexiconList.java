@@ -37,7 +37,7 @@ public class LexiconList extends JPanel
     DefaultComboBoxModel entries = new DefaultComboBoxModel();
     
     LambdaEnabledTextField lambdaEditor = new LambdaEnabledTextField();
-    JButton buttonSetDenotation = new JButton("Set Denotation");
+    JButton buttonSetDenotation = new JButton("Assign Denotation");
     JLabel labelWhatToDo = new JLabel("Enter the denotation for the selected terminal node, or select a denotation from the list.");
 
     LexicalTerminal currentNode;
@@ -220,8 +220,10 @@ public class LexiconList extends JPanel
                     if (existingMeanings[i].equals(ex))
                         isInLexicon = true;
                 
-                if (!isInLexicon)
+                if (!isInLexicon) {
                     exFile.getLexicon().addLexicalEntry(currentNode.getLabel(), ex);
+                    showLexiconForWord(currentNode);
+                }
                     
                 // Set the meaning of the selected node.
                 currentNode.setMeaning(ex);

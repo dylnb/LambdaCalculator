@@ -32,7 +32,16 @@ public class MeaningBracketExpr extends Expr {
     
     protected String toString(boolean html) {
         String label = node.getLabel();
-        if (label == null) label = node.toString();
+        if (label != null) {
+            if (node.hasIndex()) {
+                if (!html)
+                    label += "_" + node.getIndex();
+                else
+                    label += "<sub>" + node.getIndex() + "</sub>";
+            }
+        } else {
+            label = node.toString();
+        }
         
         label = escapeHTML("[[" + label + "]]", html);
         

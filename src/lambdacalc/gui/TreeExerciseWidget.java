@@ -57,7 +57,7 @@ public class TreeExerciseWidget extends JPanel {
     // Buttons
     JButton btnSimplify = new JButton("Simplify Node");
     JButton btnUnsimplify = new JButton("Undo Simplify");
-    JButton btnNextStep = new JButton("Evaluate Next Node");
+    JButton btnNextStep = new JButton("Evaluate Node Fully");
     JButton btnPrevStep = new JButton("Undo Evaluation");
     JButton btnFullScreen = new JButton("Full Screen");
     JButton btnFontIncrease = new JButton("A\u2191");
@@ -92,7 +92,10 @@ public class TreeExerciseWidget extends JPanel {
             
             exprs.add(meaning);
             try {
-                meaning = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
+                Expr meaning2 = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
+                if (!meaning.equals(meaning2))
+                    exprs.add(meaning2);
+                meaning = meaning2;
             } catch (TypeEvaluationException tee) {
                 evaluationError = tee.getMessage();
                 return;
@@ -102,11 +105,11 @@ public class TreeExerciseWidget extends JPanel {
             }
             
             while (true) {
-                exprs.add(meaning);
                 try {
                     Expr.LambdaConversionResult r = meaning.performLambdaConversion();
                     if (r == null) break;
                     meaning = r.result;
+                    exprs.add(meaning);
                 } catch (TypeEvaluationException tee) {
                     evaluationError = tee.getMessage();
                     return;
@@ -698,14 +701,13 @@ public class TreeExerciseWidget extends JPanel {
                 updateNode(selectedNode);
                 canvas.invalidate();
             }
-        } else {
-            // This expression is fully evaluated. 
-            if (lfToParent.containsKey(selectedNode)) {
-                if (testOnly) return true;
-                Nonterminal parent = (Nonterminal)lfToParent.get(selectedNode);
-                moveTo(parent);
-            }
-            return false;
+        }
+        
+        // This expression is fully evaluated. 
+        if (lfToParent.containsKey(selectedNode)) {
+            if (testOnly) return true;
+            Nonterminal parent = (Nonterminal)lfToParent.get(selectedNode);
+            moveTo(parent);
         }
         
         return false;
