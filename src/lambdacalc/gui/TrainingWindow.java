@@ -421,7 +421,7 @@ public class TrainingWindow extends JFrame {
         //TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
         //tb.setTitle("Current Problem: " + ex.getShortDirective());
         
-        jLabelAboveQuestion.setText(ex.getShortDirective());
+        jLabelAboveQuestion.setText((ex.getIndex()+1) + ". " + ex.getShortDirective());
         
         jLabelAboveDirections.setText(getCurrentGroup().getNumberedTitle());
         

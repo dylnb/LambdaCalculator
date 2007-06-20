@@ -116,7 +116,7 @@ public class ExerciseTreeModel implements TreeModel {
                     + ". " 
                     + ex.getShortTitle()
                     + ": "
-                    + truncate(ex.getExerciseText(), 8);
+                    + truncate(ex.getExerciseText(), 20);
         }
     }
 }

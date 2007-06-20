@@ -9,51 +9,51 @@ Training Window
 DONE    Clicking Next Problem when on the last problem of a group takes you to the next-numbered problem (not problem 1) of the next group
 MEDIUM    Difference between opening lbd and txt files not clear. Put into two menus? Open Assignment, Open Saved Work
 LOW    Tutorial screen
-MEDIUM    Make the layout clearer; Prev/Next problem buttons are too low
+DONE    Make the layout clearer; Prev/Next problem buttons are too low
 DONE    When an exercise in the exercise tree gets highlighted (after clicking next problem), it should scroll into view
 LOW    Be consistent in the capitalization of label text
 LOW    Is there a white background on the Current Problem frame?
 HIGH    When Next Problem'ing to the next group, that we are in a new group is not obvious. We need an intermediate screen with just the new directions. (Also when starting a new group, for consistency?)
 HIGH    Something weird with the font metrics in the lambda text field on the library Mac
-HIGH    Scrollbars on directions
+DONE    Scrollbars on directions
 DONE    After a hard line break in directions, we get a space at the beginning of the next paragraph.
 DONE(half)    L's for lambdas in directions and e_v looks weird everywhere. We must HTMLify directins, either with LaTeX conventions about _ and ^, or escape lambda expressions surrounded in { }.
 HIGH    The node properties, lexicon pane does not resize. Disappears.
-MEDIUM    Should indicate in main area the problem # being worked on, original expression being simplified
+DONE(half)    Should indicate in main area the problem # being worked on, original expression being simplified
 MEDIUM    Check whether NotSoFast works
-MEDIUM    Give Paste Below an icon, move to left
-MEDIUM    Buttons don't look like buttons
+DONE(half)    Give Paste Below an icon, move to left
+DONE    Buttons don't look like buttons
 LOW    Show student's name from saved work somewhere in main area
-HIGH    If user enters an answer and tries to go onto another exercise without Check Answer, do we stop them?
+MEDIUM    If user enters an answer and tries to go onto another exercise without Check Answer, do we stop them?
 
 Scratch pad
-HIGH    Should get multiple letter identifier option from existing exercise
+MEDIUM    Should get multiple letter identifier option from existing exercise
 MEDIUM On a syntax error, position the cursor to the indicated issue
 
 Lambda Exercises
-HIGH    Telling the user he needs an alphabetical variant may be too much help? What's the motivation to figure it out?
-HIGH    If you do two lambda conversions at once but make a mistake, program assumes you did one and gives strange help.
+?    Telling the user he needs an alphabetical variant may be too much help? What's the motivation to figure it out?
+MEDIUM    If you do two lambda conversions at once but make a mistake, program assumes you did one and gives strange help.
 
 Tree Exercises
 MEDIUM    user wants to have more e-type variables to play with (u, v, etc.). Suggest underscore notation in the conventions box
 DONE    When a tree node's label is so large it gets pushed to the right, recenter the child nodes under it.
 HIGH    What does the Simplify (and etc.) buttons do? Not clear they operate on the selected node. Add a label, tooltips, pop-up help, or something.
-HIGH       Simplify should say "Evaluate" when it does the first evaluation on a nonterminal
-HIGH       Next Node should be "Simplify Fully" when it does that, and it should always move to the next node
-HIGH       All buttons should be disabled on terminals.
+DONE       Simplify should say "Evaluate" when it does the first evaluation on a nonterminal
+IGNORED       Next Node should be "Simplify Fully" when it does that, and it should always move to the next node
+IGNORED       All buttons should be disabled on terminals.
     Types on nonterminals
 MEDIUM       Knowing them ahead of time helps students: Can we put them on the tree somewhere?
 LOW       Having a place for the student to enter them before giving lexical entries
 LOW       A general-use way to annotate nodes?
 DONE    When we guess composition rule and none apply, we need to say we tried function application but it was not applicable, for whatever reason, etc.
-MEDIUM    Prev Node button takes you to the first terminal if there is no where else to go, but it should never go to a terminal
-MEDIUM   When simplifying Carlos alpha-shaves, did we lose the lambda's dot?
+DONE    Prev Node button takes you to the first terminal if there is no where else to go, but it should never go to a terminal
+IGNORED  When simplifying Carlos alpha-shaves, did we lose the lambda's dot? (Answer: No)
 HIGH    Not clear that the lexical entry field does what it does; people think it edits selected node.
 HIGH    Not clear that with God Mode, no more user input is needed after entering terminal meanings
 HIGH    Not clear when the end of the problem is reached
 ?    Expect to enter nonterminal information where the terminal lexical entry is entered
-MEDIUM    Previous Node should clear later evaluations too.
-HIGH    Lexical entry field got frozen on a terminal.
+DONE    Previous Node should clear later evaluations too.
+IGNORED    Lexical entry field got frozen on a terminal. (Can't reproduce.)
 MEDIUM    Pre-provided, already-entered lexical entries not clear.
 MEDIUM    An empty lexicon list box looks like a text box.
 DONE    Labelless nonterminals need a larger selection box.

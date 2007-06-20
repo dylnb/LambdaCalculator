@@ -117,7 +117,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     }
     
     public String getShortTitle() {
-        return "Lambda conversion";
+        return Lambda.SYMBOL+"-Conv.";
     }
 
     public void reset() {

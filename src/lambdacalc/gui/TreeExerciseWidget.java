@@ -55,10 +55,10 @@ public class TreeExerciseWidget extends JPanel {
             = new FullScreenActionListener();
     
     // Buttons
-    JButton btnSimplify = new JButton("Compute");
-    JButton btnUnsimplify = new JButton("Undo compute");
-    JButton btnNextStep = new JButton("Next Node");
-    JButton btnPrevStep = new JButton("Previous Node");
+    JButton btnSimplify = new JButton("Simplify Node");
+    JButton btnUnsimplify = new JButton("Undo Simplify");
+    JButton btnNextStep = new JButton("Evaluate Next Node");
+    JButton btnPrevStep = new JButton("Undo Evaluation");
     JButton btnFullScreen = new JButton("Full Screen");
     // Selection listeners
     Vector listeners = new Vector();
@@ -150,11 +150,11 @@ public class TreeExerciseWidget extends JPanel {
         btnUnsimplify.addActionListener(new UnsimplifyActionListener());
         buttons.add(btnUnsimplify);
         
-        //btnNextStep.addActionListener(new NextStepActionListener());
-        //buttons.add(btnNextStep);
+        btnNextStep.addActionListener(new NextStepActionListener());
+        buttons.add(btnNextStep);
 
-        //btnPrevStep.addActionListener(new PrevStepActionListener());
-        //buttons.add(btnPrevStep);
+        btnPrevStep.addActionListener(new PrevStepActionListener());
+        buttons.add(btnPrevStep);
 
         // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
         // FullScreenTreeExerciseWidget
@@ -439,6 +439,13 @@ public class TreeExerciseWidget extends JPanel {
         btnUnsimplify.setEnabled(doUnsimplify(true));
         btnNextStep.setEnabled(doNextStep(true));
         btnPrevStep.setEnabled(doPrevStep(true));
+        
+        String simplifyText = "Simplify Node";
+        if (selectedNode != null && selectedNode instanceof Terminal)
+            simplifyText = "Go To Next Node";
+        else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode))
+            simplifyText = "Evaluate Node";
+        btnSimplify.setText(simplifyText);
     }
     
     void curErrorChanged() {
@@ -722,7 +729,7 @@ public class TreeExerciseWidget extends JPanel {
                 }
                 i--;
                 while (i >= 0) {
-                    if (isNodeEvaluated(parent.getChild(i))) {
+                    if (parent.getChild(i) instanceof Nonterminal && isNodeEvaluated(parent.getChild(i))) {
                         if (testOnly) return true;
                         setSelectedNode(parent.getChild(i));
                         return false;
@@ -741,7 +748,7 @@ public class TreeExerciseWidget extends JPanel {
         
         if (testOnly) return true;
         lfToMeaningState.remove(selectedNode);
-        updateNode(selectedNode);
+        onUserChangedNodeMeaning(selectedNode);
         canvas.invalidate();
         
         return false;

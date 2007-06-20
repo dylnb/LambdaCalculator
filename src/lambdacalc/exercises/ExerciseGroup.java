@@ -32,7 +32,7 @@ public class ExerciseGroup {
     }
     
     public String getNumberedTitle() {
-            return (char)((int)'A' + getIndex()) + ". " + getTitle();
+            return "Part " + (char)((int)'A' + getIndex()) + ". " + getTitle();
     }
     
     /**
