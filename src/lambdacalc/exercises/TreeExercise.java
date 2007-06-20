@@ -73,12 +73,12 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     }
     
     public String getUserAnswers() {
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         writeUserChoicesToString(treeroot, sb);
         return sb.toString();
     }
     
-    private void writeUserChoicesToString(LFNode node, StringBuilder output) {
+    private void writeUserChoicesToString(LFNode node, StringBuffer output) {
         if (node instanceof Nonterminal) {
             Nonterminal nt = (Nonterminal)node;
             
