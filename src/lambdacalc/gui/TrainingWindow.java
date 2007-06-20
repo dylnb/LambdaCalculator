@@ -408,7 +408,6 @@ public class TrainingWindow extends JFrame {
             btnTransfer.setEnabled(false);
             switchViewTo(TYPES_AND_CONVERSIONS);
         } else if (ex instanceof LambdaConversionExercise) {
-            btnTransfer.setEnabled(true);
             switchViewTo(TYPES_AND_CONVERSIONS);
         } else if (ex instanceof TreeExercise) {
             btnTransfer.setEnabled(false);
@@ -476,6 +475,7 @@ public class TrainingWindow extends JFrame {
                 txtFeedback.setText("You have started this exercise but have not completed it yet.");
             }
         } else {
+            txtQuestion.setText(ex.getExerciseText());
             txtUserAnswer.setText(ex.getLastAnswer());
             txtFeedback.setText("You have already solved this exercise.");
         }
@@ -495,6 +495,7 @@ public class TrainingWindow extends JFrame {
             btnCheckAnswer.setEnabled(false);
         }
         btnDoAgain.setEnabled(ex.hasBeenStarted());
+        btnTransfer.setEnabled(!ex.isDone());
     }
     
     // called in TrainingWindow() constructor
