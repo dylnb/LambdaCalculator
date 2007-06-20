@@ -1093,7 +1093,7 @@ public class TrainingWindow extends JFrame {
             currentEx--;
         } else {
             currentGroup--;
-            currentEx = getCurrentGroup().size();
+            currentEx = getCurrentGroup().size()-1;
         }
         showExercise();
     }//GEN-LAST:event_btnPrevActionPerformed

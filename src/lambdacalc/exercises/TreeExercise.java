@@ -9,9 +9,9 @@ import lambdacalc.logic.SyntaxException;
 import lambdacalc.lf.*;
 
 /**
- * An exercise that asks the student to give the semantic type
- * of a lambda expression.
- * @author tauberer
+ * An exercise that presents a LF tree and asks the student to provide
+ * denotations of terminal nodes, to select the composition rules for
+ * nonterminals, etc.
  */
 public class TreeExercise extends Exercise implements HasIdentifierTyper {
     
