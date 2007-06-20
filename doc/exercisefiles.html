@@ -114,7 +114,7 @@ directions one lambda-conversion at a time.</pre>
 <pre>directions The expression {Lx.Iy[P(y,x)]} has type &lt;e,e&gt;.</pre>
 <p>Greek letters may be included in two ways. 1) By preceding the name of the letter
 with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
-<!-- note something similar below within expressions -->
+<!-- note something similar below within expressions and brackted trees -->
 2) By putting the special character directly within the text file (i.e. with
 Word's Insert Symbol), and saving the file in UTF-8 Unicode encoding.</p>
 </dd>
@@ -240,7 +240,7 @@ For example, Ax[P(x)], AxEy[P(x) &amp; Q(y)], Lx[P(x)], LxLy.P(x,y) &amp; Q(y), 
 <li>Function application, which is an expression followed by another expression (usually in parenthesis and separated by a space), such as Lx[P(x)] (b).</li>
 <li>Single Greek letters may be used as constants or variables by preceding the name of the letter
 with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
-<!-- note use of Greek letters in directions --></li>
+<!-- note use of Greek letters in directions and in bracketed trees --></li>
 </ul>
 
 <h3>Tree Exercises</h3>
@@ -260,6 +260,10 @@ with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omeg
 <p>Traces and pronouns with indices (t_<i>i</i>, he_<i>i</i>, she_<i>i</i>, it_<i>i</i>, him_<i>i</i>, her_<i>i</i>, himself_<i>i</i>, herself_<i>i</i>, itself_<i>i</i>, his_<i>i</i>, hers_<i>i</i>, its_<i>i</i>, theirs_<i>i</i>) are automatically given the denotation of g(1), g(2), etc. according to the index.</p>
 
 <p>Relative pronouns with indices (that_<i>i</i>, what_<i>i</i>, which_<i>i</i>, who_<i>i</i>, such_<i>i</i>) and bare indices (1, 2, 3, ...) are treated as "bare index" terminal nodes for lambda abstraction, following Heim &amp; Kratzer.</p>
+
+<p>Single Greek letters may be used as terminal and nonterminal labels by preceding the name of the letter
+with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
+<!-- note use of Greek letters in directions and expressions--></li>
 						
 	</body>
 </html>

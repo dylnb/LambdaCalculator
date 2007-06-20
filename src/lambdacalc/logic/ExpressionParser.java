@@ -669,7 +669,7 @@ public class ExpressionParser {
         // But we keep the backslash for later, since we're not sure if
         // literal escaping of the next character was wanted, or else
         // something like \alpha.
-        if (id.equals("\\"))
+        if (id.equals("\\") && start < expression.length())
             id += expression.charAt(start++);
     
         while (start < expression.length()) {
@@ -681,6 +681,7 @@ public class ExpressionParser {
             if (!isIdentifierChar(ic) || (context.singleLetterIdentifiers && isLetter(ic)))
                 break;
             id += ic;
+            start++;
         }
         
         // If the identifier starts with a backslash, the user meant

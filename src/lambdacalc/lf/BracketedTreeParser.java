@@ -181,12 +181,14 @@ public class BracketedTreeParser {
                 // Reading the label of the nonterminal.
                 switch (c) {
                     case ' ':
+                        unescapeLabel(curnode);
                         parseMode = 0;
                         break;
                 
                     case ']':
                     case '[':
                     case '=':
+                        unescapeLabel(curnode);
                         parseMode = 0;
                         i--; // back track so they are parsed in parseMode 0
                              // (i gets incremented at end of iteration, so we
@@ -195,6 +197,7 @@ public class BracketedTreeParser {
                         break;
                         
                     case LFNode.INDEX_SEPARATOR:
+                        unescapeLabel(curnode);
                         curNodeForIndex = curnode;
                         parseMode = 3;
                         break;
@@ -282,8 +285,21 @@ public class BracketedTreeParser {
         return c;
     }
     
+    private static void unescapeLabel(LFNode node) {
+        String label = node.getLabel();
+        if (label != null && label.startsWith("\\")) {
+            String code = label.substring(1);
+            String decode = lambdacalc.logic.ExpressionParser.translateEscapeCode(code);
+            if (decode != code)
+                node.setLabel(decode);
+        }
+    }
+    
     private static Terminal finishTerminal
             (Nonterminal parent, Terminal child, char lastCharacterRead) {
+        
+        unescapeLabel(child);
+        
         // If the terminal label was just an integer,
         // load it as a BareIndex object.
         try {

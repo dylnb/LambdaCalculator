@@ -61,3 +61,4 @@ points per exercise 20
 [.S somebody [ 2 [ everybody [ 1 [.VP t_1 [ loves t_2]]]]]]
 [.S everybody [ 1 [.VP t_1 sleeps]]]
 #[ t_1 sleeps]
+[.S' \alpha [ 1 [.S \beta [.VP loves t_1]]]]
