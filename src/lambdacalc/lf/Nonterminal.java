@@ -115,16 +115,17 @@ public class Nonterminal extends LFNode {
 
     public String toString() {
         String ret = "[";
-        if (getLabel() != null)
-            ret += "." + getLabel() + " ";
+        if (getLabel() != null) {
+            ret += "." + getLabel();
+            if (this.hasIndex())
+                ret += String.valueOf(LFNode.INDEX_SEPARATOR) + this.getIndex();
+            ret += " ";
+        }
         for (int i = 0; i < children.size(); i++) {
             if (i > 0) ret += " ";
             ret += children.get(i).toString();
         }
         ret += "]";
-        if (this.hasIndex()) {
-            ret += String.valueOf(LFNode.INDEX_SEPARATOR)+this.getIndex();
-        }
         return ret;
     }
 }

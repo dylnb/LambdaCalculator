@@ -125,7 +125,7 @@ public class ExerciseGroup {
      * Initializes this instance with the serialized group data from a stream.
      */
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
-        if (input.readShort() != 2) throw new ExerciseFileVersionException();
+        if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
         title = input.readUTF();
         directions = input.readUTF();

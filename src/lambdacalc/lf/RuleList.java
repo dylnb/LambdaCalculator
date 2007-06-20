@@ -65,4 +65,24 @@ public class RuleList extends Vector {
         }
         return true;
     }
+    
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeByte(0); // versioning info for future use
+        output.writeInt(size());
+        
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            CompositionRule r = (CompositionRule)i.next();
+            CompositionRule.writeToStream(r, output);
+        }
+    }
+    
+    public void readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        if (input.readByte() != 0) throw new java.io.IOException("Data format error."); // sanity check
+        
+        int nRules = input.readInt();
+        
+        for (int i = 0; i < nRules; i++) {
+            add(CompositionRule.readFromStream(input));
+        }
+    }
 }

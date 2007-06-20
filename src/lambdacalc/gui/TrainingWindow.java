@@ -129,6 +129,8 @@ public class TrainingWindow extends JFrame {
 //              updateInfoBox((LFNode) evt.getSource());
 //          }
 //        });
+
+        lexiconList.addListener(new LexiconListChangeListener());
                 
         clearAllControls();
         
@@ -1348,6 +1350,12 @@ public class TrainingWindow extends JFrame {
 
     public ExerciseFile getCurrentExFile() {
         return currentExFile;
+    }
+    
+    private class LexiconListChangeListener implements LexiconList.ChangeListener {
+        public void changeMade() {
+            flagChangeMade();
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

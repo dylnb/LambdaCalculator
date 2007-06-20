@@ -235,8 +235,8 @@ public class ExerciseFile {
         OutputStream stream = new FileOutputStream(target);
         
         DataOutputStream output = new DataOutputStream(stream);
-        output.writeBytes("LAMBDA"); // magic string
-        output.writeShort(1);        // file version format number
+        output.writeBytes("LAMBDA-UPENN"); // magic string
+        output.writeShort(2);        // file version format number
         output.flush();
         
         output = new DataOutputStream( new java.util.zip.DeflaterOutputStream(stream));
@@ -255,6 +255,9 @@ public class ExerciseFile {
             output.writeByte(1);
             output.writeUTF(teacherComments);
         }
+        
+        lexicon.writeToStream(output);
+        rules.writeToStream(output);
 
         output.writeShort(groups.size());
 
@@ -280,19 +283,31 @@ public class ExerciseFile {
         if (input.readByte() != 'B') throw new ExerciseFileFormatException();
         if (input.readByte() != 'D') throw new ExerciseFileFormatException();
         if (input.readByte() != 'A') throw new ExerciseFileFormatException();
+        if (input.readByte() != '-') throw new ExerciseFileFormatException();
+        if (input.readByte() != 'U') throw new ExerciseFileFormatException();
+        if (input.readByte() != 'P') throw new ExerciseFileFormatException();
+        if (input.readByte() != 'E') throw new ExerciseFileFormatException();
+        if (input.readByte() != 'N') throw new ExerciseFileFormatException();
+        if (input.readByte() != 'N') throw new ExerciseFileFormatException();
         
         short formatVersion = input.readShort();
-        if (formatVersion != 1) throw new ExerciseFileVersionException();
+        if (formatVersion != 2) throw new ExerciseFileVersionException();
         
         input = new DataInputStream(new java.util.zip.InflaterInputStream(input));
 
         title = input.readUTF();
         
-        if (input.readByte() == 1) // otherwise the byte is zero an studentName is null
+        if (input.readByte() == 1) // otherwise the byte is zero and studentName is null
             studentName = input.readUTF();
         
-        if (input.readByte() == 1) // otherwise the byte is zero an studentName is null
+        if (input.readByte() == 1) // otherwise the byte is zero and studentName is null
             teacherComments = input.readUTF();
+        
+        lexicon = new Lexicon();
+        lexicon.readFromStream(input);
+        
+        rules = new RuleList();
+        rules.readFromStream(input);
  
         int nGroups = input.readShort();
         

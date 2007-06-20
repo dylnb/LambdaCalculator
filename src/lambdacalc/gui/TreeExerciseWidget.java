@@ -841,12 +841,12 @@ public class TreeExerciseWidget extends JPanel {
     }
     class FontIncreaseActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            setFontSize(curFontSize+6);
+            setFontSize(curFontSize+3);
         }
     }
     class FontDecreaseActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            setFontSize(curFontSize-6);
+            setFontSize(curFontSize-3);
         }
     }
     class FullScreenActionListener implements ActionListener {

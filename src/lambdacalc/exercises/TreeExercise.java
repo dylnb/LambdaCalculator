@@ -74,8 +74,46 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeShort(1); // for future use
+        
+        // write the tree & identifier typer in effect for this problem
         output.writeUTF(treeroot.toString());
         types.writeToStream(output);
+        
+        // write out the choices the user has made on the tree: terminal
+        // lexical entries and nonterminal composition rules. It's written
+        // in a pre-order traversal of the LF tree.
+        writeUserChoicesToStream(treeroot, output);
+    }
+    
+    private void writeUserChoicesToStream(LFNode node, java.io.DataOutputStream output) throws java.io.IOException {
+        if (node instanceof Nonterminal) {
+            output.writeByte(0); // sanity check later
+            Nonterminal nt = (Nonterminal)node;
+            if (nt.getCompositionRule() == null) {
+                output.writeByte(0);
+            } else {
+                output.writeByte(1);
+                CompositionRule.writeToStream(nt.getCompositionRule(), output);
+            }
+            
+            for (int i = 0; i < nt.size(); i++)
+                writeUserChoicesToStream(nt.getChild(i), output);
+        } else if (node instanceof LexicalTerminal) {
+            output.writeByte(1); // sanity check later
+            LexicalTerminal lt = (LexicalTerminal)node;
+            if (!lt.hasMeaning()) {
+                output.writeByte(0);
+            } else {
+                output.writeByte(1);
+                try {
+                    lt.getMeaning().writeToStream(output);
+                } catch (MeaningEvaluationException e) {
+                    throw new RuntimeException(e.getMessage()); // not reachable since we already checked if it has a meaning assigned
+                }
+            }
+        } else {
+            output.writeByte(2); // sanity check later
+        }
     }
     
     TreeExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
@@ -83,12 +121,41 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         
         if (input.readShort() != 1) throw new ExerciseFileVersionException();
         
+        String bracketedtree = input.readUTF();
         try {
-            this.treeroot = BracketedTreeParser.parse(input.readUTF());
+            this.treeroot = BracketedTreeParser.parse(bracketedtree);
         } catch (SyntaxException e) {
-            throw new ExerciseFileFormatException("Could not read back saved brackted tree: " + e.getMessage());
+            throw new ExerciseFileFormatException("Could not read back saved brackted tree within the exercise file: " + bracketedtree + ", " + e.getMessage());
         }
         this.types = new IdentifierTyper();
         this.types.readFromStream(input, fileFormatVersion);
+        
+        // read in the choices the user made
+        readUserChoicesFromStream(treeroot, input);
+    }
+    
+    private void readUserChoicesFromStream(LFNode node, java.io.DataInputStream input) throws java.io.IOException {
+        if (node instanceof Nonterminal) {
+            if (input.readByte() != 0) throw new java.io.IOException("Data format error.");
+            Nonterminal nt = (Nonterminal)node;
+            if (input.readByte() == 0) {
+                nt.setCompositionRule(null);
+            } else {
+                nt.setCompositionRule(CompositionRule.readFromStream(input));
+            }
+            
+            for (int i = 0; i < nt.size(); i++)
+                readUserChoicesFromStream(nt.getChild(i), input);
+        } else if (node instanceof LexicalTerminal) {
+            if (input.readByte() != 1) throw new java.io.IOException("Data format error.");
+            LexicalTerminal lt = (LexicalTerminal)node;
+            if (input.readByte() == 0) {
+                lt.setMeaning(null);
+            } else {
+                lt.setMeaning(lambdacalc.logic.Expr.readFromStream(input));
+            }
+        } else {
+            if (input.readByte() != 2) throw new java.io.IOException("Data format error.");
+        }
     }
 }

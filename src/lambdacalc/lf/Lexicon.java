@@ -12,7 +12,8 @@ import lambdacalc.logic.ExpressionParser.ParseOptions;
 public class Lexicon {
     
     //TODO retrofit to extend HashMap or ArrayList  and thereby implement Collection interface
-    //(see CompositionRuleList)
+    //(see CompositionRuleList) --- the interfaces should be implemented directly, not by
+    // extending those classes
     
     //IdentifierTyper typer; // Do we want this? TODO: Consistency check?
     // Implement Expr.getEffectiveIdentifierTyper
@@ -80,6 +81,34 @@ public class Lexicon {
         public Entry(String[] orthoForms, Expr meaning) {
             this.orthoForms = orthoForms;
             this.meaning = meaning;
+        }
+    }
+    
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeByte(0); // versioning info for future use
+        output.writeInt(entries.size());
+        
+        for (Iterator i = entries.iterator(); i.hasNext(); ) {
+            Entry e = (Entry)i.next();
+            output.writeInt(e.orthoForms.length);
+            for (int j = 0; j < e.orthoForms.length; j++)
+                output.writeUTF(e.orthoForms[j]);
+            e.meaning.writeToStream(output);
+        }
+    }
+    
+    public void readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        if (input.readByte() != 0) throw new java.io.IOException("Data format error."); // sanity check
+        
+        int nEntries = input.readInt();
+        
+        for (int i = 0; i < nEntries; i++) {
+            String[] orthoForms = new String[ input.readInt() ];
+            for (int j = 0; j < orthoForms.length; j++)
+                orthoForms[j] = input.readUTF();
+            Expr meaning = Expr.readFromStream(input);
+            
+            entries.add(new Entry(orthoForms, meaning));
         }
     }
 }

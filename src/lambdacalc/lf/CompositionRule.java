@@ -32,4 +32,22 @@ public abstract class CompositionRule {
     public abstract Expr applyTo(Nonterminal node, 
             AssignmentFunction g) throws MeaningEvaluationException;
             
+    public static void writeToStream(CompositionRule r, java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeByte(0); // versioning info for future use
+        output.writeUTF(r.getClass().getName());
+    }
+    
+    public static CompositionRule readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        if (input.readByte() != 0) throw new java.io.IOException("Data format error."); // sanity check
+        String name = input.readUTF();
+        if (name.equals("lambdacalc.lf.FunctionApplicationRule"))
+            return FunctionApplicationRule.INSTANCE;
+        else if (name.equals("lambdacalc.lf.PredicateModificationRule"))
+            return PredicateModificationRule.INSTANCE;
+        else if (name.equals("lambdacalc.lf.NonBranchingRule"))
+            return NonBranchingRule.INSTANCE;
+        else if (name.equals("lambdacalc.lf.LambdaAbstractionRule"))
+            return LambdaAbstractionRule.INSTANCE;
+        throw new java.io.IOException("Unrecognized composition rule name in file.");
+    }
 }

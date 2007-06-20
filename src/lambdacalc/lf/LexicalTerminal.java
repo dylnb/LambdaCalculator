@@ -11,9 +11,12 @@ public class LexicalTerminal extends Terminal {
         this.meaning = meaning;
         changes.firePropertyChange("meaning", oldMeaning, this.meaning);
     }
+    
+    public boolean hasMeaning() {
+        return meaning != null;
+    }
 
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-
         if (meaning == null)
             throw new TerminalLacksMeaningException(this);
         return meaning;

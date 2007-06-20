@@ -13,6 +13,7 @@ import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -40,6 +41,12 @@ public class LexiconList extends JPanel
 
     LexicalTerminal currentNode;
     
+    Vector listeners = new Vector();
+    
+    public interface ChangeListener {
+        void changeMade();
+    }
+    
     public LexiconList() {
         setLayout(new BorderLayout());
         
@@ -59,6 +66,18 @@ public class LexiconList extends JPanel
         buttonAdd.addActionListener(new AddButtonListener());
         
         lambdaEditor.setTemporaryText("enter a new lexical entry");
+    }
+    
+    public void addListener(ChangeListener listener) {
+        if (!listeners.contains(listener))
+            listeners.add(listener);
+    }
+    public void removeListener(ChangeListener listener) {
+        listeners.remove(listener);
+    }
+    private void fireChangeMade() {
+        for (Iterator i = listeners.iterator(); i.hasNext(); )
+            ((ChangeListener)i.next()).changeMade();
     }
     
     public void initialize(ExerciseFile exFile, Exercise exercise, TreeExerciseWidget widget) {
@@ -146,6 +165,7 @@ public class LexiconList extends JPanel
         
         Expr item = (Expr)listbox.getSelectedValue();
         ((LexicalTerminal)node).setMeaning(item);
+        fireChangeMade();
     }
     
     class AddButtonListener implements ActionListener {
@@ -166,6 +186,7 @@ public class LexiconList extends JPanel
                 showLexiconForWord(currentNode);
 
                 currentNode.setMeaning(ex);
+                fireChangeMade();
             
             } catch (SyntaxException se) {
                 Util.displayErrorMessage(TrainingWindow.getSingleton(), se.getMessage(), "Add Lexical Entry");
