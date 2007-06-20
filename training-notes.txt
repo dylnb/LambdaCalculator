@@ -37,7 +37,7 @@ MEDIUM    If you do two lambda conversions at once but make a mistake, program a
 Tree Exercises
 MEDIUM    user wants to have more e-type variables to play with (u, v, etc.). Suggest underscore notation in the conventions box
 DONE    When a tree node's label is so large it gets pushed to the right, recenter the child nodes under it.
-HIGH    What does the Simplify (and etc.) buttons do? Not clear they operate on the selected node. Add a label, tooltips, pop-up help, or something.
+DONE    What does the Simplify (and etc.) buttons do? Not clear they operate on the selected node. Add a label, tooltips, pop-up help, or something. (Tooltips added.)
 DONE       Simplify should say "Evaluate" when it does the first evaluation on a nonterminal
 IGNORED       Next Node should be "Simplify Fully" when it does that, and it should always move to the next node
 IGNORED       All buttons should be disabled on terminals.
@@ -67,7 +67,7 @@ MEDIUM    People think you have to Prev Node to redo previous work
 Fonts:
 LOW   Use a uniform font throughout the training window
 MEDIUM   Is it too small?
-LOW   Make the font in trees adjustable.
+DONE   Make the font in trees adjustable.
    
 Typing instructions & Conventions about letters
 LOW   Sometimes gets cut off

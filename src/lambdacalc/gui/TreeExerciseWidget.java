@@ -60,11 +60,15 @@ public class TreeExerciseWidget extends JPanel {
     JButton btnNextStep = new JButton("Evaluate Next Node");
     JButton btnPrevStep = new JButton("Undo Evaluation");
     JButton btnFullScreen = new JButton("Full Screen");
+    JButton btnFontIncrease = new JButton("A\u2191");
+    JButton btnFontDecrease = new JButton("A\u2193");
+    
     // Selection listeners
     Vector listeners = new Vector();
     
     NodePropertyChangeListener nodeListener = new NodePropertyChangeListener();
-
+    
+    int curFontSize = 14;
     
     // This class encapsulates the evaluated/simplified state of a node.
     // If the evaluation resulted in an error, evaluationError is set
@@ -146,20 +150,33 @@ public class TreeExerciseWidget extends JPanel {
         
         btnSimplify.addActionListener(new SimplifyActionListener());
         buttons.add(btnSimplify);
+        btnSimplify.setToolTipText("Perform one evaluation step on the selected node.");
         
         btnUnsimplify.addActionListener(new UnsimplifyActionListener());
         buttons.add(btnUnsimplify);
+        btnUnsimplify.setToolTipText("Undo one simplification step on the selected node.");
         
         btnNextStep.addActionListener(new NextStepActionListener());
         buttons.add(btnNextStep);
+        btnNextStep.setToolTipText("Fully evaluate the current node and move up the tree.");
 
         btnPrevStep.addActionListener(new PrevStepActionListener());
         buttons.add(btnPrevStep);
+        btnPrevStep.setToolTipText("Undo the evaluation of the current node and go backwards on the tree.");
 
+        btnFontIncrease.addActionListener(new FontIncreaseActionListener());
+        buttons.add(btnFontIncrease);
+        btnFontIncrease.setToolTipText("Increase font size.");
+
+        btnFontDecrease.addActionListener(new FontDecreaseActionListener());
+        buttons.add(btnFontDecrease);
+        btnFontDecrease.setToolTipText("Decrease font size.");
+        
         // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
         // FullScreenTreeExerciseWidget
         btnFullScreen.addActionListener(fullScreenActionListener);
         buttons.add(btnFullScreen);
+        btnFullScreen.setToolTipText("Show the tree in full screen view.");
         
         add(buttons, BorderLayout.PAGE_START);
     }
@@ -261,7 +278,6 @@ public class TreeExerciseWidget extends JPanel {
         } else {
         */
             JLabel meaningLabel = new JLabel();
-            meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
             label.add(meaningLabel);
             meaningLabel.setAlignmentX(.5F);
             //meaningLabel.addMouseListener(new NodeClickListener(lfnode));
@@ -474,12 +490,13 @@ public class TreeExerciseWidget extends JPanel {
         String labeltext = node.toHTMLString();
         if (labeltext == null || labeltext.trim().length() == 0)
             labeltext = "&nbsp;-&nbsp;";
-        orthoLabel.setText("<center>" + labeltext + "</center>");
+        orthoLabel.setText("<center style=\"font-size: " + curFontSize + "pt\">" + labeltext + "</font></center>");
         
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
         // display the lambda expression.
         JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
+        meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
             java.awt.Color meaningColor;
@@ -784,6 +801,19 @@ public class TreeExerciseWidget extends JPanel {
         canvas.invalidate();
         curErrorChanged();
     }
+    
+    public void setFontSize(int size) {
+        curFontSize = size;
+        
+        for (Iterator i = lfToOrthoLabel.keySet().iterator(); i.hasNext(); )
+            updateNode((LFNode)i.next());
+        
+        canvas.invalidate();
+        
+        btnFontDecrease.setEnabled(curFontSize > 10);
+        btnFontIncrease.setEnabled(curFontSize < 48);
+    }
+            
         
     class SimplifyActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -807,6 +837,16 @@ public class TreeExerciseWidget extends JPanel {
         public void actionPerformed(ActionEvent e) {
             doPrevStep(false);
             updateButtonEnabledState();
+        }
+    }
+    class FontIncreaseActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            setFontSize(curFontSize+6);
+        }
+    }
+    class FontDecreaseActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            setFontSize(curFontSize-6);
         }
     }
     class FullScreenActionListener implements ActionListener {

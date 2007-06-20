@@ -38,6 +38,8 @@ public class FullScreenTreeExerciseWidget extends TreeExerciseWidget {
         
         setBackground(parent.getBackground());
 
+        setFontSize(parent.curFontSize);
+        
         this.initialize(parent.getExercise());
         this.setSelectedNode(parent.getSelectedNode());
         this.setErrorMessage(parent.getErrorMessage());
