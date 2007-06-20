@@ -43,7 +43,7 @@ public class Lexicon {
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = (Entry)entries.get(i);
             for (int j = 0; j < entry.orthoForms.length; j++) {
-                if (orthoForm.equals(entry.orthoForms[j])) {
+                if (orthoForm == null || orthoForm.equals(entry.orthoForms[j])) {
                     exprs.add(entry.meaning);
                     break;
                 }

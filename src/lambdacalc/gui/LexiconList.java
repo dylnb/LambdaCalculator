@@ -37,7 +37,8 @@ public class LexiconList extends JPanel
     DefaultComboBoxModel entries = new DefaultComboBoxModel();
     
     LambdaEnabledTextField lambdaEditor = new LambdaEnabledTextField();
-    JButton buttonAdd = new JButton("Add lexical entry");
+    JButton buttonSetDenotation = new JButton("Set Denotation");
+    JLabel labelWhatToDo = new JLabel("Enter the denotation for the selected terminal node, or select a denotation from the list.");
 
     LexicalTerminal currentNode;
     
@@ -48,24 +49,27 @@ public class LexiconList extends JPanel
     }
     
     public LexiconList() {
-        setLayout(new BorderLayout());
+        //setLayout(new BorderLayout());
         
-        //add(new JLabel("Lexicon"), BorderLayout.NORTH);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
-        add(new JScrollPane(listbox), BorderLayout.CENTER);
+        labelWhatToDo.setAlignmentX(0F);
+        add(labelWhatToDo);
+        
+        JPanel addpanel = new JPanel();
+        add(addpanel);
+        addpanel.setLayout(new BorderLayout());
+        addpanel.add(lambdaEditor, BorderLayout.CENTER);
+        addpanel.add(buttonSetDenotation, BorderLayout.EAST);
+        
+        add(new JScrollPane(listbox));
         listbox.setModel(entries);
         listbox.addListSelectionListener(this);
         
-        JPanel addpanel = new JPanel();
-        add(addpanel, BorderLayout.SOUTH);
-        addpanel.setLayout(new BorderLayout());
-        addpanel.add(lambdaEditor, BorderLayout.CENTER);
-        addpanel.add(buttonAdd, BorderLayout.EAST);
+        lambdaEditor.addActionListener(new SetDenotationListener());
+        buttonSetDenotation.addActionListener(new SetDenotationListener());
         
-        lambdaEditor.addActionListener(new AddButtonListener());
-        buttonAdd.addActionListener(new AddButtonListener());
-        
-        lambdaEditor.setTemporaryText("enter a new lexical entry");
+        lambdaEditor.setTemporaryText("enter an expression");
     }
     
     public void addListener(ChangeListener listener) {
@@ -104,8 +108,10 @@ public class LexiconList extends JPanel
                 || !(curNode instanceof LexicalTerminal)
                 || ((LexicalTerminal)curNode).getLabel() == null) {
             showLexiconForWord(null);
-            buttonAdd.setEnabled(false);
+            labelWhatToDo.setEnabled(false);
+            buttonSetDenotation.setEnabled(false);
             lambdaEditor.setEnabled(false);
+            lambdaEditor.setTemporaryText("enter an expression");
             return;
         }
         
@@ -114,13 +120,24 @@ public class LexiconList extends JPanel
         currentNode = (LexicalTerminal)curNode;
         currentNode.addPropertyChangeListener(this);
 
-        buttonAdd.setEnabled(true);
+        labelWhatToDo.setEnabled(true);
+        buttonSetDenotation.setEnabled(true);
         lambdaEditor.setEnabled(true);
     }
     
     private void showLexiconForWord(LexicalTerminal node) {
         if (tewidget == null)
             throw new IllegalStateException("Widget has not been set.");
+        
+        if (node != null && node.hasMeaning()) {
+            try {
+                lambdaEditor.setText(node.getMeaning().toString());
+            } catch (MeaningEvaluationException mee) {
+                // not fired by LexicalTerminal if hasMeaning() is true
+            }
+        } else {
+            lambdaEditor.setTemporaryText("enter an expression");
+        }
         
         entries.removeAllElements();
         
@@ -131,10 +148,22 @@ public class LexiconList extends JPanel
         if (orthoForm == null)
             return;
         
+        // Put first the lexical entries that are listed for the
+        // terminal node's label.
+        HashSet seenExprs = new HashSet();
         Expr[] meanings = exFile.getLexicon().getMeanings(orthoForm);
-        for (int i = 0; i < meanings.length; i++)
+        for (int i = 0; i < meanings.length; i++) {
             entries.addElement(meanings[i]);
+            seenExprs.add(meanings[i]);
+        }
         
+        // Then put all other lexical entries, since some might be
+        // close to what the user wants.
+        Expr[] meanings2 = exFile.getLexicon().getMeanings(null);
+        for (int i = 0; i < meanings2.length; i++)
+            if (!seenExprs.contains(meanings2[i]))
+                entries.addElement(meanings2[i]);
+            
         updateListSelection(node);
     }
     
@@ -146,16 +175,16 @@ public class LexiconList extends JPanel
     }
     
     private void updateListSelection(LexicalTerminal node) {
+        listbox.clearSelection();
         try {
             listbox.setSelectedValue(node.getMeaning(), true);
         } catch (MeaningEvaluationException mee) {
-            listbox.clearSelection();
         }
     }
     
     
     public void valueChanged(ListSelectionEvent e) {
-        // Fired when the selected item in the list changes
+        // Fired when the list box's selection changes
         
         if (listbox.getSelectedValue() == null) return;
         
@@ -165,10 +194,11 @@ public class LexiconList extends JPanel
         
         Expr item = (Expr)listbox.getSelectedValue();
         ((LexicalTerminal)node).setMeaning(item);
+        lambdaEditor.setText(item.toString());
         fireChangeMade();
     }
     
-    class AddButtonListener implements ActionListener {
+    class SetDenotationListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (currentNode == null)
                 return;
@@ -182,9 +212,18 @@ public class LexiconList extends JPanel
                 Expr ex = ExpressionParser.parse(lambdaEditor.getText(), opts);
                 ex.getType(); // just checking if an exception is thrown
 
-                exFile.getLexicon().addLexicalEntry(currentNode.getLabel(), ex);
-                showLexiconForWord(currentNode);
-
+                // Add the meaning to the lexicon for this exercise file if it's
+                // not already in the lexical list for the label of this terminal.
+                boolean isInLexicon = false;
+                Expr[] existingMeanings = exFile.getLexicon().getMeanings(currentNode.getLabel());
+                for (int i = 0; i < existingMeanings.length; i++)
+                    if (existingMeanings[i].equals(ex))
+                        isInLexicon = true;
+                
+                if (!isInLexicon)
+                    exFile.getLexicon().addLexicalEntry(currentNode.getLabel(), ex);
+                    
+                // Set the meaning of the selected node.
                 currentNode.setMeaning(ex);
                 fireChangeMade();
             

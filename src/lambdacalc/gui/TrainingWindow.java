@@ -816,9 +816,9 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.setLayout(new java.awt.GridLayout(1, 0));
 
-        jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Lexical entries"));
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 100));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 100));
+        jPanelNodeProperties.setBorder(javax.swing.BorderFactory.createTitledBorder("Modify node"));
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 150));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
         jPanelInfoBox.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanelInfoBox.add(lexiconList);

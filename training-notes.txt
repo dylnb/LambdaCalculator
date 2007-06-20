@@ -48,14 +48,14 @@ LOW       A general-use way to annotate nodes?
 DONE    When we guess composition rule and none apply, we need to say we tried function application but it was not applicable, for whatever reason, etc.
 DONE    Prev Node button takes you to the first terminal if there is no where else to go, but it should never go to a terminal
 IGNORED  When simplifying Carlos alpha-shaves, did we lose the lambda's dot? (Answer: No)
-HIGH    Not clear that the lexical entry field does what it does; people think it edits selected node.
+DONE    Not clear that the lexical entry field does what it does; people think it edits selected node.
 HIGH    Not clear that with God Mode, no more user input is needed after entering terminal meanings
 HIGH    Not clear when the end of the problem is reached
 ?    Expect to enter nonterminal information where the terminal lexical entry is entered
 DONE    Previous Node should clear later evaluations too.
 IGNORED    Lexical entry field got frozen on a terminal. (Can't reproduce.)
-MEDIUM    Pre-provided, already-entered lexical entries not clear.
-MEDIUM    An empty lexicon list box looks like a text box.
+DONE    Pre-provided, already-entered lexical entries not clear.
+IGNORED    An empty lexicon list box looks like a text box.
 DONE    Labelless nonterminals need a larger selection box.
 LOW    Automatic lambda abstraction is confusing, not expected computer will actually do it
 FIXED    The node info table looks like it is a choice for the user to make
