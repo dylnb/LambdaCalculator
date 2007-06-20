@@ -28,12 +28,6 @@ public class TreeExerciseWidget extends JPanel {
     private TreeExercise exercise; // this is the exercise we're displaying
     Nonterminal lftree; // this is the tree we're displaying
     
-    boolean isFullScreenPanel = false;
-    
-    TreeExerciseWidget fullScreenWidget = null;
-    
-    JFrame fullScreenFrame = new JFrame();
-    
     JScrollPane scrollpane;
     TreeCanvas canvas; // this is the display widget
     
@@ -55,6 +49,11 @@ public class TreeExerciseWidget extends JPanel {
     // This is null if no node is the current evaluation node.
     LFNode selectedNode = null;
     
+    // This listener needs to be an instance variable so we can access and remove
+    // it in the subclass FullScreenTreeExerciseWidget    
+    protected FullScreenActionListener fullScreenActionListener 
+            = new FullScreenActionListener();
+    
     // Buttons
     JButton btnSimplify = new JButton("Compute");
     JButton btnUnsimplify = new JButton("Undo compute");
@@ -66,10 +65,6 @@ public class TreeExerciseWidget extends JPanel {
     
     NodePropertyChangeListener nodeListener = new NodePropertyChangeListener();
 
-    GraphicsDevice theScreen =
-                GraphicsEnvironment.
-                getLocalGraphicsEnvironment().
-                getDefaultScreenDevice();    
     
     // This class encapsulates the evaluated/simplified state of a node.
     // If the evaluation resulted in an error, evaluationError is set
@@ -161,7 +156,9 @@ public class TreeExerciseWidget extends JPanel {
         //btnPrevStep.addActionListener(new PrevStepActionListener());
         //buttons.add(btnPrevStep);
 
-        btnFullScreen.addActionListener(new FullScreenActionListener());
+        // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
+        // FullScreenTreeExerciseWidget
+        btnFullScreen.addActionListener(fullScreenActionListener);
         buttons.add(btnFullScreen);
         
         add(buttons, BorderLayout.PAGE_START);
@@ -807,7 +804,7 @@ public class TreeExerciseWidget extends JPanel {
     }
     class FullScreenActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            toggleFullScreenMode();
+            openFullScreenWindow();
         }
     }
     
@@ -821,75 +818,12 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
 
-    public void copyStateFrom(TreeExerciseWidget other) {
-//        this.initialize(other.getExercise());
-        this.setSelectedNode(other.getSelectedNode());
-    }
+
     
     public void openFullScreenWindow() {
-        
-//        if (isFullScreenPanel) return;
-        
-        fullScreenFrame = new JFrame();
-        fullScreenFrame.setUndecorated(true);
-        //TrainingWindow.getSingleton().getContentPane().remove(this);
-        
-        fullScreenWidget = new TreeExerciseWidget();
-        fullScreenWidget.setBackground(this.getBackground());
-
-        fullScreenWidget.initialize(this.getExercise());
-        fullScreenWidget.setSelectedNode(this.getSelectedNode());
-        fullScreenWidget.setErrorMessage(this.getErrorMessage());
-        fullScreenWidget.isFullScreenPanel = true;
-       
-        fullScreenFrame.getContentPane().add(fullScreenWidget);
-        
-        fullScreenWidget.btnFullScreen.setText("Exit full screen");
-
-        if (!theScreen.isFullScreenSupported()) {
-            System.err.println("Warning: Full screen mode not supported," +
-                    "emulating by maximizing the window...");
-        }
-//        fullScreenFrame.addKeyListener(new KeyListener() {
-//                public void keyPressed(KeyEvent event) {}
-//                public void keyReleased(KeyEvent event) {
-//                    if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
-//                        if (isFullScreenPanel) {
-//                            theScreen.setFullScreenWindow(null);
-//                        }
-//                    }
-//                }
-//                public void keyTyped(KeyEvent event) {}
-//            }
-//        );
-        
-        try {
-            theScreen.setFullScreenWindow(fullScreenFrame);
-        } catch (Exception e) {
-            e.printStackTrace();
-            theScreen.setFullScreenWindow(null);
-        } 
+        FullScreenTreeExerciseWidget fs = new FullScreenTreeExerciseWidget(this);
+        fs.display();
     }
-    
-    public void exitFullScreenMode() {
-
-//        this.setSelectedNode(fullScreenWidget.getSelectedNode());
-        this.setErrorMessage(fullScreenWidget.getErrorMessage());
-        fullScreenFrame.removeAll();
-        fullScreenFrame.dispose();
-        theScreen.setFullScreenWindow(null);
-        
-        TrainingWindow.getSingleton().requestFocus();
-    }
-    
-    public void toggleFullScreenMode() {
-        if (!isFullScreenPanel) {
-            openFullScreenWindow();
-        } else {
-            exitFullScreenMode();
-        }
-    }
-
                                       
     public static void main(String[] args) {
         
