@@ -28,7 +28,7 @@ public class TreeExerciseWidget extends JPanel {
     private TreeExercise exercise; // this is the exercise we're displaying
     Nonterminal lftree; // this is the tree we're displaying
     
-    boolean inFullScreenMode = false;
+    boolean isFullScreenPanel = false;
     
     TreeExerciseWidget fullScreenWidget = null;
     
@@ -452,7 +452,7 @@ public class TreeExerciseWidget extends JPanel {
                 evalError = ms.evaluationError;
         }
         
-        errorLabel.setText(evalError);
+        this.setErrorMessage(evalError);
     }
     
     // Update the visual display of the node. Called to
@@ -821,20 +821,27 @@ public class TreeExerciseWidget extends JPanel {
         }
     }
 
+    public void copyStateFrom(TreeExerciseWidget other) {
+//        this.initialize(other.getExercise());
+        this.setSelectedNode(other.getSelectedNode());
+    }
+    
     public void openFullScreenWindow() {
         
-//        if (inFullScreenMode) return;
+//        if (isFullScreenPanel) return;
         
         fullScreenFrame = new JFrame();
         fullScreenFrame.setUndecorated(true);
         //TrainingWindow.getSingleton().getContentPane().remove(this);
         
         fullScreenWidget = new TreeExerciseWidget();
-        fullScreenWidget.initialize(this.getExercise());
-        fullScreenWidget.inFullScreenMode = true;
         fullScreenWidget.setBackground(this.getBackground());
+
+        fullScreenWidget.initialize(this.getExercise());
         fullScreenWidget.setSelectedNode(this.getSelectedNode());
-        
+        fullScreenWidget.setErrorMessage(this.getErrorMessage());
+        fullScreenWidget.isFullScreenPanel = true;
+       
         fullScreenFrame.getContentPane().add(fullScreenWidget);
         
         fullScreenWidget.btnFullScreen.setText("Exit full screen");
@@ -847,7 +854,7 @@ public class TreeExerciseWidget extends JPanel {
 //                public void keyPressed(KeyEvent event) {}
 //                public void keyReleased(KeyEvent event) {
 //                    if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
-//                        if (inFullScreenMode) {
+//                        if (isFullScreenPanel) {
 //                            theScreen.setFullScreenWindow(null);
 //                        }
 //                    }
@@ -865,20 +872,20 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     public void exitFullScreenMode() {
-//        if (!inFullScreenMode) return;
+
+//        this.setSelectedNode(fullScreenWidget.getSelectedNode());
+        this.setErrorMessage(fullScreenWidget.getErrorMessage());
         fullScreenFrame.removeAll();
         fullScreenFrame.dispose();
         theScreen.setFullScreenWindow(null);
         
-        TrainingWindow.getSingleton().requestFocusInWindow();
+        TrainingWindow.getSingleton().requestFocus();
     }
     
     public void toggleFullScreenMode() {
-        if (!inFullScreenMode) {
-            
+        if (!isFullScreenPanel) {
             openFullScreenWindow();
         } else {
-            
             exitFullScreenMode();
         }
     }
@@ -905,5 +912,14 @@ public class TreeExerciseWidget extends JPanel {
 
     public TreeExercise getExercise() {
         return exercise;
+    }
+
+    public String getErrorMessage() {
+        return this.errorLabel.getText();
+    }
+
+    public void setErrorMessage(String statusMessage) {
+        this.errorLabel.setText(statusMessage);
+        
     }
 }
