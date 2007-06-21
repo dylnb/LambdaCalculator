@@ -62,7 +62,7 @@ FIXED    The node info table looks like it is a choice for the user to make
 LOW    Backspace key should do Unsimplify or something; delete should clear
 MEDIUM    People think you have to Prev Node to redo previous work
 ?    What actually is expected in the lex entry field? An expression?
-
+MEDIUM    These exercises should also show the problem number. i.e. "3. Perform the derivation"
 
 Fonts:
 LOW   Use a uniform font throughout the training window
