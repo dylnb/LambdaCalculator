@@ -18,23 +18,28 @@ import java.lang.StringBuffer;
 import lambdacalc.logic.*;
 
 /**
- * This class represents an exercise.
+ * This class represents a lambda conversion exercise.
  * @author tauberer
  */
 public class LambdaConversionExercise extends Exercise implements HasIdentifierTyper {
+
+    private static final String ALPHAVARY = "alphavary";
+    private static final String BETAREDUCE = "betareduce";
+    private static final String NOT_REDUCIBLE = "notreducible";
+    
     Expr expr;
     IdentifierTyper types;
     
     ArrayList steps = new ArrayList();
     ArrayList steptypes = new ArrayList();
     
-    Expr last_answer;
-    int cur_step = 0;
+    Expr lastAnswer;
+    int currentStep = 0;
     
     /**
      * Whether student's answers are parsed with the singleLetterIdentifiers option set.
      */
-    public boolean parseSingleLetterIdentifiers = true;
+    private boolean parseSingleLetterIdentifiers = true;
     /**
      * Whether students are prohibited from skipping steps in multi-step problems.
      */
@@ -42,8 +47,16 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     
     /**
      * Initializes the exercise and works out beforehand what the student should do.
+     * 
+     * @param index if this exercise is part of an ExerciseGroup, the index is 
+     * supposed to indicate where this exercise is located in the group
+     *
      */
-    public LambdaConversionExercise(Expr expr, int index, IdentifierTyper types) throws TypeEvaluationException {
+    //TODO I've made this constructor private because I noticed that the singleLetterIdentifiers
+    //field is not set in this constructor (could be dangerous) and because it's 
+    //never used anyway -- Lucas
+    private LambdaConversionExercise(Expr expr, int index, IdentifierTyper types) 
+    throws TypeEvaluationException {
         super(index);
         
         this.expr = expr;
@@ -52,6 +65,35 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         this.expr.getType(); // make sure it is well typed; will throw if not
 
         initialize();
+    }
+    
+    /**
+     * Initializes the exercise from an unparsed string, which is parsed 
+     * and sent to the other constructor.
+     */
+    public LambdaConversionExercise
+            (String expr, ExpressionParser.ParseOptions parseOptions, 
+            int index, IdentifierTyper types) 
+            throws SyntaxException, TypeEvaluationException {
+        
+        this(ExpressionParser.parse(expr, parseOptions), index, types);
+        setParseSingleLetterIdentifiers(parseOptions.singleLetterIdentifiers);
+        
+        // If explicit types were assigned to identifiers in the expression,
+        // add those conventions to the IdentifierTyper used for this exercise.
+        // Note that since a variable can be used with different types in different
+        // places, this doesn't guarantee that every identifier will be typed
+        // according to a single set of conventions.
+        if (parseOptions.hasExplicitTypes()) {
+            //explicitTypes is a map from Strings to Identifiers
+            this.types = this.types.cloneTyper(); //TODO Josh-- what does this line do? -Lucas
+            for (Iterator i = parseOptions.explicitTypes.keySet().iterator(); i.hasNext(); ) {
+                String name = (String)i.next();
+                Identifier info = (Identifier)parseOptions.explicitTypes.get(name);
+                this.types.addEntry(name, info instanceof Var, info.getType());
+                //types is a map from Strings to Types
+            }
+        }
     }
     
     private void initialize() throws TypeEvaluationException {
@@ -66,10 +108,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             
             // If an alphabetical variant was necessary, record that.
             if (lcr.alphabeticalVariant != null) {
-                steptypes.add("alphavary");
+                steptypes.add(ALPHAVARY);
                 e = lcr.alphabeticalVariant;
             } else {
-                steptypes.add("betareduce");
+                steptypes.add(BETAREDUCE);
                 e = lcr.result;
             }
 
@@ -77,32 +119,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         }
         
         if (e == expr) {
-            steptypes.add("notreducible");
+            steptypes.add(NOT_REDUCIBLE);
             steps.add(e);
         }
-    }
-
-    /**
-     * Initializes the exercise from an unparsed string, which is parsed and sent to the other constructor.
-     */
-    public LambdaConversionExercise(String expr, ExpressionParser.ParseOptions parseOptions, int index, IdentifierTyper types) throws SyntaxException, TypeEvaluationException {
-        this(ExpressionParser.parse(expr, parseOptions), index, types);
-        parseSingleLetterIdentifiers = parseOptions.singleLetterIdentifiers;
-        
-        // If explicit types were assigned to identifiers in the expression,
-        // add those conventions to the IdentifierTyper used for this exercise.
-        // Note that since a variable can be used with different types in different
-        // places, this doesn't guarantee that every identifier will be typed
-        // according to a single set of conventions.
-        if (parseOptions.explicitTypes.keySet().size() > 0) {
-            this.types = this.types.cloneTyper();
-            for (Iterator i = parseOptions.explicitTypes.keySet().iterator(); i.hasNext(); ) {
-                String name = (String)i.next();
-                Identifier info = (Identifier)parseOptions.explicitTypes.get(name);
-                this.types.addEntry(name, info instanceof Var, info.getType());
-            }
-        }
-    }
+    }    
     
     public String getExerciseText() {
         return expr.toString();
@@ -122,18 +142,18 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
     public void reset() {
         super.reset();
-        this.last_answer = null;
-        this.cur_step = 0;
+        this.lastAnswer = null;
+        this.currentStep = 0;
     }
 
     
     public AnswerStatus checkAnswer(String answer) throws SyntaxException {
         // Parse the user's answer into an expression.  Syntax errors
-        // are handled by the caller so he can position the text carret
+        // are handled by the caller so it can position the text caret
         // in the text box appropriately.
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false;
-        exprParseOpts.singleLetterIdentifiers = parseSingleLetterIdentifiers;
+        exprParseOpts.singleLetterIdentifiers = isParseSingleLetterIdentifiers();
         exprParseOpts.typer = types;
         
         Expr users_answer;
@@ -153,20 +173,20 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         }
 
         // this is what the user was trying to simplify
-        Expr prev_step = cur_step == 0 ? expr : (Expr)steps.get(cur_step-1);
+        Expr prev_step = currentStep == 0 ? expr : (Expr)steps.get(currentStep-1);
         
         // let's check up front whether the user answered without changing
         // the question.  if the expression is not reducible, that's fine,
         // otherwise we need to tell the user to try to reduce the expression
         
-        // TODO: Probably compare with last_answer, not prev_step, if last_answer
+        // TODO: Probably compare with lastAnswer, not prev_step, if lastAnswer
         // is not null, because the user's actual previous answer may be different
         // if any alphabetical variants have been made.
         
         if (users_answer.equals(prev_step)) {
             // the user didn't do anything
-            if (steptypes.get(0).equals("notreducible")) { // and that was the right thing to do
-                cur_step++;
+            if (steptypes.get(0).equals(NOT_REDUCIBLE)) { // and that was the right thing to do
+                currentStep++;
                 setDone();
                 return AnswerStatus.CorrectFinalAnswer("That is correct! " + prev_step.toString() + " is not reducible.");
                 // By doing this, we display the canonical representation (rather than the student's input) in the feedback.
@@ -183,10 +203,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // what we're expecting as the next answer, or some future answer
         // if the user gives something equaling a future answer but
         // notSoFast is true, then it's deemed an incorrect answer.
-        for (int matched_step = cur_step; matched_step < steps.size(); matched_step++) {
+        for (int matched_step = currentStep; matched_step < steps.size(); matched_step++) {
             Expr correct_answer = (Expr)steps.get(matched_step);
             if (correct_answer.alphaEquivalent(users_answer)) {
-                if (matched_step > cur_step && isNotSoFast())
+                if (matched_step > currentStep && isNotSoFast())
                     return AnswerStatus.Incorrect("Not so fast!  Do one " + Lambda.SYMBOL + "-conversion or alphabetical variant step at a time.");
 
                 // When this step is to create an alphabetical variant, the user
@@ -198,7 +218,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 try {
                     Expr.LambdaConversionResult lcr = users_answer.performLambdaConversion();
                     
-                    if (steptypes.get(matched_step).equals("alphavary")
+                    if (steptypes.get(matched_step).equals(ALPHAVARY)
                         && lcr != null
                         && lcr.alphabeticalVariant != null)
                         continue; // continue stepping through the future expected answers -
@@ -206,7 +226,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 } catch (TypeEvaluationException tee) {
                 }
                 
-                cur_step = matched_step;
+                currentStep = matched_step;
                 correct = true;
                 break;
             }
@@ -214,18 +234,18 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // - By now we know whether the answer is correct but we haven't yet taken an action based on that.
 
         
-        Expr correct_answer = (Expr)steps.get(cur_step); // the expected correct answer, not the user's input
-        String currentThingToDo = (String)steptypes.get(cur_step); // e.g. alphavary
+        Expr correct_answer = (Expr)steps.get(currentStep); // the expected correct answer, not the user's input
+        String currentThingToDo = (String)steptypes.get(currentStep); // e.g. alphavary
 
         if (correct) {
-            last_answer = users_answer;
+            lastAnswer = users_answer;
             
-            cur_step++;
+            currentStep++;
             
-            if (cur_step == steps.size()) {
+            if (currentStep == steps.size()) {
                 setDone();
                 return AnswerStatus.CorrectFinalAnswer("Correct!");
-            } else if (currentThingToDo.equals("alphavary")) {
+            } else if (currentThingToDo.equals(ALPHAVARY)) {
                 return AnswerStatus.CorrectStep("That is a licit alphabetical variant.  Now see if it is the one you need by reducing the expression...");
             } else {
                 return AnswerStatus.CorrectStep("Yes!  Now keep reducing the expression...");
@@ -255,14 +275,14 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
             }
             
-            if (!currentThingToDo.equals("alphavary") && prev_step.alphaEquivalent(users_answer))
+            if (!currentThingToDo.equals(ALPHAVARY) && prev_step.alphaEquivalent(users_answer))
                 responses.add("You've made a licit alphabetical variant, but you don't need an alphabetical variant here.");
             
             if (prev_step.operatorEquivalent(users_answer))
                 didUserRenameAFreeVariableOrDidntRenameConsistently(prev_step, users_answer, responses, diagnoses);
             
             // This is a basically hint for what to do next.
-            if (currentThingToDo.equals("alphavary")) {
+            if (currentThingToDo.equals(ALPHAVARY)) {
                 if (correct_answer.alphaEquivalent(users_answer)) {
                     // the user has given a feasible alphabetical variant,
                     // but it is not the right one.
@@ -273,9 +293,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                     // the user has done something besides making an alphabetical variant
                     hint = "Go back and try to make an alphabetical variant.";
                 }
-            } else if (currentThingToDo.equals("betareduce") && steptypes.contains("alphavary"))
+            } else if (currentThingToDo.equals(BETAREDUCE) && steptypes.contains(ALPHAVARY))
                 hint = "Try applying " + Lambda.SYMBOL + "-conversion.";
-            else if (currentThingToDo.equals("betareduce") || currentThingToDo.equals("notreducible"))
+            else if (currentThingToDo.equals(BETAREDUCE) || currentThingToDo.equals(NOT_REDUCIBLE))
                 hint = null; // nothing useful to say by default
             else
                 throw new RuntimeException(); // not reachable
@@ -327,15 +347,15 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 response += hint;
             }
 
-            //return AnswerStatus.Incorrect(steps.get(cur_step).toString()); // the correct answer, for debugging!
+            //return AnswerStatus.Incorrect(steps.get(currentStep).toString()); // the correct answer, for debugging!
             
             return AnswerStatus.Incorrect("That's not right. " + response.toString());
         }
     }
 
     public String getLastAnswer() {
-        if (last_answer == null) return null;
-        return last_answer.toString();
+        if (lastAnswer == null) return null;
+        return lastAnswer.toString();
     }
 
     public IdentifierTyper getIdentifierTyper() {
@@ -522,14 +542,14 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         output.writeShort(1); // format version marker
         expr.writeToStream(output);
         types.writeToStream(output);
-        if (last_answer == null) {
+        if (lastAnswer == null) {
             output.writeByte(0);
         } else {
             output.writeByte(1);
-            last_answer.writeToStream(output);
+            lastAnswer.writeToStream(output);
         }
-        output.writeShort(cur_step);
-        output.writeBoolean(parseSingleLetterIdentifiers);
+        output.writeShort(currentStep);
+        output.writeBoolean(isParseSingleLetterIdentifiers());
         output.writeBoolean(isNotSoFast());
         // TODO: We're outputting a canonicalized version of what the student answered.
     }
@@ -545,11 +565,11 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         this.types.readFromStream(input, fileFormatVersion);
 
         if (input.readByte() == 1)
-            this.last_answer = Expr.readFromStream(input);
+            this.lastAnswer = Expr.readFromStream(input);
         
-        this.cur_step = input.readShort();
+        this.currentStep = input.readShort();
            
-        parseSingleLetterIdentifiers = input.readBoolean();
+        setParseSingleLetterIdentifiers(input.readBoolean());
         setNotSoFast(input.readBoolean());
         
         try {
@@ -569,5 +589,13 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
     public void setNotSoFast(boolean notSoFast) {
         this.notSoFast = notSoFast;
+    }
+
+    public boolean isParseSingleLetterIdentifiers() {
+        return parseSingleLetterIdentifiers;
+    }
+
+    public void setParseSingleLetterIdentifiers(boolean parseSingleLetterIdentifiers) {
+        this.parseSingleLetterIdentifiers = parseSingleLetterIdentifiers;
     }
 }
