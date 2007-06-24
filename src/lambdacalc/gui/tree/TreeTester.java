@@ -42,7 +42,9 @@ public class TreeTester extends javax.swing.JFrame {
             rules.add(FunctionApplicationRule.INSTANCE);
             
             Nonterminal root = BracketedTreeParser.parse(jTextField1.getText());
-            root.guessLexicalEntriesAndRules(lexicon, rules);
+
+            root.guessLexicalEntries(lexicon);
+            root.guessRules(rules, false);
             
             tree.getRoot().clearChildren();
             buildTree(tree.getRoot(), root);

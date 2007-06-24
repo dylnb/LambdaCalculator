@@ -54,13 +54,9 @@ public class Trace extends Terminal {
      * Nothing to do on a Trace.
      *
      * @param lexicon the lexicon
-     * @param rules this parameter is ignored 
-     * (maybe later it can be used for type-shifting rules)
      */
-    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
+    public void guessLexicalEntries(Lexicon lexicon) {
     
     }
-    
-
     
 }

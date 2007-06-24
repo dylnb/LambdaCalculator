@@ -8,6 +8,7 @@ package lambdacalc.gui;
 
 import java.awt.CardLayout;
 import java.awt.event.KeyEvent;
+import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
 
@@ -17,6 +18,7 @@ import java.io.*;
 import lambdacalc.lf.BareIndex;
 import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LexicalTerminal;
+import lambdacalc.lf.MeaningBracketExpr;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.Trace;
 
@@ -130,27 +132,11 @@ public class TrainingWindow extends JFrame {
         { public void selectionChanged(TreeExerciseWidget.SelectionEvent evt) {
               LFNode selectedNode = (LFNode) evt.getSource(); 
               // we might also say: selectedNode = treeDisplay.getSelectedNode();
-              CardLayout cardLayout = (CardLayout) jPanelNodeProperties.getLayout();
-              
-              //TODO if we ever introduce a NodeView, then it might know how to 
-              // call the right panel
-              if (selectedNode instanceof Nonterminal) {
-                  if (((Nonterminal) selectedNode).isBranching()) {
-                      cardLayout.show(jPanelNodeProperties, "ruleSelection");
-                  } else {
-                      cardLayout.show(jPanelNodeProperties, "nonBranchingNonterminal");
-                  }
-              } else if (selectedNode instanceof LexicalTerminal) {
-                  cardLayout.show(jPanelNodeProperties, "lexicalTerminal");
-              } else if (selectedNode instanceof BareIndex) {
-                  cardLayout.show(jPanelNodeProperties, "bareIndex");
-              } else if (selectedNode instanceof Trace) {
-                  cardLayout.show(jPanelNodeProperties, "trace");
-              } else {
-                  cardLayout.show(jPanelNodeProperties, "default");
-              }
+              updateNodePropertyPanel(selectedNode);
           }
         });
+        
+        jPanelRuleSelection.initialize(treeDisplay);
 
         lexiconList.addListener(new LexiconListChangeListener());
                 
@@ -160,8 +146,60 @@ public class TrainingWindow extends JFrame {
         //TODO comment out previous line
     }
     
-    
-    
+    public void updateNodePropertyPanel(LFNode selectedNode) {
+        CardLayout cardLayout = (CardLayout) jPanelNodeProperties.getLayout();
+        
+        //TODO if we ever introduce a NodeView, then it might know how to
+        // call the right panel
+        if (selectedNode instanceof Nonterminal) {
+            if (((Nonterminal) selectedNode).isBranching()) {
+                if (((Nonterminal) selectedNode).knowsCompositionRule()) {
+                    cardLayout.show(jPanelNodeProperties, "lambdaConversion");
+                    Expr current;
+                    try {
+                        current = ((Nonterminal) selectedNode).getMeaning();
+                    } catch (MeaningEvaluationException ex) {
+                        ex.printStackTrace();
+                        return;
+                        //TODO something more useful here
+                    }
+                    LambdaConversionExercise exercise;
+                    try {
+                        exercise = new LambdaConversionExercise
+                                //TODO later on when we can parse meaning brackets,
+                                //we don't have to replace them here
+                                
+                                (MeaningBracketExpr.replaceAllMeaningBrackets(current),
+                                //(current,
+                                -1, 
+                                TrainingWindow.getSingleton().getCurrentTypingConventions());
+                        exercise.setParseSingleLetterIdentifiers(false);
+                        jPanelLambdaConversion.initialize(exercise, treeDisplay);
+                    } catch (TypeEvaluationException ex) {
+                        ex.printStackTrace();
+                        //TODO something more useful here
+                    } catch (MeaningEvaluationException ex) {
+                        ex.printStackTrace();
+                        //TODO something more useful here
+                    }
+                } else {
+                    cardLayout.show(jPanelNodeProperties, "ruleSelection");
+                }
+            } else {
+                cardLayout.show(jPanelNodeProperties, "nonBranchingNonterminal");
+            }
+        } else if (selectedNode instanceof LexicalTerminal) {
+            cardLayout.show(jPanelNodeProperties, "lexicalTerminal");
+        } else if (selectedNode instanceof BareIndex) {
+            cardLayout.show(jPanelNodeProperties, "bareIndex");
+        } else if (selectedNode instanceof Trace) {
+            cardLayout.show(jPanelNodeProperties, "trace");
+        } else {
+            cardLayout.show(jPanelNodeProperties, "default");
+        }
+        
+    }
+   
 //    void updateInfoBox(LFNode selectedNode) {
 //        
 //        //jPanelInfoBox contains jScrollPaneInfoBox, which contains jTableInfoBox
@@ -571,15 +609,6 @@ public class TrainingWindow extends JFrame {
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
         jPanelLowerRight = new javax.swing.JPanel();
         jPanelCardLayout = new javax.swing.JPanel();
-        jPanelTypesAndConversions = new javax.swing.JPanel();
-        btnCheckAnswer = new javax.swing.JButton();
-        jScrollPaneFeedback = new javax.swing.JScrollPane();
-        txtFeedback = new javax.swing.JTextArea();
-        jPanelQuestion = new javax.swing.JPanel();
-        txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
-        btnTransfer = new javax.swing.JButton();
-        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
-        jLabelAboveQuestion = new javax.swing.JLabel();
         jPanelTrees = new javax.swing.JPanel();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelNodeProperties = new javax.swing.JPanel();
@@ -594,6 +623,15 @@ public class TrainingWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jPanelTypesAndConversions = new javax.swing.JPanel();
+        btnCheckAnswer = new javax.swing.JButton();
+        jScrollPaneFeedback = new javax.swing.JScrollPane();
+        txtFeedback = new javax.swing.JTextArea();
+        jPanelQuestion = new javax.swing.JPanel();
+        txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
+        btnTransfer = new javax.swing.JButton();
+        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
+        jLabelAboveQuestion = new javax.swing.JLabel();
         jPanelNavigationButtons = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnDoAgain = new javax.swing.JButton();
@@ -735,6 +773,86 @@ public class TrainingWindow extends JFrame {
 
         jPanelCardLayout.setLayout(new java.awt.CardLayout());
 
+        jPanelTrees.setLayout(new java.awt.GridBagLayout());
+
+        jPanelTrees.setMinimumSize(new java.awt.Dimension(19, 50));
+        jPanelTrees.setPreferredSize(new java.awt.Dimension(235, 150));
+        treeDisplay.setBackground(java.awt.Color.white);
+        treeDisplay.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsListener() {
+            public void ancestorMoved(java.awt.event.HierarchyEvent evt) {
+            }
+            public void ancestorResized(java.awt.event.HierarchyEvent evt) {
+                treeDisplayAncestorResized(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelTrees.add(treeDisplay, gridBagConstraints);
+
+        jPanelNodeProperties.setLayout(new java.awt.CardLayout());
+
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 120));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 120));
+        org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
+        jPanelDefault.setLayout(jPanelDefaultLayout);
+        jPanelDefaultLayout.setHorizontalGroup(
+            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 630, Short.MAX_VALUE)
+        );
+        jPanelDefaultLayout.setVerticalGroup(
+            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 120, Short.MAX_VALUE)
+        );
+        jPanelNodeProperties.add(jPanelDefault, "default");
+
+        jPanelLexicalTerminal.setLayout(new java.awt.GridLayout(1, 0));
+
+        jPanelLexicalTerminal.add(lexiconList);
+
+        jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
+
+        jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
+
+        jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
+
+        jPanelTrace.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("This node is a trace. It is not necessary to assign it a lexical entry.");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelTrace.add(jLabel1);
+
+        jPanelNodeProperties.add(jPanelTrace, "trace");
+
+        jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("This node is a bare index. It is not necessary to assign it a lexical entry.");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelBareIndex.add(jLabel2);
+
+        jPanelNodeProperties.add(jPanelBareIndex, "bareIndex");
+
+        jPanelNonBranchingNonterminal.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("This node is a nonbranching nonterminal. It is not necessary to assign it a rule.");
+        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelNonBranchingNonterminal.add(jLabel3);
+
+        jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanelTrees.add(jPanelNodeProperties, gridBagConstraints);
+
+        jPanelCardLayout.add(jPanelTrees, "treesCard");
+
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         btnCheckAnswer.setText("Check Answer");
@@ -834,86 +952,6 @@ public class TrainingWindow extends JFrame {
         jPanelTypesAndConversions.add(jLabelAboveQuestion, gridBagConstraints);
 
         jPanelCardLayout.add(jPanelTypesAndConversions, "typesAndConversionsCard");
-
-        jPanelTrees.setLayout(new java.awt.GridBagLayout());
-
-        jPanelTrees.setMinimumSize(new java.awt.Dimension(19, 50));
-        jPanelTrees.setPreferredSize(new java.awt.Dimension(235, 150));
-        treeDisplay.setBackground(java.awt.Color.white);
-        treeDisplay.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsListener() {
-            public void ancestorMoved(java.awt.event.HierarchyEvent evt) {
-            }
-            public void ancestorResized(java.awt.event.HierarchyEvent evt) {
-                treeDisplayAncestorResized(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanelTrees.add(treeDisplay, gridBagConstraints);
-
-        jPanelNodeProperties.setLayout(new java.awt.CardLayout());
-
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 120));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 120));
-        org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
-        jPanelDefault.setLayout(jPanelDefaultLayout);
-        jPanelDefaultLayout.setHorizontalGroup(
-            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 630, Short.MAX_VALUE)
-        );
-        jPanelDefaultLayout.setVerticalGroup(
-            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 120, Short.MAX_VALUE)
-        );
-        jPanelNodeProperties.add(jPanelDefault, "default");
-
-        jPanelLexicalTerminal.setLayout(new java.awt.GridLayout(1, 0));
-
-        jPanelLexicalTerminal.add(lexiconList);
-
-        jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
-
-        jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
-
-        jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
-
-        jPanelTrace.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("This node is a trace. It is not necessary to assign it a lexical entry.");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelTrace.add(jLabel1);
-
-        jPanelNodeProperties.add(jPanelTrace, "trace");
-
-        jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("This node is a bare index. It is not necessary to assign it a lexical entry.");
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelBareIndex.add(jLabel2);
-
-        jPanelNodeProperties.add(jPanelBareIndex, "bareIndex");
-
-        jPanelNonBranchingNonterminal.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("This node is a nonbranching nonterminal. It is not necessary to assign it a rule.");
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelNonBranchingNonterminal.add(jLabel3);
-
-        jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelTrees.add(jPanelNodeProperties, gridBagConstraints);
-
-        jPanelCardLayout.add(jPanelTrees, "treesCard");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

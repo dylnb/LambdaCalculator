@@ -70,14 +70,17 @@ public class TreeExerciseWidget extends JPanel {
     
     int curFontSize = 14;
     
-    // This class encapsulates the evaluated/simplified state of a node.
-    // If the evaluation resulted in an error, evaluationError is set
-    // to a message and the other fields are unfilled. Otherwise,
-    // exprs represents the evaluated meaning (index 0), and successive
-    // steps of lambda conversion simplifications (indices >= 1).
-    // curexpr indicates the index of the Expr in exprs that is currently
-    // shown on screen. The user may be able to step back and forward
-    // through the simplification steps.
+    /**
+     * This class encapsulates the evaluated/simplified state of a node.
+     * If the evaluation resulted in an error, evaluationError is set
+     * to a message and the other fields are unfilled. Otherwise,
+     * exprs represents the evaluated meaning (index 0), and successive
+     * steps of lambda conversion simplifications (indices >= 1).
+     * curexpr indicates the index of the Expr in exprs that is currently
+     * shown on screen. The user may be able to step back and forward
+     * through the simplification steps.
+     */
+
     private class MeaningState {
         public Vector exprs = new Vector(); // of Expr objects, simplification steps
         public int curexpr = 0; // step currently shown on screen
@@ -117,6 +120,8 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
     }
+    
+
     
     public interface SelectionListener {
         void selectionChanged(SelectionEvent evt);
@@ -450,6 +455,8 @@ public class TreeExerciseWidget extends JPanel {
             SelectionListener sl = (SelectionListener)listeners.get(i);
             sl.selectionChanged(new SelectionEvent(selectedNode));
         }
+        //System.out.println("Selected node:"+selectedNode.toString() 
+        //+ " " + selectedNode.getClass().getName());
     }
     
     void updateButtonEnabledState() {
@@ -785,6 +792,9 @@ public class TreeExerciseWidget extends JPanel {
     }
         
     boolean isNodeFullyEvaluated() {
+        //TODO should check if we're in god mode, and if yes should check
+        //if this node is done by the user, i.e. contains any meaning brackets
+        // and is well typed
         if (!isNodeEvaluated(selectedNode))
             return false; // definitely not fully evaluated if it hasn't been evaluated at all
         
@@ -792,7 +802,7 @@ public class TreeExerciseWidget extends JPanel {
         return ms.curexpr == ms.exprs.size()-1;
     }
     
-    void evaluateNode() {
+    private void evaluateNode() {
         try {
             Expr m = selectedNode.getMeaning();
             lfToMeaningState.put(selectedNode, new MeaningState(m)); // no error ocurred
@@ -803,6 +813,69 @@ public class TreeExerciseWidget extends JPanel {
         canvas.invalidate();
         curErrorChanged();
     }
+    
+//    public void startEvaluation(Expr meaning) {
+//        // This is called from the outside world to begin
+//        // user simplification on the selected node.
+//        // Provide this method with whatever freebie
+//        // the user is getting as the starting point.
+//        
+//        // Start this off with the meaning brackets
+//        // already removed, because we don't handle
+//        // that step anywhere else.
+//        
+//        MeaningState ms = new MeaningState();
+//        ms.exprs.add(meaning);
+//        
+//        lfToMeaningState.put(selectedNode, ms);
+//        updateNode(selectedNode);
+//        canvas.invalidate();
+//        curErrorChanged();
+//    }
+   
+//    public String advanceSimplification(String meaning) {
+//        // Tests whether 'meaning' is a correct simplification
+//        // of the current state of the selected node. Returns
+//        // null on success, or else a String message giving
+//        // the reason why not. If successful, this also changes the 
+//        // MeaningState of this node appropriately.
+//        
+//        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+//        Expr curstate = (Expr)ms.exprs.get(ms.curexpr);
+//        
+//        LambdaConversionExercise lce = new LambdaConversionExercise
+//                (curstate, 
+//                -1, // fictitious index since this exercise is not in a group
+//                IdentifierTyper.createDefault()); //TODO use the appropriate typer instead
+//        
+//        AnswerStatus as = lce.checkAnswer(meaning);
+//        
+//        if (as.isCorrect()) {
+//            // truncate the list of pre-computed simplification
+//            // steps and discard "future" steps that haven't
+//            // been gotten to yet (only because the user may have taken a step
+//            // back by un-simplifying)  
+//            ms.exprs.setSize(ms.curexpr + 1);
+//            
+//
+//            
+//            
+//            // append the user's simplification to the end
+//            ms.exprs.add(parsedmeaning);
+//            
+//            // and then advance the cursor
+//            ms.curexpr++;
+//            
+//            updateNode(selectedNode);
+//            canvas.invalidate();
+//            curErrorChanged();
+//            
+//            return null;
+//        }
+//        
+//        return as.getMessage();
+//    }
+    
     
     public void setFontSize(int size) {
         curFontSize = size;

@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.lang.StringBuffer;
+import lambdacalc.lf.MeaningBracketExpr;
+import lambdacalc.lf.MeaningEvaluationException;
 
 import lambdacalc.logic.*;
 
@@ -52,11 +53,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      * supposed to indicate where this exercise is located in the group
      *
      */
-    //TODO I've made this constructor private because I noticed that the singleLetterIdentifiers
-    //field is not set in this constructor (could be dangerous) and because it's 
-    //never used anyway -- Lucas
-    private LambdaConversionExercise(Expr expr, int index, IdentifierTyper types) 
-    throws TypeEvaluationException {
+    //TODO  I noticed that the singleLetterIdentifiers
+    //field is not set in this constructor (could be dangerous) --Lucas
+    public LambdaConversionExercise(Expr expr, int index, IdentifierTyper types) 
+    throws TypeEvaluationException, MeaningEvaluationException {
         super(index);
         
         this.expr = expr;
@@ -74,7 +74,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     public LambdaConversionExercise
             (String expr, ExpressionParser.ParseOptions parseOptions, 
             int index, IdentifierTyper types) 
-            throws SyntaxException, TypeEvaluationException {
+            throws SyntaxException, TypeEvaluationException,
+            MeaningEvaluationException {
         
         this(ExpressionParser.parse(expr, parseOptions), index, types);
         setParseSingleLetterIdentifiers(parseOptions.singleLetterIdentifiers);
@@ -96,8 +97,13 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         }
     }
     
-    private void initialize() throws TypeEvaluationException {
+    private void initialize() throws TypeEvaluationException,
+            MeaningEvaluationException {
         Expr e = expr;
+        
+        //Remove any meaning brackets that might be in the expression.
+        e = MeaningBracketExpr.replaceAllMeaningBrackets(e);
+        
         while (true) {
             // Attempt to perform a lambda conversion on the expression.
             Expr.LambdaConversionResult lcr = e.performLambdaConversion();

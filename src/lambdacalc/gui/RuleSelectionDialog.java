@@ -40,7 +40,7 @@ public class RuleSelectionDialog extends JDialog {
         //
         
         panel = new RuleSelectionPanel();
-        panel.setParentDialog(this);
+        //panel.setParentDialog(this);
         
         getContentPane().add(panel, BorderLayout.CENTER);
         getRootPane().setDefaultButton(panel.getFAButton());

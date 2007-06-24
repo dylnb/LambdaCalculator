@@ -130,9 +130,17 @@ public abstract class LFNode {
     
     public abstract Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException;
+
+    /**
+     * Sets composition rules of nonterminals in the tree where they haven't been 
+     * set yet and are uniquely determined. Note that calling this will usually
+     * be without effect unless guessLexicalEntries is called first.
+     *
+     * @param rules the rules
+     */    
+    public abstract void guessRules(RuleList rules, boolean nonBranchingOnly);
     
-    public abstract void guessLexicalEntriesAndRules
-            (Lexicon lexicon, RuleList rules);
+    public abstract void guessLexicalEntries(Lexicon lexicon);
 
     public void addPropertyChangeListener(PropertyChangeListener l) {
         changes.addPropertyChangeListener(l);

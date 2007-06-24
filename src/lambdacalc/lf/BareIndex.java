@@ -56,12 +56,11 @@ public class BareIndex extends Terminal {
      * Nothing to do on a BareIndex.
      *
      * @param lexicon the lexicon
-     * @param rules this parameter is ignored 
-     * (maybe later it can be used for type-shifting rules)
      */
-    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
-     // nothing to do on a BareIndex
-    }    
+    public void guessLexicalEntries(Lexicon lexicon) {
+    
+    }
+    
     
     public String toString() {
         if (this.getLabel() == null) {

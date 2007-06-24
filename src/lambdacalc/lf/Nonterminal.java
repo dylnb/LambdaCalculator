@@ -12,10 +12,14 @@ public class Nonterminal extends LFNode {
     CompositionRule compositor;
     Vector children = new Vector();
     
+    
     public int size() {
         return children.size();
     }
     
+    public boolean isBranching() {
+        return children.size() >= 2;
+    }
     public LFNode getChild(int index) {
         return (LFNode)children.get(index);
     }
@@ -37,6 +41,10 @@ public class Nonterminal extends LFNode {
         return compositor;
     }
     
+    public boolean knowsCompositionRule() {
+        return compositor != null;
+    }
+    
     public void setCompositionRule(CompositionRule rule) {
         CompositionRule oldRule = compositor;
         compositor = rule;
@@ -49,14 +57,19 @@ public class Nonterminal extends LFNode {
 
     public Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException {
-        // TODO: For now, we will always try to guess the
-        // nonterminal composition rule because we have no
-        // way of choosing it.
-        if (compositor == null || !compositor.isApplicableTo(this))
-            guessCompositionRule(RuleList.HEIM_KRATZER);
-        if (compositor == null)
-            throw new NonterminalLacksCompositionRuleException(this, "I do not know how to combine the children of the " + getLabel() + " node. For instance, function application does not apply because neither child's denotation is a function whose domain is the type of the denotation of the other child.");
 
+        if (lambdacalc.Main.GOD_MODE) {
+            if (compositor == null || !compositor.isApplicableTo(this))
+                guessCompositionRule(RuleList.HEIM_KRATZER);
+        }
+        if (compositor == null) 
+            if (lambdacalc.Main.GOD_MODE) {
+                throw new NonterminalLacksCompositionRuleException(this, "I do not know how to combine the children of the " + getLabel() + " node. For instance, function application does not apply because neither child's denotation is a function whose domain is the type of the denotation of the other child.");
+            } else {
+                throw new NonterminalLacksCompositionRuleException
+                        (this, "Select a composition rule below before you try" +
+                        " to combine the children of this node.");
+            } 
         if (compositor == null)
             throw new NonterminalLacksCompositionRuleException(this);
             
@@ -81,18 +94,31 @@ public class Nonterminal extends LFNode {
      * sets the composition rule of this nonterminal if it hasn't been 
      * set yet and if it's uniquely determined. 
      *
-     * @param lexicon the lexicon
      * @param rules the rules
      */
-    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
+    public void guessRules(RuleList rules, boolean nonBranchingOnly) {
         for (int i = 0; i < children.size(); i++)
-            getChild(i).guessLexicalEntriesAndRules(lexicon, rules);
+            getChild(i).guessRules(rules, nonBranchingOnly);
         
         if (compositor != null)
             return;
 
+        if (nonBranchingOnly && this.isBranching()) return;
+        
         guessCompositionRule(rules);
     }
+    
+    /**
+     * Does nothing and calls itself recursively on the children nodes.
+     *
+     * @param lexicon the lexicon
+     */
+    public void guessLexicalEntries(Lexicon lexicon) {
+        for (int i = 0; i < children.size(); i++)
+            getChild(i).guessLexicalEntries(lexicon);
+    }
+    
+    
     
     private void guessCompositionRule(RuleList rules) {
         for (int i = 0; i < rules.size(); i++) {

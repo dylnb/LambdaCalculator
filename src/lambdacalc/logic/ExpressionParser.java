@@ -121,6 +121,9 @@ public class ExpressionParser {
          */
         public Map explicitTypes = new HashMap();
         
+        public boolean hasExplicitTypes() {
+            return !explicitTypes.isEmpty();
+        }
         public ParseOptions() {
             
         }

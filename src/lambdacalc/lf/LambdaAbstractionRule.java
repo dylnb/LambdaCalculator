@@ -63,7 +63,7 @@ public class LambdaAbstractionRule extends CompositionRule {
         }
         
         Expr bodyMeaning = body.getMeaning();
-        try { bodyMeaning = bodyMeaning.simplify(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
+        try { bodyMeaning = bodyMeaning.simplifyFully(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
  
         Var var = bodyMeaning.createFreshVar();
         

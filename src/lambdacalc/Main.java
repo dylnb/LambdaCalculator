@@ -13,6 +13,8 @@ import lambdacalc.gui.*;
  * Here's the main entry point of the program.
  */
 public class Main {
+    
+    public static final boolean GOD_MODE = false;
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {

@@ -66,8 +66,8 @@ public class LexiconList extends JPanel
         listbox.setModel(entries);
         listbox.addListSelectionListener(this);
         
-        lambdaEditor.addActionListener(new SetDenotationListener());
-        buttonSetDenotation.addActionListener(new SetDenotationListener());
+        lambdaEditor.addActionListener(new AssignDenotationListener());
+        buttonSetDenotation.addActionListener(new AssignDenotationListener());
         
         lambdaEditor.setTemporaryText("enter an expression");
     }
@@ -198,7 +198,7 @@ public class LexiconList extends JPanel
         fireChangeMade();
     }
     
-    class SetDenotationListener implements ActionListener {
+    class AssignDenotationListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (currentNode == null)
                 return;

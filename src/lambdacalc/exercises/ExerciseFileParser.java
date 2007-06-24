@@ -176,7 +176,10 @@ public class ExerciseFileParser {
                 } else if (extype.equals("tree")) {
                     try {
                         ex = new TreeExercise(line, exindex++, typer.cloneTyper());
-                        ((TreeExercise)ex).getTree().guessLexicalEntriesAndRules(file.getLexicon(), file.getRules());
+                        ((TreeExercise)ex).getTree().guessLexicalEntries(file.getLexicon());
+                        boolean nonBranchingOnly = !lambdacalc.Main.GOD_MODE;
+                        ((TreeExercise)ex).getTree().guessRules(file.getRules(), nonBranchingOnly);
+                            
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);

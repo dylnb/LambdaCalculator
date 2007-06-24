@@ -465,36 +465,26 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             tellGUIProblemEntered();
             
         } catch (SyntaxException s) {
-
+            
             jButtonCheckAnswer.setEnabled(false);
             //if (this.ex!=null) { // user is trying to modify a problem on the fly
-            if (false) { // user is trying to modify a problem on the fly
-                undoOnTheFlyModification();
-                displayFeedback("I could not understand your modification of the current problem: " + s.getMessage()
-                +"\nI reverted your modification. If you would like to scratch the current problem " +
-                        "and start a new one, click on Do Another Problem.");                
-            } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
-
-                displayFeedback(s.getMessage());
-                txtEnterYourOwnProblem.requestFocusInWindow();
-                if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
-                    txtEnterYourOwnProblem.setCaretPosition(s.getPosition());
-            }
-        } catch (TypeEvaluationException t) {
+//            if (false) { // user is trying to modify a problem on the fly
+//                undoOnTheFlyModification();
+//                displayFeedback("I could not understand your modification of the current problem: " + s.getMessage()
+//                +"\nI reverted your modification. If you would like to scratch the current problem " +
+//                        "and start a new one, click on Do Another Problem.");
+//            } else { // user is trying to enter a problem at the beginning or after clicking "Do another problem"
+            
+            displayFeedback(s.getMessage());
+            txtEnterYourOwnProblem.requestFocusInWindow();
+            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
+                txtEnterYourOwnProblem.setCaretPosition(s.getPosition());
+            
+        } catch (Exception e) {
             jButtonCheckAnswer.setEnabled(false);
-//            if (this.ex!=null) { // user is trying to modify a problem on the fly
-            if (false) { // user is trying to modify a problem on the fly
-                undoOnTheFlyModification();
-                displayFeedback("I could not understand your modification of the current problem: " + t.getMessage()
-                +"\nI reverted your modification. If you would like to scratch the current problem " +
-                        "and start a new one, click on Do Another Problem.");
-            } else {
-                
-                displayFeedback(t.getMessage());
-                txtEnterYourOwnProblem.requestFocusInWindow();
-            }
+            displayFeedback(e.getMessage());
+            txtEnterYourOwnProblem.requestFocusInWindow();
         }
-
     }//GEN-LAST:event_jButtonEnterProblemActionPerformed
 
     private void undoOnTheFlyModification() {

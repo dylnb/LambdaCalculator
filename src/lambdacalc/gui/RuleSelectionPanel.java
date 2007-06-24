@@ -6,22 +6,29 @@
 
 package lambdacalc.gui;
 
+import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import lambdacalc.gui.TreeExerciseWidget.SelectionEvent;
+import lambdacalc.gui.TreeExerciseWidget.SelectionListener;
 import lambdacalc.lf.CompositionRule;
 import lambdacalc.lf.FunctionApplicationRule;
+import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LambdaAbstractionRule;
+import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.PredicateModificationRule;
 
 /**
  *
  * @author  champoll
  */
-public class RuleSelectionPanel extends javax.swing.JPanel {
+public class RuleSelectionPanel extends javax.swing.JPanel 
+implements PropertyChangeListener, SelectionListener {
     
     private int value = -1;
     
-    private JDialog dialog;
+    //private JDialog dialog;
+    
+    private TreeExerciseWidget teWidget = null;
     
     public static final int FUNCTION_APPLICATION = 1;
     public static final int PREDICATE_MODIFICATION = 2;
@@ -32,6 +39,13 @@ public class RuleSelectionPanel extends javax.swing.JPanel {
         initComponents();
     }
     
+    public void initialize(TreeExerciseWidget teWidget) {
+        if (this.teWidget != null)
+            this.teWidget.removeSelectionListener(this);
+        this.teWidget = teWidget;
+        teWidget.addSelectionListener(this);
+    }
+    
     public static CompositionRule forValue(int i) {
         if (i == FUNCTION_APPLICATION) return FunctionApplicationRule.INSTANCE;
         if (i == PREDICATE_MODIFICATION) return PredicateModificationRule.INSTANCE;
@@ -40,8 +54,23 @@ public class RuleSelectionPanel extends javax.swing.JPanel {
         throw new IllegalArgumentException();
     }
 
-    public void setParentDialog(JDialog dialog) {
-        this.dialog = dialog;
+//    public void setParentDialog(JDialog dialog) {
+//        this.dialog = dialog;
+//    }
+    
+    
+    
+    public void propertyChange(java.beans.PropertyChangeEvent e) {
+        // Fired when the node we're viewing changes
+        if (e.getPropertyName().equals("compositionRule")) {
+            TrainingWindow.getSingleton().
+                    updateNodePropertyPanel((Nonterminal)e.getSource());
+        }
+    }    
+   
+    public void selectionChanged(SelectionEvent e) {
+        LFNode source = (LFNode) e.getSource();
+        source.addPropertyChangeListener(this);
     }
     
     public JButton getFAButton() {
@@ -60,6 +89,17 @@ public class RuleSelectionPanel extends javax.swing.JPanel {
         return value;
     }
     
+    private void updateTree(int value) {
+        //sanity check: we expect the selected node to be a branching nonterminal
+        if (teWidget == null) return;
+        if (!(teWidget.getSelectedNode() instanceof Nonterminal)) return;
+        Nonterminal node = (Nonterminal) teWidget.getSelectedNode();
+        if (!node.isBranching()) return;
+        
+        node.setCompositionRule(forValue(value));
+        
+        teWidget.doSimplify(false);
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -187,19 +227,22 @@ public class RuleSelectionPanel extends javax.swing.JPanel {
     private void jButtonLAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLAActionPerformed
         
         value = LAMBDA_ABSTRACTION;
-        this.dialog.setVisible(false);
+        updateTree(value);
+    //    this.dialog.setVisible(false);
     }//GEN-LAST:event_jButtonLAActionPerformed
 
     private void jButtonPMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPMActionPerformed
          
         value = PREDICATE_MODIFICATION;
-        this.dialog.setVisible(false);
+        updateTree(value);
+    //    this.dialog.setVisible(false);
     }//GEN-LAST:event_jButtonPMActionPerformed
 
     private void jButtonFAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFAActionPerformed
 
         value = FUNCTION_APPLICATION;
-        this.dialog.setVisible(false);
+        updateTree(value);
+    //    this.dialog.setVisible(false);
     }//GEN-LAST:event_jButtonFAActionPerformed
     
     

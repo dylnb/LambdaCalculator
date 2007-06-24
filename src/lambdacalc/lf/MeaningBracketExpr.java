@@ -75,7 +75,8 @@ public class MeaningBracketExpr extends Expr {
         return (e instanceof MeaningBracketExpr) && (node == ((MeaningBracketExpr)e).node);
     }
     
-    public static Expr replaceAllMeaningBrackets(Expr expr) throws TypeEvaluationException, MeaningEvaluationException {
+    public static Expr replaceAllMeaningBrackets(Expr expr) 
+    throws TypeEvaluationException, MeaningEvaluationException {
         // First get a list of all MeaningBracketExpr objects in expr.
         ArrayList objs = new ArrayList();
         findMeaningBrackets(expr, objs);
@@ -87,7 +88,7 @@ public class MeaningBracketExpr extends Expr {
             Expr value = mbe.node.getMeaning(mbe.g);
             value = replaceAllMeaningBrackets(value);
             value = value.replaceAll(mbe.g); // really we want to replace g(1) with gx/1(1) only, and leave it to someone else to replace gx/1(1) with x
-            value = value.simplify();
+            value = value.simplifyFully();
             
             expr = expr.replace(mbe, value);
         }

@@ -36,16 +36,14 @@ public class LexicalTerminal extends Terminal {
      * @param rules this parameter is ignored 
      * (maybe later it can be used for type-shifting rules)
      */
-    public void guessLexicalEntriesAndRules(Lexicon lexicon, RuleList rules) {
+    public void guessLexicalEntries(Lexicon lexicon) {
         if (meaning != null)
             return;
         
         Expr[] meanings = lexicon.getMeanings(getLabel());
         if (meanings.length == 1)
-            meaning = meanings[0];
-    
+            meaning = meanings[0];    
     }
-
     
     public String toString() {
         return super.toString();

@@ -241,7 +241,7 @@ public abstract class Expr {
     /**
      * Simplifies the expression by performing all possible lambda conversions.
      */
-    public final Expr simplify() throws TypeEvaluationException {
+    public final Expr simplifyFully() throws TypeEvaluationException {
         Expr expr = this;    
         while (true) {
             LambdaConversionResult r = expr.performLambdaConversion();
