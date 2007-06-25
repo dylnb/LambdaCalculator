@@ -748,6 +748,27 @@ public class ExpressionParser {
             start++;
             parens = true;
         }
+        
+        // If we found the identifier 'g' and an open parenthesis,
+        // then if we find a close parenthesis, and further if
+        // what comes in the middle is an integer, then parse
+        // this predicate as a GApp. Otherwise, we fall through
+        // and parse this like a normal predicate.
+        boolean mightBeG = false;
+        if (id.equals("g") && parens) {
+            int closeparen = expression.indexOf(')', start);
+            if (closeparen != -1) {
+                mightBeG = true;
+                String param = expression.substring(start, closeparen).trim();
+                try {
+                    int idx = Integer.valueOf(param).intValue();
+                    return new ParseResultSet(new ParseResult(new GApp(idx), closeparen+1));
+                } catch (NumberFormatException e) {
+                    // fall through to treating this
+                    // like a normal predicate
+                }        		
+        	}
+        }
 
         ArrayList arguments = new ArrayList();
         boolean first = true;
@@ -777,7 +798,16 @@ public class ExpressionParser {
                 first = false;
 
                 try {
-                    ParseResult arg = parse2(expression, start, context, "the next argument to the predicate " + id, false);
+                	String exp;
+                	if (arguments.size() == 0) {
+	                    if (!mightBeG)
+	                        exp = "the first argument to the predicate " + id;
+	                    else
+	                        exp = "an index (1, 2, etc.) for the assignment function 'g' or the first argument to a predicate 'g'";
+	                } else {
+                        exp = "the next argument to the predicate " + id;
+	                }
+                    ParseResult arg = parse2(expression, start, context, exp, false);
                     arguments.add(arg.Expression);
                     start = arg.Next;
                 } catch (SyntaxException se) {
