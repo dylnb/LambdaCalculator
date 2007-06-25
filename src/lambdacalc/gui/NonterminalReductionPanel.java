@@ -116,8 +116,6 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
 
         btnTransfer.setFont(new java.awt.Font("Lucida Grande", 0, 10));
         btnTransfer.setText("Paste");
-        btnTransfer.setMinimumSize(new java.awt.Dimension(60, 29));
-        btnTransfer.setPreferredSize(new java.awt.Dimension(60, 29));
         btnTransfer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTransferActionPerformed(evt);
@@ -145,8 +143,6 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         jPanelQuestion.add(txtUserAnswer, gridBagConstraints);
 
         jButtonCheckAnswer.setText("Check Answer");
-        jButtonCheckAnswer.setMaximumSize(new java.awt.Dimension(120, 25));
-        jButtonCheckAnswer.setMinimumSize(new java.awt.Dimension(120, 25));
         jButtonCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCheckAnsweronCheckAnswer(evt);
