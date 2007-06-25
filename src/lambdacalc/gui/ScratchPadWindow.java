@@ -602,6 +602,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private void onCheckAnswer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckAnswer
         try {
+            txtUserAnswer.deleteAnyTemporaryText();
             String string = txtUserAnswer.getText().trim();
             if (!string.equals(txtUserAnswer.getText())) {
                 txtUserAnswer.setText(string);

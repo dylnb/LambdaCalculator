@@ -150,19 +150,25 @@ public class TrainingWindow extends JFrame {
         CardLayout cardLayout = (CardLayout) jPanelNodeProperties.getLayout();
         
         //TODO if we ever introduce a NodeView, then it might know how to
-        // call the right panel
+        // call the right panel, so we don't have to cycle through all possible
+        // node types with instanceof calls
         if (selectedNode instanceof Nonterminal) {
             if (((Nonterminal) selectedNode).isBranching()) {
                 if (((Nonterminal) selectedNode).knowsCompositionRule()) {
                     cardLayout.show(jPanelNodeProperties, "lambdaConversion");
                     Expr current;
-                    try {
-                        current = ((Nonterminal) selectedNode).getMeaning();
-                    } catch (MeaningEvaluationException ex) {
-                        ex.printStackTrace();
-                        return;
-                        //TODO something more useful here
-                    }
+//                    try {
+//                        current = treeDisplay.getCurrentExpression();
+// //                   } catch (MeaningEvaluationException ex) {
+//                    } catch (Exception ex) {
+                        try {
+                            current = ((Nonterminal) selectedNode).getMeaning();
+                        } catch (MeaningEvaluationException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        //TODO something more useful here with the exception
+                    //}
                     LambdaConversionExercise exercise;
                     try {
                         exercise = new LambdaConversionExercise
@@ -182,7 +188,7 @@ public class TrainingWindow extends JFrame {
                         ex.printStackTrace();
                         //TODO something more useful here
                     }
-                } else {
+                } else { // the nonterminal doesn't know its composition rule
                     cardLayout.show(jPanelNodeProperties, "ruleSelection");
                 }
             } else {
@@ -1164,6 +1170,7 @@ public class TrainingWindow extends JFrame {
 
     private void onCheckAnswer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onCheckAnswer
         try {
+            txtUserAnswer.deleteAnyTemporaryText();
             String string = txtUserAnswer.getText().trim();
             if (!string.equals(txtUserAnswer.getText()))
                 txtUserAnswer.setText(string);
@@ -1172,7 +1179,7 @@ public class TrainingWindow extends JFrame {
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
                 if (btnNext.isEnabled() && !getCurrentExFile().hasBeenCompleted()) {
-                    response += "Click the Next Problem button to go on to the next exercise.";
+                    response += "Click the Next button to go on to the next exercise.";
                     btnNext.requestFocusInWindow();
                 }
                 else if (!getCurrentExFile().hasBeenCompleted())

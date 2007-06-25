@@ -86,6 +86,10 @@ public class TreeExerciseWidget extends JPanel {
         public int curexpr = 0; // step currently shown on screen
         public String evaluationError; // error message if evaluation failed
         
+        public Expr getCurrentExpression() {
+            return (Expr) exprs.get(curexpr);
+        }
+        
         public MeaningState(String error) {
             evaluationError = error;
         }
@@ -324,6 +328,19 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
     }
+    
+//    public MeaningState getMeaningStateForNode(LFNode node) {
+//        return (MeaningState) lfToMeaningState.get(node);
+//    }
+//    
+//    public MeaningState getMeaningStateForSelectedNode() {
+//        return getMeaningStateForNode(getSelectedNode());
+//    }
+//    
+//    public Expr getCurrentExpression() {
+//            return this.getMeaningStateForSelectedNode().getCurrentExpression();
+//    }
+    
     
     /*
     private void updateTerminalLexicalChoices(Terminal node) {
@@ -814,67 +831,68 @@ public class TreeExerciseWidget extends JPanel {
         curErrorChanged();
     }
     
-//    public void startEvaluation(Expr meaning) {
-//        // This is called from the outside world to begin
-//        // user simplification on the selected node.
-//        // Provide this method with whatever freebie
-//        // the user is getting as the starting point.
-//        
-//        // Start this off with the meaning brackets
-//        // already removed, because we don't handle
-//        // that step anywhere else.
-//        
-//        MeaningState ms = new MeaningState();
-//        ms.exprs.add(meaning);
-//        
-//        lfToMeaningState.put(selectedNode, ms);
-//        updateNode(selectedNode);
-//        canvas.invalidate();
-//        curErrorChanged();
-//    }
+    /**
+     * This is called from the outside world to begin
+     * user simplification on the selected node.
+     * Provide this method with whatever freebie
+     *  the user is getting as the starting point.
+        
+     * Start this off with the meaning brackets
+     * already removed, because we don't handle
+     * that step anywhere else.  
+     */ 
+    public void startEvaluation(Expr meaning) {
+
+        
+        MeaningState ms = new MeaningState(meaning);
+        lfToMeaningState.put(selectedNode, ms);
+        updateNode(selectedNode);
+        canvas.invalidate();
+        curErrorChanged();
+    }
    
-//    public String advanceSimplification(String meaning) {
-//        // Tests whether 'meaning' is a correct simplification
-//        // of the current state of the selected node. Returns
-//        // null on success, or else a String message giving
-//        // the reason why not. If successful, this also changes the 
-//        // MeaningState of this node appropriately.
-//        
-//        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
-//        Expr curstate = (Expr)ms.exprs.get(ms.curexpr);
-//        
-//        LambdaConversionExercise lce = new LambdaConversionExercise
-//                (curstate, 
-//                -1, // fictitious index since this exercise is not in a group
-//                IdentifierTyper.createDefault()); //TODO use the appropriate typer instead
-//        
-//        AnswerStatus as = lce.checkAnswer(meaning);
-//        
-//        if (as.isCorrect()) {
-//            // truncate the list of pre-computed simplification
-//            // steps and discard "future" steps that haven't
-//            // been gotten to yet (only because the user may have taken a step
-//            // back by un-simplifying)  
-//            ms.exprs.setSize(ms.curexpr + 1);
-//            
-//
-//            
-//            
-//            // append the user's simplification to the end
-//            ms.exprs.add(parsedmeaning);
-//            
-//            // and then advance the cursor
-//            ms.curexpr++;
-//            
-//            updateNode(selectedNode);
-//            canvas.invalidate();
-//            curErrorChanged();
-//            
-//            return null;
-//        }
-//        
-//        return as.getMessage();
-//    }
+    /**
+     * Tests whether 'meaning' is a correct simplification
+     * of the current state of the selected node. 
+     * If successful, this also changes the 
+     * MeaningState of this node appropriately.
+     */
+    public AnswerStatus advanceSimplification(Expr parsedMeaning) 
+    throws TypeEvaluationException, MeaningEvaluationException {
+        
+        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+        Expr curstate = (Expr)ms.exprs.get(ms.curexpr);
+        
+        LambdaConversionExercise lce = new LambdaConversionExercise
+                (curstate, 
+                -1, // fictitious index since this exercise is not in a group
+                IdentifierTyper.createDefault()); //TODO use the appropriate typer instead
+        
+        //Expr parsedMeaning = lce.parse(meaning);
+        AnswerStatus as = lce.checkAnswer(parsedMeaning);
+        
+        if (as.isCorrect()) {
+            // truncate the list of pre-computed simplification
+            // steps and discard "future" steps that haven't
+            // been gotten to yet (only because the user may have taken a step
+            // back by un-simplifying)
+            ms.exprs.setSize(ms.curexpr + 1);
+            
+            // append the user's simplification to the end
+            ms.exprs.add(parsedMeaning);
+            
+            // and then advance the cursor
+            ms.curexpr++;
+            
+            updateNode(selectedNode);
+            canvas.invalidate();
+            curErrorChanged();
+            
+            
+        }
+        
+        return as;
+    }
     
     
     public void setFontSize(int size) {

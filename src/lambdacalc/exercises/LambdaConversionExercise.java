@@ -152,24 +152,28 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         this.currentStep = 0;
     }
 
+    /**
+     * Parses an expression using the parser options of this exercise. Syntax errors
+     * are left to be handled by the caller so it can position the text caret
+     * in the text box appropriately. We also check if the user has inadvertently
+     * entered a type.
+     */
+    public Expr parse(String exprString) throws SyntaxException {
     
-    public AnswerStatus checkAnswer(String answer) throws SyntaxException {
-        // Parse the user's answer into an expression.  Syntax errors
-        // are handled by the caller so it can position the text caret
-        // in the text box appropriately.
+        Expr result;
+        
+    
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false;
         exprParseOpts.singleLetterIdentifiers = isParseSingleLetterIdentifiers();
         exprParseOpts.typer = types;
-        
-        Expr users_answer;
-        
+
         try {
-            users_answer = ExpressionParser.parse(answer, exprParseOpts);
+            result = ExpressionParser.parse(exprString, exprParseOpts);
         } catch (BadCharacterException exception) {
             boolean parsedAsType = false;
             try {
-                TypeParser.parse(answer);
+                TypeParser.parse(exprString);
                 parsedAsType = true;
             } catch (SyntaxException ex2) {
             }
@@ -177,24 +181,45 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 throw new SyntaxException(exception.getMessage() + " In this exercise you are supposed to enter a " + Lambda.SYMBOL + "-expression, not a type.", exception.getPosition());
            throw exception;
         }
+        
+        return result;
+    }
+    
+    /**
+     * Parses the user's answer into an expression and checks it.  Syntax errors
+     * are left to be handled by the caller so it can position the text caret
+     * in the text box appropriately. This is just a call to the other
+     * #checkAnswer(Expr) method.
+     */
+    public AnswerStatus checkAnswer(String answer) throws SyntaxException {
+        return checkAnswer(parse(answer));
+    }
+    
+    /**
+     * Checks if the given expression is a correct answer.
+     * It is recommended to produce the
+     * argument using
+     * this exercise's parser settings, e.g. by using #parse(Expr) in this class.
+     */
+    public AnswerStatus checkAnswer(Expr userAnswer) {
 
         // this is what the user was trying to simplify
-        Expr prev_step = currentStep == 0 ? expr : (Expr)steps.get(currentStep-1);
+        Expr prevStep = currentStep == 0 ? expr : (Expr)steps.get(currentStep-1);
         
         // let's check up front whether the user answered without changing
         // the question.  if the expression is not reducible, that's fine,
         // otherwise we need to tell the user to try to reduce the expression
         
-        // TODO: Probably compare with lastAnswer, not prev_step, if lastAnswer
+        // TODO: Probably compare with lastAnswer, not prevStep, if lastAnswer
         // is not null, because the user's actual previous answer may be different
         // if any alphabetical variants have been made.
         
-        if (users_answer.equals(prev_step)) {
+        if (userAnswer.equals(prevStep)) {
             // the user didn't do anything
             if (steptypes.get(0).equals(NOT_REDUCIBLE)) { // and that was the right thing to do
                 currentStep++;
                 setDone();
-                return AnswerStatus.CorrectFinalAnswer("That is correct! " + prev_step.toString() + " is not reducible.");
+                return AnswerStatus.CorrectFinalAnswer("That is correct! " + prevStep.toString() + " is not reducible.");
                 // By doing this, we display the canonical representation (rather than the student's input) in the feedback.
                 
             } else { // the user should have done something
@@ -211,7 +236,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // notSoFast is true, then it's deemed an incorrect answer.
         for (int matched_step = currentStep; matched_step < steps.size(); matched_step++) {
             Expr correct_answer = (Expr)steps.get(matched_step);
-            if (correct_answer.alphaEquivalent(users_answer)) {
+            if (correct_answer.alphaEquivalent(userAnswer)) {
                 if (matched_step > currentStep && isNotSoFast())
                     return AnswerStatus.Incorrect("Not so fast!  Do one " + Lambda.SYMBOL + "-conversion or alphabetical variant step at a time.");
 
@@ -222,7 +247,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 // expression which now no longer needs further alphabetical
                 // variation in order to be beta reduced.
                 try {
-                    Expr.LambdaConversionResult lcr = users_answer.performLambdaConversion();
+                    Expr.LambdaConversionResult lcr = userAnswer.performLambdaConversion();
                     
                     if (steptypes.get(matched_step).equals(ALPHAVARY)
                         && lcr != null
@@ -244,7 +269,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         String currentThingToDo = (String)steptypes.get(currentStep); // e.g. alphavary
 
         if (correct) {
-            lastAnswer = users_answer;
+            lastAnswer = userAnswer;
             
             currentStep++;
             
@@ -265,12 +290,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             ArrayList responses = new ArrayList();
             Set diagnoses = new HashSet();
 
-            if (didUserAttemptLambdaConversion(prev_step, users_answer)) {
-                didUserApplyTheRightArgument(prev_step, users_answer, responses, diagnoses);
-                didUserRemoveTheRightLambda(prev_step, users_answer, responses, diagnoses);
+            if (didUserAttemptLambdaConversion(prevStep, userAnswer)) {
+                didUserApplyTheRightArgument(prevStep, userAnswer, responses, diagnoses);
+                didUserRemoveTheRightLambda(prevStep, userAnswer, responses, diagnoses);
                 
                 // See if the user did everything right but made a mistake in the names of variables.
-                if (!correct_answer.alphaEquivalent(users_answer) && correct_answer.operatorEquivalent(users_answer) && !diagnoses.contains("leftmost-leftmost"))
+                if (!correct_answer.alphaEquivalent(userAnswer) && correct_answer.operatorEquivalent(userAnswer) && !diagnoses.contains("leftmost-leftmost"))
                     responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. Remember to substitute the argument for all free instances of the " + Lambda.SYMBOL + " variable, and for no other variables.");
                 
                 // test if the number of removed lambdas doesn't equal the number of removed arguments
@@ -281,15 +306,15 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
             }
             
-            if (!currentThingToDo.equals(ALPHAVARY) && prev_step.alphaEquivalent(users_answer))
+            if (!currentThingToDo.equals(ALPHAVARY) && prevStep.alphaEquivalent(userAnswer))
                 responses.add("You've made a licit alphabetical variant, but you don't need an alphabetical variant here.");
             
-            if (prev_step.operatorEquivalent(users_answer))
-                didUserRenameAFreeVariableOrDidntRenameConsistently(prev_step, users_answer, responses, diagnoses);
+            if (prevStep.operatorEquivalent(userAnswer))
+                didUserRenameAFreeVariableOrDidntRenameConsistently(prevStep, userAnswer, responses, diagnoses);
             
             // This is a basically hint for what to do next.
             if (currentThingToDo.equals(ALPHAVARY)) {
-                if (correct_answer.alphaEquivalent(users_answer)) {
+                if (correct_answer.alphaEquivalent(userAnswer)) {
                     // the user has given a feasible alphabetical variant,
                     // but it is not the right one.
                     hint = "You have given a licit alphabetical variant, but it's not one that will help you.  (Do you see why?)  Try again.";
@@ -310,7 +335,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             // is a type issue, we can flag that as well to help the user
             // figure out what went wrong.
             try {
-                users_answer.getType();
+                userAnswer.getType();
             } catch (TypeMismatchException e) {
                 responses.add("Note that your expression " + (responses.size() > 0 ? "also " : "") + "has a problem with types: " + e.getMessage());
             } catch (TypeEvaluationException e) {

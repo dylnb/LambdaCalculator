@@ -8,7 +8,10 @@ package lambdacalc.gui;
 
 import lambdacalc.exercises.AnswerStatus;
 import lambdacalc.exercises.Exercise;
+import lambdacalc.exercises.LambdaConversionExercise;
+import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.logic.SyntaxException;
+import lambdacalc.logic.TypeEvaluationException;
 
 /**
  *
@@ -16,7 +19,7 @@ import lambdacalc.logic.SyntaxException;
  */
 public class NonterminalReductionPanel extends javax.swing.JPanel {
 
-    private Exercise exercise;
+    private LambdaConversionExercise exercise;
     private TreeExerciseWidget teWidget;
     
     /** Creates new form NonterminalReductionPanel */
@@ -29,11 +32,12 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         return exercise;
     }
 
-    public void initialize(Exercise exercise, TreeExerciseWidget widget) {
+    public void initialize(LambdaConversionExercise exercise, TreeExerciseWidget widget) {
         this.teWidget = widget;
         this.exercise = exercise;
-        txtQuestion.setText(exercise.toString());
+        tellGUIProblemChanged();
     }
+    
 
     //TODO this is copied from TrainingWindow -- make static in Util?
     private void switchOn(javax.swing.JTextField j) {
@@ -49,7 +53,18 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         //    j.setBackground(javax.swing.UIManager.getColor("TextField.inactiveBackground"));
         //}
     }    
-    
+
+    private void tellGUIProblemChanged() {
+        //TODO check to what extent this corresponds with ScratchPadWindow
+        //method tellGUIProblemEntered
+        txtFeedback.setText("");
+        txtQuestion.setText(exercise.toString());
+        jButtonCheckAnswer.setEnabled(true);
+        txtUserAnswer.setTemporaryText("enter an expression");
+        switchOn(txtUserAnswer);
+        txtUserAnswer.requestFocusInWindow();
+    }
+
     private void tellGUIProblemSolved() {
         switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
@@ -204,6 +219,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         //TODO this code is largely copied from TrainingWindow and 
         //ScratchPadWindow -- can we centralize it somehow?
         try {
+            txtUserAnswer.deleteAnyTemporaryText();
             String string = txtUserAnswer.getText().trim();
             if (!string.equals(txtUserAnswer.getText())) {
                 txtUserAnswer.setText(string);
@@ -212,17 +228,36 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
             if (exercise == null) {
                 // TODO exception handling
             }
-            AnswerStatus status = exercise.checkAnswer(string);
+            AnswerStatus status;
+            try {
+                status = teWidget.advanceSimplification(exercise.parse(string));
+            //TODO exception handling
+            } catch (TypeEvaluationException ex) {
+                ex.printStackTrace();
+                return;
+            } catch (MeaningEvaluationException ex) {
+                ex.printStackTrace();
+                return;
+            }
+//            AnswerStatus status = exercise.checkAnswer(string);
             displayFeedback(status.getMessage());
-            if (status.isCorrect()) {
-                if (status.endsExercise()) {
+            if (status.isCorrect() && 
+                status.endsExercise()) {
+
                     tellGUIProblemSolved();
-                    
-                    exercise=null;
+
+                    String response = status.getMessage() + " ";
+                    if (true) { // todo if the current tree exercise is completed
+                        response += "Now click on another node to continue.";
+                    } else {
+                        response += "You have completed this tree.";
+                    }
+                    txtFeedback.setText(response);
+                   
                 } else { // "Correct! Now simplify..."
                     txtQuestion.setText(exercise.getLastAnswer());
                 }
-            }
+        
         } catch (SyntaxException s) {
             displayFeedback(s.getMessage());
             if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())

@@ -26,10 +26,14 @@ import lambdacalc.logic.*;
  */
 public class LambdaEnabledTextField extends JTextField {
 
-     boolean isTempText = false;
+     private boolean isTempText = false;
     
      public LambdaEnabledTextField() {
      	setFont(Util.getUnicodeFont(16));
+     }
+     
+     public boolean isTempText() {
+         return isTempText;
      }
      
      public void setText(String text) {
@@ -38,12 +42,24 @@ public class LambdaEnabledTextField extends JTextField {
          super.setText(text);
      }
      
+     
      public void setTemporaryText(String text) {
          isTempText = true;
          super.setText(text);
          setForeground(UIManager.getColor("TextField.inactiveForeground"));
          setCaretPosition(0);
      }
+     
+     /**
+      * If this field is displaying a temporary text, delete it, otherwise do nothing.
+      */
+     public void deleteAnyTemporaryText() {
+         if (isTempText == false) return;
+         
+         isTempText = false;
+         setForeground(UIManager.getColor("TextField.foreground"));
+         setText("");
+      }
      
      private void onEvent() {
           if (isTempText) {

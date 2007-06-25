@@ -14,8 +14,11 @@ import lambdacalc.lf.CompositionRule;
 import lambdacalc.lf.FunctionApplicationRule;
 import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LambdaAbstractionRule;
+import lambdacalc.lf.MeaningBracketExpr;
+import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.PredicateModificationRule;
+import lambdacalc.logic.TypeEvaluationException;
 
 /**
  *
@@ -97,8 +100,17 @@ implements PropertyChangeListener, SelectionListener {
         if (!node.isBranching()) return;
         
         node.setCompositionRule(forValue(value));
-        
-        teWidget.doSimplify(false);
+        try {
+            // freebie: we replace all meaning brackets
+            teWidget.startEvaluation(MeaningBracketExpr.replaceAllMeaningBrackets(node.getMeaning()));
+        } catch (MeaningEvaluationException ex) {
+            ex.printStackTrace();
+            //TODO do something more useful
+        } catch (TypeEvaluationException ex) {
+            ex.printStackTrace();
+            //TODO do something more useful
+        }
+//        teWidget.doSimplify(false);
     }
     /** This method is called from within the constructor to
      * initialize the form.
