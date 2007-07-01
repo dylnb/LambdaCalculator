@@ -337,6 +337,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 }
             } else if (currentThingToDo.equals(BETAREDUCE) && steptypes.contains(ALPHAVARY))
                 hint = "Try applying " + Lambda.SYMBOL + "-conversion.";
+            else if (currentThingToDo.equals(MEANINGBRACKETS))
+                hint = "Replace the ocurrences of the interpretation function [[ ... ]] with the denotations of the indicated nodes in the tree.";
             else if (currentThingToDo.equals(BETAREDUCE) || currentThingToDo.equals(NOT_REDUCIBLE))
                 hint = null; // nothing useful to say by default
             else
