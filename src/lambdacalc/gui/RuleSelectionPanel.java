@@ -65,10 +65,10 @@ implements PropertyChangeListener, SelectionListener {
     
     public void propertyChange(java.beans.PropertyChangeEvent e) {
         // Fired when the node we're viewing changes
-        if (e.getPropertyName().equals("compositionRule")) {
-            TrainingWindow.getSingleton().
-                    updateNodePropertyPanel((Nonterminal)e.getSource());
-        }
+//        if (e.getPropertyName().equals("compositionRule")) {
+//            TrainingWindow.getSingleton().
+//                    updateNodePropertyPanel((Nonterminal)e.getSource());
+//        }
     }    
    
     public void selectionChanged(SelectionEvent e) {
@@ -100,7 +100,19 @@ implements PropertyChangeListener, SelectionListener {
         if (!node.isBranching()) return;
         
         node.setCompositionRule(forValue(value));
+//<<<<<<< .mine
+//        try {
+//            // freebie: we replace all meaning brackets
+//            teWidget.startEvaluation(MeaningBracketExpr.replaceAllMeaningBrackets(node.getMeaning()));
+//        } catch (MeaningEvaluationException ex) {
+//            teWidget.setErrorMessage(ex.getMessage());
+//        } catch (TypeEvaluationException ex) {
+//            teWidget.setErrorMessage(ex.getMessage());
+//        }
+////        teWidget.doSimplify(false);
+//=======
         teWidget.startEvaluation();
+//>>>>>>> .r216
     }
     /** This method is called from within the constructor to
      * initialize the form.
