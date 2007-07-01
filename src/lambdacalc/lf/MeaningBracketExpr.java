@@ -30,6 +30,14 @@ public class MeaningBracketExpr extends Expr {
         return 1;
     }
     
+    public LFNode getNode() {
+        return node;
+    }
+    
+    public AssignmentFunction getAssignmentFunction() {
+        return g;
+    }
+    
     protected String toString(boolean html) {
         String label = node.getLabel();
         if (label != null) {
@@ -103,6 +111,96 @@ public class MeaningBracketExpr extends Expr {
             List subexprs = expr.getSubExpressions();
             for (Iterator i = subexprs.iterator(); i.hasNext(); )
                 findMeaningBrackets((Expr)i.next(), objs);
+        }
+    }
+    
+    /**
+     * MeaningBracketExpr objects can't be serialized because they have references
+     * to nodes in a tree, and it's impossible to serialize and deserialize that
+     * object reference. This method and the corresponding readExpr method provide
+     * a way to save and load expressions that deep down may contain MeaningBracketExpr
+     * objects.
+     */
+    public static void writeExpr(Expr expr, Nonterminal treeroot, java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeByte(0); // version info
+        
+        // Get a list of all meaning bracket objects in the expression.
+        ArrayList mbs = new ArrayList();
+        findMeaningBrackets(expr, mbs);
+        
+        // Replace each with a special variable, and maintain a mapping
+        // of the original meaning bracket exprs to the special varaibles.
+        Map replacements = new HashMap();
+        for (Iterator i = mbs.iterator(); i.hasNext(); ) {
+            MeaningBracketExpr mb = (MeaningBracketExpr)i.next();
+            Var key = expr.createFreshVar();
+            expr = expr.replace(mb, key);
+            replacements.put(mb, key);
+        }
+        
+        // Create a mapping from nodes to paths (and paths to nodes, but we don't need that here).
+        Map nodeToPath = new HashMap(), pathToNode = new HashMap();
+        getNodePaths(treeroot, nodeToPath, pathToNode, "R");
+        
+        // Write out the expr that has the meaning brackets replaced with variables.
+        expr.writeToStream(output);
+        
+        // Write out the mapping from special variables to meaning bracket exprs.
+        output.writeInt(mbs.size());
+        for (Iterator i = mbs.iterator(); i.hasNext(); ) {
+            MeaningBracketExpr mb = (MeaningBracketExpr)i.next();
+            
+            // Write out the meaning bracket. To write the node that it refers
+            // to, write out the path to the node.
+            output.writeUTF((String)nodeToPath.get(mb.getNode()));
+            
+            // And write out the assignment function applied to the node.
+            mb.getAssignmentFunction().writeToStream(output);
+            
+            // And the special variable.
+            Var key = (Var)replacements.get(mb);
+            key.writeToStream(output);
+        }
+    }
+    
+    public static Expr readExpr(Nonterminal treeroot, java.io.DataInputStream input) throws java.io.IOException {
+        if (input.readByte() != 0)
+            throw new java.io.IOException("Data format error.");
+
+        // Create a mapping from nodes to paths (which we don't need) and paths to nodes.
+        Map nodeToPath = new HashMap(), pathToNode = new HashMap();
+        getNodePaths(treeroot, nodeToPath, pathToNode, "R");
+        
+        // Read the expr that has the meaning brackets replaced with variables.
+        Expr expr = Expr.readFromStream(input);
+        
+        // Read in the mapping from special variables to meaning brackets.
+        Map replacements = new HashMap();
+        int n = input.readInt();
+        for (int i = 0; i < n; i++) {
+            LFNode node = (LFNode)pathToNode.get(input.readUTF());
+            
+            AssignmentFunction g = new AssignmentFunction();
+            g.readFromStream(input);
+            
+            MeaningBracketExpr mb = new MeaningBracketExpr(node, g);
+            
+            Var key = (Var)Expr.readFromStream(input);
+            
+            replacements.put(key, mb);
+        }
+        
+        return expr.replaceAll(replacements);
+    }
+
+    private static void getNodePaths(LFNode node, Map nodeToPath, Map pathToNode, String path) {
+        nodeToPath.put(node, path);
+        pathToNode.put(path, node);
+        
+        if (node instanceof Nonterminal) {
+            Nonterminal nt = (Nonterminal)node;
+            for (int i = 0; i < nt.size(); i++)
+                getNodePaths(nt.getChild(i), nodeToPath, pathToNode, path + "," + i);
         }
     }
     

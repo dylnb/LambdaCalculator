@@ -78,6 +78,11 @@ public class TreeExerciseWidget extends JPanel {
      * curexpr indicates the index of the Expr in exprs that is currently
      * shown on screen. The user may be able to step back and forward
      * through the simplification steps.
+     *
+     * When we create and remove meaning states from ltToMeaningState, we have
+     * to also keep in sync the exprs vector here and the one in the Nonterminal
+     * this is for (if it's for a nonterminal), so when we save and load the
+     * nonterminals from .lbd files, we save the simplification states.
      */
 
     private class MeaningState {
@@ -126,6 +131,11 @@ public class TreeExerciseWidget extends JPanel {
                     return;
                 }
             }
+        }
+        
+        public MeaningState(Vector steps) {
+            exprs = steps;
+            curexpr = exprs.size() - 1;
         }
     }
     
@@ -296,6 +306,13 @@ public class TreeExerciseWidget extends JPanel {
            }
         }
         
+        // If the nonterminal has saved simplification steps, restore them.
+        if (lfnode instanceof Nonterminal) {
+            Nonterminal nt = (Nonterminal)lfnode;
+            if (nt.getUserMeaningSimplification() != null)
+               lfToMeaningState.put(nt, new MeaningState(nt.getUserMeaningSimplification()));
+        }
+        
         treenode.setLabel(label);
         
         // Update the display of the node.
@@ -326,16 +343,18 @@ public class TreeExerciseWidget extends JPanel {
         } else {
            // For nonterminals, we just clear the meaning state.
             lfToMeaningState.remove(node);
+            ((Nonterminal)node).setUserMeaningSimplification(null);
         }
 
         updateNode(node);
     
         // Clear the meaning states of the parent nodes.
-        LFNode ancestor = (LFNode)lfToParent.get(node);
+        Nonterminal ancestor = (Nonterminal)lfToParent.get(node);
         while (ancestor != null) {
             lfToMeaningState.remove(ancestor);
+            ancestor.setUserMeaningSimplification(null);
             updateNode(ancestor);
-            ancestor = (LFNode)lfToParent.get(ancestor);
+            ancestor = (Nonterminal)lfToParent.get(ancestor);
         }
 
             
@@ -717,6 +736,7 @@ public class TreeExerciseWidget extends JPanel {
         
         if (testOnly) return true;
         lfToMeaningState.remove(selectedNode);
+        ((Nonterminal)selectedNode).setUserMeaningSimplification(null);
         onUserChangedNodeMeaning(selectedNode);
         canvas.invalidate();
         
@@ -748,9 +768,14 @@ public class TreeExerciseWidget extends JPanel {
     private void evaluateNode() {
         try {
             Expr m = selectedNode.getMeaning();
-            lfToMeaningState.put(selectedNode, new MeaningState(m)); // no error ocurred
+            MeaningState s = new MeaningState(m);
+            if (selectedNode instanceof Nonterminal)
+                ((Nonterminal)selectedNode).setUserMeaningSimplification(s.exprs);
+            lfToMeaningState.put(selectedNode, s); // no error ocurred
         } catch (MeaningEvaluationException e) {
             lfToMeaningState.put(selectedNode, new MeaningState(e.getMessage()));
+            if (selectedNode instanceof Nonterminal)
+                ((Nonterminal)selectedNode).setUserMeaningSimplification(null);
         }
         updateNode(selectedNode);
         canvas.invalidate();

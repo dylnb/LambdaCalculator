@@ -4,6 +4,9 @@
 
 package lambdacalc.exercises;
 
+import java.util.Vector;
+
+import lambdacalc.logic.Expr;
 import lambdacalc.logic.IdentifierTyper;
 import lambdacalc.logic.SyntaxException;
 import lambdacalc.lf.*;
@@ -85,6 +88,8 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
             for (int i = 0; i < nt.size(); i++)
                 writeUserChoicesToString(nt.getChild(i), output);
             
+            output.append("\t");
+            
             if (nt.getLabel() != null) {
                 output.append(nt.getLabel());
                 if (nt.hasIndex())
@@ -101,10 +106,20 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
                 output.append(nt.getCompositionRule().getName());
             }
             
+            if (nt.getUserMeaningSimplification() == null) {
+                output.append(", no simplification performed");
+            } else {
+                output.append("\n");
+                Vector steps = nt.getUserMeaningSimplification();
+                for (int i = 0; i < steps.size(); i++)
+                    output.append("\t\t" + steps.get(i) + "\n");
+            }
+            
             output.append("\n");
             
         } else if (node instanceof LexicalTerminal) {
             LexicalTerminal lt = (LexicalTerminal)node;
+            output.append("\t");
             output.append(lt.toString() + ": ");
             if (!lt.hasMeaning()) {
                 output.append("no denotation given");
@@ -146,8 +161,22 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
                 CompositionRule.writeToStream(nt.getCompositionRule(), output);
             }
             
+            if (nt.getUserMeaningSimplification() == null) {
+                output.writeByte(0);
+            } else {
+                output.writeByte(1);
+                output.writeInt(nt.getUserMeaningSimplification().size());
+                for (int i = 0; i < nt.getUserMeaningSimplification().size(); i++) {
+                    Expr e = (lambdacalc.logic.Expr)nt.getUserMeaningSimplification().get(i);
+                    
+                    // We can't serialize e directly because we know it may contain MeaningBracketExpr objects.
+                    MeaningBracketExpr.writeExpr(e, treeroot, output);
+                }
+            }
+            
             for (int i = 0; i < nt.size(); i++)
                 writeUserChoicesToStream(nt.getChild(i), output);
+            
         } else if (node instanceof LexicalTerminal) {
             output.writeByte(1); // sanity check later
             LexicalTerminal lt = (LexicalTerminal)node;
@@ -192,6 +221,18 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
                 nt.setCompositionRule(null);
             } else {
                 nt.setCompositionRule(CompositionRule.readFromStream(input));
+            }
+            
+            if (input.readByte() == 0) {
+                nt.setUserMeaningSimplification(null);
+            } else {
+                Vector v = new Vector();
+                int n = input.readInt();
+                for (int i = 0; i < n; i++) {
+                    Expr e = MeaningBracketExpr.readExpr(treeroot, input);
+                    v.add(e);
+                }
+                nt.setUserMeaningSimplification(v);
             }
             
             for (int i = 0; i < nt.size(); i++)

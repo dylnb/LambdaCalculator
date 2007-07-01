@@ -596,8 +596,10 @@ public class TeacherToolWindow extends javax.swing.JFrame {
             }
             
             textArea.setText(text);
+            textArea.setCaretPosition(0);
             
             jTextTeacherComments.setText(exfile.getTeacherComments());
+            jTextTeacherComments.setCaretPosition(0);
             jTextTeacherComments.setEditable(true);
             
         } catch (ExerciseFileVersionException e) {

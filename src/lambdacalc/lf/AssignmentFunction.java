@@ -8,6 +8,7 @@
 package lambdacalc.lf;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import lambdacalc.logic.GApp;
 import lambdacalc.logic.Var;
 
@@ -97,4 +98,26 @@ public class AssignmentFunction extends HashMap {
         return "toString() not yet implemented";
     }
     
+    public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
+        output.writeByte(0); // version info
+        output.writeInt(size());
+        for (Iterator i = keySet().iterator(); i.hasNext(); ) {
+            Integer index = (Integer)i.next();
+            Var var = (Var)get(index);
+            output.writeInt(index.intValue());
+            var.writeToStream(output);
+        }
+    }
+    
+    public void readFromStream(java.io.DataInputStream input) throws java.io.IOException {
+        if (input.readByte() != 0)
+            throw new java.io.IOException("Data format error.");
+        
+        int n = input.readInt();
+        for (int i = 0; i < n; i++) {
+            Integer index = new Integer(input.readInt());
+            Var var = (Var)lambdacalc.logic.Expr.readFromStream(input);
+            put(index, var);
+        }
+    }
 }

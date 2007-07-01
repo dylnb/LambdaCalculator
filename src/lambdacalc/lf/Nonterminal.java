@@ -9,8 +9,10 @@ import lambdacalc.logic.TypeEvaluationException;
 
 public class Nonterminal extends LFNode {
 
-    CompositionRule compositor;
     Vector children = new Vector();
+    
+    CompositionRule compositor;
+    Vector userProvidedMeaningSimplification;
     
     
     public int size() {
@@ -49,6 +51,14 @@ public class Nonterminal extends LFNode {
         CompositionRule oldRule = compositor;
         compositor = rule;
         changes.firePropertyChange("compositionRule", oldRule, compositor);
+    }
+    
+    public Vector getUserMeaningSimplification() {
+        return userProvidedMeaningSimplification;
+    }
+    
+    public void setUserMeaningSimplification(Vector simplificationSteps) {
+        userProvidedMeaningSimplification = simplificationSteps;
     }
     
     public String getDisplayName() {
