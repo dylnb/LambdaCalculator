@@ -36,7 +36,6 @@ public class TreeExerciseWidget extends JPanel {
     Map lfToOrthoLabel = new HashMap(); // orthographic label
     Map lfToMeaningLabel = new HashMap(); // propositional content label (for nonterminals only if we're using dropdowns for terminals)
     Map lfToMeaningState; // state of the propositional label, or null if node is not evaluated yet
-    //Map lfToMeaningChooser = new HashMap(); // meaning JComboBox: lexical entry for terminals, composition rule for nonterminals
     Map lfToParent = new HashMap(); // parent LFNode
     
     JTextArea errorLabel = new JTextArea(" "); // label containing error messages
@@ -85,10 +84,6 @@ public class TreeExerciseWidget extends JPanel {
         public Vector exprs = new Vector(); // of Expr objects, simplification steps
         public int curexpr = 0; // step currently shown on screen
         public String evaluationError; // error message if evaluation failed
-        
-        public Expr getCurrentExpression() {
-            return (Expr) exprs.get(curexpr);
-        }
         
         public MeaningState(String error) {
             evaluationError = error;
@@ -232,7 +227,6 @@ public class TreeExerciseWidget extends JPanel {
         lfToTreeLabelPanel.clear();
         lfToOrthoLabel.clear();
         lfToMeaningLabel.clear();
-        //lfToMeaningChooser.clear();
         lfToMeaningState = null;
         lfToParent.clear();
         
@@ -285,33 +279,12 @@ public class TreeExerciseWidget extends JPanel {
         orthoLabel.addMouseListener(new NodeClickListener(lfnode));
         lfToOrthoLabel.put(lfnode, orthoLabel);
         
-        /*
-        // For terminals, give them comboboxes to choose the lexical entry.
-        if (lfnode instanceof Terminal) {
-            JComboBox lexicalChoices = new JComboBox();
-            lexicalChoices.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
-            label.add(lexicalChoices);
-            lexicalChoices.setAlignmentX(.5F);
-            lfToMeaningChooser.put(lfnode, lexicalChoices);
-            updateTerminalLexicalChoices((Terminal)lfnode);
-            
-        // For nonterminals, give them JLabels for their meanings.
-        } else {
-        */
-            JLabel meaningLabel = new JLabel();
-            label.add(meaningLabel);
-            meaningLabel.setAlignmentX(.5F);
-            //meaningLabel.addMouseListener(new NodeClickListener(lfnode));
-            lfToMeaningLabel.put(lfnode, meaningLabel);
+        JLabel meaningLabel = new JLabel();
+        label.add(meaningLabel);
+        meaningLabel.setAlignmentX(.5F);
+        //meaningLabel.addMouseListener(new NodeClickListener(lfnode));
+        lfToMeaningLabel.put(lfnode, meaningLabel);
 
-        /*    JComboBox compositionRuleChoices = new JComboBox();
-            compositionRuleChoices.setFont(lambdacalc.gui.Util.getUnicodeFont(14));
-            label.add(compositionRuleChoices);
-            compositionRuleChoices.setAlignmentX(.5F);
-            lfToMeaningChooser.put(lfnode, compositionRuleChoices);
-            updateNonterminalCompositionRules((Nonterminal)lfnode);
-        }*/
-        
         // If the Terminal already has a lexical entry assigned,
         // initialize its meaning state.
         if (lfnode instanceof Terminal) {
@@ -337,77 +310,6 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
     }
-    
-//    public MeaningState getMeaningStateForNode(LFNode node) {
-//        return (MeaningState) lfToMeaningState.get(node);
-//    }
-//    
-//    public MeaningState getMeaningStateForSelectedNode() {
-//        return getMeaningStateForNode(getSelectedNode());
-//    }
-//    
-//    public Expr getCurrentExpression() {
-//            return this.getMeaningStateForSelectedNode().getCurrentExpression();
-//    }
-    
-    
-    /*
-    private void updateTerminalLexicalChoices(Terminal node) {
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        
-        int selectIndex = -1;
-        if (node.getLabel() != null) {
-            Expr[] meanings = lexicon.getMeanings(node.getLabel());
-            if (meanings.length > 0)
-                selectIndex = 0;
-            for (int i = 0; i < meanings.length; i++) {
-                model.addElement(meanings[i]);
-            }
-        }
-        
-        JComboBox lexicalChoices = (JComboBox)lfToMeaningChooser.get(node);
-        lexicalChoices.setModel(model);
-        
-        lexicalChoices.setSelectedIndex(selectIndex); // TODO: If terminal is assiged a meaning, select it
-        lexicalChoices.addActionListener(new LexicalChoiceActionListener(node, lexicalChoices));
-    }
-        
-    private void updateNonterminalCompositionRules(Nonterminal node) {
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (int i = 0; i < rules.size(); i++) {
-            model.addElement(rules.get(i));
-        }
-        
-        JComboBox choices = (JComboBox)lfToMeaningChooser.get(node);
-        choices.setModel(model);
-        
-        if (rules.size() > 0) // TODO: If nonterminal is assiged a meaning, select it
-            choices.setSelectedIndex(0);
-        choices.addActionListener(new LexicalChoiceActionListener(node, lexicalChoices));
-    }
-    
-    private class LexicalChoiceActionListener implements ActionListener {
-        Terminal terminal;
-        JComboBox combobox;
-        
-        public LexicalChoiceActionListener(Terminal terminal, JComboBox combobox) {
-            this.terminal = terminal;
-            this.combobox = combobox;
-        }
-        
-        public void actionPerformed(ActionEvent e) {
-            // If no choices are in the box, the event might fire with index -1.
-            if (combobox.getSelectedIndex() == -1)
-                return;
-                
-            // Initialize the meaning state of the node.
-            Expr selection = (Expr)combobox.getSelectedItem();
-            terminal.setMeaning(selection);
-            lfToMeaningState.put(terminal, new MeaningState(selection));
-            onUserChangedNodeMeaning(terminal);
-        }
-    }
-    */
     
     private void onUserChangedNodeMeaning(LFNode node) {
         // If the node was a terminal, its lexical value
