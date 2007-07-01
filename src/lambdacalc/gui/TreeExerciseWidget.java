@@ -787,17 +787,18 @@ public class TreeExerciseWidget extends JPanel {
      * panel after the user chooses a composition rule to begin simplifying the node.
      * The node is evaluated.
      */
-    public void startEvaluation() {
+    public void startEvaluation(boolean skipMeaningBracketsState) {
         evaluateNode();
 
-        // skip the meaning brackets state?
-        /*MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
-        if (ms != null && ms.evaluationError == null) {
-            ms.curexpr = ms.exprs.size() - 1;
-            updateNode(selectedNode);
-            canvas.invalidate();
-        }*/
-        
+        if (skipMeaningBracketsState) {
+            // skip the meaning brackets state?
+            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+            if (ms != null && ms.evaluationError == null) {
+                ms.curexpr = ms.exprs.size() - 1;
+                updateNode(selectedNode);
+                canvas.invalidate();
+            }
+        }        
         updateButtonEnabledState();
         fireSelectedNodeChanged();
     }
