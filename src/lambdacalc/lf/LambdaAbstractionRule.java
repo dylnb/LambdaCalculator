@@ -62,11 +62,19 @@ public class LambdaAbstractionRule extends CompositionRule {
             body = left;
         }
         
-        Expr bodyMeaning = body.getMeaning();
-        try { bodyMeaning = bodyMeaning.simplifyFully(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
- 
-        Var var = bodyMeaning.createFreshVar();
+        Var var;
         
+        // Get a fresh variable based on the meaning that we know we will eventually get
+        try {
+            Expr bodyMeaning = body.getMeaning();
+            try { bodyMeaning = bodyMeaning.simplifyFully(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
+            var = bodyMeaning.createFreshVar();
+        
+        // But if we can't get a meaning, choose a default variable
+        } catch (MeaningEvaluationException mee) {
+            var = new Var("x", lambdacalc.logic.Type.E, false);
+        }
+
         // Copy the assignment function being given to us and add the
         // new mapping from the bare index to a fresh variable.
         AssignmentFunction g2 = (g == null ? new AssignmentFunction() : new AssignmentFunction(g));

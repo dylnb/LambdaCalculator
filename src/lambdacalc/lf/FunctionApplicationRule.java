@@ -47,17 +47,14 @@ public class FunctionApplicationRule extends CompositionRule {
         if (left instanceof BareIndex || right instanceof BareIndex)
             throw new MeaningEvaluationException("The left and right children of a function application node must not be lambda-abstraction indices.");
         
-        Expr leftMeaning = left.getMeaning();
-        Expr rightMeaning = right.getMeaning();
-        
-        // Simplify the left and right before combining them.
-        // simplifyFully() can throw TypeEvaluationException when
-        // a type mismatch occurs, but we don't expect this to
-        // happen within subnodes because we've already called
-        // getMeaning above successfully.
-        try { leftMeaning = leftMeaning.simplifyFully(); } catch (TypeEvaluationException e) { }
-        try { rightMeaning = rightMeaning.simplifyFully(); } catch (TypeEvaluationException e) { }
-        
+        Expr leftMeaning, rightMeaning;
+        try {
+            leftMeaning = left.getMeaning();
+            rightMeaning = right.getMeaning();
+        } catch (MeaningEvaluationException mee) {
+            return apply(left, right, g); // when we can't get meanings of subparts, take a default order
+        }
+
         if (isFunctionOf(leftMeaning, rightMeaning))
             return apply(left, right, g);
         if (isFunctionOf(rightMeaning, leftMeaning))
@@ -68,8 +65,7 @@ public class FunctionApplicationRule extends CompositionRule {
                 "application.");
     }
     
-    private boolean isFunctionOf(Expr left, Expr right) 
-    throws MeaningEvaluationException {
+    private boolean isFunctionOf(Expr left, Expr right) {
         // Return true iff left is a composite type <X,Y>
         // and right is of type X.
         try {
@@ -78,11 +74,9 @@ public class FunctionApplicationRule extends CompositionRule {
                 if (t.getLeft().equals(right.getType()))
                     return true;
             }
-            return false;
         } catch (TypeEvaluationException ex) {
-            throw new MeaningEvaluationException("A type mismatch has occurred: " 
-                    + ex.getMessage());
         }
+        return false;
     }
     
     private Expr apply(LFNode left, LFNode right, AssignmentFunction g) {
