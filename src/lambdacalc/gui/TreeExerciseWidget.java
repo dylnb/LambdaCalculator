@@ -99,14 +99,6 @@ public class TreeExerciseWidget extends JPanel {
             
             exprs.add(meaning);
 
-            // When we're in God mode, we pre-simplify the expression so we know
-            // all of the steps in the simplification ahead of time. When not in
-            // God mode, we stop immediately at the first step. Additional methods
-            // are provided for advancing the simplification state, which appends
-            // simplification steps into this state.
-            if (!lambdacalc.Main.GOD_MODE)
-                return;
-            
             try {
                 Expr meaning2 = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
                 if (!meaning.equals(meaning2))
@@ -119,6 +111,15 @@ public class TreeExerciseWidget extends JPanel {
                 evaluationError = mee.getMessage();
                 return;
             }
+            
+            // When we're in God mode, we pre-simplify the expression so we know
+            // all of the steps in the simplification ahead of time. When not in
+            // God mode, we stop immediately at the first step, after the freebie
+            // above of taking away the meaning brackets. Additional methods
+            // are provided for advancing the simplification state, which appends
+            // simplification steps into this state.
+            if (!lambdacalc.Main.GOD_MODE)
+                return;
             
             while (true) {
                 try {
