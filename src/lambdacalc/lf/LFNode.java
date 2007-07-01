@@ -93,6 +93,18 @@ public abstract class LFNode {
         return m;
     }
 
+    public String toShortString() {
+        if (getLabel() != null) {
+            if (!hasIndex())
+                return getLabel();
+            else
+                return getLabel() + "_" + getIndex();
+        } else if (hasIndex()) {
+            return "" + getIndex();
+        } else {
+            return toString();
+        }
+    }
     
     public String toString() {
         String result = getLabel();

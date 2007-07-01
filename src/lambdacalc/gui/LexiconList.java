@@ -44,6 +44,8 @@ public class LexiconList extends JPanel
     
     Vector listeners = new Vector();
     
+    boolean holdEvents = false;
+    
     public interface ChangeListener {
         void changeMade();
     }
@@ -158,13 +160,34 @@ public class LexiconList extends JPanel
         }
         
         // Then put all other lexical entries, since some might be
-        // close to what the user wants.
+        // close to what the user wants. First put lexical entries that
+        // match the semantic type of any of the meanings known for this word.
         Expr[] meanings2 = exFile.getLexicon().getMeanings(null);
-        for (int i = 0; i < meanings2.length; i++)
-            if (!seenExprs.contains(meanings2[i]))
+        for (int i = 0; i < meanings2.length; i++) {
+            if (matchesType(meanings2[i], meanings) && !seenExprs.contains(meanings2[i])) {
                 entries.addElement(meanings2[i]);
+                seenExprs.add(meanings2[i]);
+            }
+        }
+        for (int i = 0; i < meanings2.length; i++) {
+            if (!seenExprs.contains(meanings2[i])) {
+                entries.addElement(meanings2[i]);
+                seenExprs.add(meanings2[i]);
+            }
+        }
             
         updateListSelection(node);
+    }
+    
+    boolean matchesType(Expr a, Expr[] b) {
+        for (int i = 0; i < b.length; i++) {
+            try {
+                if (a.getType().equals(b[i].getType()))
+                    return true;
+            } catch (TypeEvaluationException e) {
+            }
+        }
+        return false;
     }
     
     public void propertyChange(java.beans.PropertyChangeEvent e) {
@@ -175,11 +198,23 @@ public class LexiconList extends JPanel
     }
     
     private void updateListSelection(LexicalTerminal node) {
-        listbox.clearSelection();
+        Expr meaning = null;
         try {
-            listbox.setSelectedValue(node.getMeaning(), true);
+            meaning = node.getMeaning();
         } catch (MeaningEvaluationException mee) {
         }
+        Expr selected = (Expr)listbox.getSelectedValue();
+        
+        if (meaning == null && selected == null)
+            return; // nothing to update
+        if (meaning != null && selected != null && meaning.equals(selected))
+            return; // still nothing to update
+
+        holdEvents = true;
+        listbox.clearSelection();
+        if (meaning != null) // what happens if the meaning isn't in the list?
+            listbox.setSelectedValue(meaning, true);
+        holdEvents = false;
     }
     
     
@@ -195,7 +230,9 @@ public class LexiconList extends JPanel
         Expr item = (Expr)listbox.getSelectedValue();
         ((LexicalTerminal)node).setMeaning(item);
         lambdaEditor.setText(item.toString());
-        fireChangeMade();
+        
+        if (!holdEvents)
+            fireChangeMade();
     }
     
     class AssignDenotationListener implements ActionListener {

@@ -154,43 +154,28 @@ public class TrainingWindow extends JFrame {
         // node types with instanceof calls
         if (selectedNode instanceof Nonterminal) {
             if (((Nonterminal) selectedNode).isBranching()) {
-                if (((Nonterminal) selectedNode).knowsCompositionRule()) {
-                    cardLayout.show(jPanelNodeProperties, "lambdaConversion");
-                    Expr current;
-//                    try {
-//                        current = treeDisplay.getCurrentExpression();
-// //                   } catch (MeaningEvaluationException ex) {
-//                    } catch (Exception ex) {
-                        try {
-                            current = ((Nonterminal) selectedNode).getMeaning();
-                        } catch (MeaningEvaluationException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        //TODO something more useful here with the exception
-                    //}
-                    LambdaConversionExercise exercise;
+                // Try to display the lambda reduction panel, but if not, fall back
+                // on the rule selection panel.
+                // Show the lambda conversion panel if...
+                //    The node's evaluation has already begun.
+                //    There were no errors in creating a LambdaConversionExercise around the current state.
+                if (treeDisplay.getNodeExpressionState(selectedNode) != null) {
+                    Expr current = treeDisplay.getNodeExpressionState(selectedNode);
                     try {
-                        exercise = new LambdaConversionExercise
-                                //TODO later on when we can parse meaning brackets,
-                                //we don't have to replace them here
-                                
-                                (MeaningBracketExpr.replaceAllMeaningBrackets(current),
-                                //(current,
-                                -1, 
-                                TrainingWindow.getSingleton().getCurrentTypingConventions());
+                        LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, TrainingWindow.getSingleton().getCurrentTypingConventions());
                         exercise.setParseSingleLetterIdentifiers(false);
                         jPanelLambdaConversion.initialize(exercise, treeDisplay);
+                        cardLayout.show(jPanelNodeProperties, "lambdaConversion");
+                        return;
                     } catch (TypeEvaluationException ex) {
-                        ex.printStackTrace();
-                        //TODO something more useful here
-                    } catch (MeaningEvaluationException ex) {
-                        ex.printStackTrace();
+                        // Seems to be thrown if a meaning bracket could not be evaluated.
+                        // The message it provides is opaque to the user at this point.
+                        treeDisplay.setErrorMessage("This node cannot be evaluated yet. Make sure all children have been evaluated already.");
                         //TODO something more useful here
                     }
-                } else { // the nonterminal doesn't know its composition rule
-                    cardLayout.show(jPanelNodeProperties, "ruleSelection");
                 }
+                
+               cardLayout.show(jPanelNodeProperties, "ruleSelection");
             } else {
                 cardLayout.show(jPanelNodeProperties, "nonBranchingNonterminal");
             }

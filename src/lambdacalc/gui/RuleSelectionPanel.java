@@ -100,17 +100,7 @@ implements PropertyChangeListener, SelectionListener {
         if (!node.isBranching()) return;
         
         node.setCompositionRule(forValue(value));
-        try {
-            // freebie: we replace all meaning brackets
-            teWidget.startEvaluation(MeaningBracketExpr.replaceAllMeaningBrackets(node.getMeaning()));
-        } catch (MeaningEvaluationException ex) {
-            ex.printStackTrace();
-            //TODO do something more useful
-        } catch (TypeEvaluationException ex) {
-            ex.printStackTrace();
-            //TODO do something more useful
-        }
-//        teWidget.doSimplify(false);
+        teWidget.startEvaluation();
     }
     /** This method is called from within the constructor to
      * initialize the form.

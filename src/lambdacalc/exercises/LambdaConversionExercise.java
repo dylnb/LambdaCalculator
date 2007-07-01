@@ -27,6 +27,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     private static final String ALPHAVARY = "alphavary";
     private static final String BETAREDUCE = "betareduce";
     private static final String NOT_REDUCIBLE = "notreducible";
+    private static final String MEANINGBRACKETS = "meaningbrackets"; // user is to replace meaning brackets with expressions
     
     Expr expr;
     IdentifierTyper types;
@@ -56,7 +57,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     //TODO  I noticed that the singleLetterIdentifiers
     //field is not set in this constructor (could be dangerous) --Lucas
     public LambdaConversionExercise(Expr expr, int index, IdentifierTyper types) 
-    throws TypeEvaluationException, MeaningEvaluationException {
+    throws TypeEvaluationException {
         super(index);
         
         this.expr = expr;
@@ -74,8 +75,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     public LambdaConversionExercise
             (String expr, ExpressionParser.ParseOptions parseOptions, 
             int index, IdentifierTyper types) 
-            throws SyntaxException, TypeEvaluationException,
-            MeaningEvaluationException {
+            throws SyntaxException, TypeEvaluationException {
         
         this(ExpressionParser.parse(expr, parseOptions), index, types);
         setParseSingleLetterIdentifiers(parseOptions.singleLetterIdentifiers);
@@ -97,12 +97,19 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         }
     }
     
-    private void initialize() throws TypeEvaluationException,
-            MeaningEvaluationException {
+    private void initialize() throws TypeEvaluationException {
         Expr e = expr;
         
-        //Remove any meaning brackets that might be in the expression.
-        e = MeaningBracketExpr.replaceAllMeaningBrackets(e);
+        try {
+            e = MeaningBracketExpr.replaceAllMeaningBrackets(expr);
+            if (!e.equals(expr)) {
+                steptypes.add(MEANINGBRACKETS);
+                steps.add(e);
+            }
+        } catch (MeaningEvaluationException mee) {
+            // just ignore-- the nonterminal lacks a valid meaning: so why did
+            // we create this problem in the first place?
+        }
         
         while (true) {
             // Attempt to perform a lambda conversion on the expression.
@@ -150,6 +157,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         super.reset();
         this.lastAnswer = null;
         this.currentStep = 0;
+    }
+    
+    public boolean isNotReducible() {
+        return steptypes.get(0).equals(NOT_REDUCIBLE);
     }
 
     /**
