@@ -15,6 +15,9 @@ import lambdacalc.gui.*;
 public class Main {
     
     public static final boolean GOD_MODE = false;
+    
+    public static final boolean NOT_SO_FAST = true; 
+    // true means we force the user to do one step at a time in lambda conversions
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {

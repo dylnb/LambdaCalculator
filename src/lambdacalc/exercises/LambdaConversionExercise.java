@@ -45,7 +45,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     /**
      * Whether students are prohibited from skipping steps in multi-step problems.
      */
-    private boolean notSoFast = false; // one step at a time
+    private boolean notSoFast = lambdacalc.Main.NOT_SO_FAST; 
+    // whether we force the user to proceed one step at a time
     
     /**
      * Initializes the exercise and works out beforehand what the student should do.
