@@ -7,11 +7,13 @@
 
 package lambdacalc.lf;
 
+import lambdacalc.logic.And;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.ExpressionParser;
 import lambdacalc.logic.FunApp;
-import lambdacalc.logic.TypeEvaluationException;
+import lambdacalc.logic.Lambda;
+import lambdacalc.logic.Var;
 
 /**
  *
@@ -21,6 +23,7 @@ public class PredicateModificationRule extends CompositionRule {
     public static final PredicateModificationRule INSTANCE 
             = new PredicateModificationRule();
     
+    public static final Var VARIABLE = Var.Z;
     
     private static final ExpressionParser.ParseOptions options
             = new ExpressionParser.ParseOptions
@@ -58,9 +61,20 @@ public class PredicateModificationRule extends CompositionRule {
                     "two children of type <e,t>.");
         }
 
-        return new FunApp(new FunApp(engine, new MeaningBracketExpr(node.getLeftChild(), g)),
-            new MeaningBracketExpr(node.getRightChild(), g));
+//        return new FunApp(new FunApp(engine, new MeaningBracketExpr(node.getLeftChild(), g)),
+//            new MeaningBracketExpr(node.getRightChild(), g));
         
+        MeaningBracketExpr left = new MeaningBracketExpr(node.getLeftChild(), g);
+        MeaningBracketExpr right = new MeaningBracketExpr(node.getRightChild(), g);
+        
+        FunApp leftFA = new FunApp(left, VARIABLE);
+        FunApp rightFA = new FunApp(right, VARIABLE);
+        
+        And and = new And(leftFA, rightFA);
+        
+        Lambda result = new Lambda(VARIABLE, and, true); // has period
+        
+        return result;
     }
 
 }

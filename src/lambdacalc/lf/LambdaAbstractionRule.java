@@ -45,7 +45,8 @@ public class LambdaAbstractionRule extends CompositionRule {
             throw new MeaningEvaluationException
                     ("The lambda abstraction rule is only " +
                     "applicable on a nonterminal that has exactly " +
-                    "two children of which one is a bare index.");
+                    "two children of which one is a bare index or a " +
+                    "word like \"which\" or \"such\".");
         }
 
         BareIndex index = null;

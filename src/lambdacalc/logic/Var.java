@@ -18,6 +18,9 @@ public class Var extends Identifier {
 
     public static final Var X = 
             new Var("x", Type.E, false);
+
+    public static final Var Z = 
+            new Var("z", Type.E, false);
     
     /**
      * Constructs a variable with the given name and type.
