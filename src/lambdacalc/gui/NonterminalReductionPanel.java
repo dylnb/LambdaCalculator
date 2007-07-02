@@ -77,7 +77,8 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
     
     private void noSimplificationNeeded() {
         tellGUIProblemSolved();
-        txtFeedback.setText("This node is fully simplified.");
+        txtFeedback.setText("This node is fully simplified. " +
+                "You do not need to work on it. Click on another node.");
     }
     
     /** This method is called from within the constructor to

@@ -181,6 +181,7 @@ public class TrainingWindow extends JFrame {
             }
         } else if (selectedNode instanceof LexicalTerminal) {
             cardLayout.show(jPanelNodeProperties, "lexicalTerminal");
+            
         } else if (selectedNode instanceof BareIndex) {
             cardLayout.show(jPanelNodeProperties, "bareIndex");
         } else if (selectedNode instanceof Trace) {
@@ -588,7 +589,11 @@ public class TrainingWindow extends JFrame {
         jSplitPaneLeftHalf = new javax.swing.JSplitPane();
         jScrollPaneUpperLeft = new javax.swing.JScrollPane();
         jTreeExerciseFile = new javax.swing.JTree();
-        jPanel1 = new javax.swing.JPanel();
+        jPanelLowerLeft = new javax.swing.JPanel();
+        jPanelNavigationButtons = new javax.swing.JPanel();
+        btnPrev = new javax.swing.JButton();
+        btnDoAgain = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
         jPanelEnterExpressions = new javax.swing.JPanel();
         lblHelpHeader = new javax.swing.JTextArea();
         lblHelpLambda = new javax.swing.JLabel();
@@ -596,6 +601,7 @@ public class TrainingWindow extends JFrame {
         lblHelpBinaries = new javax.swing.JLabel();
         lblHelpNot = new javax.swing.JLabel();
         lblHelpConditionals = new javax.swing.JLabel();
+        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
         lblIdentifierTypes = new javax.swing.JTextArea();
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
         jPanelLowerRight = new javax.swing.JPanel();
@@ -623,10 +629,6 @@ public class TrainingWindow extends JFrame {
         btnTransfer = new javax.swing.JButton();
         txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
         jLabelAboveQuestion = new javax.swing.JLabel();
-        jPanelNavigationButtons = new javax.swing.JPanel();
-        btnPrev = new javax.swing.JButton();
-        btnDoAgain = new javax.swing.JButton();
-        btnNext = new javax.swing.JButton();
         jSeparatorBelowNavButtons = new javax.swing.JSeparator();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -675,10 +677,68 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneLeftHalf.setTopComponent(jScrollPaneUpperLeft);
 
-        jPanel1.setLayout(new java.awt.GridLayout(2, 1));
+        jPanelLowerLeft.setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(60, 84));
+        jPanelLowerLeft.setMinimumSize(new java.awt.Dimension(60, 84));
+        jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
+
+        btnPrev.setText("< Previous");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
+        jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
+
+        btnDoAgain.setText("Repeat");
+        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoAgainActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
+        jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
+
+        btnNext.setText("Next >");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+        btnNext.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnNextKeyPressed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
+        jPanelNavigationButtons.add(btnNext, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelLowerLeft.add(jPanelNavigationButtons, gridBagConstraints);
+
         jPanelEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Expressions"));
+        jPanelEnterExpressions.setPreferredSize(new java.awt.Dimension(0, 150));
         lblHelpHeader.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblHelpHeader.setColumns(20);
         lblHelpHeader.setEditable(false);
@@ -741,8 +801,18 @@ public class TrainingWindow extends JFrame {
                 .add(lblHelpConditionals)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel1.add(jPanelEnterExpressions);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelLowerLeft.add(jPanelEnterExpressions, gridBagConstraints);
 
+        jScrollPaneIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Typing Conventions"));
+        jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(23, 160));
+        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(239, 160));
         lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblIdentifierTypes.setColumns(20);
         lblIdentifierTypes.setEditable(false);
@@ -751,10 +821,15 @@ public class TrainingWindow extends JFrame {
         lblIdentifierTypes.setRows(5);
         lblIdentifierTypes.setText(" ");
         lblIdentifierTypes.setWrapStyleWord(true);
-        lblIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Conventions about letters"));
-        jPanel1.add(lblIdentifierTypes);
+        jScrollPaneIdentifierTypes.setViewportView(lblIdentifierTypes);
 
-        jSplitPaneLeftHalf.setRightComponent(jPanel1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanelLowerLeft.add(jScrollPaneIdentifierTypes, gridBagConstraints);
+
+        jSplitPaneLeftHalf.setRightComponent(jPanelLowerLeft);
 
         jSplitPaneMain.setLeftComponent(jSplitPaneLeftHalf);
 
@@ -785,8 +860,8 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.setLayout(new java.awt.CardLayout());
 
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 120));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 120));
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 150));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
         org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
         jPanelDefault.setLayout(jPanelDefaultLayout);
         jPanelDefaultLayout.setHorizontalGroup(
@@ -795,7 +870,7 @@ public class TrainingWindow extends JFrame {
         );
         jPanelDefaultLayout.setVerticalGroup(
             jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 120, Short.MAX_VALUE)
+            .add(0, 150, Short.MAX_VALUE)
         );
         jPanelNodeProperties.add(jPanelDefault, "default");
 
@@ -821,7 +896,7 @@ public class TrainingWindow extends JFrame {
         jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("This node is a bare index. It is not necessary to assign it a lexical entry.");
+        jLabel2.setText("This node is an index for lambda abstraction. It is not necessary to assign it a lexical entry.");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanelBareIndex.add(jLabel2);
 
@@ -951,60 +1026,6 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanelLowerRight.add(jPanelCardLayout, gridBagConstraints);
-
-        jPanelNavigationButtons.setLayout(new java.awt.GridBagLayout());
-
-        btnPrev.setText("< Previous");
-        btnPrev.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrevActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-        jPanelNavigationButtons.add(btnPrev, gridBagConstraints);
-
-        btnDoAgain.setText("Repeat");
-        btnDoAgain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDoAgainActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-        jPanelNavigationButtons.add(btnDoAgain, gridBagConstraints);
-
-        btnNext.setText("Next >");
-        btnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNextActionPerformed(evt);
-            }
-        });
-        btnNext.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                btnNextKeyPressed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-        jPanelNavigationButtons.add(btnNext, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        jPanelLowerRight.add(jPanelNavigationButtons, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1164,7 +1185,7 @@ public class TrainingWindow extends JFrame {
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
                 if (btnNext.isEnabled() && !getCurrentExFile().hasBeenCompleted()) {
-                    response += "Click the Next button to go on to the next exercise.";
+                    response += "Click the Next button on the left to go on to the next exercise.";
                     btnNext.requestFocusInWindow();
                 }
                 else if (!getCurrentExFile().hasBeenCompleted())
@@ -1500,13 +1521,13 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabelAboveDirections;
     private javax.swing.JLabel jLabelAboveQuestion;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelBareIndex;
     private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelDefault;
     private javax.swing.JPanel jPanelEnterExpressions;
     private lambdacalc.gui.NonterminalReductionPanel jPanelLambdaConversion;
     private javax.swing.JPanel jPanelLexicalTerminal;
+    private javax.swing.JPanel jPanelLowerLeft;
     private javax.swing.JPanel jPanelLowerRight;
     private javax.swing.JPanel jPanelNavigationButtons;
     private javax.swing.JPanel jPanelNodeProperties;
@@ -1519,6 +1540,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparatorBelowDirections;

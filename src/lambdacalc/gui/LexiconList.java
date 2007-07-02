@@ -114,6 +114,7 @@ public class LexiconList extends JPanel
             buttonSetDenotation.setEnabled(false);
             lambdaEditor.setEnabled(false);
             lambdaEditor.setTemporaryText("enter an expression");
+            lambdaEditor.requestFocusInWindow();
             return;
         }
         
