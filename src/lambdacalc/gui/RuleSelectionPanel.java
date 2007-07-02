@@ -14,11 +14,9 @@ import lambdacalc.lf.CompositionRule;
 import lambdacalc.lf.FunctionApplicationRule;
 import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LambdaAbstractionRule;
-import lambdacalc.lf.MeaningBracketExpr;
 import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.PredicateModificationRule;
-import lambdacalc.logic.TypeEvaluationException;
 
 /**
  *
@@ -32,6 +30,10 @@ implements PropertyChangeListener, SelectionListener {
     //private JDialog dialog;
     
     private TreeExerciseWidget teWidget = null;
+    
+    public static final FunctionApplicationRule FA_RULE = FunctionApplicationRule.INSTANCE;
+    public static final PredicateModificationRule PM_RULE = PredicateModificationRule.INSTANCE;
+    public static final LambdaAbstractionRule LA_RULE = LambdaAbstractionRule.INSTANCE;
     
     public static final int FUNCTION_APPLICATION = 1;
     public static final int PREDICATE_MODIFICATION = 2;
@@ -50,9 +52,9 @@ implements PropertyChangeListener, SelectionListener {
     }
     
     public static CompositionRule forValue(int i) {
-        if (i == FUNCTION_APPLICATION) return FunctionApplicationRule.INSTANCE;
-        if (i == PREDICATE_MODIFICATION) return PredicateModificationRule.INSTANCE;
-        if (i == LAMBDA_ABSTRACTION) return LambdaAbstractionRule.INSTANCE;
+        if (i == FUNCTION_APPLICATION) return FA_RULE;
+        if (i == PREDICATE_MODIFICATION) return PM_RULE;
+        if (i == LAMBDA_ABSTRACTION) return LA_RULE;
         
         throw new IllegalArgumentException();
     }
@@ -74,6 +76,39 @@ implements PropertyChangeListener, SelectionListener {
     public void selectionChanged(SelectionEvent e) {
         LFNode source = (LFNode) e.getSource();
         source.addPropertyChangeListener(this);
+        
+
+        Nonterminal node = getSelectedBranchingNodeIfAny();
+        if (node == null) return;
+        try {
+            if (FA_RULE.isApplicableTo(node)) {
+                txtFA.setText(FA_RULE.applyTo(node, true, true).toString());
+            } else {
+                
+                txtFA.setText
+                    ("\""+FA_RULE.applyTo(node, false, true).toString()
+                    + "\" or \"" +
+                    FA_RULE.applyTo(node, false, false).toString()
+                    +"\"");
+            }
+            
+        } catch (MeaningEvaluationException ex) {
+            txtFA.setText(ex.getMessage());
+            //txtFA.setText("Not applicable here");
+        }
+        try {
+            txtPM.setText(PM_RULE.applyTo(node, false).toString());
+        } catch (MeaningEvaluationException ex) {
+            //txtPM.setText(ex.getMessage());
+            txtPM.setText("Not applicable here");
+        }
+        try {
+            txtLA.setText(LA_RULE.applyTo(node, false).toString());
+        } catch (MeaningEvaluationException ex) {
+            //txtLA.setText(ex.getMessage());
+            txtLA.setText("Not applicable here");
+        }
+        
     }
     
     public JButton getFAButton() {
@@ -92,12 +127,20 @@ implements PropertyChangeListener, SelectionListener {
         return value;
     }
     
-    private void updateTree(int value) {
+    private Nonterminal getSelectedBranchingNodeIfAny() {
         //sanity check: we expect the selected node to be a branching nonterminal
-        if (teWidget == null) return;
-        if (!(teWidget.getSelectedNode() instanceof Nonterminal)) return;
+        if (teWidget == null) return null;
+        if (!(teWidget.getSelectedNode() instanceof Nonterminal)) return null;
         Nonterminal node = (Nonterminal) teWidget.getSelectedNode();
-        if (!node.isBranching()) return;
+        if (!node.isBranching()) return null;
+        // else
+        return node;
+    }
+    
+    private void updateTree(int value) {
+
+        Nonterminal node = getSelectedBranchingNodeIfAny();
+        if (node == null) return;
         
         node.setCompositionRule(forValue(value));
 //<<<<<<< .mine
@@ -124,45 +167,19 @@ implements PropertyChangeListener, SelectionListener {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabelFA = new javax.swing.JLabel();
-        jLabelPM = new javax.swing.JLabel();
-        jLabelLA = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jButtonFA = new javax.swing.JButton();
         jButtonPM = new javax.swing.JButton();
         jButtonLA = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane3 = new javax.swing.JTextPane();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtFA = new lambdacalc.gui.LambdaEnabledTextField();
+        txtPM = new lambdacalc.gui.LambdaEnabledTextField();
+        txtLA = new lambdacalc.gui.LambdaEnabledTextField();
 
-        setLayout(new java.awt.GridBagLayout());
-
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Select a composition rule"));
-        jLabelFA.setText("Function Application");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jLabelFA, gridBagConstraints);
-
-        jLabelPM.setText("Predicate Modification");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jLabelPM, gridBagConstraints);
-
-        jLabelLA.setText("Lambda Abstraction");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jLabelLA, gridBagConstraints);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jButtonFA.setText("Select");
         jButtonFA.addActionListener(new java.awt.event.ActionListener() {
@@ -173,9 +190,9 @@ implements PropertyChangeListener, SelectionListener {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 4);
-        add(jButtonFA, gridBagConstraints);
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(jButtonFA, gridBagConstraints);
 
         jButtonPM.setText("Select");
         jButtonPM.addActionListener(new java.awt.event.ActionListener() {
@@ -186,9 +203,9 @@ implements PropertyChangeListener, SelectionListener {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jButtonPM, gridBagConstraints);
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(jButtonPM, gridBagConstraints);
 
         jButtonLA.setText("Select");
         jButtonLA.addActionListener(new java.awt.event.ActionListener() {
@@ -199,43 +216,79 @@ implements PropertyChangeListener, SelectionListener {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        add(jButtonLA, gridBagConstraints);
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(jButtonLA, gridBagConstraints);
 
-        jScrollPane1.setEnabled(false);
-        jTextPane1.setEditable(false);
-        jScrollPane1.setViewportView(jTextPane1);
-
+        jLabel1.setText("Function Application");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        add(jScrollPane1, gridBagConstraints);
-
-        jTextPane2.setEditable(false);
-        jTextPane2.setEnabled(false);
-        jScrollPane2.setViewportView(jTextPane2);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        jPanel1.add(jLabel1, gridBagConstraints);
+
+        jLabel2.setText("Predicate Modification");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        jPanel1.add(jLabel2, gridBagConstraints);
+
+        jLabel3.setText("Lambda Abstraction");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        jPanel1.add(jLabel3, gridBagConstraints);
+
+        jLabel4.setFont(new java.awt.Font("Lucida Grande", 1, 16));
+        jLabel4.setText("Select a composition rule");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.insets = new java.awt.Insets(8, 0, 20, 0);
+        jPanel1.add(jLabel4, gridBagConstraints);
+
+        txtFA.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        add(jScrollPane2, gridBagConstraints);
+        jPanel1.add(txtFA, gridBagConstraints);
 
-        jTextPane3.setEditable(false);
-        jTextPane3.setEnabled(false);
-        jScrollPane3.setViewportView(jTextPane3);
-
+        txtPM.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        add(jScrollPane3, gridBagConstraints);
+        jPanel1.add(txtPM, gridBagConstraints);
 
+        txtLA.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(txtLA, gridBagConstraints);
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(61, Short.MAX_VALUE))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonLAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLAActionPerformed
@@ -265,15 +318,14 @@ implements PropertyChangeListener, SelectionListener {
     private javax.swing.JButton jButtonFA;
     private javax.swing.JButton jButtonLA;
     private javax.swing.JButton jButtonPM;
-    private javax.swing.JLabel jLabelFA;
-    private javax.swing.JLabel jLabelLA;
-    private javax.swing.JLabel jLabelPM;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
-    private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private lambdacalc.gui.LambdaEnabledTextField txtFA;
+    private lambdacalc.gui.LambdaEnabledTextField txtLA;
+    private lambdacalc.gui.LambdaEnabledTextField txtPM;
     // End of variables declaration//GEN-END:variables
     
 }

@@ -86,7 +86,7 @@ public class Nonterminal extends LFNode {
                         " to combine the children of this node.");
         }
             
-        return compositor.applyTo(this, g);
+        return compositor.applyTo(this, g, true);
     }
     
     /**

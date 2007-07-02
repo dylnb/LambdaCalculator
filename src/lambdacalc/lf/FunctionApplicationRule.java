@@ -34,7 +34,22 @@ public class FunctionApplicationRule extends CompositionRule {
         return false;
     }
     
-    public Expr applyTo(Nonterminal node, AssignmentFunction g) 
+    public Expr applyTo(Nonterminal node, boolean onlyIfApplicable, boolean 
+            defaultApplyLeftToRight) 
+    throws MeaningEvaluationException {
+        return this.applyTo(node, new AssignmentFunction(), onlyIfApplicable, 
+                defaultApplyLeftToRight);
+    }     
+
+    
+    public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable) 
+    throws MeaningEvaluationException {
+        return this.applyTo(node, g, onlyIfApplicable, true);
+    }     
+    
+    //the defaultApplyLeftToRight parameter is ignored if onlyIfApplicable is true
+    public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable,
+            boolean defaultApplyLeftToRight) 
     throws MeaningEvaluationException {
         if (node.size() != 2)
             throw new MeaningEvaluationException("Function application is not " +
@@ -44,15 +59,25 @@ public class FunctionApplicationRule extends CompositionRule {
         LFNode left = node.getChild(0);
         LFNode right = node.getChild(1);
         
-        if (left instanceof BareIndex || right instanceof BareIndex)
-            throw new MeaningEvaluationException("The left and right children of a function application node must not be lambda-abstraction indices.");
+        if (onlyIfApplicable && left instanceof BareIndex) {
+            throw new MeaningEvaluationException("The left child of this node is an index for lambda abstraction. Function application is not defined on this node.");
+        }
+        if (onlyIfApplicable && right instanceof BareIndex) {
+            throw new MeaningEvaluationException("The right child of this node is an index for lambda abstraction. Function application is not defined on this node.");
+        }
         
         Expr leftMeaning, rightMeaning;
         try {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();
         } catch (MeaningEvaluationException mee) {
-            return apply(left, right, g); // when we can't get meanings of subparts, take a default order
+           if (onlyIfApplicable) {
+               throw mee;
+           } else if (defaultApplyLeftToRight) {
+                return apply(left, right, g);
+            } else {
+                return apply(right, left, g);
+            }
         }
 
         if (isFunctionOf(leftMeaning, rightMeaning))
@@ -60,9 +85,17 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(rightMeaning, leftMeaning))
             return apply(right, left, g);
 
-        throw new MeaningEvaluationException("The children of the nonterminal "
-                + (node.getLabel() == null ? node.toString() : node.getLabel())+ " are not of compatible types for function " +
-                "application.");
+        if (onlyIfApplicable) {
+            throw new MeaningEvaluationException("The children of the nonterminal "
+                    + (node.getLabel() == null ? node.toString() : node.getLabel())+ " are not of compatible types for function " +
+                    "application.");
+        } else {
+            if (defaultApplyLeftToRight) {
+                return apply(left, right, g);
+            } else {
+                return apply(right, left, g);
+            }
+        }
     }
     
     private boolean isFunctionOf(Expr left, Expr right) {

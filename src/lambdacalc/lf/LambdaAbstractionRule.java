@@ -39,7 +39,9 @@ public class LambdaAbstractionRule extends CompositionRule {
         }
     }
     
-    public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
+    //We ignore the parameter onlyIfApplicable because there is just no way to "apply" this
+    //rule in non-applicable cases.
+    public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable) throws MeaningEvaluationException {
      
         if (!this.isApplicableTo(node)) {
             throw new MeaningEvaluationException
@@ -58,9 +60,11 @@ public class LambdaAbstractionRule extends CompositionRule {
         if (left instanceof BareIndex) {
             index = (BareIndex) left;
             body = right;
-        } else {
+        } else if (right instanceof BareIndex) {
             index = (BareIndex) right;
             body = left;
+        } else { //should never be reached
+            throw new RuntimeException();
         }
         
         Var var;

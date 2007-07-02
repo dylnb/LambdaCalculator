@@ -26,11 +26,33 @@ public abstract class CompositionRule {
      */
     public abstract boolean isApplicableTo(Nonterminal node);
     
-    public Expr applyTo(Nonterminal node) throws MeaningEvaluationException {
-        return applyTo(node, new AssignmentFunction());
+    /**
+     * Applies this rule to a nonterminal using an empty assignment function.
+     * Overriding implementations of this method should not alter the given node.
+     *
+     * @param onlyIfApplicable see other method of the same name as this one.
+     */
+    public Expr applyTo(Nonterminal node, boolean onlyIfApplicable) throws MeaningEvaluationException {
+        return applyTo(node, new AssignmentFunction(), onlyIfApplicable);
     }
+    
+    /**
+     * Applies this rule to a nonterminal using the given assignment function.
+     * Implementations of this method should not alter the given node.
+     *
+     * @param onlyIfApplicable if this parameter is true, calls isApplicableTo and throws a 
+     * MeaningEvaluationException if that method returns falls. If the parameter
+     * is false, we try as much as possible to "apply" this rule even if it's 
+     * strictly speaking impossible, but we reserve the right to throw a 
+     * MeaningEvaluationException if there is just no conceivable way of 
+     * applying this rule. (Implementation note: This parameter is used in the
+     * RuleSelectionPanel in order to present the user with bogus "applications"
+     * of composition rules even in cases they don't apply.)
+     *
+     *
+     */
     public abstract Expr applyTo(Nonterminal node, 
-            AssignmentFunction g) throws MeaningEvaluationException;
+            AssignmentFunction g, boolean onlyIfApplicable) throws MeaningEvaluationException;
             
     public static void writeToStream(CompositionRule r, java.io.DataOutputStream output) throws java.io.IOException {
         output.writeByte(0); // versioning info for future use

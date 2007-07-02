@@ -25,15 +25,15 @@ public class PredicateModificationRule extends CompositionRule {
     
     public static final Var VARIABLE = Var.Z;
     
-    private static final ExpressionParser.ParseOptions options
-            = new ExpressionParser.ParseOptions
-            (true, // single letter identifier mode is on
-            true // certain ASCII sequences become special
-            );
+//    private static final ExpressionParser.ParseOptions options
+//            = new ExpressionParser.ParseOptions
+//            (true, // single letter identifier mode is on
+//            true // certain ASCII sequences become special
+//            );
     
-    private static final Expr engine = 
-            ExpressionParser.parseAndSuppressExceptions
-            ("LX.LY.Lx.[X(x)&Y(x)]", options);
+//    private static final Expr engine = 
+//            ExpressionParser.parseAndSuppressExceptions
+//            ("LX.LY.Lx.[X(x)&Y(x)]", options);
 
     private PredicateModificationRule() {
         super("Predicate Modification");
@@ -52,12 +52,12 @@ public class PredicateModificationRule extends CompositionRule {
         }            
     }
     
-    public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
-        //TODO don't ignore g
-        if (!this.isApplicableTo(node)) {
+    public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable) throws MeaningEvaluationException {
+
+        if (onlyIfApplicable && !this.isApplicableTo(node)) {
             throw new MeaningEvaluationException
-                    ("The predicate modification rule is not " +
-                    "applicable on a nonterminal that does not have exactly " +
+                    ("The predicate modification rule is only " +
+                    "applicable on a nonterminal that has exactly " +
                     "two children of type <e,t>.");
         }
 

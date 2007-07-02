@@ -26,7 +26,7 @@ public class NonBranchingRule extends CompositionRule {
         return node.size() == 1;
     }
     
-    public Expr applyTo(Nonterminal node, AssignmentFunction g) throws MeaningEvaluationException {
+    public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable) throws MeaningEvaluationException {
         //TODO don't ignore g
         if (node.size() != 1)
             throw new MeaningEvaluationException
