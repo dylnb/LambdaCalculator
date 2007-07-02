@@ -60,10 +60,14 @@ public class FunctionApplicationRule extends CompositionRule {
         LFNode right = node.getChild(1);
         
         if (onlyIfApplicable && left instanceof BareIndex) {
-            throw new MeaningEvaluationException("The left child of this node is an index for lambda abstraction. Function application is not defined on this node.");
+            throw new MeaningEvaluationException("The left child of this node is" +
+                    " an index for lambda abstraction. Function application is " +
+                    "undefined on such a node.");
         }
         if (onlyIfApplicable && right instanceof BareIndex) {
-            throw new MeaningEvaluationException("The right child of this node is an index for lambda abstraction. Function application is not defined on this node.");
+            throw new MeaningEvaluationException("The right child of this node is" +
+                    " an index for lambda abstraction. Function application is " +
+                    "undefined on such a node.");
         }
         
         Expr leftMeaning, rightMeaning;

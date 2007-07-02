@@ -59,8 +59,10 @@ public class TreeExerciseWidget extends JPanel {
     JButton btnNextStep = new JButton("Evaluate Node Fully");
     JButton btnPrevStep = new JButton("Undo Evaluation");
     JButton btnFullScreen = new JButton("Full Screen");
-    JButton btnFontIncrease = new JButton("A\u2191");
-    JButton btnFontDecrease = new JButton("A\u2193");
+//    JButton btnFontIncrease = new JButton("A\u2191");
+//    JButton btnFontDecrease = new JButton("A\u2193");
+    JButton btnFontIncrease = new JButton("Larger");
+    JButton btnFontDecrease = new JButton("Smaller");
     
     // Selection listeners
     Vector listeners = new Vector();
@@ -201,9 +203,9 @@ public class TreeExerciseWidget extends JPanel {
         
         // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
         // FullScreenTreeExerciseWidget
-        btnFullScreen.addActionListener(fullScreenActionListener);
-        buttons.add(btnFullScreen);
-        btnFullScreen.setToolTipText("Show the tree in full screen view.");
+        //btnFullScreen.addActionListener(fullScreenActionListener);
+        //buttons.add(btnFullScreen);
+        //btnFullScreen.setToolTipText("Show the tree in full screen view.");
         
         add(buttons, BorderLayout.PAGE_START);
     }
