@@ -15,6 +15,10 @@ import lambdacalc.logic.*;
  * nor can their toString()'s be parsed back.
  */
 public class MeaningBracketExpr extends Expr {
+    
+    public static final char LEFT_BRACKET = '\uu301a'; //Unicode left white square bracket
+    public static final char RIGHT_BRACKET = '\uu301b'; //Unicode right white square bracket
+    
     LFNode node;
     AssignmentFunction g;
     

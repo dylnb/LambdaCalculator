@@ -11,12 +11,12 @@
 
 package lambdacalc.gui;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;   
-import java.io.Serializable;
 import javax.swing.*;
 import javax.swing.text.*;
+import javax.swing.text.AbstractDocument.Content;
+import lambdacalc.lf.MeaningBracketExpr;
 
 import lambdacalc.logic.*;
 
@@ -166,6 +166,22 @@ public class LambdaEnabledTextField extends JTextField {
                           } else if (c2 == '!' && c3 == '=') {
                               replace(i-1, 2, String.valueOf(Equality.NEQ_SYMBOL), null);
                               foundChange = true;
+                              break;
+                          
+                          
+                          // Brackets: [[
+                          
+                          } else if (c2 == '[' && c3 == '[') {
+                              replace(i-1, 2, String.valueOf(MeaningBracketExpr.LEFT_BRACKET), null);
+                              foundChange=true;
+                              break;
+                          
+                              
+                          // Brackets: ]]
+                          
+                          } else if (c2 == ']' && c3 == ']') {
+                              replace(i-1, 2, String.valueOf(MeaningBracketExpr.RIGHT_BRACKET), null);
+                              foundChange=true;
                               break;
                           }
                           
