@@ -17,7 +17,7 @@ import java.util.Vector;
  */
 public abstract class Unary extends Expr {
     
-    Expr innerExpr;
+    private Expr innerExpr;
     
     /**
      * Creates a new unary expression around the given expression.

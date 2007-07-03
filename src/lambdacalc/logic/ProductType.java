@@ -18,7 +18,7 @@ public class ProductType extends Type {
      */
     public static final char SYMBOL = '\u00D7';
     
-    Type[] subtypes;
+    private Type[] subtypes;
     
     /**
      * Creates a new product type with the given sub-types.

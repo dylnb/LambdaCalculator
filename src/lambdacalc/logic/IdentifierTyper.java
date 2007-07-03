@@ -31,7 +31,7 @@ public class IdentifierTyper {
         }
     }
     
-    ArrayList entries = new ArrayList();
+    private ArrayList entries = new ArrayList();
     
     /**
      * Creates a new IdentifierTyper with no type mappings.

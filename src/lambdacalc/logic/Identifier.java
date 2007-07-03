@@ -23,9 +23,9 @@ public abstract class Identifier extends Expr {
     
     public static final char PRIME_INPUT_SYMBOL = '\'';
     
-    String symbol;
-    Type type;
-    boolean typeIsExplicit;
+    private String symbol;
+    private Type type;
+    private boolean typeIsExplicit;
     
     /** Creates a new instance of Identifier */
     public Identifier(String symbol, Type type, boolean isTypeExplicit) {

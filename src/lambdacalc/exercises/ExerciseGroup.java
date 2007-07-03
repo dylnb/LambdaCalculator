@@ -17,9 +17,9 @@ import java.util.ArrayList;
  */
 public class ExerciseGroup {
     
-    String title, directions;
-    ArrayList items = new ArrayList();
-    int index;
+    private String title, directions;
+    private ArrayList items = new ArrayList();
+    private int index;
     
     ExerciseGroup(int index) {
         title = "Exercise Group";

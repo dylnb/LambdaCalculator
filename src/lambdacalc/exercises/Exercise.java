@@ -13,10 +13,10 @@ import lambdacalc.logic.*;
  * @author tauberer
  */
 public abstract class Exercise {
-    int index;
-    boolean done;
-    java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
-    String instructions;
+    private int index;
+    private boolean done;
+    private java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
+    private String instructions;
     
     /**
      * Creates an Exercise with the given index in its ExerciseGroup.

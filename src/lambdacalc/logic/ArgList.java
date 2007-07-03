@@ -18,7 +18,7 @@ import java.util.Set;
  * predicates, which are represented by Identifiers.  
  */
 public class ArgList extends Expr {
-    Expr[] exprs;
+    private Expr[] exprs;
     
     /**
      * Constructs the ArgList.

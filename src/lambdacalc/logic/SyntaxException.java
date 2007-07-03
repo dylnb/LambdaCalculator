@@ -13,7 +13,7 @@ package lambdacalc.logic;
  * otherwise the character index at the point the problem occurred.
  */
 public class SyntaxException extends Exception {
-    int position;
+    private int position;
     
     /**
      * Constructs a SyntaxException with the given message for

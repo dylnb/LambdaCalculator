@@ -22,7 +22,7 @@ public class Equality extends LogicalBinary {
      */
     public static final char NEQ_SYMBOL = '\u2260';
     
-    boolean equality;
+    private boolean equality;
     
     /**
      * Constructs the connective.

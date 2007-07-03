@@ -4,7 +4,7 @@ import lambdacalc.logic.Expr;
 
 public abstract class CompositionRule {
 
-    String name;
+    private String name;
     
     public CompositionRule(String name) {
         this.name = name;

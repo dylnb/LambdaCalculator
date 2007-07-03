@@ -18,12 +18,12 @@ import lambdacalc.logic.*;
  */
 public class TypeExercise extends Exercise implements HasIdentifierTyper {
     
-    Expr expr;
-    IdentifierTyper types;
+    private Expr expr;
+    private IdentifierTyper types;
     
-    Type type;
+    private Type type;
     
-    Type last_answer;
+    private Type last_answer;
     
     public TypeExercise(Expr expression, int index, IdentifierTyper types) throws TypeEvaluationException {
         super(index);

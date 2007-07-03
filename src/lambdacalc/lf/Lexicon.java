@@ -20,7 +20,7 @@ public class Lexicon {
     // Implement are two IdentifierTypers consistent?
     //   and unify them
 
-    Vector entries = new Vector(); // lexical entries for words
+    private Vector entries = new Vector(); // lexical entries for words
         
     public Vector getEntries() {
         // TODO: Return a read-only wrapper so entries can't be modified?

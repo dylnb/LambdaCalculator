@@ -11,8 +11,8 @@ package lambdacalc.exercises;
  * provided by the user.
  */
 public class AnswerStatus {
-    boolean correct, endsExercise;
-    String message;
+    private boolean correct, endsExercise;
+    private String message;
     
     private AnswerStatus(boolean correct, boolean endsExercise, String message) {
         this.correct = correct;

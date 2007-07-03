@@ -19,8 +19,8 @@ public class MeaningBracketExpr extends Expr {
     public static final char LEFT_BRACKET = '\uu301a'; //Unicode left white square bracket
     public static final char RIGHT_BRACKET = '\uu301b'; //Unicode right white square bracket
     
-    LFNode node;
-    AssignmentFunction g;
+    private LFNode node;
+    private AssignmentFunction g;
     
     /**
      * @param g may be null

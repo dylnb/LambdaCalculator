@@ -12,7 +12,7 @@ package lambdacalc.logic;
  */
 public class IdentifierTypeUnknownException extends Exception {
     
-    String id;
+    private String id;
     
     public IdentifierTypeUnknownException(String identifier) {
         super("The type of the constant or variable '" + identifier + "' is not known. Check the typing conventions that are in effect, or use subscript (underscore) notation to give its type explicitly, such as '" + identifier + "_e' to make it type e.");

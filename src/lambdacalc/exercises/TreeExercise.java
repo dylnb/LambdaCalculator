@@ -18,8 +18,8 @@ import lambdacalc.lf.*;
  */
 public class TreeExercise extends Exercise implements HasIdentifierTyper {
     
-    Nonterminal treeroot;
-    IdentifierTyper types;
+    private Nonterminal treeroot;
+    private IdentifierTyper types;
     
     // persists the state of the tree, as derived by God-mode
     public java.util.Map derivationDisplayState = new java.util.HashMap();

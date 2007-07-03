@@ -11,7 +11,7 @@ import java.util.Vector;
  * when it is given an ambiguous string to parse.
  */
 public class AmbiguousStringException extends SyntaxException {
-    Vector alternatives;
+    private Vector alternatives;
 
     /**
      * Constructs an instance with the given message and a set
@@ -37,12 +37,5 @@ public class AmbiguousStringException extends SyntaxException {
         }
         return ambiguity;
     }
-    
-    /**
-     * Gets the character position in which the syntax
-     * error occurred.
-     */
-    public int getPosition() {
-        return position;
-    }
+
 }

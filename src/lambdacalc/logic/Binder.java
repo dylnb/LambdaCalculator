@@ -19,13 +19,13 @@ import java.util.Vector;
  */
 public abstract class Binder extends Expr {
     
-    Identifier ident; 
+    private Identifier ident; 
     // ident = what the binder binds.
     // in "correct" lambda calculus this must be a variable.
     // but to capture student errors, we also allow it to be a constant.
     
-    Expr innerExpr;
-    boolean hasPeriod;
+    private Expr innerExpr;
+    private boolean hasPeriod;
 
     /**
      * Constructs the binder.

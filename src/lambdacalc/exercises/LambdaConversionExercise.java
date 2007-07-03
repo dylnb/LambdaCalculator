@@ -29,14 +29,14 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     private static final String NOT_REDUCIBLE = "notreducible";
     private static final String MEANINGBRACKETS = "meaningbrackets"; // user is to replace meaning brackets with expressions
     
-    Expr expr;
-    IdentifierTyper types;
+    private Expr expr;
+    private IdentifierTyper types;
     
-    ArrayList steps = new ArrayList();
-    ArrayList steptypes = new ArrayList();
+    private ArrayList steps = new ArrayList();
+    private ArrayList steptypes = new ArrayList();
     
     private Expr lastAnswer;
-    int currentStep = 0;
+    private int currentStep = 0;
     
     /**
      * Whether student's answers are parsed with the singleLetterIdentifiers option set.

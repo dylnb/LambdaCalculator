@@ -23,16 +23,16 @@ import lambdacalc.lf.RuleList;
  */
 public class ExerciseFile {
     
-    String title;
-    ArrayList groups = new ArrayList();
+    private String title;
+    private ArrayList groups = new ArrayList();
     
-    Lexicon lexicon;
+    private Lexicon lexicon;
     
-    RuleList rules;
+    private RuleList rules;
     
-    String studentName;
+    private String studentName;
     
-    String teacherComments;
+    private String teacherComments;
     
     /**
      * Creates a new ExerciseFile.

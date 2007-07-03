@@ -9,10 +9,10 @@ import lambdacalc.logic.TypeEvaluationException;
 
 public class Nonterminal extends LFNode {
 
-    Vector children = new Vector();
+    private Vector children = new Vector();
     
-    CompositionRule compositor;
-    Vector userProvidedMeaningSimplification;
+    private CompositionRule compositor;
+    private Vector userProvidedMeaningSimplification;
     
     
     public int size() {
