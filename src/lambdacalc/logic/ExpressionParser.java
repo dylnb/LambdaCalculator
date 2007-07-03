@@ -396,11 +396,11 @@ public class ExpressionParser {
             // All of the ASCII symbol replacements at this level are 
             // single character substitutions.
             switch (c) {
-                case '~': c = Not.SYMBOL; break;
-                case 'A': c = ForAll.SYMBOL; break;
-                case 'E': c = Exists.SYMBOL; break;
-                case 'L': c = Lambda.SYMBOL; break;
-                case 'I': c = Iota.SYMBOL; break;
+                case Not.INPUT_SYMBOL: c = Not.SYMBOL; break;
+                case ForAll.INPUT_SYMBOL: c = ForAll.SYMBOL; break;
+                case Exists.INPUT_SYMBOL: c = Exists.SYMBOL; break;
+                case Lambda.INPUT_SYMBOL: c = Lambda.SYMBOL; break;
+                case Iota.INPUT_SYMBOL: c = Iota.SYMBOL; break;
             }
         }
         return c;
@@ -1036,12 +1036,12 @@ public class ExpressionParser {
         if (context.ASCII) {
             char cnext = (start+1 < expression.length()) ? expression.charAt(start+1) : (char)0;
             char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
-            if (c == '&')
-                c = And.SYMBOL;
+            if (c == And.INPUT_SYMBOL) // '&'
+                c = And.SYMBOL; // wedge
 
             // TODO: synchronize this with LambdaEnabledTextField
 
-            else if (c == '|')
+            else if (c == Or.INPUT_SYMBOL)
                 c = Or.SYMBOL;
                 
             else if (c == '-' && cnext == '>')

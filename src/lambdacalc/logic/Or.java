@@ -15,6 +15,8 @@ public class Or extends LogicalBinary {
      */
     public static final char SYMBOL = '\u2228';
     
+    public static final char INPUT_SYMBOL = 'V';
+    
     /**
      * Constructs the connective.
      * @param left the expression on the left side of the connective

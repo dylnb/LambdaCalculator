@@ -15,6 +15,8 @@ public class Exists extends PropositionalBinder {
      */
     public static final char SYMBOL = '\u2203';
     
+    public static final char INPUT_SYMBOL = 'E';
+    
     /**
      * Constructs the binder.
      * @param ident the identifier the binder binds, which may

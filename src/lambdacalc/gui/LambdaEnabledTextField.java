@@ -99,15 +99,16 @@ public class LambdaEnabledTextField extends JTextField {
               char[] revised = str.toCharArray();
               for (int i = 0; i < revised.length; i++) {
                   switch (revised[i]) {
-                      case 'L': revised[i] = Lambda.SYMBOL; break;
-                      case 'A': revised[i] = ForAll.SYMBOL; break;
-                      case 'E': revised[i] = Exists.SYMBOL; break;
-                      case 'I': revised[i] = Iota.SYMBOL; break;
-                      case '&': revised[i] = And.SYMBOL; break;
+                      case Lambda.INPUT_SYMBOL: revised[i] = Lambda.SYMBOL; break;
+                      case ForAll.INPUT_SYMBOL: revised[i] = ForAll.SYMBOL; break;
+                      case Exists.INPUT_SYMBOL: revised[i] = Exists.SYMBOL; break;
+                      case Iota.INPUT_SYMBOL: revised[i] = Iota.SYMBOL; break;
+                      case And.INPUT_SYMBOL: revised[i] = And.SYMBOL; break;
+                      //alternative way of entering And
                       case '^': revised[i] = And.SYMBOL; break;
-                      case '|': revised[i] = Or.SYMBOL; break;
-                      case '~': revised[i] = Not.SYMBOL; break;
-                      case '\'': revised[i] = Identifier.PRIME; break;
+                      case Or.INPUT_SYMBOL: revised[i] = Or.SYMBOL; break;
+                      case Not.INPUT_SYMBOL: revised[i] = Not.SYMBOL; break;
+                      case Identifier.PRIME_INPUT_SYMBOL: revised[i] = Identifier.PRIME; break;
                   }
               }
               

@@ -21,6 +21,8 @@ public abstract class Identifier extends Expr {
      */
     public static final char PRIME = '\u02B9'; // 0x2032 is another one
     
+    public static final char PRIME_INPUT_SYMBOL = '\'';
+    
     String symbol;
     Type type;
     boolean typeIsExplicit;

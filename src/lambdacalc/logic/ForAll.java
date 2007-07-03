@@ -15,6 +15,8 @@ public class ForAll extends PropositionalBinder {
      */
     public static final char SYMBOL = '\u2200';
     
+    public static final char INPUT_SYMBOL = 'A';
+    
     /**
      * Constructs the binder.
      * @param ident the identifier the binder binds, which may

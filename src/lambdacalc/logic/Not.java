@@ -15,6 +15,8 @@ public class Not extends Unary {
      */
     public static final char SYMBOL = '\u00AC';
     
+    public static final char INPUT_SYMBOL = '~';
+    
     /**
      * Constructs negation around the given expression.
      */

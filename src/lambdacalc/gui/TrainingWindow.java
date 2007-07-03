@@ -117,10 +117,13 @@ public class TrainingWindow extends JFrame {
         lblHelpConditionals.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
 
         //TODO synchronize this with ExpressionParser and LambdaEnabledTextField
-        lblHelpLambda.setText("Type capital L for " + Lambda.SYMBOL);
-        lblHelpBinders.setText("Type capital A, E, and I for " + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
-        lblHelpBinaries.setText("Type & for " + And.SYMBOL + " and | for " + Or.SYMBOL);
-        lblHelpNot.setText("Type the tilde (~) for " + Not.SYMBOL);
+        lblHelpLambda.setText("Type capital " + Lambda.INPUT_SYMBOL + " for " + Lambda.SYMBOL);
+        lblHelpBinders.setText("Type capital " + ForAll.INPUT_SYMBOL + ", "
+                + Exists.INPUT_SYMBOL + ", and " + Iota.INPUT_SYMBOL + " for " 
+                + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
+        lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL + " for " + And.SYMBOL + " and "
+                + Or.INPUT_SYMBOL + " for " + Or.SYMBOL);
+        lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
       
         txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
@@ -143,7 +146,6 @@ public class TrainingWindow extends JFrame {
         clearAllControls();
         
         //loadExerciseFile("examples/tests.txt");
-        //TODO comment out previous line
     }
     
     public void updateNodePropertyPanel(LFNode selectedNode) {
@@ -606,7 +608,16 @@ public class TrainingWindow extends JFrame {
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
         jPanelLowerRight = new javax.swing.JPanel();
         jPanelCardLayout = new javax.swing.JPanel();
-        jPanelTrees = new javax.swing.JPanel();
+        jPanelTypesAndConversions = new javax.swing.JPanel();
+        btnCheckAnswer = new javax.swing.JButton();
+        jScrollPaneFeedback = new javax.swing.JScrollPane();
+        txtFeedback = new javax.swing.JTextArea();
+        jPanelQuestion = new javax.swing.JPanel();
+        txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
+        btnTransfer = new javax.swing.JButton();
+        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
+        jLabelAboveQuestion = new javax.swing.JLabel();
+        jSplitPaneTrees = new javax.swing.JSplitPane();
         treeDisplay = new lambdacalc.gui.TreeExerciseWidget();
         jPanelNodeProperties = new javax.swing.JPanel();
         jPanelDefault = new javax.swing.JPanel();
@@ -620,15 +631,6 @@ public class TrainingWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jPanelTypesAndConversions = new javax.swing.JPanel();
-        btnCheckAnswer = new javax.swing.JButton();
-        jScrollPaneFeedback = new javax.swing.JScrollPane();
-        txtFeedback = new javax.swing.JTextArea();
-        jPanelQuestion = new javax.swing.JPanel();
-        txtQuestion = new lambdacalc.gui.LambdaEnabledTextField();
-        btnTransfer = new javax.swing.JButton();
-        txtUserAnswer = new lambdacalc.gui.LambdaEnabledTextField();
-        jLabelAboveQuestion = new javax.swing.JLabel();
         jSeparatorBelowNavButtons = new javax.swing.JSeparator();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -839,86 +841,6 @@ public class TrainingWindow extends JFrame {
 
         jPanelCardLayout.setLayout(new java.awt.CardLayout());
 
-        jPanelTrees.setLayout(new java.awt.GridBagLayout());
-
-        jPanelTrees.setMinimumSize(new java.awt.Dimension(19, 50));
-        jPanelTrees.setPreferredSize(new java.awt.Dimension(235, 150));
-        treeDisplay.setBackground(java.awt.Color.white);
-        treeDisplay.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsListener() {
-            public void ancestorMoved(java.awt.event.HierarchyEvent evt) {
-            }
-            public void ancestorResized(java.awt.event.HierarchyEvent evt) {
-                treeDisplayAncestorResized(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanelTrees.add(treeDisplay, gridBagConstraints);
-
-        jPanelNodeProperties.setLayout(new java.awt.CardLayout());
-
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 150));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
-        org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
-        jPanelDefault.setLayout(jPanelDefaultLayout);
-        jPanelDefaultLayout.setHorizontalGroup(
-            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 630, Short.MAX_VALUE)
-        );
-        jPanelDefaultLayout.setVerticalGroup(
-            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 150, Short.MAX_VALUE)
-        );
-        jPanelNodeProperties.add(jPanelDefault, "default");
-
-        jPanelLexicalTerminal.setLayout(new java.awt.GridLayout(1, 0));
-
-        jPanelLexicalTerminal.add(lexiconList);
-
-        jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
-
-        jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
-
-        jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
-
-        jPanelTrace.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("This node is a trace. It is not necessary to assign it a lexical entry.");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelTrace.add(jLabel1);
-
-        jPanelNodeProperties.add(jPanelTrace, "trace");
-
-        jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("This node is an index for lambda abstraction. It is not necessary to assign it a lexical entry.");
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelBareIndex.add(jLabel2);
-
-        jPanelNodeProperties.add(jPanelBareIndex, "bareIndex");
-
-        jPanelNonBranchingNonterminal.setLayout(new java.awt.GridLayout(1, 0));
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("This node is a nonbranching nonterminal. It is not necessary to assign it a rule.");
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanelNonBranchingNonterminal.add(jLabel3);
-
-        jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelTrees.add(jPanelNodeProperties, gridBagConstraints);
-
-        jPanelCardLayout.add(jPanelTrees, "treesCard");
-
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         btnCheckAnswer.setText("Check Answer");
@@ -1018,6 +940,77 @@ public class TrainingWindow extends JFrame {
         jPanelTypesAndConversions.add(jLabelAboveQuestion, gridBagConstraints);
 
         jPanelCardLayout.add(jPanelTypesAndConversions, "typesAndConversionsCard");
+
+        jSplitPaneTrees.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPaneTrees.setResizeWeight(1.0);
+        jSplitPaneTrees.setOneTouchExpandable(true);
+        treeDisplay.setBackground(java.awt.Color.white);
+        treeDisplay.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsListener() {
+            public void ancestorMoved(java.awt.event.HierarchyEvent evt) {
+            }
+            public void ancestorResized(java.awt.event.HierarchyEvent evt) {
+                treeDisplayAncestorResized(evt);
+            }
+        });
+
+        jSplitPaneTrees.setLeftComponent(treeDisplay);
+
+        jPanelNodeProperties.setLayout(new java.awt.CardLayout());
+
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 150));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
+        org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
+        jPanelDefault.setLayout(jPanelDefaultLayout);
+        jPanelDefaultLayout.setHorizontalGroup(
+            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 626, Short.MAX_VALUE)
+        );
+        jPanelDefaultLayout.setVerticalGroup(
+            jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 150, Short.MAX_VALUE)
+        );
+        jPanelNodeProperties.add(jPanelDefault, "default");
+
+        jPanelLexicalTerminal.setLayout(new java.awt.GridLayout(1, 0));
+
+        jPanelLexicalTerminal.add(lexiconList);
+
+        jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
+
+        jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
+
+        jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
+
+        jPanelTrace.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("This node is a trace. It is not necessary to assign it a lexical entry.");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelTrace.add(jLabel1);
+
+        jPanelNodeProperties.add(jPanelTrace, "trace");
+
+        jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("This node is an index for lambda abstraction. It is not necessary to assign it a lexical entry.");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelBareIndex.add(jLabel2);
+
+        jPanelNodeProperties.add(jPanelBareIndex, "bareIndex");
+
+        jPanelNonBranchingNonterminal.setLayout(new java.awt.GridLayout(1, 0));
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("This node is a nonbranching nonterminal. It is not necessary to assign it a rule.");
+        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelNonBranchingNonterminal.add(jLabel3);
+
+        jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
+
+        jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
+
+        jPanelCardLayout.add(jSplitPaneTrees, "treesCard");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1535,7 +1528,6 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelQuestion;
     private lambdacalc.gui.RuleSelectionPanel jPanelRuleSelection;
     private javax.swing.JPanel jPanelTrace;
-    private javax.swing.JPanel jPanelTrees;
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
@@ -1548,6 +1540,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
+    private javax.swing.JSplitPane jSplitPaneTrees;
     private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
     private javax.swing.JLabel lblHelpBinaries;

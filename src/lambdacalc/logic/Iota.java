@@ -21,6 +21,8 @@ public class Iota extends Binder {
         // the special curly, Math-style iota is \u2373
         // Latin small letter iota is \u0269
     
+    public static final char INPUT_SYMBOL = 'I';
+    
     /**
      * Constructs the binder.
      * @param ident the identifier the binder binds, which may

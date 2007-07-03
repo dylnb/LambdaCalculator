@@ -16,6 +16,8 @@ public class And extends LogicalBinary {
      */
     public static final char SYMBOL = '\u2227';
     
+    public static final char INPUT_SYMBOL = '&';
+    
     /**
      * Constructs the connective.
      * @param left the expression on the left side of the connective

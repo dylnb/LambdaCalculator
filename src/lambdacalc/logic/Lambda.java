@@ -15,6 +15,8 @@ public class Lambda extends Binder {
      */
     public static final char SYMBOL = '\u03BB';
     
+    public static final char INPUT_SYMBOL = 'L';
+    
     /**
      * Constructs the binder.
      * @param ident the identifier the binder binds, which may

@@ -246,10 +246,10 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         AnswerStatus status = exercise.checkAnswer(answer);
         
         if (status.isCorrect()) {
-           teWidget.advanceSimplification(answer);
-           if (status.endsExercise()) {
+            teWidget.advanceSimplification(answer);
+            if (status.endsExercise()) {
                 tellGUIProblemSolved();
-
+                
                 String response = status.getMessage() + " ";
                 if (!teWidget.isTreeFullyEvaluated()) {
                     response += "Now click on another node to continue.";
@@ -264,7 +264,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         } else {
             displayFeedback(status.getMessage());
         }
-
+        
         txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_jButtonCheckAnsweronCheckAnswer
 
