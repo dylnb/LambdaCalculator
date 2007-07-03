@@ -336,7 +336,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                     // the user has done something besides making an alphabetical variant
                     hint = "Go back and try to make an alphabetical variant.";
                 }
-            } else if (currentThingToDo.equals(BETAREDUCE) && steptypes.contains(ALPHAVARY))
+            } else if (currentThingToDo.equals(BETAREDUCE) && getNumberOfLambdaConversions(prevStep) > 1)
+                hint = "Perform the outermost or leftmost " + Lambda.SYMBOL + "-conversion first.";
+            else if (currentThingToDo.equals(BETAREDUCE) && steptypes.contains(ALPHAVARY))
                 hint = "Try applying " + Lambda.SYMBOL + "-conversion.";
             else if (currentThingToDo.equals(MEANINGBRACKETS))
                 hint = "Replace the ocurrences of the interpretation function [[ ... ]] with the denotations of the indicated nodes in the tree.";
@@ -582,6 +584,26 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 hints.add("Your answer changed the truth conditions of the expression because a free variable was accidentally bound during substitution.");
         } catch (TypeEvaluationException ex) {
         }
+    }
+    
+    /**
+     * Returns the number of potential lambda conversions that could take place in
+     * this expression.
+     */
+    private int getNumberOfLambdaConversions(Expr expr) {
+        int convs = 0;
+        
+        if (expr instanceof FunApp) {
+            FunApp fa = (FunApp)expr;
+            if (fa.getFunc() instanceof Lambda)
+                convs++;
+        }
+        
+        java.util.List subexprs = expr.getSubExpressions();
+        for (int i = 0; i < subexprs.size(); i++)
+            convs += getNumberOfLambdaConversions((Expr)subexprs.get(i));
+        
+        return convs;
     }
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
