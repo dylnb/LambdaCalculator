@@ -65,6 +65,10 @@ public class Nonterminal extends LFNode {
         return "Nonterminal";
     }
 
+    public boolean isMeaningful() {
+        return true;
+    }
+    
     public Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException {
 
@@ -78,6 +82,12 @@ public class Nonterminal extends LFNode {
         " For instance, function application does not apply because neither child's " +
         "denotation is a function whose domain is the type of the denotation of the other child.");
             }
+        
+        } else if (compositor == null && NonBranchingRule.INSTANCE.isApplicableTo(this)) {
+            // We are always allowed to guess the non-branching rule, even when not in
+            // God mode.
+            compositor = NonBranchingRule.INSTANCE;
+            
         } else {
             if (compositor == null)
                 throw new NonterminalLacksCompositionRuleException

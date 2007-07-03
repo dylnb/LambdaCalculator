@@ -657,7 +657,7 @@ public class ExpressionParser {
             if (isRightAfterBinder)
                 return new ParseResultSet(new BadCharacterException("I'm expecting a variable at the indicated location, but variables must start with a letter.", start));
             else
-                return new ParseResultSet(new BadCharacterException("You cannot have a '" + c + "' at the indicated location. I'm expecting to find " + whatIsExpected + ".", start));
+                return new ParseResultSet(new BadCharacterException("You cannot have a '" + c + "' at the indicated location. I'm expecting to find " + whatIsExpected + " there.", start));
         }
         
         // Read in the identifier until the first non-letter-or-number
@@ -1310,6 +1310,26 @@ public class ExpressionParser {
 
         // Parse a prefix expression to our right.
         ParseResultSet rights = parsePrefixExpression(expression, start, context, "an argument to the function " + left.Expression.toString());
+        
+        // If parsing what we think might be an argument failed, we want to alter our
+        // error message depending on the type of the left argument. If indeed it is
+        // a function-typed thing, or if we can't determine its type, then indicate
+        // in the HowToContinue field of the left-hand-side how parsing the argument
+        // failed. However, if the left-thing isn't a function, then if parsing
+        // the argument failed (because there is no argument; how's that for presupposition
+        // cancellation!), don't bother passing that information up. The user
+        // probably didn't intend to parse an argument.
+        if (rights.Exception != null) {
+            try {
+                Type t = left.Expression.getType();
+                if (!(t instanceof CompositeType)) {
+                    results.add(left);
+                    return;
+                }
+            } catch (TypeEvaluationException tee) {
+                // nevermind
+            }
+        }
         
         // We return the nondeterministic path up to
         // the left expression and note in its HowToContinue

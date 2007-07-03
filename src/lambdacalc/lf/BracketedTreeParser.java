@@ -331,6 +331,9 @@ public class BracketedTreeParser {
             }
         }
         
+        if (child.getLabel() != null && !child.hasIndex() && child.getLabel().startsWith("(") && child.getLabel().endsWith(")"))
+            child = new DummyTerminal(child.getLabel());
+        
         parent.addChild(child);
         return child;
     }

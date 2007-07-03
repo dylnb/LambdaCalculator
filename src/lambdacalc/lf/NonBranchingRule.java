@@ -23,17 +23,27 @@ public class NonBranchingRule extends CompositionRule {
     }
     
     public boolean isApplicableTo(Nonterminal node) {
-        return node.size() == 1;
+        // Count up the children of node that are not DummyTerminal's. If there's
+        // just one, then we are a non-branching node.
+        int nChildren = 0;
+        for (int i = 0; i < node.size(); i++)
+            if (!(node.getChild(i) instanceof DummyTerminal))
+                nChildren++;
+        return nChildren == 1;
     }
     
     public Expr applyTo(Nonterminal node, AssignmentFunction g, boolean onlyIfApplicable) throws MeaningEvaluationException {
-        //TODO don't ignore g
-        if (node.size() != 1)
+        if (!isApplicableTo(node))
             throw new MeaningEvaluationException
                     ("The non-branching node rule is not " +
                     "applicable on a nonterminal that does not have exactly " +
                     "one child.");
         
-        return new MeaningBracketExpr(node.getChild(0), g);
+        // Find first non-DummyTerminal.
+        for (int i = 0; i < node.size(); i++)
+            if (!(node.getChild(i) instanceof DummyTerminal))
+                return new MeaningBracketExpr(node.getChild(i), g);
+       
+        throw new RuntimeException(); // not reachable
     }
 }

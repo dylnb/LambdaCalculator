@@ -136,6 +136,13 @@ public abstract class LFNode {
         return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
     
+    /**
+     * This returns true for node types that, in principle, have denotations,
+     * which are Nonterminal and LexicalTerminal nodes. False for BareIndex
+     * and DummyNode.
+     */
+    public abstract boolean isMeaningful();
+    
     public Expr getMeaning() throws MeaningEvaluationException {
         return getMeaning(new AssignmentFunction());
     }

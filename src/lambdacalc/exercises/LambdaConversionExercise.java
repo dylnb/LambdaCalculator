@@ -392,7 +392,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 response += hint;
             }
 
-            //return AnswerStatus.Incorrect(steps.get(currentStep).toString()); // the correct answer, for debugging!
+            //System.err.println("User's answer: " + userAnswer.toString()); // the user's answer, for debugging!
+            //System.err.println("Expecting: " + steps.get(currentStep).toString()); // the correct answer, for debugging!
             
             return AnswerStatus.Incorrect("That's not right. " + response.toString());
         }

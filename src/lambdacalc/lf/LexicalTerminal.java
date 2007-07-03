@@ -16,6 +16,10 @@ public class LexicalTerminal extends Terminal {
         return meaning != null;
     }
 
+    public boolean isMeaningful() {
+        return true;
+    }
+    
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
         if (meaning == null)
             throw new TerminalLacksMeaningException(this);
@@ -45,10 +49,5 @@ public class LexicalTerminal extends Terminal {
             meaning = meanings[0];    
     }
     
-    public String toString() {
-        return super.toString();
-    }
-    
-
-    
+ 
 }

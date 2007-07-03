@@ -305,6 +305,7 @@ public class TreeExerciseWidget extends JPanel {
            try {
                Expr m = t.getMeaning();
                lfToMeaningState.put(t, new MeaningState(m));
+                propogateMeaningUpNonBranchingNodes(lfnode);
            } catch (Exception e) {
            }
         }
@@ -360,7 +361,8 @@ public class TreeExerciseWidget extends JPanel {
             ancestor = (Nonterminal)lfToParent.get(ancestor);
         }
 
-            
+        propogateMeaningUpNonBranchingNodes(node);
+        
         // Ensure tree layout is adjusted due to changes to node label.
         // This ought to be automatic, but isn't.
         canvas.invalidate();
@@ -500,8 +502,7 @@ public class TreeExerciseWidget extends JPanel {
             for (int i = 0; i < ((Nonterminal)node).size(); i++) {
                 LFNode child = ((Nonterminal)node).getChild(i);
                 
-                // BareIndex nodes dont have meanings.
-                if (child instanceof BareIndex)
+                if (!child.isMeaningful())
                     continue;
                 
                 if (!lfToMeaningState.containsKey(child)) {
@@ -547,7 +548,7 @@ public class TreeExerciseWidget extends JPanel {
             
             // We must be at a child that isn't fully evaluated.
             if (!isNodeEvaluated(selectedNode))
-                evaluateNode();
+                evaluateNode(selectedNode);
                 
             if (nodeHasError(selectedNode))
                 return false;
@@ -578,9 +579,13 @@ public class TreeExerciseWidget extends JPanel {
         
         // Node hasn't been evaluated yet. Evaluate it.
         if (!isNodeEvaluated(selectedNode)) {
-            if (!lambdacalc.Main.GOD_MODE) return false;
+            // If non-God-mode, the user can simplify non-branching-nodes with this button.
+            if (!lambdacalc.Main.GOD_MODE)
+                if (!(selectedNode instanceof Nonterminal && NonBranchingRule.INSTANCE.isApplicableTo((Nonterminal)selectedNode)))
+                    return false;
+            
             if (testOnly) return true;
-            evaluateNode();
+            evaluateNode(selectedNode);
             canvas.invalidate();
         } else if (nodeHasError(selectedNode)) {
             return false; // can't go further
@@ -658,7 +663,7 @@ public class TreeExerciseWidget extends JPanel {
             if (testOnly) return !nodeHasError(selectedNode);
         
             if (!isNodeEvaluated(selectedNode))
-                evaluateNode();
+                evaluateNode(selectedNode);
                 
             canvas.invalidate();
             
@@ -768,19 +773,19 @@ public class TreeExerciseWidget extends JPanel {
         return ms.curexpr == ms.exprs.size()-1;
     }
     
-    private void evaluateNode() {
+    private void evaluateNode(LFNode node) {
         try {
-            Expr m = selectedNode.getMeaning();
+            Expr m = node.getMeaning();
             MeaningState s = new MeaningState(m);
-            if (selectedNode instanceof Nonterminal)
-                ((Nonterminal)selectedNode).setUserMeaningSimplification(s.exprs);
-            lfToMeaningState.put(selectedNode, s); // no error ocurred
+            if (node instanceof Nonterminal)
+                ((Nonterminal)node).setUserMeaningSimplification(s.exprs);
+            lfToMeaningState.put(node, s); // no error ocurred
         } catch (MeaningEvaluationException e) {
-            lfToMeaningState.put(selectedNode, new MeaningState(e.getMessage()));
-            if (selectedNode instanceof Nonterminal)
-                ((Nonterminal)selectedNode).setUserMeaningSimplification(null);
+            lfToMeaningState.put(node, new MeaningState(e.getMessage()));
+            if (node instanceof Nonterminal)
+                ((Nonterminal)node).setUserMeaningSimplification(null);
         }
-        updateNode(selectedNode);
+        updateNode(node);
         canvas.invalidate();
         curErrorChanged();
     }
@@ -790,20 +795,22 @@ public class TreeExerciseWidget extends JPanel {
      * panel after the user chooses a composition rule to begin simplifying the node.
      * The node is evaluated.
      */
-    public void startEvaluation(boolean skipMeaningBracketsState) {
-        evaluateNode();
+    public void startEvaluation(LFNode node, boolean skipMeaningBracketsState) {
+        evaluateNode(node);
 
         if (skipMeaningBracketsState) {
             // skip the meaning brackets state?
-            MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+            MeaningState ms = (MeaningState)lfToMeaningState.get(node);
             if (ms != null && ms.evaluationError == null) {
                 ms.curexpr = ms.exprs.size() - 1;
-                updateNode(selectedNode);
+                updateNode(node);
                 canvas.invalidate();
             }
         }        
         updateButtonEnabledState();
-        fireSelectedNodeChanged();
+        
+        if (node == selectedNode)
+            fireSelectedNodeChanged();
     }
     
     public Expr getNodeExpressionState(LFNode node) {
@@ -815,7 +822,7 @@ public class TreeExerciseWidget extends JPanel {
    
     /**
      */
-    public void advanceSimplification(Expr parsedMeaning) {
+    public void advanceSimplification(Expr parsedMeaning, boolean isFinished) {
         MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
         
         // truncate the list of pre-computed simplification
@@ -831,12 +838,37 @@ public class TreeExerciseWidget extends JPanel {
         ms.curexpr++;
 
         updateNode(selectedNode);
+        
+        if (isFinished)
+            propogateMeaningUpNonBranchingNodes(selectedNode);
+        
         canvas.invalidate();
         curErrorChanged();
         updateButtonEnabledState();
         fireSelectedNodeChanged();
     }
     
+    /**
+     * If the node's parent is a non-branching node, automatically get its meaning.
+     */
+    private void propogateMeaningUpNonBranchingNodes(LFNode node) {
+        while (true) {
+            Nonterminal parent = (Nonterminal)lfToParent.get(node);
+            if (parent == null) return; // root node has no parent
+
+            if (!NonBranchingRule.INSTANCE.isApplicableTo(parent))
+                return;
+            
+            parent.setCompositionRule(NonBranchingRule.INSTANCE);
+            evaluateNode(parent);
+            MeaningState ms = (MeaningState)lfToMeaningState.get(parent);
+            if (ms != null && ms.evaluationError == null) // skip freebie
+                ms.curexpr = ms.exprs.size() - 1;
+            updateNode(parent);
+            
+            node = parent;
+        }
+    }
     
     public void setFontSize(int size) {
         curFontSize = size;

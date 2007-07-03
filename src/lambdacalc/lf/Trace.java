@@ -26,6 +26,10 @@ public class Trace extends Terminal {
         this(SYMBOL, index);
     }
     
+    public boolean isMeaningful() {
+        return true;
+    }
+    
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
         //return (Expr) g.get(this.getIndex());
         return new GApp(this.getIndex());

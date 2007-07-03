@@ -248,7 +248,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         String lastAnswer = exercise.getLastAnswer();        
         
         if (status.isCorrect()) {
-            teWidget.advanceSimplification(answer);
+            teWidget.advanceSimplification(answer, status.endsExercise());
             if (status.endsExercise()) {
                 tellGUIProblemSolved();
                 
@@ -279,6 +279,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
 
     private void displayFeedback(String msg) {
         txtFeedback.setText(msg);
+        txtFeedback.setCaretPosition(0);
     }
     
     

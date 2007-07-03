@@ -154,7 +154,7 @@ implements PropertyChangeListener, SelectionListener {
 //        }
 ////        teWidget.doSimplify(false);
 //=======
-        teWidget.startEvaluation(true);
+        teWidget.startEvaluation(node, true);
 //>>>>>>> .r216
     }
     /** This method is called from within the constructor to

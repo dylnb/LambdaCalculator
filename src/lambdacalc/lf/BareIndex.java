@@ -47,9 +47,13 @@ public class BareIndex extends Terminal {
         return "Bare index";
     }
     
+    public boolean isMeaningful() {
+        return false;
+    }
+    
     public Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException {
-        throw new MeaningEvaluationException("Tried to get the meaning of a BareIndex");
+        throw new MeaningEvaluationException("The bare index \"" + toShortString() + "\" has no denotation.");
     }
     
     /**
