@@ -24,6 +24,13 @@ define shaves : LxLy[shaves(y,x)]
 define introduces : LxLyLz[introduces(z,x,y)]
 define hug : Le.HUGGING(e)
 
+define the : LP.Ix.P(x)
+define woman: Lx.woman(x)
+define introduced : LxLyLz[introduced(z,x,y)]
+define niece-of : LxLy[niece-of(y,x)]
+define rock-star : Lx.rock-star(x)
+define liked : LxLy.liked(y,x)
+
 # Finally, the exercises themselves are entered.
 
 exercise tree

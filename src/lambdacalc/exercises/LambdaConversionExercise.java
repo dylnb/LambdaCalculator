@@ -35,7 +35,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     ArrayList steps = new ArrayList();
     ArrayList steptypes = new ArrayList();
     
-    Expr lastAnswer;
+    private Expr lastAnswer;
     int currentStep = 0;
     
     /**

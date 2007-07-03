@@ -244,6 +244,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         }
         
         AnswerStatus status = exercise.checkAnswer(answer);
+        String lastAnswer = exercise.getLastAnswer();        
         
         if (status.isCorrect()) {
             teWidget.advanceSimplification(answer);
@@ -258,7 +259,14 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
                 }
                 displayFeedback(response);
             } else { // "Correct! Now simplify..."
-                txtQuestion.setText(exercise.getLastAnswer());
+                //TODO if I replace the following line by
+                //txtQuestion.setText(exercise.getLastAnswer());
+                //then "exercise.getLastAnswer()" returns null, even though
+                //it doesn't return null ten lines above. The workaround for now
+                //is to have the lastAnswer determined above. But I really don't
+                //understand at all how getLastAnswer() can be affecte by the 
+                //calls in the ten lines above. -Lucas
+                txtQuestion.setText(lastAnswer);
                 displayFeedback(status.getMessage());
             }
         } else {
