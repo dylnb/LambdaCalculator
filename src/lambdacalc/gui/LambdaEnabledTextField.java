@@ -11,12 +11,12 @@
 
 package lambdacalc.gui;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;   
+import java.io.Serializable;
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.swing.text.AbstractDocument.Content;
-import lambdacalc.lf.MeaningBracketExpr;
 
 import lambdacalc.logic.*;
 
@@ -83,7 +83,6 @@ public class LambdaEnabledTextField extends JTextField {
      protected Document createDefaultModel() {
           return new LambdaDocument();
      }
-     
  
      class LambdaDocument extends PlainDocument {
          public void insertString(int offs, String str, AttributeSet a) 
@@ -98,19 +97,7 @@ public class LambdaEnabledTextField extends JTextField {
                   return;
               
               char[] revised = str.toCharArray();
-              int meaningBracketStack = 0; // a positive value indicates we're inside meaning brackets
-              
               for (int i = 0; i < revised.length; i++) {
-                  if (revised[i]=='[' && i < revised.length-1 && revised[i+1]=='[') {
-                      meaningBracketStack++;
-                      i++; // skip the second bracket
-                  } else if (revised[i]==']' && i < revised.length-1 && revised[i+1]==']') {
-                      meaningBracketStack--;
-                      i++; // skip the second bracket
-                  }
-                  // no replacements inside meaning brackets:
-                  if (meaningBracketStack > 0) continue;
-                  
                   switch (revised[i]) {
                       case Lambda.INPUT_SYMBOL: revised[i] = Lambda.SYMBOL; break;
                       case ForAll.INPUT_SYMBOL: revised[i] = ForAll.SYMBOL; break;
@@ -166,22 +153,6 @@ public class LambdaEnabledTextField extends JTextField {
                           } else if (c2 == '!' && c3 == '=') {
                               replace(i-1, 2, String.valueOf(Equality.NEQ_SYMBOL), null);
                               foundChange = true;
-                              break;
-                          
-                          
-                          // Brackets: [[
-                          
-                          } else if (c2 == '[' && c3 == '[') {
-                              replace(i-1, 2, String.valueOf(MeaningBracketExpr.LEFT_BRACKET), null);
-                              foundChange=true;
-                              break;
-                          
-                              
-                          // Brackets: ]]
-                          
-                          } else if (c2 == ']' && c3 == ']') {
-                              replace(i-1, 2, String.valueOf(MeaningBracketExpr.RIGHT_BRACKET), null);
-                              foundChange=true;
                               break;
                           }
                           
