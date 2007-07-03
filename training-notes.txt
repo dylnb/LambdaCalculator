@@ -18,7 +18,7 @@ HIGH    Something weird with the font metrics in the lambda text field on the li
 DONE    Scrollbars on directions
 DONE    After a hard line break in directions, we get a space at the beginning of the next paragraph.
 DONE(half)    L's for lambdas in directions and e_v looks weird everywhere. We must HTMLify directins, either with LaTeX conventions about _ and ^, or escape lambda expressions surrounded in { }.
-HIGH    The node properties, lexicon pane does not resize. Disappears.
+DONE    The node properties, lexicon pane does not resize. Disappears.
 DONE(half)    Should indicate in main area the problem # being worked on, original expression being simplified
 MEDIUM    Check whether NotSoFast works
 DONE(half)    Give Paste Below an icon, move to left

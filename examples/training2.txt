@@ -6,7 +6,7 @@ variables of type v : e
 variables of type <e,t> : P-Q X-Z
 variables of type <e,et> : R
 variables of type <e,<e,et>> : S
-variables of type <v,t> : V
+variables of type <v,t> : T
 
 multiple letter identifiers
 
