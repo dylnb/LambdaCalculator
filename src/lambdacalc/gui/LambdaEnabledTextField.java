@@ -72,14 +72,56 @@ public class LambdaEnabledTextField extends JTextField {
      protected void processKeyEvent(KeyEvent e) {
          onEvent();
          
+         //System.err.println(e);
+         
          // Replace ALT plus various special keys with some special unicode
          // symbols. We handle both the letter-like replacements as well as
          // some symbol replacements, even though ALT isn't strictly necessary
          // in those cases.
-         if (e.isAltDown()) {
-             // Convert the key char to uppercase because we have the uppercase
-             // characters stored in the constants below.
-             char c = Character.toUpperCase( e.getKeyChar() );
+         
+         // On PCs, use the ALT key. On Macs, this almsot works,
+         // but ALT+E and ALT+I add accent marks and this behavior
+         // seems apparently out of our control.
+         boolean mod = e.isAltDown();
+         
+         // Try to detect whether we are on a Mac by seeing whether
+         // the Meta key is called "Command". If so, then we take
+         // over the Control key. The Command key is used for copy/paste,
+         // so we don't want to touch that (esp. since V (Cut) would
+         // be mapped to OR.)
+         if (KeyEvent.getKeyText(KeyEvent.VK_META).equals("Command"))
+            mod = e.isControlDown();
+         
+         if (mod) {
+             // On OSX, ALT+key changes the key to something weird,
+             // and we get KEY_TYPED events that have 0 as the keyCode
+             // and a non-noormal unicode character as the keyChar.
+             // At this point, we've lost the information about what
+             // key was actually pressed. So, we simply ignore KEY_TYPED
+             // event when ALT is downs (i.e. process them and have them
+             // do nothing), and deal with our special keys on
+             // KEY_PRESSED.
+             
+             if (e.getID() == KeyEvent.KEY_TYPED) {
+                 e.consume();
+                 return;
+             }
+         
+             // On Linux, getKeyChar returns the letter that corresponds
+             // with what would be typed had Alt not been pressed (i.e.
+             // lowercase).
+             // On Mac OSX, getKeyChar returns also the letter corresponding
+             // to the key, but it maps ALT+key to some character
+             // other than what's normal, and that useless character is
+             // returned.
+             // To get around the Mac problem, we ask for what character
+             // the key means without any modifiers by constructing a
+             // new KeyEvent with the same keyCode (which represents the
+             // physical key pressed) but with no modifiers, and we call
+             // getKeyChar on that.
+             
+             char c = new KeyEvent((Component)e.getSource(), e.getID(), e.getWhen(), 0, e.getKeyCode()).getKeyChar();
+             //System.err.println(c);
              
              switch (c) {
                  case Lambda.INPUT_SYMBOL: c = Lambda.SYMBOL; break;
@@ -88,18 +130,32 @@ public class LambdaEnabledTextField extends JTextField {
                  case Iota.INPUT_SYMBOL: c = Iota.SYMBOL; break;
                  case '6': c = And.SYMBOL; break; // i.e. sort of ALT+CARRET
                  case '7': c = And.SYMBOL; break; // i.e. sort of ALT+AMPERSAND
-                 case Or.INPUT_SYMBOL: c = Or.SYMBOL; break;
-                 case '`': c = Not.SYMBOL; break; // i.e. sort of ALT+tilde
+                 case 'V': c = Or.SYMBOL; break;
+                 case '`': c = Not.SYMBOL; break; // i.e. sort of ALT+tilde; doesn't work on Mac!
                  default:
                      super.processKeyEvent(e);
                      return;
              }
             
              // If we got here, we decided that the user pressed a special key.
-             e.setKeyChar(c);
-             e.setModifiers(0); // this method is marked as deprecated, but hopefully we'll get away with it
-             super.processKeyEvent(e);
-         
+
+             // On Linux, we can simply update e with setKeyChar, setModifiers
+             // and pass that up. This seems to not work on Mac OSX, since it
+             // ignores the change to the modifier state and inserts some
+             // other character.l
+             //e.setKeyChar(c);
+             //e.setModifiers(0); // this method is marked as deprecated, but hopefully we'll get away with it
+             //super.processKeyEvent(e);
+             
+             // Instead of that, we insert the character that we want
+             // directly into the document. We only want to insert
+             // a character once per press/release, and KEY_TYPED is
+             // the appropriate event to work with, but it seems (on
+             // OSX?), KEY_TYPED don't get fired always...?
+             e.consume();
+             if (e.getID() == KeyEvent.KEY_PRESSED)
+                 replaceSelection(c + "");
+             
          // And when ALT is not pressed, we have some special symbol replacements
          // as well. Note that SHIFT might be pressed in some of these cases. These
          // are the non-letter replacements.
