@@ -30,7 +30,7 @@ define introduced : LxLyLz[introduced(z,x,y)]
 define niece-of : LxLy[niece-of(y,x)]
 define rock-star : Lx.rock-star(x)
 define liked : LxLy.liked(y,x)
-
+define (to) : Lx.x
 # Finally, the exercises themselves are entered.
 
 exercise tree

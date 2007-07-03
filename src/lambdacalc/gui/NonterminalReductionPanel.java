@@ -70,6 +70,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
     }
 
     private void tellGUIProblemSolved() {
+        txtUserAnswer.deleteAnyTemporaryText();
         switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
         btnTransfer.setEnabled(true);

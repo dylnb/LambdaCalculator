@@ -583,6 +583,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     private void tellGUIProblemSolved() {
         txtEnterYourOwnProblem.setEnabled(true);
         jButtonEnterProblem.setEnabled(true);
+        txtUserAnswer.deleteAnyTemporaryText();
         switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
         setRadioButtonsEnabled(true);
