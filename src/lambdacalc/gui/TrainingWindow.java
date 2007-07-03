@@ -117,11 +117,11 @@ public class TrainingWindow extends JFrame {
         lblHelpConditionals.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
 
         //TODO synchronize this with ExpressionParser and LambdaEnabledTextField
-        lblHelpLambda.setText("Type capital " + Lambda.INPUT_SYMBOL + " for " + Lambda.SYMBOL);
-        lblHelpBinders.setText("Type capital " + ForAll.INPUT_SYMBOL + ", "
+        lblHelpLambda.setText("Type ALT plus " + Lambda.INPUT_SYMBOL + " for " + Lambda.SYMBOL);
+        lblHelpBinders.setText("Type ALT plus " + ForAll.INPUT_SYMBOL + ", "
                 + Exists.INPUT_SYMBOL + ", and " + Iota.INPUT_SYMBOL + " for " 
                 + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
-        lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL + " for " + And.SYMBOL + " and "
+        lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL + " for " + And.SYMBOL + " and ALT plus "
                 + Or.INPUT_SYMBOL + " for " + Or.SYMBOL);
         lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
