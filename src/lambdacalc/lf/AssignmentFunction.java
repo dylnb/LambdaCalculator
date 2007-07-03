@@ -102,9 +102,9 @@ public class AssignmentFunction extends HashMap {
         output.writeByte(0); // version info
         output.writeInt(size());
         for (Iterator i = keySet().iterator(); i.hasNext(); ) {
-            Integer index = (Integer)i.next();
-            Var var = (Var)get(index);
-            output.writeInt(index.intValue());
+            GApp index = (GApp)i.next();
+            Var var = (Var)get(index.getIndex());
+            output.writeInt(index.getIndex());
             var.writeToStream(output);
         }
     }
