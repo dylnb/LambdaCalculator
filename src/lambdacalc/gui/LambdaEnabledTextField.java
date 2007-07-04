@@ -101,7 +101,7 @@ public class LambdaEnabledTextField extends JTextField {
          
          // On Windows, presses of ALT move the focus to the menu bar.
          // We need to consume presses and releases of the ALT key itself.
-         if (!Util.IsMac() && e.getKeyCode() == key) {
+         if (!Util.isMac() && e.getKeyCode() == key) {
              e.consume();
              return;
          }

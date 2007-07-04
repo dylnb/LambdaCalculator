@@ -366,6 +366,7 @@ public class TrainingWindow extends JFrame {
             }
             menuItemSaveAs.setEnabled(true);
             menuItemSave.setEnabled(false);
+            this.previousGroup = null; //so that at the beginning of a new exercise we don't say "You have started a new group"
         } catch (IOException e) { // thrown by deserialize and parse
             e.printStackTrace();
             Util.displayErrorMessage
