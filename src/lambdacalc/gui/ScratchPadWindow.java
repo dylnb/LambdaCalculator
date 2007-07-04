@@ -272,7 +272,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         jPanelFeedbackAndTypes.setLayout(new java.awt.GridBagLayout());
 
         jScrollPaneIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Conventions about letters"));
+        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Typing Conventions"));
         jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(232, 228));
         jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(232, 228));
         lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));

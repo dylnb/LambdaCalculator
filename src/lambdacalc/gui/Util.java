@@ -79,4 +79,20 @@ public class Util {
         JDialog dialog = p.createDialog(parentComponent, windowTitle);
         dialog.setVisible(true);
     }
+
+    private static String osName = System.getProperty("os.name");
+    public static String getOSName() { return osName; }
+
+    private static boolean isWin = osName.startsWith("Windows");
+    public static boolean isWin() { return isWin; }
+    
+    private static boolean isMac = !isWin && osName.startsWith("Mac");
+    public static boolean isMac() { return isMac; }
+    
+    private static boolean isLinux = osName.startsWith("Linux");
+    public static boolean isLinux() { return isLinux; }
+    
+    private static boolean isVista = isWin && osName.indexOf("Vista")!=-1;
+    public static boolean isVista() { return isVista; }
+    
 }

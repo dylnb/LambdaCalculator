@@ -116,18 +116,10 @@ public class TrainingWindow extends JFrame {
         lblHelpNot.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
         lblHelpConditionals.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
 
-        //TODO synchronize this with ExpressionParser and LambdaEnabledTextField
-        lblHelpLambda.setText("Type ALT plus " + Lambda.INPUT_SYMBOL + " for " + Lambda.SYMBOL);
-        lblHelpBinders.setText("Type ALT plus " + ForAll.INPUT_SYMBOL + ", "
-                + Exists.INPUT_SYMBOL + ", and " + Iota.INPUT_SYMBOL + " for " 
-                + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
-        lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL + " for " + And.SYMBOL + " and ALT plus "
-                + Or.INPUT_SYMBOL + " for " + Or.SYMBOL);
-        lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);
-        lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
-      
+        updateLetterEnteringDisplay();
+        
         txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-  
+        
         //jSplitPaneLowerRight.setDividerLocation(0.7);
         
         treeDisplay.addSelectionListener
@@ -146,6 +138,21 @@ public class TrainingWindow extends JFrame {
         clearAllControls();
         
         //loadExerciseFile("examples/tests.txt");
+    }
+    
+    public void updateLetterEnteringDisplay() {
+        String mod = LambdaEnabledTextField.getModifier();
+        lblHelpLambda.setText("Type " + mod + "-" + Character.toLowerCase(Lambda.INPUT_SYMBOL) + " for " + Lambda.SYMBOL);
+        lblHelpBinders.setText("Type " + mod + "-" + Character.toLowerCase(ForAll.INPUT_SYMBOL) + ", "
+                + mod + "-" + Character.toLowerCase(Exists.INPUT_SYMBOL) + ", and "
+                + mod + "-" + Character.toLowerCase(Iota.INPUT_SYMBOL) + " for " 
+                + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
+        lblHelpBinaries.setText("Type " + Character.toLowerCase(And.INPUT_SYMBOL) + " for " + And.SYMBOL 
+                + " and " + mod + "-"
+                + Character.toLowerCase(Or.INPUT_SYMBOL) + " for " + Or.SYMBOL);
+        lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);
+        lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
+        
     }
     
     public void updateNodePropertyPanel(LFNode selectedNode) {
