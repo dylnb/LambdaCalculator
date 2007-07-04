@@ -68,6 +68,10 @@ public class LambdaEnabledTextField extends JTextField {
              setText("");
          }
      }
+     
+     public static String getModifier() {
+         if (Util.isMac()) return "Ctrl"; else return "Alt";
+     }
  
      protected void processKeyEvent(KeyEvent e) {
          onEvent();
@@ -84,12 +88,12 @@ public class LambdaEnabledTextField extends JTextField {
          // seems apparently out of our control.
          boolean mod = e.isAltDown();
          
-         // Try to detect whether we are on a Mac by seeing whether
-         // the Meta key is called "Command". If so, then we take
+         // Detect whether we are on a Mac. If so, then we take
          // over the Control key. The Command key is used for copy/paste,
          // so we don't want to touch that (esp. since V (Cut) would
          // be mapped to OR.)
-         if (KeyEvent.getKeyText(KeyEvent.VK_META).equals("Command"))
+         if (Util.isMac()) 
+//         if (KeyEvent.getKeyText(KeyEvent.VK_META).equals("Command"))
             mod = e.isControlDown();
          
          if (mod) {
