@@ -1179,7 +1179,7 @@ public class ExpressionParser {
                        } else {
                            // We encountered a different operator in the past,
                            // which means we have an ambiguous bracketing situation.
-                           return new SyntaxException("Your expression is ambiguous because it has adjacent " + ops[op_idx] + " and " + ops[j] + " connectives without parenthesis. Add parenthesis.", -1);
+                           return new SyntaxException("Your expression is ambiguous because it has adjacent " + ops[op_idx] + " and " + ops[j] + " connectives without parenthesis. Add parentheses.", -1);
                        }
                    }
                    break;
