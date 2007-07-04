@@ -39,8 +39,9 @@ public class TrainingWindow extends JFrame {
 
     // used for switchViewTo method that switches the content of the 
     // right half of the screen
-    public static final int TYPES_AND_CONVERSIONS = 0;
+    public static final int BLANK = 0;
     public static final int TREES = 1;
+    public static final int TYPES_AND_CONVERSIONS = 2;
 
     private ExerciseFile currentExFile; // this is null if no file has been loaded yet
     
@@ -237,7 +238,9 @@ public class TrainingWindow extends JFrame {
             case TYPES_AND_CONVERSIONS:
                 cardLayout.show(jPanelCardLayout, "typesAndConversionsCard");
                 break;
-                
+            case BLANK:
+                cardLayout.show(jPanelCardLayout, "blank");
+                break;
 //                
 //                jSplitPaneUpperRight.removeAll();
 //                jSplitPaneLowerRight.removeAll();
@@ -293,6 +296,7 @@ public class TrainingWindow extends JFrame {
         currentExFile = null;
         ex = null;
         
+        
         this.jTreeExerciseFile.setModel(new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode("No exercise file opened")));
 
         lblDirections.setText("Open an exercise file from your instructor by using the File menu above.");
@@ -303,7 +307,7 @@ public class TrainingWindow extends JFrame {
         //TitledBorder tb = (TitledBorder)jPanelQuestion.getBorder();
         //tb.setTitle("Current Problem");
         
-        jLabelAboveDirections.setText(" ");
+        jLabelAboveDirections.setText("Lambda Calculator");
         jLabelAboveQuestion.setText(" ");
         
         txtUserAnswer.setBackground(UIManager.getColor("TextField.inactiveBackground"));
@@ -318,7 +322,7 @@ public class TrainingWindow extends JFrame {
         menuItemSave.setEnabled(false);
         menuItemSaveAs.setEnabled(false);
         
-        switchViewTo(TYPES_AND_CONVERSIONS);
+        switchViewTo(BLANK);
     }
     
     private void loadExerciseFile(String filename) {
@@ -655,6 +659,7 @@ public class TrainingWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jPanelBlank = new javax.swing.JPanel();
         jSeparatorBelowNavButtons = new javax.swing.JSeparator();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -1035,6 +1040,18 @@ public class TrainingWindow extends JFrame {
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
         jPanelCardLayout.add(jSplitPaneTrees, "treesCard");
+
+        org.jdesktop.layout.GroupLayout jPanelBlankLayout = new org.jdesktop.layout.GroupLayout(jPanelBlank);
+        jPanelBlank.setLayout(jPanelBlankLayout);
+        jPanelBlankLayout.setHorizontalGroup(
+            jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 630, Short.MAX_VALUE)
+        );
+        jPanelBlankLayout.setVerticalGroup(
+            jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 495, Short.MAX_VALUE)
+        );
+        jPanelCardLayout.add(jPanelBlank, "blank");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1539,6 +1556,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabelAboveQuestion;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelBareIndex;
+    private javax.swing.JPanel jPanelBlank;
     private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelDefault;
     private javax.swing.JPanel jPanelEnterExpressions;
