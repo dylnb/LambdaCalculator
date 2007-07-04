@@ -113,6 +113,7 @@ public class TrainingWindow extends JFrame {
         
         jTreeExerciseFile.setFont(Util.getUnicodeFont(14));
 
+        lblHelpHeader.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
         lblHelpLambda.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
         lblHelpBinders.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
         lblHelpBinaries.setFont(Util.getUnicodeFont(lblHelpHeader.getFont().getSize()));
@@ -150,7 +151,8 @@ public class TrainingWindow extends JFrame {
                 + mod + "-" + Character.toLowerCase(Exists.INPUT_SYMBOL) + ", and "
                 + mod + "-" + Character.toLowerCase(Iota.INPUT_SYMBOL) + " for " 
                 + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
-        lblHelpBinaries.setText("Type " + Character.toLowerCase(And.INPUT_SYMBOL) + " for " + And.SYMBOL 
+        lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL 
+        + " or " + And.ALTERNATE_INPUT_SYMBOL + " for " + And.SYMBOL 
                 + " and " + mod + "-"
                 + Character.toLowerCase(Or.INPUT_SYMBOL) + " for " + Or.SYMBOL);
         lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);

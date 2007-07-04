@@ -152,7 +152,7 @@ public class LambdaEnabledTextField extends JTextField {
                      //TODO localize the two following lines on intl keyboards!
                  case KeyEvent.VK_6: // modifier on the key that's the same as "&" on English keyboards
                  case KeyEvent.VK_7: // modifier on the key that's the same as "^" on English keyboards   
-                 case KeyEvent.VK_CIRCUMFLEX: // alternative for "and"
+                 case And.ALTERNATE_INPUT_SYMBOL: // alternative for "and": caret (^)
                      c = And.SYMBOL;
                      break;
                  case Or.KEY_EVENT: 
