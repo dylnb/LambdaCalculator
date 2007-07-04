@@ -47,6 +47,9 @@ public class TrainingWindow extends JFrame {
     Exercise ex;
     int currentGroup = 0, currentEx = 0; // we start counting at zero
     ExerciseTreeModel treemodel;
+    
+    private ExerciseGroup previousGroup = null;
+    
     boolean updatingTree = false;
     
     int wrongInARowCount = 0;
@@ -519,27 +522,38 @@ public class TrainingWindow extends JFrame {
 
         wrongInARowCount = 0;
         
+        previousGroup = getCurrentGroup();
+        
         txtUserAnswer.requestFocusInWindow();
     }
     
     // called in showExercise()
     private void setQuestionText() {
+        
+        String text = "";
+        if (previousGroup != null && !(getCurrentGroup().equals(previousGroup))) {
+            text += "You are now in a different group of exercises. Check the directions " +
+                    "above.\n\n";
+        }
+        
         if (!ex.isDone()) {
             String lastAnswer = ex.getLastAnswer();
             if (lastAnswer == null) {
                 txtQuestion.setText(ex.getExerciseText());
                 txtUserAnswer.setTemporaryText(ex.getTipForTextField());
-                txtFeedback.setText("You have not yet started this exercise.");
+                text += "You have not yet started this exercise.";
             } else {
                 txtQuestion.setText(lastAnswer);
                 txtUserAnswer.setText(lastAnswer);
-                txtFeedback.setText("You have started this exercise but have not completed it yet.");
+                text += "You have started this exercise but have not completed it yet.";
             }
         } else {
-            txtQuestion.setText(ex.getExerciseText());
+            txtFeedback.setText(ex.getExerciseText());
             txtUserAnswer.setText(ex.getLastAnswer());
-            txtFeedback.setText("You have already solved this exercise.");
+            text += "You have already solved this exercise.";
         }
+        
+        txtFeedback.setText(text);
     }
     
     // called in:
@@ -1185,7 +1199,7 @@ public class TrainingWindow extends JFrame {
             if (status.isCorrect() && status.endsExercise()) {
                 String response = status.getMessage() + " ";
                 if (btnNext.isEnabled() && !getCurrentExFile().hasBeenCompleted()) {
-                    response += "Click the Next button on the left to go on to the next exercise.";
+                    response += "Press Return to go on to the next exercise.";
                     btnNext.requestFocusInWindow();
                 }
                 else if (!getCurrentExFile().hasBeenCompleted())
