@@ -118,26 +118,36 @@ public class LambdaEnabledTextField extends JTextField {
              // to the key, but it maps ALT+key to some character
              // other than what's normal, and that useless character is
              // returned.
-             // To get around the Mac problem, we ask for what character
-             // the key means without any modifiers by constructing a
-             // new KeyEvent with the same keyCode (which represents the
-             // physical key pressed) but with no modifiers, and we call
-             // getKeyChar on that.
+             // To get around the Mac problem, we ask the expressions for their
+             // key events.
              
-             char c = new KeyEvent((Component)e.getSource(), e.getID(), e.getWhen(), 0, e.getKeyCode()).getKeyChar();
+             //char c = new KeyEvent((Component)e.getSource(), e.getID(), e.getWhen(), 0, e.getKeyCode()).getKeyChar();
              //System.err.println(c);
-             
-             switch (c) {
-                 case Lambda.INPUT_SYMBOL: c = Lambda.SYMBOL; break;
-                 case ForAll.INPUT_SYMBOL: c = ForAll.SYMBOL; break;
-                 case Exists.INPUT_SYMBOL: c = Exists.SYMBOL; break;
-                 case Iota.INPUT_SYMBOL: c = Iota.SYMBOL; break;
-                 case Or.INPUT_SYMBOL: c = Or.SYMBOL; break;
-          
-                 //the following lines do not work on non-english keyboards and have been disabled
-                 //case '6': c = And.SYMBOL; break; // i.e. sort of ALT+CARRET
-                 //case '7': c = And.SYMBOL; break; // i.e. sort of ALT+AMPERSAND
-                 //case '`': c = Not.SYMBOL; break; // i.e. sort of ALT+tilde; doesn't work on Mac!
+             char c;
+             int i = e.getKeyCode();
+             switch (i) {
+                 case Lambda.KEY_EVENT:
+                     c = Lambda.SYMBOL;
+                     break;
+                 case ForAll.KEY_EVENT:
+                     c = ForAll.SYMBOL;
+                     break;
+                 case Exists.KEY_EVENT:
+                     c = Exists.SYMBOL;
+                     break;
+                 case Iota.KEY_EVENT:
+                     c = Iota.SYMBOL;
+                     break;
+                 case And.KEY_EVENT:
+                     //TODO localize the two following lines on intl keyboards!
+                 case KeyEvent.VK_6: // modifier on the key that's the same as "&" on English keyboards
+                 case KeyEvent.VK_7: // modifier on the key that's the same as "^" on English keyboards   
+                 case KeyEvent.VK_CIRCUMFLEX: // alternative for "and"
+                     c = And.SYMBOL;
+                     break;
+                 case Or.KEY_EVENT: 
+                     c = Or.SYMBOL;
+                     break;             
                  
                  default:
                      super.processKeyEvent(e);
@@ -179,7 +189,6 @@ public class LambdaEnabledTextField extends JTextField {
                      return;
              }
             
-             // If we got here, we decided that the user pressed a special key.
              e.setKeyChar(c);
              super.processKeyEvent(e);
              
