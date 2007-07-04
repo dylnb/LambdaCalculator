@@ -87,14 +87,24 @@ public class LambdaEnabledTextField extends JTextField {
          // but ALT+E and ALT+I add accent marks and this behavior
          // seems apparently out of our control.
          boolean mod = e.isAltDown();
+         int key = KeyEvent.VK_ALT;
          
          // Detect whether we are on a Mac. If so, then we take
          // over the Control key. The Command key is used for copy/paste,
          // so we don't want to touch that (esp. since V (Cut) would
          // be mapped to OR.)
-         if (Util.isMac()) 
-//         if (KeyEvent.getKeyText(KeyEvent.VK_META).equals("Command"))
+         if (Util.isMac()) {
+//         if (KeyEvent.getKeyText(KeyEvent.VK_META).equals("Command")) {
             mod = e.isControlDown();
+            key = KeyEvent.VK_CONTROL;
+         }
+         
+         // On Windows, presses of ALT move the focus to the menu bar.
+         // We need to consume presses and releases of the ALT key itself.
+         if (!Util.IsMac() && e.getKeyCode() == key) {
+             e.consume();
+             return;
+         }
          
          if (mod) {
              // On OSX, ALT+key changes the key to something weird,
