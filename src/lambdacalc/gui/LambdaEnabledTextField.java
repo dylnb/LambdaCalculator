@@ -132,10 +132,13 @@ public class LambdaEnabledTextField extends JTextField {
                  case ForAll.INPUT_SYMBOL: c = ForAll.SYMBOL; break;
                  case Exists.INPUT_SYMBOL: c = Exists.SYMBOL; break;
                  case Iota.INPUT_SYMBOL: c = Iota.SYMBOL; break;
-                 case '6': c = And.SYMBOL; break; // i.e. sort of ALT+CARRET
-                 case '7': c = And.SYMBOL; break; // i.e. sort of ALT+AMPERSAND
-                 case 'V': c = Or.SYMBOL; break;
-                 case '`': c = Not.SYMBOL; break; // i.e. sort of ALT+tilde; doesn't work on Mac!
+                 case Or.INPUT_SYMBOL: c = Or.SYMBOL; break;
+          
+                 //the following lines do not work on non-english keyboards and have been disabled
+                 //case '6': c = And.SYMBOL; break; // i.e. sort of ALT+CARRET
+                 //case '7': c = And.SYMBOL; break; // i.e. sort of ALT+AMPERSAND
+                 //case '`': c = Not.SYMBOL; break; // i.e. sort of ALT+tilde; doesn't work on Mac!
+                 
                  default:
                      super.processKeyEvent(e);
                      return;
