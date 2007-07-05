@@ -2,7 +2,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>0</headerType>
   <jar>dist/LambdaCalculator.jar</jar>
-  <outfile>Lambda.exe</outfile>
+  <outfile>dist/LambdaCalculator.exe</outfile>
   <errTitle>Lambda</errTitle>
   <jarArgs></jarArgs>
   <chdir></chdir>
@@ -24,14 +24,14 @@
     <timeoutErr>true</timeoutErr>
   </splash>
   <versionInfo>
-    <fileVersion>0.5.0.0</fileVersion>
-    <txtFileVersion>0.5</txtFileVersion>
-    <fileDescription>Lambda: The Semantics Tool</fileDescription>
-    <copyright>Copyright (2006) Lucas Champollion and Joshua Tauberer</copyright>
-    <productVersion>0.5.0.0</productVersion>
-    <txtProductVersion>0.5</txtProductVersion>
-    <productName>Lambda: The Semantics Tool</productName>
-    <companyName>University of Pennsylvania</companyName>
+    <fileVersion>1.0.0.0</fileVersion>
+    <txtFileVersion>1.0.0</txtFileVersion>
+    <fileDescription>Lambda Calculator: The Semantics Tool</fileDescription>
+    <copyright>Copyright (2007) Lucas Champollion and Joshua Tauberer</copyright>
+    <productVersion>1.0.0.0</productVersion>
+    <txtProductVersion>1.0.0</txtProductVersion>
+    <productName>Lambda Calculator: The Semantics Tool</productName>
+    <companyName>The University of Pennsylvania</companyName>
     <internalName>Lambda</internalName>
     <originalFilename>Lambda.exe</originalFilename>
   </versionInfo>

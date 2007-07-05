@@ -76,9 +76,8 @@
     	</jar>
     	
     	<!-- Create the Windows executable file. -->
-    	<exec executable="java" dir="launch4j">
-    		<arg line="-jar launch4j.jar"/>
+    	<java fork="true" dir="launch4j" jar="launch4j/launch4j.jar">
     		<arg line="../launch4j.xml"/>
-    	</exec>
+    	</java>
     </target>
 </project>
