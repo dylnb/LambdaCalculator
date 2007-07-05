@@ -100,7 +100,7 @@ MEDIUM In FunApp type checking, automatic typing and conventions confuse user he
 DONE   R(x)(x) is perhaps not quite one-place. In error messages, don't call it one place. Say that it takes first just an e-type thing alone.
 MEDIUM   The error about a binder being followed by a variable, not a constant, doesn't position the cursor properly (note: because it is a type exception and not a syntax exception)
 HIGH   When user turns a lambda variable into a constant during conversion, a strange error message results
-HIGH   The substituting just bound variables message should say "Check that you didn't make any substitutions of variables not bound by the lambda."
+DONE   The substituting just bound variables message should say "Check that you didn't make any substitutions of variables not bound by the lambda."
 DONE   Dont' use the word identifier in error messages
 HIGH   When there are type errors, suggest adding spaces/brackets
 

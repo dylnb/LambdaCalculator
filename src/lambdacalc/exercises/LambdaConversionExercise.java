@@ -313,7 +313,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 && !diagnoses.contains("leftmost-leftmost"))
                     responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. " +
                             "Remember to substitute the argument for all free instances of the " 
-                            + Lambda.SYMBOL + " variable, and for no other variables.");
+                            + Lambda.SYMBOL + " variable, and for no other variables. "
+                            + "Check that you didn't make any substitutions of variables not bound by the " + Lambda.SYMBOL + ".");
                 
                 // test if the number of removed lambdas doesn't equal the number of removed arguments
                 // (this indicates that the user tried to do a beta reduction but was confused)
