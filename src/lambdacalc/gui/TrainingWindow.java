@@ -139,6 +139,8 @@ public class TrainingWindow extends JFrame {
         jPanelRuleSelection.initialize(treeDisplay);
 
         lexiconList.addListener(new LexiconListChangeListener());
+        
+        jListNodeHistory.setFont(Util.getUnicodeFont(16)); // same as LambdaEnabledTextField
                 
         clearAllControls();
         
@@ -170,6 +172,17 @@ public class TrainingWindow extends JFrame {
         if (selectedNode instanceof Nonterminal) {
             if (lambdacalc.Main.GOD_MODE) {
                 cardLayout.show(jPanelNodeProperties, "history");
+                
+                DefaultListModel model = new DefaultListModel();
+                Nonterminal nt = (Nonterminal)selectedNode;
+                java.util.Vector steps = nt.getUserMeaningSimplification();
+                if (steps != null) {
+                    for (java.util.Iterator i = steps.iterator(); i.hasNext(); )
+                        model.addElement(i.next());
+                }
+                
+                jListNodeHistory.setModel(model);
+                        
             } else if (((Nonterminal) selectedNode).isBranching()) {
                 // Try to display the lambda reduction panel, but if not, fall back
                 // on the rule selection panel.
