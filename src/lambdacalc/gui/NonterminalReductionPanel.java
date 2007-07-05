@@ -258,7 +258,12 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
                 if (!teWidget.isTreeFullyEvaluated()) {
                     response += "Now click on another node to continue.";
                 } else {
-                    response += "You have completed this tree.";
+                    response += "You have fully evaluated this tree.\n"
+                            +"Check if the formula displayed at the root node corresponds to " +
+                            "the actual meaning of the sentence. " +
+                            "If necessary, click on any terminal node to reassign it a lexical entry. " +
+                            "When you are satisfied, use the File menu to save your work.";
+                            
                 }
                 displayFeedback(response);
             } else { // "Correct! Now keep reducing the expression..."
