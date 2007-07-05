@@ -13,8 +13,12 @@ import lambdacalc.gui.*;
  * Here's the main entry point of the program.
  */
 public class Main {
+    // When changing these values, make sure to do a full rebuild (i.e. clean first)
+    // because it would seem that other class files hold onto the values here
+    // at compile time rather than getting them at run time. (An overzealous
+    // optimization probably.)
     
-    public static final boolean GOD_MODE = false;
+    public static final boolean GOD_MODE = true;
     
     public static final boolean NOT_SO_FAST = true; 
     // true means we force the user to do one step at a time in lambda conversions
