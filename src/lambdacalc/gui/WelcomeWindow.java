@@ -167,7 +167,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 0, 10));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("by Lucas Champollion, Joshua Tauberer, and Maribel Romero (2007)");
+        jLabel2.setText("by Lucas Champollion, Maribel Romero, and Josh Tauberer (2007)");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
