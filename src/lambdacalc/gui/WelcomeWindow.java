@@ -32,6 +32,8 @@ public class WelcomeWindow extends javax.swing.JFrame {
         // the user answering positively to a JFileChooser
         
         initComponents();
+        
+        jLabelVersion.setText("version " + lambdacalc.Main.VERSION);
     }
     
     public static void prepareWindow() {
@@ -80,6 +82,9 @@ public class WelcomeWindow extends javax.swing.JFrame {
         btnExit = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabelVersion = new javax.swing.JLabel();
 
         jMenuMenu.setMnemonic('m');
         jMenuMenu.setText("Menu");
@@ -167,31 +172,54 @@ public class WelcomeWindow extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 0, 10));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("by Lucas Champollion, Maribel Romero, and Josh Tauberer (2007)");
+        jLabel2.setText("by Lucas Champollion, Joshua Tauberer, and Maribel Romero (2007)");
+
+        jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("The University of Pennsylvania");
+
+        jLabel4.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("http://www.ling.upenn.edu/lambda");
+
+        jLabelVersion.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+        jLabelVersion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelVersion.setText("[version]");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(btnTeacherTool, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addContainerGap())
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(btnScratchPad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .add(jLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnExercise, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE))
+                .add(jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(btnExercise, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(btnScratchPad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(btnTeacherTool, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addContainerGap())
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(275, Short.MAX_VALUE)
+                .addContainerGap(254, Short.MAX_VALUE)
                 .add(btnExit)
                 .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabelVersion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -200,6 +228,10 @@ public class WelcomeWindow extends javax.swing.JFrame {
                 .add(1, 1, 1)
                 .add(jLabel2)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLabel3)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLabel4)
+                .add(15, 15, 15)
                 .add(btnExercise, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnScratchPad, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -207,7 +239,8 @@ public class WelcomeWindow extends javax.swing.JFrame {
                 .add(btnTeacherTool, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(btnExit)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 21, Short.MAX_VALUE)
+                .add(jLabelVersion))
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -274,6 +307,9 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnTeacherTool;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelVersion;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuMenu;
     private javax.swing.JMenuItem menuItemExercise;
