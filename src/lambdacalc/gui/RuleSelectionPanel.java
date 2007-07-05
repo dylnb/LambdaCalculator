@@ -7,6 +7,7 @@
 package lambdacalc.gui;
 
 import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 import javax.swing.JButton;
 import lambdacalc.gui.TreeExerciseWidget.SelectionEvent;
 import lambdacalc.gui.TreeExerciseWidget.SelectionListener;
@@ -140,7 +141,23 @@ implements PropertyChangeListener, SelectionListener {
     private void updateTree(int value) {
 
         Nonterminal node = getSelectedBranchingNodeIfAny();
+        
+        
+        
         if (node == null) return;
+        //TODO the following code doesn't do what it looks like it should, instead
+        //it does nothing. The semantics of "isNodeEvaluated" should be clarified.
+        if (!teWidget.isNodeEvaluated(node.getLeftChild())) {
+            teWidget.setErrorMessage("You must first complete both children of this node before you can start working on it.");
+            teWidget.setSelectedNode(node.getLeftChild());
+            return;
+        }
+        
+        if (!teWidget.isNodeEvaluated(node.getRightChild())) {
+            teWidget.setErrorMessage("You must first complete both children of this node before you can start working on it.");
+            teWidget.setSelectedNode(node.getRightChild());
+            return;
+        }
         
         node.setCompositionRule(forValue(value));
 //<<<<<<< .mine

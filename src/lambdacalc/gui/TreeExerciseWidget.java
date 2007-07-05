@@ -774,14 +774,17 @@ public class TreeExerciseWidget extends JPanel {
         return ms.evaluationError != null;
     }
         
-    boolean isNodeFullyEvaluated() {
+    public boolean isNodeFullyEvaluated() {
+        return isNodeFullyEvaluated(selectedNode);
+    }
+    public boolean isNodeFullyEvaluated(LFNode node) {
         //TODO should check if we're in god mode, and if yes should check
         //if this node is done by the user, i.e. contains any meaning brackets
         // and is well typed
-        if (!isNodeEvaluated(selectedNode))
+        if (!isNodeEvaluated(node))
             return false; // definitely not fully evaluated if it hasn't been evaluated at all
         
-        MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
+        MeaningState ms = (MeaningState)lfToMeaningState.get(node);
         return ms.curexpr == ms.exprs.size()-1;
     }
     
