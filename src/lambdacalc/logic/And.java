@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * Represents the conjunction binary connective.
  */
@@ -17,6 +19,10 @@ public class And extends LogicalBinary {
     public static final char SYMBOL = '\u2227';
     
     public static final char INPUT_SYMBOL = '&';
+    
+    public static final char ALTERNATE_INPUT_SYMBOL = '^';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_AMPERSAND;
     
     /**
      * Constructs the connective.

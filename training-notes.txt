@@ -122,6 +122,7 @@ DONE binder periods shouldn't affect scope
 Does lambda abstraction really work if we have nested lambda abstractions?
 DONE The first step of a tree computation expansion is to show the meaning brackets
 We should go through all expression and type error messages and remove the presupposition that it was parsed as intended.
+LOW use JarBundler (http://informagen.com/JarBundler/) to create a Mac OS bundle from the jar file
 
 scrollRectToVisible
 

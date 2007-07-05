@@ -230,7 +230,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             // the user didn't do anything
             if (steptypes.get(0).equals(NOT_REDUCIBLE)) { // and that was the right thing to do
                 currentStep++;
-                setDone();
+                setDone(true);
                 return AnswerStatus.CorrectFinalAnswer("That is correct! " + prevStep.toString() + " is not reducible.");
                 // By doing this, we display the canonical representation (rather than the student's input) in the feedback.
                 
@@ -286,7 +286,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             currentStep++;
             
             if (currentStep == steps.size()) {
-                setDone();
+                setDone(true);
                 return AnswerStatus.CorrectFinalAnswer("Correct!");
             } else if (currentThingToDo.equals(ALPHAVARY)) {
                 return AnswerStatus.CorrectStep("That is a licit alphabetical variant.  Now see if it is the one you need by reducing the expression...");

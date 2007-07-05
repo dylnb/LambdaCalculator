@@ -1036,7 +1036,7 @@ public class ExpressionParser {
         if (context.ASCII) {
             char cnext = (start+1 < expression.length()) ? expression.charAt(start+1) : (char)0;
             char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
-            if (c == And.INPUT_SYMBOL) // '&'
+            if (c == And.INPUT_SYMBOL) // '&' //todo: also And.ALTERNATE_INPUT_SYMBOL?
                 c = And.SYMBOL; // wedge
 
             // TODO: synchronize this with LambdaEnabledTextField

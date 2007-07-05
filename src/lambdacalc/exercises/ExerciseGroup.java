@@ -146,7 +146,7 @@ public class ExerciseGroup {
             items.add(ex);
             
             if (input.readBoolean())
-                ex.setDone();
+                ex.setDone(true);
             
             ex.setPoints(new java.math.BigDecimal(input.readUTF()));
             

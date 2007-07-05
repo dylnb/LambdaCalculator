@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * Represents the lambda binder.
  */
@@ -16,6 +18,8 @@ public class Lambda extends Binder {
     public static final char SYMBOL = '\u03BB';
     
     public static final char INPUT_SYMBOL = 'L';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_L;
     
     /**
      * Constructs the binder.

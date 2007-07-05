@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * The existential quantifier.
  */
@@ -16,6 +18,8 @@ public class Exists extends PropositionalBinder {
     public static final char SYMBOL = '\u2203';
     
     public static final char INPUT_SYMBOL = 'E';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_E;
     
     /**
      * Constructs the binder.

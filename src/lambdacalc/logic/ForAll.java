@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * The universal quantifier.
  */
@@ -16,6 +18,8 @@ public class ForAll extends PropositionalBinder {
     public static final char SYMBOL = '\u2200';
     
     public static final char INPUT_SYMBOL = 'A';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_A;
     
     /**
      * Constructs the binder.

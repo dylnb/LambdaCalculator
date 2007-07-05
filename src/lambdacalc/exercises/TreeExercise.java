@@ -21,6 +21,8 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     private Nonterminal treeroot;
     private IdentifierTyper types;
     
+    private boolean hasBeenStarted = false;
+    
     // persists the state of the tree, as derived by God-mode
     public java.util.Map derivationDisplayState = new java.util.HashMap();
     
@@ -34,6 +36,13 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         this(BracketedTreeParser.parse(tree), index, types);
     }
 
+    public void setHasBeenStarted(boolean b) {
+        this.hasBeenStarted = b;
+    }
+    
+    public boolean getHasBeenStarted() {
+        return this.hasBeenStarted;
+    }
     public String getExerciseText() {
         return treeroot.toString();
     }
@@ -55,12 +64,16 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     }
 
     public AnswerStatus checkAnswer(String answer) throws SyntaxException  {
-        setDone();
+        setDone(true);
         return AnswerStatus.CorrectFinalAnswer("Sure, why not.");
     }
     
     public String getLastAnswer() {
         return null;
+    }
+    
+    public boolean hasBeenStarted() {
+        return this.hasBeenStarted;
     }
     
     public IdentifierTyper getIdentifierTyper() {
@@ -204,7 +217,7 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         try {
             this.treeroot = BracketedTreeParser.parse(bracketedtree);
         } catch (SyntaxException e) {
-            throw new ExerciseFileFormatException("Could not read back saved brackted tree within the exercise file: " + bracketedtree + ", " + e.getMessage());
+            throw new ExerciseFileFormatException("Could not read back saved bracketed tree within the exercise file: " + bracketedtree + ", " + e.getMessage());
         }
         this.types = new IdentifierTyper();
         this.types.readFromStream(input, fileFormatVersion);

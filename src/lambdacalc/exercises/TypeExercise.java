@@ -77,7 +77,7 @@ public class TypeExercise extends Exercise implements HasIdentifierTyper {
         }
 
         if (type.equals(answertype)) {
-            setDone();
+            setDone(true);
             last_answer = answertype;
             return AnswerStatus.CorrectFinalAnswer(type.toString() + " is correct!");
         } else {

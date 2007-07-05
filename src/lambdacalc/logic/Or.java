@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * Represents the disjunction binary connective.
  */
@@ -16,6 +18,8 @@ public class Or extends LogicalBinary {
     public static final char SYMBOL = '\u2228';
     
     public static final char INPUT_SYMBOL = 'V';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_V;
     
     /**
      * Constructs the connective.

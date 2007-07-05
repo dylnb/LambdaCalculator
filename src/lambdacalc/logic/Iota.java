@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.awt.event.KeyEvent;
+
 /**
  * The iota operator.
  * This operator is like the other operators, but its semantic type
@@ -22,6 +24,8 @@ public class Iota extends Binder {
         // Latin small letter iota is \u0269
     
     public static final char INPUT_SYMBOL = 'I';
+    
+    public static final int KEY_EVENT = KeyEvent.VK_I;
     
     /**
      * Constructs the binder.

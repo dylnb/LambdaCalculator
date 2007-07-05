@@ -72,11 +72,17 @@ public class LambdaAbstractionRule extends CompositionRule {
         // Get a fresh variable based on the meaning that we know we will eventually get
         try {
             Expr bodyMeaning = body.getMeaning();
-            try { bodyMeaning = bodyMeaning.simplifyFully(); } catch (TypeEvaluationException e) {} // shouldn't throw since getMeaning worked
+            try { bodyMeaning = 
+                    MeaningBracketExpr.
+                    replaceAllMeaningBrackets(bodyMeaning).simplifyFully(); 
+            } catch (TypeEvaluationException e) {
+            } // shouldn't throw since getMeaning worked
             var = bodyMeaning.createFreshVar();
         
         // But if we can't get a meaning, choose a default variable
+            //TODO I think this is dangerous and we should provide a warning -Lucas
         } catch (MeaningEvaluationException mee) {
+            mee.printStackTrace();
             var = new Var("x", lambdacalc.logic.Type.E, false);
         }
 

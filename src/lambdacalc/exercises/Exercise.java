@@ -106,8 +106,8 @@ public abstract class Exercise {
      * Called by Exercise implementations to indicate that the exercise has
      * been completed.
      */
-    protected void setDone() {
-        this.done = true;
+    public void setDone(boolean done) {
+        this.done = done;
     }
     
     /**
