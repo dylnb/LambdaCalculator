@@ -324,6 +324,9 @@ public class TrainingWindow extends JFrame {
         menuItemSave.setEnabled(false);
         menuItemSaveAs.setEnabled(false);
         
+        jListNodeHistory.setModel(new DefaultListModel());
+        
+        
         switchViewTo(BLANK);
     }
     
@@ -661,9 +664,9 @@ public class TrainingWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jPanelHistory = new javax.swing.JPanel();
-        jScrollPaneHistory = new javax.swing.JScrollPane();
-        jListHistory = new javax.swing.JList();
+        jPanelNodeHistory = new javax.swing.JPanel();
+        jScrollPaneNodeHistory = new javax.swing.JScrollPane();
+        jListNodeHistory = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
         jPanelBlank = new javax.swing.JPanel();
         jPanelUpperRight = new javax.swing.JPanel();
@@ -1044,35 +1047,35 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
 
-        jListHistory.setModel(new javax.swing.AbstractListModel() {
+        jListNodeHistory.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPaneHistory.setViewportView(jListHistory);
+        jScrollPaneNodeHistory.setViewportView(jListNodeHistory);
 
         jLabel4.setText("Node History");
 
-        org.jdesktop.layout.GroupLayout jPanelHistoryLayout = new org.jdesktop.layout.GroupLayout(jPanelHistory);
-        jPanelHistory.setLayout(jPanelHistoryLayout);
-        jPanelHistoryLayout.setHorizontalGroup(
-            jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelHistoryLayout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout jPanelNodeHistoryLayout = new org.jdesktop.layout.GroupLayout(jPanelNodeHistory);
+        jPanelNodeHistory.setLayout(jPanelNodeHistoryLayout);
+        jPanelNodeHistoryLayout.setHorizontalGroup(
+            jPanelNodeHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelNodeHistoryLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
+                .add(jPanelNodeHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanelHistoryLayout.setVerticalGroup(
-            jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanelHistoryLayout.createSequentialGroup()
+        jPanelNodeHistoryLayout.setVerticalGroup(
+            jPanelNodeHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelNodeHistoryLayout.createSequentialGroup()
                 .add(jLabel4)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPaneHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .add(jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanelNodeProperties.add(jPanelHistory, "history");
+        jPanelNodeProperties.add(jPanelNodeHistory, "history");
 
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
@@ -1632,19 +1635,19 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelAboveDirections;
     private javax.swing.JLabel jLabelAboveQuestion;
-    private javax.swing.JList jListHistory;
+    private javax.swing.JList jListNodeHistory;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelBareIndex;
     private javax.swing.JPanel jPanelBlank;
     private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelDefault;
     private javax.swing.JPanel jPanelEnterExpressions;
-    private javax.swing.JPanel jPanelHistory;
     private lambdacalc.gui.NonterminalReductionPanel jPanelLambdaConversion;
     private javax.swing.JPanel jPanelLexicalTerminal;
     private javax.swing.JPanel jPanelLowerLeft;
     private javax.swing.JPanel jPanelLowerRight;
     private javax.swing.JPanel jPanelNavigationButtons;
+    private javax.swing.JPanel jPanelNodeHistory;
     private javax.swing.JPanel jPanelNodeProperties;
     private javax.swing.JPanel jPanelNonBranchingNonterminal;
     private javax.swing.JPanel jPanelQuestion;
@@ -1654,8 +1657,8 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
-    private javax.swing.JScrollPane jScrollPaneHistory;
     private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
+    private javax.swing.JScrollPane jScrollPaneNodeHistory;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;

@@ -770,7 +770,7 @@
                                 </Component>
                               </SubComponents>
                             </Container>
-                            <Container class="javax.swing.JPanel" name="jPanelHistory">
+                            <Container class="javax.swing.JPanel" name="jPanelNodeHistory">
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
                                   <CardConstraints cardName="history"/>
@@ -783,7 +783,7 @@
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="jScrollPaneHistory" alignment="0" pref="586" max="32767" attributes="0"/>
+                                              <Component id="jScrollPaneNodeHistory" alignment="0" pref="586" max="32767" attributes="0"/>
                                               <Component id="jLabel4" alignment="0" pref="586" max="32767" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
@@ -795,18 +795,18 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jScrollPaneHistory" pref="106" max="32767" attributes="0"/>
+                                          <Component id="jScrollPaneNodeHistory" pref="106" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
                               <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="jScrollPaneHistory">
+                                <Container class="javax.swing.JScrollPane" name="jScrollPaneNodeHistory">
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                                   <SubComponents>
-                                    <Component class="javax.swing.JList" name="jListHistory">
+                                    <Component class="javax.swing.JList" name="jListNodeHistory">
                                       <Properties>
                                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                                           <StringArray count="5">
