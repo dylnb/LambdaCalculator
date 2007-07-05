@@ -304,7 +304,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             Set diagnoses = new HashSet();
 
             if (didUserAttemptLambdaConversion(prevStep, userAnswer)) {
-                didUserApplyTheRightArgument(prevStep, userAnswer, responses, diagnoses);
+                didUserApplyTheRightArgument(prevStep, correct_answer, userAnswer, responses, diagnoses);
                 didUserRemoveTheRightLambda(prevStep, userAnswer, responses, diagnoses);
                 
                 // See if the user did everything right but made a mistake in the names of variables.
@@ -444,15 +444,25 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      * Error diagnostic. Given that the user has either removed a lambda or an argument, check
      * that it was the innermost argument that was removed.
      */
-    private void didUserApplyTheRightArgument(Expr prev_step, Expr answer, ArrayList hints, Set diagnoses) {
-        prev_step = prev_step.stripAnyParens();
+    private void didUserApplyTheRightArgument(Expr prevStep, Expr correctAnswer, Expr answer, ArrayList hints, Set diagnoses) {
+        // This check is actually kind of complicated due to the following situations:
+        //   Lx.P(x) a
+        //   Lx.[Ly.P(y) a] b
+        // After lambda conversion, the FunApp *inside* the lambda becomes the root
+        // of the expression, and so the correct answer actually has, in these cases,
+        // just as many arguments on the right edge of the expression as the previous
+        // step, rather than one less like in the basic examples.
+        
+        prevStep = prevStep.stripAnyParens();
+        correctAnswer = correctAnswer.stripAnyParens();
         answer = answer.stripAnyParens();
         
-        ArrayList correctargs = getFunAppArgs(prev_step);
+        ArrayList prevargs = getFunAppArgs(prevStep);
+        ArrayList correctargs = getFunAppArgs(correctAnswer);
         ArrayList userargs = getFunAppArgs(answer);
 
         // Did user remove exactly one argument?
-        if (correctargs.size()-1 != userargs.size()) {
+        if (correctargs.size() != userargs.size()) {
             hints.add("After each " + Lambda.SYMBOL + "-conversion, one argument should be gone on the right hand side.");
             return;
         }
@@ -461,8 +471,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // first because removing the first and the last arguments might
         // result in the same list (for duplicated arguments), and that
         // means the user did the right thing.
-        if (!userargs.equals(pop(correctargs))) {
-            hints.add("The leftmost " + Lambda.SYMBOL + "-slot corresponds with the leftmost argument to be " + Lambda.SYMBOL + "-converted.  Start with the argument '" +  correctargs.get(correctargs.size()-1) + "'.");
+        if (!userargs.equals(correctargs)) {
+            hints.add("The leftmost " + Lambda.SYMBOL + "-slot corresponds with the leftmost argument to be " + Lambda.SYMBOL + "-converted.  Start with the argument '" +  prevargs.get(prevargs.size()-1) + "'.");
             diagnoses.add("leftmost-leftmost");
         }
         
