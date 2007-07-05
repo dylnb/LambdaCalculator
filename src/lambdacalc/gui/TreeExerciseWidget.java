@@ -601,7 +601,7 @@ public class TreeExerciseWidget extends JPanel {
             canvas.invalidate();
         } else if (nodeHasError(selectedNode)) {
             return false; // can't go further
-        } else if (!isNodeFullyEvaluated()) {
+        } else if (!isNodeAtFinalSimplificationState(selectedNode)) {
             // Node is evaluated but not fully simplified, so go to the next
             // simplification step.
             if (testOnly) return true;
@@ -671,7 +671,7 @@ public class TreeExerciseWidget extends JPanel {
         if (!testOnly && !ensureChildrenEvaluated())
             return false;
         
-        if (!isNodeFullyEvaluated()) {
+        if (!isNodeAtFinalSimplificationState(selectedNode)) {
             if (testOnly) return !nodeHasError(selectedNode);
         
             if (!isNodeEvaluated(selectedNode))
@@ -774,18 +774,45 @@ public class TreeExerciseWidget extends JPanel {
         return ms.evaluationError != null;
     }
         
-    public boolean isNodeFullyEvaluated() {
-        return isNodeFullyEvaluated(selectedNode);
-    }
-    public boolean isNodeFullyEvaluated(LFNode node) {
-        //TODO should check if we're in god mode, and if yes should check
-        //if this node is done by the user, i.e. contains any meaning brackets
-        // and is well typed
+    public boolean isNodeAtFinalSimplificationState(LFNode node) {
         if (!isNodeEvaluated(node))
-            return false; // definitely not fully evaluated if it hasn't been evaluated at all
+            return false; // definitely not fully evaluated if it hasn't been evaluated (i.e. evaluation started) at all
         
         MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-        return ms.curexpr == ms.exprs.size()-1;
+        if (ms.evaluationError != null) return false;
+        
+        return ms.curexpr == ms.exprs.size() - 1;
+    }
+    
+    public boolean isNodeFullyEvaluated(LFNode node) {
+        if (!isNodeEvaluated(node))
+            return false; // definitely not fully evaluated if it hasn't been evaluated (i.e. evaluation started) at all
+        
+        MeaningState ms = (MeaningState)lfToMeaningState.get(node);
+        if (ms.evaluationError != null) return false;
+        
+        if (lambdacalc.Main.GOD_MODE) {
+            // Has user simplified to the last step?
+            return ms.curexpr == ms.exprs.size() - 1;
+        } else {
+            // Has user provided an expression that can no longer be simplified?
+            // If a type evaluation error occurs, we'll just take that to mean
+            // the expression can no longer be simplified, and so the user has
+            // reached the end, although to an incorrect answer.
+            // performLambdaConversion returns null when expression can't be 
+            // simplified.
+            
+            Expr cur_state = (Expr)ms.exprs.get(ms.exprs.size()-1);
+            
+            if (MeaningBracketExpr.hasMeaningBrackets(cur_state))
+                return false;
+            
+            try {
+                return cur_state.performLambdaConversion() == null;
+            } catch (TypeEvaluationException tee) {
+                return true;
+            }
+        }
     }
     
     private void evaluateNode(LFNode node) {
@@ -991,25 +1018,6 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     public boolean isTreeFullyEvaluated() {
-        MeaningState s = (MeaningState)lfToMeaningState.get(lftree);
-        if (s == null) return false;
-        if (s.evaluationError != null) return false;
-        
-        if (lambdacalc.Main.GOD_MODE) {
-            // Has user simplified to the last step?
-            return s.curexpr == s.exprs.size() - 1;
-        } else {
-            // Has user provided an expression that can no longer be simplified?
-            // If a type evaluation error occurs, we'll just take that to mean
-            // the expression can no longer be simplified, and so the user has
-            // reached the end, although to an incorrect answer.
-            // performLambdaConversion returns null when expression can't be 
-            // simplified.
-            try {
-                return ((Expr)s.exprs.get(s.exprs.size()-1)).performLambdaConversion() == null;
-            } catch (TypeEvaluationException tee) {
-                return true;
-            }
-        }
+        return isNodeFullyEvaluated(lftree);
     }
 }

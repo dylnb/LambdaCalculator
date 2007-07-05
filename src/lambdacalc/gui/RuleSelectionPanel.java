@@ -145,20 +145,21 @@ implements PropertyChangeListener, SelectionListener {
         
         
         if (node == null) return;
-        //TODO the following code doesn't do what it looks like it should, instead
-        //it does nothing. The semantics of "isNodeEvaluated" should be clarified.
-        if (!teWidget.isNodeEvaluated(node.getLeftChild())) {
-            teWidget.setErrorMessage("You must first complete both children of this node before you can start working on it.");
-            teWidget.setSelectedNode(node.getLeftChild());
-            return;
-        }
         
-        if (!teWidget.isNodeEvaluated(node.getRightChild())) {
-            teWidget.setErrorMessage("You must first complete both children of this node before you can start working on it.");
-            teWidget.setSelectedNode(node.getRightChild());
-            return;
+        // We want to make sure that any children of the seleted node
+        // that ought to have a meaning have been fully simplified by the
+        // user.
+        for (java.util.Iterator i = node.getChildren().iterator(); i.hasNext(); ) {
+            LFNode child = (LFNode)i.next();
+            if (child.isMeaningful()) {
+                if (!teWidget.isNodeFullyEvaluated(child)) {
+                    teWidget.setSelectedNode(child);
+                    teWidget.setErrorMessage("You must first complete all children of this node before you can start working on it.");
+                    return;
+                }
+            }
         }
-        
+       
         node.setCompositionRule(forValue(value));
 //<<<<<<< .mine
 //        try {

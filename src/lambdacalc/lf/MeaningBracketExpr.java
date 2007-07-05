@@ -87,6 +87,12 @@ public class MeaningBracketExpr extends Expr {
         return (e instanceof MeaningBracketExpr) && (node == ((MeaningBracketExpr)e).node);
     }
     
+    public static boolean hasMeaningBrackets(Expr expr) {
+        ArrayList objs = new ArrayList();
+        findMeaningBrackets(expr, objs);
+        return objs.size() > 0;
+    }
+    
     public static Expr replaceAllMeaningBrackets(Expr expr) 
     throws TypeEvaluationException, MeaningEvaluationException {
         // First get a list of all MeaningBracketExpr objects in expr.
