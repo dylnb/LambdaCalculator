@@ -289,7 +289,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 setDone(true);
                 return AnswerStatus.CorrectFinalAnswer("Correct!");
             } else if (currentThingToDo.equals(ALPHAVARY)) {
-                return AnswerStatus.CorrectStep("That is a licit alphabetical variant.  Now see if it is the one you need by reducing the expression...");
+                return AnswerStatus.CorrectStep("That is a licit alphabetical variant.  " +
+                        "Now see if it is the one you need by reducing the expression...");
             } else {
                 return AnswerStatus.CorrectStep("Yes!  Now keep reducing the expression...");
             }
@@ -307,8 +308,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 didUserRemoveTheRightLambda(prevStep, userAnswer, responses, diagnoses);
                 
                 // See if the user did everything right but made a mistake in the names of variables.
-                if (!correct_answer.alphaEquivalent(userAnswer) && correct_answer.operatorEquivalent(userAnswer) && !diagnoses.contains("leftmost-leftmost"))
-                    responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. Remember to substitute the argument for all free instances of the " + Lambda.SYMBOL + " variable, and for no other variables.");
+                if (!correct_answer.alphaEquivalent(userAnswer) 
+                && correct_answer.operatorEquivalent(userAnswer) 
+                && !diagnoses.contains("leftmost-leftmost"))
+                    responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. " +
+                            "Remember to substitute the argument for all free instances of the " 
+                            + Lambda.SYMBOL + " variable, and for no other variables.");
                 
                 // test if the number of removed lambdas doesn't equal the number of removed arguments
                 // (this indicates that the user tried to do a beta reduction but was confused)

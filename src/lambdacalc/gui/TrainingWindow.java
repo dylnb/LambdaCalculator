@@ -168,7 +168,9 @@ public class TrainingWindow extends JFrame {
         // call the right panel, so we don't have to cycle through all possible
         // node types with instanceof calls
         if (selectedNode instanceof Nonterminal) {
-            if (((Nonterminal) selectedNode).isBranching()) {
+            if (lambdacalc.Main.GOD_MODE) {
+                cardLayout.show(jPanelNodeProperties, "history");
+            } else if (((Nonterminal) selectedNode).isBranching()) {
                 // Try to display the lambda reduction panel, but if not, fall back
                 // on the rule selection panel.
                 // Show the lambda conversion panel if...
@@ -659,6 +661,10 @@ public class TrainingWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jPanelHistory = new javax.swing.JPanel();
+        jScrollPaneHistory = new javax.swing.JScrollPane();
+        jListHistory = new javax.swing.JList();
+        jLabel4 = new javax.swing.JLabel();
         jPanelBlank = new javax.swing.JPanel();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -1038,6 +1044,36 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.add(jPanelNonBranchingNonterminal, "nonBranchingNonterminal");
 
+        jListHistory.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPaneHistory.setViewportView(jListHistory);
+
+        jLabel4.setText("Node History");
+
+        org.jdesktop.layout.GroupLayout jPanelHistoryLayout = new org.jdesktop.layout.GroupLayout(jPanelHistory);
+        jPanelHistory.setLayout(jPanelHistoryLayout);
+        jPanelHistoryLayout.setHorizontalGroup(
+            jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelHistoryLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanelHistoryLayout.setVerticalGroup(
+            jPanelHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanelHistoryLayout.createSequentialGroup()
+                .add(jLabel4)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPaneHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanelNodeProperties.add(jPanelHistory, "history");
+
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
         jPanelCardLayout.add(jSplitPaneTrees, "treesCard");
@@ -1051,7 +1087,7 @@ public class TrainingWindow extends JFrame {
         );
         jPanelBlankLayout.setVerticalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 499, Short.MAX_VALUE)
+            .add(0, 500, Short.MAX_VALUE)
         );
         jPanelCardLayout.add(jPanelBlank, "blank");
 
@@ -1593,14 +1629,17 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelAboveDirections;
     private javax.swing.JLabel jLabelAboveQuestion;
+    private javax.swing.JList jListHistory;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelBareIndex;
     private javax.swing.JPanel jPanelBlank;
     private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelDefault;
     private javax.swing.JPanel jPanelEnterExpressions;
+    private javax.swing.JPanel jPanelHistory;
     private lambdacalc.gui.NonterminalReductionPanel jPanelLambdaConversion;
     private javax.swing.JPanel jPanelLexicalTerminal;
     private javax.swing.JPanel jPanelLowerLeft;
@@ -1615,6 +1654,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
     private javax.swing.JScrollPane jScrollPaneFeedback;
+    private javax.swing.JScrollPane jScrollPaneHistory;
     private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
