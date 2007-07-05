@@ -1277,7 +1277,7 @@ public class TrainingWindow extends JFrame {
                 txtFeedback.setText(message);
             }
             
-            jTreeExerciseFile.repaint();
+            repaintExerciseFileTree();
             
             setAnswerEnabledState(); // update enabled state of controls
             
@@ -1297,6 +1297,9 @@ public class TrainingWindow extends JFrame {
         
     }//GEN-LAST:event_onCheckAnswer
 
+    public void repaintExerciseFileTree() {
+        jTreeExerciseFile.repaint();
+    }
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentEx > 0) {
             currentEx--;

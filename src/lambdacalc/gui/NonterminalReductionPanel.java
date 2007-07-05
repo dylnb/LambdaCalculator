@@ -73,7 +73,9 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         txtUserAnswer.deleteAnyTemporaryText();
         switchOff(txtUserAnswer);
         jButtonCheckAnswer.setEnabled(false);
-        btnTransfer.setEnabled(true);
+        btnTransfer.setEnabled(false);
+        
+        TrainingWindow.getSingleton().repaintExerciseFileTree();
     }    
     
     private void noSimplificationNeeded() {
@@ -249,7 +251,7 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         
         if (status.isCorrect()) {
             teWidget.advanceSimplification(answer, status.endsExercise());
-            if (status.endsExercise()) {
+            if (status.endsExercise()) { 
                 tellGUIProblemSolved();
                 
                 String response = status.getMessage() + " ";
@@ -259,20 +261,30 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
                     response += "You have completed this tree.";
                 }
                 displayFeedback(response);
-            } else { // "Correct! Now simplify..."
+            } else { // "Correct! Now keep reducing the expression..."
                 //TODO if I replace the following line by
                 //txtQuestion.setText(exercise.getLastAnswer());
                 //then "exercise.getLastAnswer()" returns null, even though
                 //it doesn't return null ten lines above. The workaround for now
-                //is to have the lastAnswer determined above. But I really don't
-                //understand at all how getLastAnswer() can be affecte by the 
+                //is to have the lastAnswer determined above instead of here.
+                //But I really don't
+                //understand at all how getLastAnswer() can be affected by the 
                 //calls in the ten lines above. -Lucas
                 txtQuestion.setText(lastAnswer);
+                
+                //TODO I don't understand why the txtQuestion field has been cleared
+                //at this point. The following line is just a temporary workaround.-Lucas
+                //On second thought the following line could be considered a feature
+                //(that might be worthy of introducing in the lambda conversion exercise)
+                //because it means that we insert whitespaces in a way that shows how the
+                //program has "understood" the answer.
+                txtUserAnswer.setText(lastAnswer);
                 displayFeedback(status.getMessage());
             }
         } else {
             displayFeedback(status.getMessage());
         }
+
         
         txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_jButtonCheckAnsweronCheckAnswer

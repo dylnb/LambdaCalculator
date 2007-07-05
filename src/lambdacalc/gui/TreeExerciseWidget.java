@@ -257,6 +257,7 @@ public class TreeExerciseWidget extends JPanel {
         
         buildTree(canvas.getRoot(), lftree);
         
+        
         // Ensure tree layout is adjusted due to changes to node label.
         // This ought to be automatic, but isn't.
         canvas.invalidate();
@@ -483,6 +484,12 @@ public class TreeExerciseWidget extends JPanel {
         } else {
             meaningLabel.setVisible(false);
             meaningLabel.setText("");
+        }
+        
+        if (node.equals(this.lftree)) { // the root node has changed
+            this.exercise.setDone(isTreeFullyEvaluated()); 
+            // this makes the checkmark appear in the exercise tree to the left of the TrainingWindow GUI
+            //TODO activate the "repeat" button if the exercise is done
         }
     }
     
@@ -936,8 +943,7 @@ public class TreeExerciseWidget extends JPanel {
             updateButtonEnabledState();
         }
     }
-
-
+    
     
     public void openFullScreenWindow() {
         FullScreenTreeExerciseWidget fs = new FullScreenTreeExerciseWidget(this);
