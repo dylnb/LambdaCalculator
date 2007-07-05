@@ -1282,7 +1282,7 @@ public class TrainingWindow extends JFrame {
             setAnswerEnabledState(); // update enabled state of controls
             
             if (status.isCorrect())
-                flagChangeMade();
+                notifyUserHasUnsavedWork();
             
         } catch (SyntaxException s) {
             txtFeedback.setText(s.getMessage());
@@ -1326,7 +1326,7 @@ public class TrainingWindow extends JFrame {
 
     private void btnDoAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoAgainActionPerformed
         ex.reset();
-        flagChangeMade();
+        notifyUserHasUnsavedWork();
         jTreeExerciseFile.repaint();
         showExercise();
     }//GEN-LAST:event_btnDoAgainActionPerformed
@@ -1561,7 +1561,8 @@ public class TrainingWindow extends JFrame {
     // called in:
     // btnDoAgainActionPerformed()
     // onCheckAnswer()
-    private void flagChangeMade() {
+    // TreeExerciseWidget
+    public void notifyUserHasUnsavedWork() {
         hasUnsavedWork = true;
         if (hasUserSaved)
             menuItemSave.setEnabled(true);
@@ -1577,7 +1578,7 @@ public class TrainingWindow extends JFrame {
     
     private class LexiconListChangeListener implements LexiconList.ChangeListener {
         public void changeMade() {
-            flagChangeMade();
+            notifyUserHasUnsavedWork();
         }
     }
     

@@ -364,6 +364,11 @@ public class TreeExerciseWidget extends JPanel {
 
         propogateMeaningUpNonBranchingNodes(node);
         
+        // tell the tree exercise that user has started working on it
+        this.exercise.setHasBeenStarted(true);
+        // tell the GUI that the user has done something since last saving
+        TrainingWindow.getSingleton().notifyUserHasUnsavedWork();
+        
         // Ensure tree layout is adjusted due to changes to node label.
         // This ought to be automatic, but isn't.
         canvas.invalidate();
