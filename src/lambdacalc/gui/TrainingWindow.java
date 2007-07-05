@@ -660,12 +660,10 @@ public class TrainingWindow extends JFrame {
         jPanelNonBranchingNonterminal = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jPanelBlank = new javax.swing.JPanel();
-        jSeparatorBelowNavButtons = new javax.swing.JSeparator();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
         lblDirections = new javax.swing.JTextArea();
         jLabelAboveDirections = new javax.swing.JLabel();
-        jSeparatorBelowDirections = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemOpen = new javax.swing.JMenuItem();
@@ -676,6 +674,8 @@ public class TrainingWindow extends JFrame {
         menuTools = new javax.swing.JMenu();
         menuItemTeacherTool = new javax.swing.JMenuItem();
         menuItemScratchPad = new javax.swing.JMenuItem();
+        menuView = new javax.swing.JMenu();
+        jCheckBoxMenuItemPresentationMode = new javax.swing.JCheckBoxMenuItem();
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
@@ -872,6 +872,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
+        jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
         btnCheckAnswer.setText("Check Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1031,7 +1032,7 @@ public class TrainingWindow extends JFrame {
         jPanelNonBranchingNonterminal.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("This node is a nonbranching nonterminal. It is not necessary to assign it a rule.");
+        jLabel3.setText("This node is a nonbranching nonterminal. Its meaning carries over from its daughter.");
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanelNonBranchingNonterminal.add(jLabel3);
 
@@ -1041,6 +1042,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelCardLayout.add(jSplitPaneTrees, "treesCard");
 
+        jPanelBlank.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
         org.jdesktop.layout.GroupLayout jPanelBlankLayout = new org.jdesktop.layout.GroupLayout(jPanelBlank);
         jPanelBlank.setLayout(jPanelBlankLayout);
         jPanelBlankLayout.setHorizontalGroup(
@@ -1049,7 +1051,7 @@ public class TrainingWindow extends JFrame {
         );
         jPanelBlankLayout.setVerticalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 495, Short.MAX_VALUE)
+            .add(0, 499, Short.MAX_VALUE)
         );
         jPanelCardLayout.add(jPanelBlank, "blank");
 
@@ -1061,17 +1063,11 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weighty = 1.0;
         jPanelLowerRight.add(jPanelCardLayout, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
-        jPanelLowerRight.add(jSeparatorBelowNavButtons, gridBagConstraints);
-
         jSplitPaneRightHalf.setRightComponent(jPanelLowerRight);
 
         jPanelUpperRight.setLayout(new java.awt.GridBagLayout());
 
+        jPanelUpperRight.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
         jScrollPaneDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneDirections.setBorder(null);
         jScrollPaneDirections.setPreferredSize(new java.awt.Dimension(100, 100));
@@ -1098,13 +1094,6 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanelUpperRight.add(jLabelAboveDirections, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-        jPanelUpperRight.add(jSeparatorBelowDirections, gridBagConstraints);
 
         jSplitPaneRightHalf.setLeftComponent(jPanelUpperRight);
 
@@ -1190,11 +1179,58 @@ public class TrainingWindow extends JFrame {
 
         jMenuBar1.add(menuTools);
 
+        menuView.setMnemonic('v');
+        menuView.setText("View");
+        jCheckBoxMenuItemPresentationMode.setMnemonic('p');
+        jCheckBoxMenuItemPresentationMode.setText("Presentation Mode");
+        jCheckBoxMenuItemPresentationMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItemPresentationModeActionPerformed(evt);
+            }
+        });
+
+        menuView.add(jCheckBoxMenuItemPresentationMode);
+
+        jMenuBar1.add(menuView);
+
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jCheckBoxMenuItemPresentationModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemPresentationModeActionPerformed
+        if (!inPresentationMode) {
+            jSplitPaneMain.setDividerLocation(0.0);
+            jSplitPaneMainLastDividerSize = jSplitPaneMain.getDividerSize();
+            jSplitPaneMain.setDividerSize(0);
+            jSplitPaneMain.setEnabled(false);
+            
+            jSplitPaneRightHalf.setDividerLocation(0.0);
+            jSplitPaneRightHalfLastDividerSize = jSplitPaneRightHalf.getDividerSize();
+            jSplitPaneRightHalf.setDividerSize(0);
+            jSplitPaneRightHalf.setEnabled(false);
+            //jSplitPaneTrees.setDividerLocation(1.0);
+            inPresentationMode=true;
+            
+      
+        } else {
+            jSplitPaneMain.setDividerLocation(jSplitPaneMain.getLastDividerLocation());
+            jSplitPaneMain.setDividerSize(jSplitPaneMainLastDividerSize);
+            jSplitPaneMain.setEnabled(true);
+            
+            jSplitPaneRightHalf.setDividerLocation(jSplitPaneRightHalf.getLastDividerLocation());
+            jSplitPaneRightHalf.setDividerSize(jSplitPaneRightHalfLastDividerSize);
+            jSplitPaneRightHalf.setEnabled(true);
+            //jSplitPaneTrees.setDividerLocation(jSplitPaneTrees.getLastDividerLocation());
+            
+            inPresentationMode = false;
+        }
+    }//GEN-LAST:event_jCheckBoxMenuItemPresentationModeActionPerformed
+
+    boolean inPresentationMode = false;
+    int jSplitPaneMainLastDividerSize;
+    int jSplitPaneRightHalfLastDividerSize;
+    
     private void treeDisplayAncestorResized(java.awt.event.HierarchyEvent evt) {//GEN-FIRST:event_treeDisplayAncestorResized
 // TODO add your handling code here:
     }//GEN-LAST:event_treeDisplayAncestorResized
@@ -1432,7 +1468,7 @@ public class TrainingWindow extends JFrame {
                     "Cancel"};
 
            int n = JOptionPane.showOptionDialog(this,
-            "Some of your answers have not yet been saved. What should I do?",
+            "At least some of your answers have not yet been saved. What should I do?",
             "Lambda Calculator",
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE,
@@ -1548,6 +1584,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnTransfer;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemPresentationMode;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1577,8 +1614,6 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparatorBelowDirections;
-    private javax.swing.JSeparator jSeparatorBelowNavButtons;
     private javax.swing.JSplitPane jSplitPaneLeftHalf;
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
@@ -1601,6 +1636,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JMenuItem menuItemScratchPad;
     private javax.swing.JMenuItem menuItemTeacherTool;
     private javax.swing.JMenu menuTools;
+    private javax.swing.JMenu menuView;
     private lambdacalc.gui.TreeExerciseWidget treeDisplay;
     private javax.swing.JTextArea txtFeedback;
     private lambdacalc.gui.LambdaEnabledTextField txtQuestion;
