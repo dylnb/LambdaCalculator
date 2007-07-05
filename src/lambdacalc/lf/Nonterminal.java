@@ -1,19 +1,21 @@
 package lambdacalc.lf;
 
+import java.util.List;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Vector;
 import lambdacalc.logic.Expr;
-import lambdacalc.logic.Type;
-import lambdacalc.logic.TypeEvaluationException;
 
 public class Nonterminal extends LFNode {
-
+    
     private Vector children = new Vector();
     
     private CompositionRule compositor;
     private Vector userProvidedMeaningSimplification;
     
+    
+    public List getChildren() {
+        return children;
+    }
     
     public int size() {
         return children.size();
@@ -64,25 +66,25 @@ public class Nonterminal extends LFNode {
     public String getDisplayName() {
         return "Nonterminal";
     }
-
+    
     public boolean isMeaningful() {
         return true;
     }
     
-    public Expr getMeaning(AssignmentFunction g) 
+    public Expr getMeaning(AssignmentFunction g)
     throws MeaningEvaluationException {
-
+        
         if (lambdacalc.Main.GOD_MODE) {
             // Guess a composition rule, and if we don't find any, tell the user none seem to apply.
             if (compositor == null || !compositor.isApplicableTo(this))
                 guessCompositionRule(RuleList.HEIM_KRATZER);
             if (compositor == null) {
-                throw new NonterminalLacksCompositionRuleException(this, 
-        "I do not know how to combine the children of the " + getLabel() + " node." +
-        " For instance, function application does not apply because neither child's " +
-        "denotation is a function whose domain is the type of the denotation of the other child.");
+                throw new NonterminalLacksCompositionRuleException(this,
+                        "I do not know how to combine the children of the " + getLabel() + " node." +
+                        " For instance, function application does not apply because neither child's " +
+                        "denotation is a function whose domain is the type of the denotation of the other child.");
             }
-        
+            
         } else if (compositor == null && NonBranchingRule.INSTANCE.isApplicableTo(this)) {
             // We are always allowed to guess the non-branching rule, even when not in
             // God mode.
@@ -91,11 +93,11 @@ public class Nonterminal extends LFNode {
         } else {
             if (compositor == null)
                 throw new NonterminalLacksCompositionRuleException
-                        (this, "Select a composition rule for the nonterminal " 
+                        (this, "Select a composition rule for the nonterminal "
                         + toShortString() + " before you try" +
                         " to combine the children of this node.");
         }
-            
+        
         return compositor.applyTo(this, g, true);
     }
     
@@ -110,12 +112,12 @@ public class Nonterminal extends LFNode {
         SortedMap m = super.getProperties();
         m.put("Rule", this.getCompositionRule());
         return m;
-    }    
+    }
     
     /**
      * Calls itself recursively on the children nodes, then
-     * sets the composition rule of this nonterminal if it hasn't been 
-     * set yet and if it's uniquely determined. 
+     * sets the composition rule of this nonterminal if it hasn't been
+     * set yet and if it's uniquely determined.
      *
      * @param rules the rules
      */
@@ -125,7 +127,7 @@ public class Nonterminal extends LFNode {
         
         if (compositor != null)
             return;
-
+        
         if (nonBranchingOnly && this.isBranching()) return;
         
         guessCompositionRule(rules);
@@ -148,7 +150,7 @@ public class Nonterminal extends LFNode {
             CompositionRule rule = (CompositionRule) rules.get(i);
             if (rule.isApplicableTo(this)) {
                 if (compositor == null) {
-                    // The first time we hit a compatible composition rule, 
+                    // The first time we hit a compatible composition rule,
                     // assign it to ourself.
                     compositor = rule;
                 } else {
@@ -161,7 +163,7 @@ public class Nonterminal extends LFNode {
             }
         }
     }
-
+    
     public String toString() {
         String ret = "[";
         if (getLabel() != null) {
@@ -177,4 +179,5 @@ public class Nonterminal extends LFNode {
         ret += "]";
         return ret;
     }
+    
 }

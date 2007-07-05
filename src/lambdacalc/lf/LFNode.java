@@ -2,6 +2,7 @@ package lambdacalc.lf;
 
 import lambdacalc.logic.Expr;
 import java.beans.*;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import lambdacalc.logic.Type;
@@ -115,6 +116,16 @@ public abstract class LFNode {
         } 
         return result;
     }
+    public String toStringTerminalsOnly() {
+        String ret = "";
+        for (int i = 0; i < getChildren().size(); i++) {
+            if (i > 0) ret += " ";
+            ret += ((LFNode) getChildren().get(i)).toStringTerminalsOnly();
+        }
+        return ret;
+    }
+    
+    public abstract List getChildren();
     
     public String toHTMLString() {
         if (getLabel() != null) {

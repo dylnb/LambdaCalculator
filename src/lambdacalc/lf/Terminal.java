@@ -7,6 +7,9 @@
 
 package lambdacalc.lf;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  *
  * @author champoll
@@ -29,5 +32,14 @@ public abstract class Terminal extends LFNode {
     public void guessRules(RuleList rules, boolean nonBranchingOnly) {
     
     }    
+    List children = new Vector(0);
+    public List getChildren() {
+        return children;
+    }
+    
+    public String toStringTerminalsOnly() {
+//        if (this.getLabel() == null) return ""; else return this.getLabel();
+        return this.toShortString();
+    }
 
 }

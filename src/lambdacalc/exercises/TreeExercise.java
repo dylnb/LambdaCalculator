@@ -44,7 +44,8 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         return this.hasBeenStarted;
     }
     public String getExerciseText() {
-        return treeroot.toString();
+//        return treeroot.toString();
+        return treeroot.toStringTerminalsOnly();
     }
     
     public String getTipForTextField() {
