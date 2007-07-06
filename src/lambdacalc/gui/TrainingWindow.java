@@ -8,7 +8,6 @@ package lambdacalc.gui;
 
 import java.awt.CardLayout;
 import java.awt.event.KeyEvent;
-import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
 
@@ -16,9 +15,9 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import java.io.*;
 import lambdacalc.lf.BareIndex;
+import lambdacalc.lf.DummyTerminal;
 import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LexicalTerminal;
-import lambdacalc.lf.MeaningBracketExpr;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.Trace;
 
@@ -220,6 +219,8 @@ public class TrainingWindow extends JFrame {
             } else {
                 cardLayout.show(jPanelNodeProperties, "pronoun");
             }
+        } else if (selectedNode instanceof DummyTerminal) {
+            cardLayout.show(jPanelNodeProperties, "dummyTerminal");
         } else {
             cardLayout.show(jPanelNodeProperties, "default");
         }
@@ -687,6 +688,8 @@ public class TrainingWindow extends JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanelPronoun = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jPanelDummyTerminal = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
         jPanelBlank = new javax.swing.JPanel();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -1104,6 +1107,15 @@ public class TrainingWindow extends JFrame {
         jPanelPronoun.add(jLabel5);
 
         jPanelNodeProperties.add(jPanelPronoun, "pronoun");
+
+        jPanelDummyTerminal.setLayout(new java.awt.GridLayout());
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("This node is vacuous. It is not necessary to assign it a lexical entry.");
+        jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelDummyTerminal.add(jLabel6);
+
+        jPanelNodeProperties.add(jPanelDummyTerminal, "dummyTerminal");
 
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
@@ -1667,6 +1679,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelAboveDirections;
     private javax.swing.JLabel jLabelAboveQuestion;
     private javax.swing.JList jListNodeHistory;
@@ -1675,6 +1688,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelBlank;
     private javax.swing.JPanel jPanelCardLayout;
     private javax.swing.JPanel jPanelDefault;
+    private javax.swing.JPanel jPanelDummyTerminal;
     private javax.swing.JPanel jPanelEnterExpressions;
     private lambdacalc.gui.NonterminalReductionPanel jPanelLambdaConversion;
     private javax.swing.JPanel jPanelLexicalTerminal;
