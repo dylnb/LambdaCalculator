@@ -302,26 +302,11 @@ public class ExerciseFileParser {
         // and then escaped again to represent in source code.
         directions = directions.replaceAll("\\\\\\\\ *", "\n");
         
-        // Various escape sequence are also supported. (Note again the four
-        // backslashes which in the regex means just a single literal backslash.)
-        // As we do it now, the escape sequence ends on the first non-letter,
-        // so unlike LaTeX, \alphawhatever does not translate into awhatever.
-        Pattern p = Pattern.compile("\\\\([a-zA-Z]+)");
-        Matcher m = p.matcher(directions);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            String code = m.group(1);
-            code = ExpressionParser.translateEscapeCode(code);
-            m.appendReplacement(sb, code);
-        }
-        m.appendTail(sb);
-        directions = sb.toString();
-
         // Allow formulas to be surrounded in braces, parse them, and then
         // toString() them so that special symbols like lambdas are interpreted.
-        p = Pattern.compile("\\{([^}]+)\\}");
-        m = p.matcher(directions);
-        sb = new StringBuffer();
+        Pattern p = Pattern.compile("\\{([^}]+)\\}");
+        Matcher m = p.matcher(directions);
+        StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String exprstr = m.group(1);
             try {
@@ -335,6 +320,21 @@ public class ExerciseFileParser {
         m.appendTail(sb);
         directions = sb.toString();
         
+        // Various escape sequence are also supported. (Note again the four
+        // backslashes which in the regex means just a single literal backslash.)
+        // As we do it now, the escape sequence ends on the first non-letter,
+        // so unlike LaTeX, \alphawhatever does not translate into awhatever.
+        p = Pattern.compile("\\\\([a-zA-Z]+)");
+        m = p.matcher(directions);
+        sb = new StringBuffer();
+        while (m.find()) {
+            String code = m.group(1);
+            code = ExpressionParser.translateEscapeCode(code);
+            m.appendReplacement(sb, code);
+        }
+        m.appendTail(sb);
+        directions = sb.toString();
+
         return directions;
     }
 }
