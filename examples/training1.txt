@@ -11,6 +11,13 @@ title Semantic Types
 directions Give the semantic type of the following lambda-expressions.
 directions For instance, the type of "x" is e, and the type of "P(x)"
 directions is t.
+directions You may want to simplify the expressions in your mind if 
+directions necessary before assigning a type.
+directions You may omit commas between single-letter types only. Angled
+directions brackets around single-letter type combinations can be omitted 
+directions as well. Thus
+directions you can abbreviate <<e,t>,<e,t>> as <<et>,<et>> or simply 
+directions <et,et>.
 points per exercise 5
 
 P(a) -> Q(b)

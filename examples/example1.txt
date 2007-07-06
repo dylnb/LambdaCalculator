@@ -10,7 +10,7 @@ variables of type <et> : X Y
 
 exercise semantic types
 title Semantic Types
-directions Give the semantic type of the following lambda-expressions.
+directions Give the semantic type of the following lambda-expressions. You may want to simplify them in your mind if necessary before assigning a type.
 points per exercise 20
 
 Lx[P(x) & Q(x)]

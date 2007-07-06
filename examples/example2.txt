@@ -9,7 +9,7 @@ Homework 2
 # Next, typing conventions are entered. If no typing conventions
 # are given, some defaults are used.
 
-constants of type e : c p r s
+constants of type e : c p r s j m
 variables of type e : x-z
 variables of type v : e
 variables of type <e,t> : P-Q X-Z
@@ -38,14 +38,22 @@ use rule lambda abstraction
 # times. Students are able to add their own lexical entries
 # as well.
 
-define Carlos : c
-define Paco : p
-define Ron : r
-define Sue : s
-define Philadelphia : p
-define shaves : LxLy[shaves(y,x)]
-define introduces : LxLyLz[introduces(z,x,y)]
-define hug : Le.HUGGING(e)
+define sleep,sleeps : Lx[sleep(x)]
+define happy : Lx[happy(x)]
+define guy : Lx[guy(x)]
+define love, loves : LyLx[love(x,y)]
+define someone, somebody : LX[Ex[X(x)]]
+define everyone, everybody : LX[Ax[X(x)]]
+# TODO when we define "someone" as  LP[Ex[P(x)]],
+# we should get an immediate warning because P is declared above to 
+# be a constant
+define a : LX.LY.[Ex[X(x)&Y(x)]]
+define is : LX.Lx.[X(x)]
+
+# can we define "is" as LX.X?
+define John : j	
+define Mary : m
+
 
 # Finally, the exercises themselves are entered.
 
