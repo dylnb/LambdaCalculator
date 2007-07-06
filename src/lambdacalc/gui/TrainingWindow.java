@@ -215,7 +215,11 @@ public class TrainingWindow extends JFrame {
         } else if (selectedNode instanceof BareIndex) {
             cardLayout.show(jPanelNodeProperties, "bareIndex");
         } else if (selectedNode instanceof Trace) {
-            cardLayout.show(jPanelNodeProperties, "trace");
+            if (((Trace) selectedNode).isActualTrace()) {
+                cardLayout.show(jPanelNodeProperties, "trace");
+            } else {
+                cardLayout.show(jPanelNodeProperties, "pronoun");
+            }
         } else {
             cardLayout.show(jPanelNodeProperties, "default");
         }
@@ -681,6 +685,8 @@ public class TrainingWindow extends JFrame {
         jScrollPaneNodeHistory = new javax.swing.JScrollPane();
         jListNodeHistory = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
+        jPanelPronoun = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
         jPanelBlank = new javax.swing.JPanel();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -790,7 +796,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelLowerLeft.add(jPanelNavigationButtons, gridBagConstraints);
 
-        jPanelEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Expressions"));
+        jPanelEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Special Characters"));
         jPanelEnterExpressions.setPreferredSize(new java.awt.Dimension(0, 150));
         lblHelpHeader.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblHelpHeader.setColumns(20);
@@ -1090,6 +1096,15 @@ public class TrainingWindow extends JFrame {
         );
         jPanelNodeProperties.add(jPanelNodeHistory, "history");
 
+        jPanelPronoun.setLayout(new java.awt.GridLayout());
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("This node is a pronoun. It is not necessary to assign it a lexical entry.");
+        jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanelPronoun.add(jLabel5);
+
+        jPanelNodeProperties.add(jPanelPronoun, "pronoun");
+
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
         jPanelCardLayout.add(jSplitPaneTrees, "treesCard");
@@ -1384,7 +1399,12 @@ public class TrainingWindow extends JFrame {
     }//GEN-LAST:event_btnDoAgainActionPerformed
 
     private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
-        txtUserAnswer.setText(txtQuestion.getText());
+        //make any changes also in NonterminalReductionPanel and ScratchPadWindow
+        if (txtQuestion.getSelectedText() == null) {
+            txtUserAnswer.setText(txtQuestion.getText());
+        } else {
+            txtUserAnswer.setText(txtQuestion.getSelectedText());
+        }
         txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_btnTransferActionPerformed
 
@@ -1646,6 +1666,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelAboveDirections;
     private javax.swing.JLabel jLabelAboveQuestion;
     private javax.swing.JList jListNodeHistory;
@@ -1663,6 +1684,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelNodeHistory;
     private javax.swing.JPanel jPanelNodeProperties;
     private javax.swing.JPanel jPanelNonBranchingNonterminal;
+    private javax.swing.JPanel jPanelPronoun;
     private javax.swing.JPanel jPanelQuestion;
     private lambdacalc.gui.RuleSelectionPanel jPanelRuleSelection;
     private javax.swing.JPanel jPanelTrace;

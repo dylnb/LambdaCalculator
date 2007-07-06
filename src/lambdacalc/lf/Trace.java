@@ -11,6 +11,7 @@ import lambdacalc.logic.Expr;
 import lambdacalc.logic.GApp;
 
 /**
+ * A trace or a pronoun.
  *
  * @author champoll
  */
@@ -28,6 +29,10 @@ public class Trace extends Terminal {
     
     public boolean isMeaningful() {
         return true;
+    }
+    
+    public boolean isActualTrace() {
+        return this.getLabel().equals(this.SYMBOL);
     }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {

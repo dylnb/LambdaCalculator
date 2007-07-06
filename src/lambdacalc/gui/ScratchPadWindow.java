@@ -395,7 +395,12 @@ public class ScratchPadWindow extends javax.swing.JFrame {
 
     private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
         if (txtUserAnswer.isEnabled()) {
-            txtUserAnswer.setText(txtEnterYourOwnProblem.getText());
+            //make any changes also in TrainingWindow and NonterminalReductionPanel
+            if (txtEnterYourOwnProblem.getSelectedText() == null) {
+                txtUserAnswer.setText(txtEnterYourOwnProblem.getText());
+            } else {
+                txtUserAnswer.setText(txtEnterYourOwnProblem.getSelectedText());
+            }
             txtUserAnswer.requestFocusInWindow();
         } else if (txtEnterYourOwnProblem.isEnabled()) {
             txtEnterYourOwnProblem.requestFocusInWindow();
@@ -424,7 +429,20 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         // options for parsing lambda expressions
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = false; // LambdaEnabledTextBox will already do the conversion
-        exprParseOpts.singleLetterIdentifiers = true; // Pa means P(a) 
+        
+        Exercise trainingWindowExercise = TrainingWindow.getSingleton().getCurrentExercise();
+        if (trainingWindowExercise != null) {
+            if (trainingWindowExercise instanceof LambdaConversionExercise) {
+                exprParseOpts.singleLetterIdentifiers 
+                        = ((LambdaConversionExercise) trainingWindowExercise).isParseSingleLetterIdentifiers();
+            } else if (trainingWindowExercise instanceof TypeExercise) {
+                exprParseOpts.singleLetterIdentifiers = true; //TODO is this the best setting?
+            } else if (trainingWindowExercise instanceof TreeExercise) {
+                exprParseOpts.singleLetterIdentifiers = false;
+            }
+        }
+
+// Pa means P(a) 
         // TODO maybe singleLetterIdentifiers option should be parametrized
         // and/or dependent on whatever the state of the main window is?
         exprParseOpts.typer = it;

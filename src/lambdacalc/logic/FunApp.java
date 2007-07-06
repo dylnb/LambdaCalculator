@@ -84,24 +84,42 @@ public class FunApp extends Binary {
         
         if (!(getArg() instanceof ArgList) && domain instanceof ProductType) {
             int arity = ((ProductType)domain).getArity();
-            throw new TypeMismatchException(getFunc() + " is a " + functype + " that takes " + arity + " arguments but you provided only one argument.");
+            throw new TypeMismatchException
+                    (getFunc() + " is a " + functype + " that takes " + arity + 
+                    " arguments but you provided only one argument.");
         } else if (getArg() instanceof ArgList && !(domain instanceof ProductType)) {
-            if (functype.equals("predicate"))
-                throw new TypeMismatchException(getFunc() + " is a predicate that takes (first) a single " + domain + "-type argument alone, but you provided more than one argument together.");
-            else
-                throw new TypeMismatchException(getFunc() + " is a function which takes a (first) a single " + domain + "-type argument alone, but you provided more than one argument.");
+            String str;
+            if (functype.equals("predicate")) {
+                str = "predicate";
+            } else {
+                str = "function";
+            }
+                throw new TypeMismatchException
+                        (getFunc() + " is a " + str + " that takes (first) a single " 
+                        + domain + "-type argument alone, but you provided " +
+                        "more than one argument. Rewrite your expression " +
+                        "so that " + getFunc() + " is Sch\u00F6nfinkelized " +
+                        "(i.e. each argument to " + getFunc() + " is " +
+                        "surrounded by a separate " +
+                        "pair of brackets).");
         } else if (getArg() instanceof ArgList && domain instanceof ProductType) {
             int actualarity = ((ArgList)getArg()).getArity();
             int formalarity = ((ProductType)domain).getArity();
             if (actualarity != formalarity)
-                throw new TypeMismatchException(getFunc() + " is a " + functype + " that takes " + formalarity + " arguments but you provided " + actualarity + " arguments.");
+                throw new TypeMismatchException
+                        (getFunc() + " is a " + functype + " that takes " 
+                        + formalarity + " arguments but you provided " 
+                        + actualarity + " arguments.");
             for (int i = 0; i < actualarity; i++) {
                 Expr arg = ((ArgList)getArg()).getArgs()[i];
                 Type actualtype = arg.getType();
                 Type formaltype = ((ProductType)domain).getSubTypes()[i];
                 if (!actualtype.equals(formaltype))
-                    throw new TypeMismatchException(getFunc() + " is a " + functype + " whose " + getOrdinal(i) + " argument must be of type "
-                            + formaltype + " but " + arg + " is of type " + actualtype + ".");
+                    throw new TypeMismatchException
+                            (getFunc() + " is a " + functype + " whose " 
+                            + getOrdinal(i) + " argument must be of type "
+                            + formaltype + " but " + arg + " is of type " 
+                            + actualtype + ".");
             }
         } else { // !ArgList and !ProductType
             Type actualtype = getArg().getType();
@@ -109,8 +127,10 @@ public class FunApp extends Binary {
             if (functype.equals("predicate"))
                 functype = "one-place " + functype;
             if (!actualtype.equals(formaltype))
-                throw new TypeMismatchException(getFunc() + " is a " + functype + " whose argument must be of type "
-                        + formaltype + " but " + getArg() + " is of type " + actualtype + ".");
+                throw new TypeMismatchException(getFunc() + " is a " + functype 
+                        + " whose argument must be of type "
+                        + formaltype + " but " + getArg() + " is of type " 
+                        + actualtype + ".");
         }
         
         return funcType.getRight();

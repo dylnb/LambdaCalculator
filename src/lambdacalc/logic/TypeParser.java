@@ -116,7 +116,7 @@ public class TypeParser {
                         return new ParseResult(current.Left, i);
                 }
                 
-            } else if (c == ',') {
+            } else if (c == ',') { 
                 if (current.Left == null) { // still on the left side
                     throw new SyntaxException("You can't have a comma at the beginning of a type.", i);
                 } else if (current.Right != null) {
@@ -180,7 +180,12 @@ public class TypeParser {
                 throw new SyntaxException("Instead of braces, use the angled brackets '<' and '>'.", i);
                
             } else {
-                throw new BadCharacterException("The '" + c + "' character is not allowed in a type.", i);
+                if (c == '\u2192') { // unicode right arrow
+                    throw new BadCharacterException("In this program, please " +
+                            "write comma (\",\") instead of \"\u2192\".", i);
+                } else {
+                    throw new BadCharacterException("The '" + c + "' character is not allowed in a type.", i);
+                }
             }
         }
         

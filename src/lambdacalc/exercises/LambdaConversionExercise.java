@@ -250,7 +250,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             Expr correct_answer = (Expr)steps.get(matched_step);
             if (correct_answer.alphaEquivalent(userAnswer)) {
                 if (matched_step > currentStep && isNotSoFast())
-                    return AnswerStatus.Incorrect("Not so fast!  Do one " + Lambda.SYMBOL + "-conversion or alphabetical variant step at a time.");
+                    return AnswerStatus.Incorrect("Not so fast!  Do one " 
+                            + Lambda.SYMBOL + "-conversion or alphabetical " +
+                            "variant step at a time. (You're on the right track, but I'd " +
+                            "like to see your individual steps.");
 
                 // When this step is to create an alphabetical variant, the user
                 // must enter an expression that is alpha-equivalent

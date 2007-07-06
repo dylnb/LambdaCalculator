@@ -123,6 +123,10 @@ Does lambda abstraction really work if we have nested lambda abstractions?
 DONE The first step of a tree computation expansion is to show the meaning brackets
 We should go through all expression and type error messages and remove the presupposition that it was parsed as intended.
 LOW use JarBundler (http://informagen.com/JarBundler/) to create a Mac OS bundle from the jar file
+LOW lexiconlist should maybe use radiobuttons to choose among lexical entries in the list
+MEDIUM spacing shouldn't be meaningful too of ten -- or else feedback should say "Try putting a space somewhere, maybe it helps" or sth like that
+MEDIUM say more clearly that the expression can still be simplified (when this is the case)
+MEDIUM add a way to reference (i.e. display) the definitions of the h&k composition rules (function application etc.)
 
 scrollRectToVisible
 

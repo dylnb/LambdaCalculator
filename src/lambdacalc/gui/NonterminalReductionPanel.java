@@ -197,7 +197,12 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_txtUserAnswerActionPerformed
 
     private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
-        txtUserAnswer.setText(txtQuestion.getText());
+        //make any changes also in TrainingWindow and ScratchPadWindow
+        if (txtQuestion.getSelectedText() == null) {
+            txtUserAnswer.setText(txtQuestion.getText());
+        } else {
+            txtUserAnswer.setText(txtQuestion.getSelectedText());
+        }
         txtUserAnswer.requestFocusInWindow();
     }//GEN-LAST:event_btnTransferActionPerformed
 
