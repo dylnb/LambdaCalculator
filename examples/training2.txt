@@ -94,9 +94,9 @@ directions formal predicates relating the event to the relevant argument. This
 directions approach, called neo-Davidsonian, is exemplified in (4), where e is
 directions an event variable, type v.  To achieve the truth conditions in (4),
 directions two compositional approaches have been pursued: (5) and (6). \\
-directions (4)	[[(1)]] = 1 iff {Ee_v.[HUGG$ING(e) & $AG(e,r) & P$AT(e,s)]} \\
-directions (5)	[[hug]] = {LxLyLe_v.HUGG$ING(e) & $AG(e,y) & P$AT(e,x)}  \\
-directions (6)	[[hug]]	= {Le_v.HUGG$ING(e)} \\
+directions (4)	[[(1)]] = 1 iff {Ee_v.[HUGG\ING(e) & \AG(e,r) & P\AT(e,s)]} \\
+directions (5)	[[hug]] = {LxLyLe_v.HUGG\ING(e) & \AG(e,y) & P\AT(e,x)}  \\
+directions (6)	[[hug]]	= {Le_v.HUGG\ING(e)} \\
 directions In this exercise we’ll concentrate in the second version of the
 directions neo-Davidsonian approach, in (6).
 
