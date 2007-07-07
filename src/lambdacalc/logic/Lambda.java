@@ -42,6 +42,10 @@ public class Lambda extends Binder {
         return 4;
     }
     
+    public boolean dotPolicy() {
+        return true;
+    }
+    
     public String getSymbol() {
         return String.valueOf(SYMBOL);
     }

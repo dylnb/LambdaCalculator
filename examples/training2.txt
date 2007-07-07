@@ -22,7 +22,7 @@ define Sue : s
 define Philadelphia : p
 define shaves : LxLy[shaves(y,x)]
 define introduces : LxLyLz[introduces(z,x,y)]
-define hug : Le.HUGGING(e)
+define hug : Le.HUGG\ING(e)
 
 define the : LP.Ix.P(x)
 define woman: Lx.woman(x)

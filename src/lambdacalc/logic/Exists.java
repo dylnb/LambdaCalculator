@@ -41,6 +41,10 @@ public class Exists extends PropositionalBinder {
         return new Exists(variable, inner, hasPeriod());
     }
     
+    public boolean dotPolicy() {
+        return false;
+    }
+    
     Exists(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }

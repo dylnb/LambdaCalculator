@@ -47,6 +47,10 @@ public class Iota extends Binder {
         return new Iota(variable, inner, hasPeriod());
     }
     
+    public boolean dotPolicy() {
+        return false;
+    }
+    
     /**
      * Gets the operator precedence of this operator.
      * All values are documented in Expr, so don't change the value here

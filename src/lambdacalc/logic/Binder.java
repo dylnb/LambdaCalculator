@@ -2,6 +2,10 @@
  * Binder.java
  *
  * Created on May 29, 2006, 3:25 PM
+ *
+ * @author Lucas Champollion
+ * @author Maribel Romero
+ * @author Josh Tauberer
  */
 
 package lambdacalc.logic;
@@ -207,14 +211,37 @@ public abstract class Binder extends Expr {
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
     
+    /**
+     * Returns true if the prescriptively "right" way to write this binder
+     * consists in using a dot, i.e. if this binder should be displayed with
+     * a dot in program output.
+     */
+    public abstract boolean dotPolicy();
+    
     protected String toString(boolean html) {
         String inner = innerExpr.toString(html);
         if (!(innerExpr instanceof Binder) 
           && innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
             inner = "[" + inner + "]";
+//        } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {
+//            if (dotPolicy()) {
+//                inner = "." + inner;
+//            } else {
+//                inner = " " + inner;
+//            }
+//        }
         } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {
+            if (!dotPolicy()) {
+                inner = " " + inner;
+            } 
+        }
+         
+        // if this binder has a dot policy we prescriptively add a dot
+        // no matter what the user did (or whoever entered the expression)
+        if (dotPolicy()) {
             inner = "." + inner;
         }
+        
         return getSymbol() + escapeHTML(ident.toString(), html) + inner;
     }
     

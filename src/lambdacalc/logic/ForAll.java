@@ -36,6 +36,10 @@ public class ForAll extends PropositionalBinder {
     public String getSymbol() {
         return String.valueOf(SYMBOL);
     }
+    
+    public boolean dotPolicy() {
+        return false;
+    }
 
     protected Binder create(Identifier variable, Expr inner) {
         return new ForAll(variable, inner, hasPeriod());
