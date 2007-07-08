@@ -55,9 +55,9 @@ public class TreeExerciseWidget extends JPanel {
     
     // Buttons
     JButton btnSimplify = new JButton("Simplify Node");
-    JButton btnUnsimplify = new JButton("Undo Simplify");
+    JButton btnUnsimplify = new JButton("Undo");
     JButton btnNextStep = new JButton("Evaluate Node Fully");
-    JButton btnPrevStep = new JButton("Undo Evaluation");
+    JButton btnPrevStep = new JButton("Undo");
     JButton btnFullScreen = new JButton("Full Screen");
 //    JButton btnFontIncrease = new JButton("A\u2191");
 //    JButton btnFontDecrease = new JButton("A\u2193");
@@ -430,13 +430,18 @@ public class TreeExerciseWidget extends JPanel {
         btnPrevStep.setVisible(lambdacalc.Main.GOD_MODE);
         
         String simplifyText = "Simplify Node";
+        //String unSimplifyText = "Undo Simplify";
         if (lambdacalc.Main.GOD_MODE) {
-            if (selectedNode != null && selectedNode instanceof Terminal)
-                simplifyText = "Go To Next Node";
-            else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode))
+            if (selectedNode != null && selectedNode instanceof Terminal) {
+                simplifyText = "Next Node";
+            }
+            else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode)) {
                 simplifyText = "Evaluate Node";
+                //unSimplifyText = "Undo Eval";
+            }
         }
         btnSimplify.setText(simplifyText);
+        //btnUnsimplify.setText(unSimplifyText);
     }
     
     void curErrorChanged() {

@@ -32,8 +32,13 @@ public class WelcomeWindow extends javax.swing.JFrame {
         // the user answering positively to a JFileChooser
         
         initComponents();
-        
-        jLabelVersion.setText("version " + lambdacalc.Main.VERSION);
+        if (lambdacalc.Main.GOD_MODE) {
+            jLabelVersion.setText("version " + lambdacalc.Main.VERSION
+                    + " (teacher edition)");
+        } else {
+            jLabelVersion.setText("version " + lambdacalc.Main.VERSION 
+                    + " (student edition)");
+        }
     }
     
     public static void prepareWindow() {
@@ -207,10 +212,10 @@ public class WelcomeWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabelVersion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                         .add(btnScratchPad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                         .add(btnTeacherTool, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
-                        .add(btnExercise, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
+                        .add(btnExercise, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                        .add(jLabelVersion, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
                     .add(btnExit))
                 .add(12, 12, 12))
         );

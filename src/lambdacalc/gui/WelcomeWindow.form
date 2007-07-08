@@ -92,10 +92,10 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                      <Component id="jLabelVersion" alignment="1" pref="360" max="32767" attributes="0"/>
                       <Component id="btnScratchPad" alignment="0" pref="360" max="32767" attributes="0"/>
                       <Component id="btnTeacherTool" alignment="0" pref="360" max="32767" attributes="0"/>
                       <Component id="btnExercise" alignment="0" pref="360" max="32767" attributes="0"/>
+                      <Component id="jLabelVersion" alignment="0" pref="360" max="32767" attributes="0"/>
                   </Group>
                   <Component id="btnExit" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
