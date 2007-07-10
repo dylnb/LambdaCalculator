@@ -658,6 +658,9 @@ public class TrainingWindow extends JFrame {
         btnPrev = new javax.swing.JButton();
         btnDoAgain = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
+        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
+        lblIdentifierTypes = new javax.swing.JTextArea();
+        jScrollPaneEnterExpressions = new javax.swing.JScrollPane();
         jPanelEnterExpressions = new javax.swing.JPanel();
         lblHelpHeader = new javax.swing.JTextArea();
         lblHelpLambda = new javax.swing.JLabel();
@@ -665,8 +668,6 @@ public class TrainingWindow extends JFrame {
         lblHelpBinaries = new javax.swing.JLabel();
         lblHelpNot = new javax.swing.JLabel();
         lblHelpConditionals = new javax.swing.JLabel();
-        jScrollPaneIdentifierTypes = new javax.swing.JScrollPane();
-        lblIdentifierTypes = new javax.swing.JTextArea();
         jSplitPaneRightHalf = new javax.swing.JSplitPane();
         jPanelLowerRight = new javax.swing.JPanel();
         jPanelCardLayout = new javax.swing.JPanel();
@@ -810,7 +811,29 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelLowerLeft.add(jPanelNavigationButtons, gridBagConstraints);
 
-        jPanelEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Special Characters"));
+        jScrollPaneIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Typing Conventions"));
+        jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(23, 160));
+        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(239, 160));
+        lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        lblIdentifierTypes.setColumns(20);
+        lblIdentifierTypes.setEditable(false);
+        lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblIdentifierTypes.setLineWrap(true);
+        lblIdentifierTypes.setRows(5);
+        lblIdentifierTypes.setText(" ");
+        lblIdentifierTypes.setWrapStyleWord(true);
+        jScrollPaneIdentifierTypes.setViewportView(lblIdentifierTypes);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanelLowerLeft.add(jScrollPaneIdentifierTypes, gridBagConstraints);
+
+        jScrollPaneEnterExpressions.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jScrollPaneEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Special Characters"));
         jPanelEnterExpressions.setPreferredSize(new java.awt.Dimension(0, 150));
         lblHelpHeader.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblHelpHeader.setColumns(20);
@@ -854,7 +877,7 @@ public class TrainingWindow extends JFrame {
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 4, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -874,33 +897,15 @@ public class TrainingWindow extends JFrame {
                 .add(lblHelpConditionals)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        jScrollPaneEnterExpressions.setViewportView(jPanelEnterExpressions);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanelLowerLeft.add(jPanelEnterExpressions, gridBagConstraints);
-
-        jScrollPaneIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        jScrollPaneIdentifierTypes.setBorder(javax.swing.BorderFactory.createTitledBorder("Typing Conventions"));
-        jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(23, 160));
-        jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(239, 160));
-        lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        lblIdentifierTypes.setColumns(20);
-        lblIdentifierTypes.setEditable(false);
-        lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12));
-        lblIdentifierTypes.setLineWrap(true);
-        lblIdentifierTypes.setRows(5);
-        lblIdentifierTypes.setText(" ");
-        lblIdentifierTypes.setWrapStyleWord(true);
-        jScrollPaneIdentifierTypes.setViewportView(lblIdentifierTypes);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanelLowerLeft.add(jScrollPaneIdentifierTypes, gridBagConstraints);
+        jPanelLowerLeft.add(jScrollPaneEnterExpressions, gridBagConstraints);
 
         jSplitPaneLeftHalf.setRightComponent(jPanelLowerLeft);
 
@@ -912,6 +917,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelCardLayout.setLayout(new java.awt.CardLayout());
 
+        jPanelCardLayout.setPreferredSize(new java.awt.Dimension(606, 230));
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
@@ -1718,6 +1724,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelTypesAndConversions;
     private javax.swing.JPanel jPanelUpperRight;
     private javax.swing.JScrollPane jScrollPaneDirections;
+    private javax.swing.JScrollPane jScrollPaneEnterExpressions;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
     private javax.swing.JScrollPane jScrollPaneNodeHistory;
