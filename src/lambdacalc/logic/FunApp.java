@@ -78,6 +78,7 @@ public class FunApp extends Binary {
         
         CompositeType funcType = (CompositeType)getFunc().getType();
         Type domain = funcType.getLeft();
+        Type range = funcType.getRight();
         
         Expr func = getFunc().stripAnyParens();
         String functype = (func instanceof Identifier ? "predicate" : "function");
@@ -94,6 +95,13 @@ public class FunApp extends Binary {
             } else {
                 str = "function";
             }
+
+            if (range instanceof AtomicType) {
+                throw new TypeMismatchException
+                        (getFunc() + " is a " + str + " that takes a single " 
+                        + domain + "-type argument, but you provided " +
+                        "more than one argument.");
+            } else {
                 throw new TypeMismatchException
                         (getFunc() + " is a " + str + " that takes (first) a single " 
                         + domain + "-type argument alone, but you provided " +
@@ -102,6 +110,7 @@ public class FunApp extends Binary {
                         "(i.e. each argument to " + getFunc() + " is " +
                         "surrounded by a separate " +
                         "pair of brackets).");
+            }
         } else if (getArg() instanceof ArgList && domain instanceof ProductType) {
             int actualarity = ((ArgList)getArg()).getArity();
             int formalarity = ((ProductType)domain).getArity();

@@ -527,6 +527,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      * This method should normally only be called if currentThingToDo == BETAREDUCE
      */
     private void didUserRemoveTheRightLambda(Expr expr, Expr answer, ArrayList hints, Set diagnoses) {
+    	// TODO: We need same fix as in method above.
+    	
         expr = expr.stripAnyParens();
         answer = answer.stripAnyParens();
 
