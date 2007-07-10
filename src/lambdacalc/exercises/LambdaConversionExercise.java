@@ -299,14 +299,17 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             }
 
         } else { // incorrect
-            String hint;
+            String hint; //TODO rename into finalHint
             
 
             // Compile a list of messages about what we think the user did wrong.
             ArrayList responses = new ArrayList();
             Set diagnoses = new HashSet();
 
-            if (didUserAttemptLambdaConversion(prevStep, userAnswer)) {
+            //TODO the next three lines should be parametrized in their error messages
+            //on whether or not lambda conversion is the correct next thing to do
+            if (didUserAttemptLambdaConversion(prevStep, userAnswer)
+                && currentThingToDo.equals(BETAREDUCE)) {
                 didUserApplyTheRightArgument(prevStep, correct_answer, userAnswer, responses, diagnoses);
                 didUserRemoveTheRightLambda(prevStep, userAnswer, responses, diagnoses);
                 
@@ -316,8 +319,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 && !diagnoses.contains("leftmost-leftmost"))
                     responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. " +
                             "Remember to substitute the argument for all free instances of the " 
-                            + Lambda.SYMBOL + " variable, and for no other variables. "
+                            + Lambda.SYMBOL + " variable, and for nothing else. "
                             + "Check that you didn't make any substitutions of variables not bound by the " + Lambda.SYMBOL + ".");
+                //TODO "check that you didn't..." is misleading in cases where the user didn't in fact
+                //do any such substitutions
                 
                 // test if the number of removed lambdas doesn't equal the number of removed arguments
                 // (this indicates that the user tried to do a beta reduction but was confused)
@@ -335,6 +340,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             
             // This is a basically hint for what to do next.
             if (currentThingToDo.equals(ALPHAVARY)) {
+                didUserSubstituteButNeedingAlphabeticalVariant(prevStep, userAnswer, responses);
                 if (correct_answer.alphaEquivalent(userAnswer)) {
                     // the user has given a feasible alphabetical variant,
                     // but it is not the right one.
@@ -445,7 +451,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     
     /**
      * Error diagnostic. Given that the user has either removed a lambda or an argument, check
-     * that it was the innermost argument that was removed.
+     * that it was the innermost argument that was removed. 
+     * This method should normally only be called if currentThingToDo == BETAREDUCE
+     *
      */
     private void didUserApplyTheRightArgument(Expr prevStep, Expr correctAnswer, Expr answer, ArrayList hints, Set diagnoses) {
         // This check is actually kind of complicated due to the following situations:
@@ -455,6 +463,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // of the expression, and so the correct answer actually has, in these cases,
         // just as many arguments on the right edge of the expression as the previous
         // step, rather than one less like in the basic examples.
+        
+        
         
         prevStep = prevStep.stripAnyParens();
         correctAnswer = correctAnswer.stripAnyParens();
@@ -466,8 +476,10 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
         // Did user remove exactly one argument?
         if (correctargs.size() != userargs.size()) {
-            hints.add("After each " + Lambda.SYMBOL + "-conversion, one argument should be gone on the right hand side.");
+            
+            hints.add("After each " + Lambda.SYMBOL + "-conversion, exactly one argument should be gone on the right hand side.");
             return;
+            
         }
 
         // Test if the user did the right thing.  We have to do this test
@@ -511,6 +523,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         return list;
     }
 
+    /**
+     * This method should normally only be called if currentThingToDo == BETAREDUCE
+     */
     private void didUserRemoveTheRightLambda(Expr expr, Expr answer, ArrayList hints, Set diagnoses) {
         expr = expr.stripAnyParens();
         answer = answer.stripAnyParens();
@@ -593,6 +608,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     /**
      * This checks if the user did a beta reduction without doing a needed
      * alphabetical variant.
+     *
+     *
      */
     private void didUserSubstituteButNeedingAlphabeticalVariant(Expr expr, Expr answer, ArrayList hints) {
         try {

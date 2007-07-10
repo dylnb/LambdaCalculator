@@ -140,6 +140,10 @@ public class TreeExerciseWidget extends JPanel {
             exprs = steps;
             curexpr = exprs.size() - 1;
         }
+        
+        public Expr getCurrentExpression() {
+            return (Expr) this.exprs.get(this.curexpr);
+        }
     }
     
 
@@ -420,14 +424,31 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     void updateButtonEnabledState() {
-        // Check what buttons should be enabled now
+
+        btnNextStep.setVisible(lambdacalc.Main.GOD_MODE);
+        btnPrevStep.setVisible(lambdacalc.Main.GOD_MODE);
+        
+        
+        // if we're on a dummy node or index we switch the buttons off
+        // TODO switch them on and make it work without generating an error
+        // on these buttons
+        
+        if (selectedNode != null && 
+                ((selectedNode instanceof BareIndex 
+                || selectedNode instanceof DummyTerminal))) {
+            btnSimplify.setEnabled(false);
+            btnUnsimplify.setEnabled(false);
+            btnNextStep.setEnabled(false);
+            btnPrevStep.setEnabled(false);
+            return;
+        }
+        
+    // Check what buttons should be enabled now
         btnSimplify.setEnabled(doSimplify(true));
         btnUnsimplify.setEnabled(doUnsimplify(true));
         btnNextStep.setEnabled(doNextStep(true));
         btnPrevStep.setEnabled(doPrevStep(true));
         
-        btnNextStep.setVisible(lambdacalc.Main.GOD_MODE);
-        btnPrevStep.setVisible(lambdacalc.Main.GOD_MODE);
         
         String simplifyText = "Simplify Node";
         //String unSimplifyText = "Undo Simplify";
@@ -482,7 +503,7 @@ public class TreeExerciseWidget extends JPanel {
             java.awt.Color meaningColor;
             if (ms.evaluationError == null) { // was there an error?
                 //meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
-                meaningLabel.setText(((Expr)ms.exprs.get(ms.curexpr)).toString());
+                meaningLabel.setText(ms.getCurrentExpression().toString());
                 meaningColor = java.awt.Color.BLUE;
             } else {
                 //meaningLabel.setText("<center><font color=red>Problem!</font></center>");
@@ -496,12 +517,20 @@ public class TreeExerciseWidget extends JPanel {
             meaningLabel.setText("");
         }
         
+        //TODO the remainder of the code in this method
+        //is arguably logic related, not view-related, so it should
+        //be moved elsewhere
+        
+        
+        
         if (node.equals(this.lftree)) { // the root node has changed
             this.exercise.setDone(isTreeFullyEvaluated()); 
             // this makes the checkmark appear in the exercise tree to the left of the TrainingWindow GUI
             //TODO activate the "repeat" button if the exercise is done
         }
     }
+    
+  
     
     // Move the current evaluation node to the node indicated, but only
     // if all of its children have been fully evaluated and simplified. If they
@@ -864,9 +893,11 @@ public class TreeExerciseWidget extends JPanel {
         MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
         if (ms == null) return null;
         if (ms.evaluationError != null) return null;
-        return (Expr)ms.exprs.get(ms.curexpr);
+        return ms.getCurrentExpression();
     }
-   
+    
+
+  
     /**
      */
     public void advanceSimplification(Expr parsedMeaning, boolean isFinished) {
