@@ -10,7 +10,7 @@ public class Nonterminal extends LFNode {
     private Vector children = new Vector();
     
     private CompositionRule compositor;
-    private Vector userProvidedMeaningSimplification;
+    private Vector userProvidedMeaningSimplification; //of Expr objects
     
     
     public List getChildren() {
@@ -55,10 +55,12 @@ public class Nonterminal extends LFNode {
         changes.firePropertyChange("compositionRule", oldRule, compositor);
     }
     
+    //returns vector of Expr objects
     public Vector getUserMeaningSimplification() {
         return userProvidedMeaningSimplification;
     }
     
+    //simplificationSteps: vector of Expr objects
     public void setUserMeaningSimplification(Vector simplificationSteps) {
         userProvidedMeaningSimplification = simplificationSteps;
     }

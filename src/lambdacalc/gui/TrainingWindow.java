@@ -8,8 +8,6 @@ package lambdacalc.gui;
 
 import java.awt.CardLayout;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
 
@@ -177,12 +175,23 @@ public class TrainingWindow extends JFrame {
                 DefaultListModel model = new DefaultListModel();
                 Nonterminal nt = (Nonterminal)selectedNode;
                 
-//  display the entire node history (including the future history) at once                
-//                java.util.Vector steps = nt.getUserMeaningSimplification();
-//                if (steps != null) {
-//                    for (java.util.Iterator i = steps.iterator(); i.hasNext(); )
-//                        model.addElement(i.next());
-//                }
+                
+
+                
+                
+//  display the entire node history at once
+                java.util.Vector steps = nt.getUserMeaningSimplification();
+                // steps: a vector of Expr objects
+                if (steps != null) {
+                    for (java.util.Iterator i = steps.iterator(); i.hasNext(); ) {
+                        Expr next = (Expr) i.next();
+                        model.addElement(next);
+                        if (next.equals(treeDisplay.getNodeExpressionState
+                                (treeDisplay.getSelectedNode()))) {
+                            break; // don't go on b/c we don't want to display "future history"
+                        }
+                    }
+                }
 //                treeDisplay.addSelectionListener()
 //                nt.addPropertyChangeListener
 //                        (new PropertyChangeListener() {
