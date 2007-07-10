@@ -185,21 +185,16 @@ public class TrainingWindow extends JFrame {
                 if (steps != null) {
                     for (java.util.Iterator i = steps.iterator(); i.hasNext(); ) {
                         Expr next = (Expr) i.next();
-                        model.addElement(next);
+                        model.addElement(next.toString());
                         if (next.equals(treeDisplay.getNodeExpressionState
                                 (treeDisplay.getSelectedNode()))) {
                             break; // don't go on b/c we don't want to display "future history"
                         }
                     }
                 }
-//                treeDisplay.addSelectionListener()
-//                nt.addPropertyChangeListener
-//                        (new PropertyChangeListener() {
-//                    public void propertyChange(PropertyChangeEvent evt) {
-//                        Nonterminal nt = (Nonterminal) evt.getSource();
-//                        
-//                    }
-//                });
+                if (model.isEmpty()) {
+                    model.addElement("This node has not yet been evaluated.");
+                }
                 jListNodeHistory.setModel(model);
                         
             } else if (((Nonterminal) selectedNode).isBranching()) {
