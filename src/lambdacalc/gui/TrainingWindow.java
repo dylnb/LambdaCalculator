@@ -915,6 +915,7 @@ public class TrainingWindow extends JFrame {
         jPanelTypesAndConversions.setLayout(new java.awt.GridBagLayout());
 
         jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
+        jPanelTypesAndConversions.setMinimumSize(new java.awt.Dimension(0, 256));
         btnCheckAnswer.setText("Check Answer");
         btnCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1017,6 +1018,7 @@ public class TrainingWindow extends JFrame {
         jSplitPaneTrees.setResizeWeight(1.0);
         jSplitPaneTrees.setOneTouchExpandable(true);
         treeDisplay.setBackground(java.awt.Color.white);
+        treeDisplay.setMinimumSize(new java.awt.Dimension(0, 84));
         treeDisplay.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsListener() {
             public void ancestorMoved(java.awt.event.HierarchyEvent evt) {
             }
@@ -1029,7 +1031,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.setLayout(new java.awt.CardLayout());
 
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(180, 150));
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(0, 150));
         jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
         org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
         jPanelDefault.setLayout(jPanelDefaultLayout);
@@ -1110,7 +1112,7 @@ public class TrainingWindow extends JFrame {
         );
         jPanelNodeProperties.add(jPanelNodeHistory, "history");
 
-        jPanelPronoun.setLayout(new java.awt.GridLayout());
+        jPanelPronoun.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("This node is a pronoun. It is not necessary to assign it a lexical entry.");
@@ -1119,7 +1121,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.add(jPanelPronoun, "pronoun");
 
-        jPanelDummyTerminal.setLayout(new java.awt.GridLayout());
+        jPanelDummyTerminal.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("This node is vacuous. It is not necessary to assign it a lexical entry.");

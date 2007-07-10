@@ -96,6 +96,7 @@ public class FunApp extends Binary {
                 str = "function";
             }
 
+
             if (range instanceof AtomicType) {
                 throw new TypeMismatchException
                         (getFunc() + " is a " + str + " that takes a single " 
