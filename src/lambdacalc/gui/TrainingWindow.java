@@ -196,6 +196,7 @@ public class TrainingWindow extends JFrame {
                     model.addElement("This node has not yet been evaluated.");
                 }
                 jListNodeHistory.setModel(model);
+                jListNodeHistory.setEnabled(!model.isEmpty());
                         
             } else if (((Nonterminal) selectedNode).isBranching()) {
                 // Try to display the lambda reduction panel, but if not, fall back

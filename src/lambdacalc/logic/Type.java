@@ -94,6 +94,10 @@ public abstract class Type implements Comparable {
         throw new RuntimeException(); // unreachable
     }
     
+    /**
+     * A string representation that doesn't display more commas than needed.
+     */
+    public abstract String toShortString();
     
     /**
      * Writes a serialization of the type to a DataOutputStream.

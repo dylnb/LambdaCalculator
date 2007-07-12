@@ -76,6 +76,26 @@ public class CompositeType extends Type {
         }
     }
     
+    public String toShortString() {
+        if (left instanceof AtomicType && right instanceof AtomicType) {
+            return 
+                    //String.valueOf(LEFT_BRACKET)
+                    //+
+                    String.valueOf(left)
+            +String.valueOf(right)
+            //+String.valueOf(RIGHT_BRACKET)
+            ;
+        } else {  
+            return String.valueOf(LEFT_BRACKET)
+            + left.toShortString()
+            + (left instanceof ProductType ? " " : "")
+            + String.valueOf(SEPARATOR)
+            + (left instanceof ProductType ? " " : "")
+            + right.toShortString()
+            + String.valueOf(RIGHT_BRACKET);
+        }     
+    }
+    
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeUTF("CompositeType");
         output.writeShort(0); // data format version

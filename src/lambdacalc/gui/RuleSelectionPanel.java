@@ -112,6 +112,21 @@ implements PropertyChangeListener, SelectionListener {
         
     }
     
+    public void setVisibleFA(boolean b) {
+        this.jButtonFA.setVisible(b);
+        this.txtFA.setVisible(b);
+    }
+    
+    public void setVisiblePM(boolean b) {
+        this.jButtonPM.setVisible(b);
+        this.txtPM.setVisible(b);
+    }
+    
+    public void setVisibleLA(boolean b) {
+        this.jButtonLA.setVisible(b);
+        this.txtLA.setVisible(b);
+    }
+
     public JButton getFAButton() {
         return this.jButtonFA;
     }
@@ -265,6 +280,8 @@ implements PropertyChangeListener, SelectionListener {
         jLabel4.setFont(new java.awt.Font("Lucida Grande", 1, 16));
         jLabel4.setText("Select a composition rule");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.insets = new java.awt.Insets(8, 0, 20, 0);
         jPanel1.add(jLabel4, gridBagConstraints);
@@ -305,7 +322,7 @@ implements PropertyChangeListener, SelectionListener {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

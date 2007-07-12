@@ -63,6 +63,10 @@ public class ProductType extends Type {
         return hc;
     }
     
+    public String toShortString() {
+        return toString();
+    }
+    
     public String toString() {
         String ret = "";
         for (int i = 0; i < getSubTypes().length; i++) {

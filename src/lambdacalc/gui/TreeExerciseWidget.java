@@ -28,12 +28,16 @@ public class TreeExerciseWidget extends JPanel {
     private TreeExercise exercise; // this is the exercise we're displaying
     Nonterminal lftree; // this is the tree we're displaying
     
+    private boolean typesDisplayed = lambdacalc.Main.GOD_MODE;
+    //whether or not we display the types of nodes in the tree
+    
     JScrollPane scrollpane;
     TreeCanvas canvas; // this is the display widget
     
     // Maps from LFNodes in lftree to controls being displayed and other state.
     Map lfToTreeLabelPanel = new HashMap(); // panel containing ortho label, propositional content
     Map lfToOrthoLabel = new HashMap(); // orthographic label
+    Map lfToTypeLabel = new HashMap(); // type label
     Map lfToMeaningLabel = new HashMap(); // propositional content label (for nonterminals only if we're using dropdowns for terminals)
     Map lfToMeaningState; // state of the propositional label, or null if node is not evaluated yet
     Map lfToParent = new HashMap(); // parent LFNode
@@ -296,6 +300,14 @@ public class TreeExerciseWidget extends JPanel {
         orthoLabel.setAlignmentX(.5F);
         orthoLabel.addMouseListener(new NodeClickListener(lfnode));
         lfToOrthoLabel.put(lfnode, orthoLabel);
+
+        if (isTypesDisplayed()) {
+            JLabel typeLabel = new JLabel();
+            label.add(typeLabel);
+            typeLabel.setAlignmentX(.5F);
+            //typeLabel.addMouseListener(new NodeClickListener(lfnode));
+            lfToTypeLabel.put(lfnode, typeLabel);
+        }
         
         JLabel meaningLabel = new JLabel();
         label.add(meaningLabel);
@@ -493,28 +505,54 @@ public class TreeExerciseWidget extends JPanel {
             labeltext = "&nbsp;-&nbsp;";
         orthoLabel.setText("<center style=\"font-size: " + curFontSize + "pt\">" + labeltext + "</font></center>");
         
+        
+        
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
         // display the lambda expression.
         JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
         meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
+        JLabel typeLabel = null;
+        if (isTypesDisplayed()) {
+            typeLabel = (JLabel)lfToTypeLabel.get(node);
+            typeLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
+        }
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
             java.awt.Color meaningColor;
+            java.awt.Color typeColor = new java.awt.Color(0,100,0);//dark green
             if (ms.evaluationError == null) { // was there an error?
                 //meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
-                meaningLabel.setText(ms.getCurrentExpression().toString());
+                Expr expr = ms.getCurrentExpression();
+                meaningLabel.setText(expr.toString());
                 meaningColor = java.awt.Color.BLUE;
-            } else {
+                if (isTypesDisplayed()) {
+                    try {
+                        typeLabel.setText(expr.getType().toShortString());
+                    } catch (TypeEvaluationException e) {
+                        typeLabel.setText("Type unknown");
+                        typeColor = java.awt.Color.RED;
+                    }
+                }                
+            } else { // there was an error in evaluating the node
                 //meaningLabel.setText("<center><font color=red>Problem!</font></center>");
                 meaningLabel.setText("Problem!");
                 meaningColor = java.awt.Color.RED;
+                
             }
             meaningLabel.setForeground(meaningColor);
             meaningLabel.setVisible(true);
-        } else {
+            if (isTypesDisplayed()) {
+                typeLabel.setForeground(typeColor);
+                typeLabel.setVisible(true);
+            }
+        } else { // the noded has not been evaluated
             meaningLabel.setVisible(false);
             meaningLabel.setText("");
+            if (isTypesDisplayed()) {
+                typeLabel.setVisible(false);
+                typeLabel.setText("");
+            }
         }
         
         //TODO the remainder of the code in this method
@@ -1055,5 +1093,14 @@ public class TreeExerciseWidget extends JPanel {
     
     public boolean isTreeFullyEvaluated() {
         return isNodeFullyEvaluated(lftree);
+    }
+
+    public boolean isTypesDisplayed() {
+        return typesDisplayed;
+    }
+
+    //must manually redisplay the tree after this is set
+    public void setTypesDisplayed(boolean typesDisplayed) {
+        this.typesDisplayed = typesDisplayed;
     }
 }

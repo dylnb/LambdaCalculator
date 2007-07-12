@@ -29,6 +29,10 @@ public class AtomicType extends Type {
         return String.valueOf(this.symbol);
     }
     
+    public String toShortString() {
+        return toString();
+    }
+    
     protected boolean equals(Type t) {
         if (t instanceof AtomicType) {
             AtomicType at = (AtomicType) t;
