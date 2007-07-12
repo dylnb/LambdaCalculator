@@ -48,7 +48,8 @@ public class TypeParser {
         }
     }
     
-    static ParseResult parseType(String type, int start, boolean stopSoon) throws SyntaxException {
+    static ParseResult parseType(String type, int start, boolean stopSoon) 
+    throws SyntaxException {
         Stack stack = new Stack();
         ParseState current = new ParseState();
         
@@ -59,9 +60,9 @@ public class TypeParser {
             
             if (isParsingProduct) {
                 if (current.Right != null)
-                    current.Right = AddProduct(current.Right, new AtomicType(c));
+                    current.Right = addProduct(current.Right, new AtomicType(c));
                 else
-                    current.Left = AddProduct(current.Left, new AtomicType(c));
+                    current.Left = addProduct(current.Left, new AtomicType(c));
                 isParsingProduct = false;
                 continue;
             }
@@ -79,16 +80,20 @@ public class TypeParser {
                     if (current.ReadBracket) {
                         if (current.ReadComma)
                             // <a,b<
-                            throw new SyntaxException("You can't have an open bracket here.  A close bracket is needed to finish the type.", i);
+                            throw new SyntaxException("You can't have an open " +
+                                    "bracket here.  A close bracket is needed " +
+                                    "to finish the type.", i);
                         else
                             // <ab<
-                            throw new SyntaxException("You can't have an open bracket here.  You seem to be missing a comma or close bracket.", i);
+                            throw new SyntaxException("You can't have an open " +
+                                    "bracket here.  You seem to be missing a comma or close bracket.", i);
                     } else {
                         // a,b< or ab<
                         throw new SyntaxException("You can't have an open bracket here.", i);
                     }
                 } else if (!current.ReadBracket) {
-                    throw new SyntaxException("You can't start a complex type here.  Enclose the outer type with brackets.", i);
+                    throw new SyntaxException("You can't start a complex type " +
+                            "here.  Enclose the outer type with angle brackets <>.", i);
                 } else {
                     stack.push(current);
                     current = new ParseState();
@@ -98,20 +103,28 @@ public class TypeParser {
             } else if (c == '>' || c == CompositeType.RIGHT_BRACKET) {
                 if (current.Left == null) { // still on the left side
                     if (!current.ReadBracket)
-                        throw new SyntaxException("You can't have a close bracket at the beginning of a type.", i);
+                        throw new SyntaxException("You can't have a close bracket" +
+                                " at the beginning of a type.", i);
                     else
-                        throw new SyntaxException("Insert a pair of types within the brackets.", i);
+                        throw new SyntaxException("Insert a pair of types within" +
+                                " the brackets.", i);
                 } else if (current.Right == null) {
                     if (current.Left instanceof AtomicType)
-                        throw new SyntaxException("You cannot have brackets around an atomic type. Brackets only surround function types, like <e,t>. Remove these brackets.", i);
+                        throw new SyntaxException("You cannot have brackets " +
+                                "around an atomic type. Brackets only surround " +
+                                "function types, like <e,t>. Remove these brackets.", i);
                     else if (current.Left instanceof CompositeType)
-                        throw new SyntaxException("You have an extra pair of brackets around " + current.Left + " at the indicated location.  Remove these brackets.", i);
+                        throw new SyntaxException("You have an extra pair of " +
+                                "brackets around " + current.Left + " at the " +
+                                "indicated location.  Remove these brackets.", i);
                     else
-                        throw new SyntaxException("You cannot have brackets at the indicated location. Brackets only surround function types, like <e,t>.  Remove these brackets.", i);
+                        throw new SyntaxException("You cannot have brackets at " +
+                                "the indicated location. Brackets only surround" +
+                                " function types, like <e,t>.  Remove these brackets.", i);
                 } else {
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket here.", i);
-                    current = CloseType(stack, current);
+                    current = closeType(stack, current);
                     if (stopSoon && stack.size() == 0 && current.Right == null)
                         return new ParseResult(current.Left, i);
                 }
@@ -123,7 +136,7 @@ public class TypeParser {
                     if (!current.ReadBracket && current.ReadComma) {
                         throw new SyntaxException("You can't have a comma again. Are you missing brackets?", i);
                     } else if (!current.ReadBracket && !current.ReadComma) {
-                        throw new SyntaxException("A pair of complex types must be surrounded by brackets. Add brackets where needed.", i);
+                        throw new SyntaxException("A pair of complex types must be surrounded by angle brackets < >. Add brackets where needed.", i);
                     } else if (current.ReadBracket && !current.ReadComma) {
                         current.Left = new CompositeType(current.Left, current.Right);
                         current.Right = null;
@@ -132,9 +145,14 @@ public class TypeParser {
                         throw new SyntaxException("You can't have a comma again. Are you missing brackets?", i);
                     }
                 } else if (!current.ReadBracket) {
-                    throw new SyntaxException("I can only understand a complex type with a comma when the type is surrounded by brackets. Add brackets where needed.", i);
+                    throw new SyntaxException("I can only understand a complex " +
+                            "type with a comma when the type is surrounded by " +
+                            "angle brackets < >. Add brackets where needed, or " +
+                            "remove the comma if that doesn't introduce an " +
+                            "ambiguity.", i);
                 } else if (current.ReadComma) {
-                    throw new SyntaxException("You can't have a comma again. Are you missing brackets?", i);
+                    throw new SyntaxException("You can't have a comma again. Are" +
+                            " you missing brackets?", i);
                 } else {
                     current.ReadComma = true;
                 }
@@ -147,44 +165,59 @@ public class TypeParser {
                     current.Left = at;
                 } else if (current.Right == null) {
                     if (!current.ReadBracket && !(current.Left instanceof AtomicType))
-                        throw new SyntaxException("Add a comma to separate these types, and add the corresponding brackets.", i);
+                        throw new SyntaxException("Add a comma to separate " +
+                                "these types, and add the corresponding " +
+                                "angle brackets <>.", i);
                     current.Right = at;
                 } else {
                     if (!current.ReadBracket && current.ReadComma)
-                        throw new SyntaxException("I can only understand a complex type with a comma when the type is surrounded by brackets. Add brackets where needed.", i);
+                    throw new SyntaxException("I can only understand a complex " +
+                            "type with a comma when the type is surrounded by " +
+                            "angle brackets < >. Add brackets where needed, or " +
+                            "remove the comma if that doesn't introduce an " +
+                            "ambiguity.", i);
                     else if (!current.ReadBracket && !current.ReadComma)
                         // ett
-                        throw new SyntaxException("The expression is ambiguous. Add some brackets.", i);
+                        throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
                     else if (current.ReadBracket && current.ReadComma && current.Right instanceof AtomicType)
                         // <e, et>
                         current.Right = new CompositeType(current.Right, at);
                     else
-                        throw new SyntaxException("The expression is ambiguous. Add some brackets.", i);
+                        throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
                 }
                 
             } else if (c == '*' || c == ProductType.SYMBOL) {
                 if (current.Left == null || (current.ReadComma && current.Right == null))
-                    throw new SyntaxException("'*' is used to create a type like e" + ProductType.SYMBOL + "e.  It cannot be used at the start of a type.", i);
-                if ((current.Right != null && current.Right instanceof CompositeType) || (current.Left != null && current.Left instanceof CompositeType))
-                    throw new SyntaxException("'*' is used to create a type like e" + ProductType.SYMBOL + "e over atomic types.  It cannot be used after a composite type.", i);
+                    throw new SyntaxException("'*' is used to create a type " +
+                            "like e" + ProductType.SYMBOL + "e.  It cannot be " +
+                            "used at the start of a type.", i);
+                if ((current.Right != null && current.Right instanceof CompositeType) 
+                || (current.Left != null && current.Left instanceof CompositeType))
+                    throw new SyntaxException("'*' is used to create a type like e" 
+                            + ProductType.SYMBOL + "e over atomic types.  " +
+                            "It cannot be used after a composite type.", i);
                 isParsingProduct = true;
                 
             } else if (Character.isWhitespace(c)) {
                 // do nothing
               
             } else if (c == '(' || c == ')') {
-                throw new SyntaxException("Instead of parentheses, use the angled brackets '<' and '>'.", i);
+                throw new SyntaxException("Instead of parentheses, use " +
+                        "the angle brackets '<' and '>'.", i);
             } else if (c == '[' || c == ']') {
-                throw new SyntaxException("Instead of square brackets, use the angled brackets '<' and '>'.", i);
+                throw new SyntaxException("Instead of square brackets, use " +
+                        "the angle brackets '<' and '>'.", i);
             } else if (c == '{' || c =='}') {
-                throw new SyntaxException("Instead of braces, use the angled brackets '<' and '>'.", i);
+                throw new SyntaxException("Instead of braces, use " +
+                        "the angle brackets '<' and '>'.", i);
                
             } else {
                 if (c == '\u2192') { // unicode right arrow
                     throw new BadCharacterException("In this program, please " +
                             "write comma (\",\") instead of \"\u2192\".", i);
                 } else {
-                    throw new BadCharacterException("The '" + c + "' character is not allowed in a type.", i);
+                    throw new BadCharacterException
+                            ("The '" + c + "' character is not allowed in a type.", i);
                 }
             }
         }
@@ -205,12 +238,15 @@ public class TypeParser {
             if (current.ReadBracket)
                 throw new SyntaxException("You're missing a closing bracket.", type.length());
             if (current.ReadComma) // comma but no brackets
-                 throw new SyntaxException("I can only understand a complex type with a comma when the type is surrounded by brackets. Add brackets around the whole type.", start);
+                    throw new SyntaxException("I can only understand a complex " +
+                            "type with a comma when the type is surrounded by " +
+                            "angle brackets < >. Add brackets around the whole type, or " +
+                            "remove the comma.", start);
             return new ParseResult(new CompositeType(current.Left, current.Right), type.length()-1);
         }
     }
     
-    private static ParseState CloseType(Stack domains, ParseState current) {
+    private static ParseState closeType(Stack domains, ParseState current) {
         Type ct;
         while (true) {
             ct = new CompositeType(current.Left, current.Right);
@@ -231,7 +267,7 @@ public class TypeParser {
         }
     }
     
-    private static ProductType AddProduct(Type t, AtomicType at) {
+    private static ProductType addProduct(Type t, AtomicType at) {
         if (t instanceof ProductType) {
             ProductType pt = (ProductType)t;
             Type[] st = new Type[pt.getSubTypes().length + 1];
