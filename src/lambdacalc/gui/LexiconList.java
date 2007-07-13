@@ -268,11 +268,11 @@ public class LexiconList extends JPanel
                 fireChangeMade();
             
             } catch (SyntaxException se) {
-                Util.displayErrorMessage(TrainingWindow.getSingleton(), se.getMessage(), "Add Lexical Entry");
+                Util.displayErrorMessage(TrainingWindow.getSingleton(), se.getMessage(), "Assign Denotation");
                 if (se.getPosition() != -1)
                     lambdaEditor.setCaretPosition(se.getPosition());
             } catch (TypeEvaluationException tee) {
-                Util.displayErrorMessage(TrainingWindow.getSingleton(), tee.getMessage(), "Add Lexical Entry");
+                Util.displayErrorMessage(TrainingWindow.getSingleton(), tee.getMessage(), "Assign Denotation");
             }
             
             lambdaEditor.requestFocus();

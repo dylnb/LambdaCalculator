@@ -178,7 +178,8 @@ public class TypeParser {
                             "ambiguity.", i);
                     else if (!current.ReadBracket && !current.ReadComma)
                         // ett
-                        throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
+                        throw new SyntaxException("What you wrote is ambiguous. Add some angle brackets <> " +
+                                "in order to indicate what you mean.", i);
                     else if (current.ReadBracket && current.ReadComma && current.Right instanceof AtomicType)
                         // <e, et>
                         current.Right = new CompositeType(current.Right, at);

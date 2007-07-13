@@ -34,6 +34,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
     
     private boolean userMod = false; // whether user is trying to modify a problem he's currently working on
     
+    private static boolean typingConventionsAreSet = false;
+    
     private Exercise ex=null; // contract: this must be null whenever a problem has been solved
     private Exercise previousEx; // whenever a problem is solved it is written in here
     
@@ -43,8 +45,9 @@ public class ScratchPadWindow extends javax.swing.JFrame {
        if (singleton == null) {
             singleton = new ScratchPadWindow();
        }
-       setTypingConventions(null); // sets them to default
-
+       if (!typingConventionsAreSet) { // not yet set
+           setTypingConventions(null); // sets them to default
+       }
        singleton.resetGUI();
     }
         
@@ -77,6 +80,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
         if (singleton != null) {
             singleton.lblIdentifierTypes.setText("Use the following typing conventions:\n" + typer);
         }
+        typingConventionsAreSet = true;
     }
     
     /** This method is called from within the constructor to
