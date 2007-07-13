@@ -418,7 +418,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
 
     public String getLastAnswer() {
         if (lastAnswer == null) return null;
-        return lastAnswer.toString();
+        return lastAnswer.stripAnyDoubleParens().toString();
     }
 
     public IdentifierTyper getIdentifierTyper() {

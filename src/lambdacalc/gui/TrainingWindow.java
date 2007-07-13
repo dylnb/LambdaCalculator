@@ -457,6 +457,8 @@ public class TrainingWindow extends JFrame {
             this.jTreeExerciseFile.setRowHeight(this.jTreeExerciseFile.getFont().getBaselineFor('A'));
         }
         
+        jPanelRuleSelection.setVisibleRules(this.getCurrentExFile().getRules());
+        
         showFirstExercise();
         
     }

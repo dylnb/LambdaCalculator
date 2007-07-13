@@ -7,7 +7,6 @@
 package lambdacalc.gui;
 
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 import javax.swing.JButton;
 import lambdacalc.gui.TreeExerciseWidget.SelectionEvent;
 import lambdacalc.gui.TreeExerciseWidget.SelectionListener;
@@ -18,6 +17,7 @@ import lambdacalc.lf.LambdaAbstractionRule;
 import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.PredicateModificationRule;
+import lambdacalc.lf.RuleList;
 
 /**
  *
@@ -64,6 +64,11 @@ implements PropertyChangeListener, SelectionListener {
 //        this.dialog = dialog;
 //    }
     
+    public void setVisibleRules(RuleList r) {
+        setVisibleFA(r.contains(FA_RULE));
+        setVisiblePM(r.contains(PM_RULE));
+        setVisibleLA(r.contains(LA_RULE));
+    }
     
     
     public void propertyChange(java.beans.PropertyChangeEvent e) {
@@ -112,19 +117,22 @@ implements PropertyChangeListener, SelectionListener {
         
     }
     
-    public void setVisibleFA(boolean b) {
+    private void setVisibleFA(boolean b) {
         this.jButtonFA.setVisible(b);
         this.txtFA.setVisible(b);
+        this.jLabelFA.setVisible(b);
     }
     
-    public void setVisiblePM(boolean b) {
+    private void setVisiblePM(boolean b) {
         this.jButtonPM.setVisible(b);
         this.txtPM.setVisible(b);
+        this.jLabelPM.setVisible(b);
     }
     
-    public void setVisibleLA(boolean b) {
+    private void setVisibleLA(boolean b) {
         this.jButtonLA.setVisible(b);
         this.txtLA.setVisible(b);
+        this.jLabelLA.setVisible(b);
     }
 
     public JButton getFAButton() {
@@ -204,10 +212,10 @@ implements PropertyChangeListener, SelectionListener {
         jButtonFA = new javax.swing.JButton();
         jButtonPM = new javax.swing.JButton();
         jButtonLA = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        jLabelFA = new javax.swing.JLabel();
+        jLabelPM = new javax.swing.JLabel();
+        jLabelLA = new javax.swing.JLabel();
+        jLabelSelect = new javax.swing.JLabel();
         txtFA = new lambdacalc.gui.LambdaEnabledTextField();
         txtPM = new lambdacalc.gui.LambdaEnabledTextField();
         txtLA = new lambdacalc.gui.LambdaEnabledTextField();
@@ -253,38 +261,38 @@ implements PropertyChangeListener, SelectionListener {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel1.add(jButtonLA, gridBagConstraints);
 
-        jLabel1.setText("Function Application");
+        jLabelFA.setText("Function Application");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        jPanel1.add(jLabel1, gridBagConstraints);
+        jPanel1.add(jLabelFA, gridBagConstraints);
 
-        jLabel2.setText("Predicate Modification");
+        jLabelPM.setText("Predicate Modification");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        jPanel1.add(jLabel2, gridBagConstraints);
+        jPanel1.add(jLabelPM, gridBagConstraints);
 
-        jLabel3.setText("Lambda Abstraction");
+        jLabelLA.setText("Lambda Abstraction");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
-        jPanel1.add(jLabel3, gridBagConstraints);
+        jPanel1.add(jLabelLA, gridBagConstraints);
 
-        jLabel4.setFont(new java.awt.Font("Lucida Grande", 1, 16));
-        jLabel4.setText("Select a composition rule");
+        jLabelSelect.setFont(new java.awt.Font("Lucida Grande", 1, 16));
+        jLabelSelect.setText("Select a composition rule");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.insets = new java.awt.Insets(8, 0, 20, 0);
-        jPanel1.add(jLabel4, gridBagConstraints);
+        jPanel1.add(jLabelSelect, gridBagConstraints);
 
         txtFA.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -353,10 +361,10 @@ implements PropertyChangeListener, SelectionListener {
     private javax.swing.JButton jButtonFA;
     private javax.swing.JButton jButtonLA;
     private javax.swing.JButton jButtonPM;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelFA;
+    private javax.swing.JLabel jLabelLA;
+    private javax.swing.JLabel jLabelPM;
+    private javax.swing.JLabel jLabelSelect;
     private javax.swing.JPanel jPanel1;
     private lambdacalc.gui.LambdaEnabledTextField txtFA;
     private lambdacalc.gui.LambdaEnabledTextField txtLA;
