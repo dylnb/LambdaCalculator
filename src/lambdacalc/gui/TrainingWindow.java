@@ -1335,7 +1335,7 @@ public class TrainingWindow extends JFrame {
     int jSplitPaneRightHalfLastDividerSize;
     
     private void treeDisplayAncestorResized(java.awt.event.HierarchyEvent evt) {//GEN-FIRST:event_treeDisplayAncestorResized
-// TODO add your handling code here:
+// TODO get rid of this method (I generated it by mistake and Netbeans won't let me)
     }//GEN-LAST:event_treeDisplayAncestorResized
 
     private void btnNextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnNextKeyPressed

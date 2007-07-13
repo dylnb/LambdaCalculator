@@ -73,14 +73,14 @@ public class FunApp extends Binary {
 
     public Type getType() throws TypeEvaluationException {
         if (!(getFunc().getType() instanceof CompositeType))
-            throw new TypeMismatchException(getFunc() + " cannot be applied as a function to what looks like an argument to its right (" + getArg().stripAnyParens() + ") because " + getFunc() + " is of type " +
+            throw new TypeMismatchException(getFunc() + " cannot be applied as a function to what looks like an argument to its right (" + getArg().stripOutermostParens() + ") because " + getFunc() + " is of type " +
                     getFunc().getType() + " according to the typing conventions in effect and therefore is not a function.");
         
         CompositeType funcType = (CompositeType)getFunc().getType();
         Type domain = funcType.getLeft();
         Type range = funcType.getRight();
         
-        Expr func = getFunc().stripAnyParens();
+        Expr func = getFunc().stripOutermostParens();
         String functype = (func instanceof Identifier ? "predicate" : "function");
         
         if (!(getArg() instanceof ArgList) && domain instanceof ProductType) {
@@ -165,8 +165,8 @@ public class FunApp extends Binary {
     protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda to convert...
         
-        Expr func = getFunc().stripAnyParens(); // we need to strip parens to see what it really is
-        Expr arg = getArg().stripAnyParens(); // undo the convention of parens around the argument
+        Expr func = getFunc().stripOutermostParens(); // we need to strip parens to see what it really is
+        Expr arg = getArg().stripOutermostParens(); // undo the convention of parens around the argument
         
         // In the case of nested function applications, the structurally innermost one gets 
         // simplified first, so we just recurse down the tree. 
@@ -184,7 +184,7 @@ public class FunApp extends Binary {
                 throw new ConstInsteadOfVarException("A variable must be bound by the " + Lambda.SYMBOL + ", but " + lambda.getVariable() + " is a constant according to the typing conventions in effect.");
             Var var = (Var)lambda.getVariable();
             
-            Expr inside = lambda.getInnerExpr().stripAnyParens();
+            Expr inside = lambda.getInnerExpr().stripOutermostParens();
             
             Set binders = new HashSet(); // initialize for use down below
             return inside.performLambdaConversion2(var, arg, binders, accidentalBinders);

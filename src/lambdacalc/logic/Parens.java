@@ -58,9 +58,9 @@ public class Parens extends Unary {
         
         // ignore parentheses for equality test
         // this line needs to be added to every equals method in every subclass of Expr
-        e = e.stripAnyParens();
+        e = e.stripOutermostParens();
 
-        return this.stripAnyParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars);
+        return this.stripOutermostParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars);
     }
         
     protected Unary create(Expr inner) {

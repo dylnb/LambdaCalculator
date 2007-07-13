@@ -466,9 +466,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         
         
         
-        prevStep = prevStep.stripAnyParens();
-        correctAnswer = correctAnswer.stripAnyParens();
-        answer = answer.stripAnyParens();
+        prevStep = prevStep.stripOutermostParens();
+        correctAnswer = correctAnswer.stripOutermostParens();
+        answer = answer.stripOutermostParens();
         
         ArrayList prevargs = getFunAppArgs(prevStep);
         ArrayList correctargs = getFunAppArgs(correctAnswer);
@@ -502,12 +502,12 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      */
     private ArrayList getFunAppArgs(Expr expr) {
         ArrayList ret = new ArrayList();
-        expr = expr.stripAnyParens();
+        expr = expr.stripOutermostParens();
         while (expr instanceof FunApp) {
             Expr func = ((FunApp)expr).getFunc();
             Expr arg = ((FunApp)expr).getArg();
-            ret.add(arg.stripAnyParens());
-            expr = func.stripAnyParens();
+            ret.add(arg.stripOutermostParens());
+            expr = func.stripOutermostParens();
         }
         return ret;
     }
@@ -529,8 +529,8 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
     private void didUserRemoveTheRightLambda(Expr expr, Expr answer, ArrayList hints, Set diagnoses) {
     	// TODO: We need same fix as in method above.
     	
-        expr = expr.stripAnyParens();
-        answer = answer.stripAnyParens();
+        expr = expr.stripOutermostParens();
+        answer = answer.stripOutermostParens();
 
         ArrayList correctvars = getLambdaVars(expr);
         ArrayList uservars = getLambdaVars(answer);
@@ -559,22 +559,22 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
      */
     private ArrayList getLambdaVars(Expr expr) {
         ArrayList ret = new ArrayList();
-        expr = expr.stripAnyParens();
+        expr = expr.stripOutermostParens();
         while (expr instanceof FunApp)
-            expr = ((FunApp)expr).getFunc().stripAnyParens();
+            expr = ((FunApp)expr).getFunc().stripOutermostParens();
         
         while (expr instanceof Lambda) {
             Expr var = ((Lambda)expr).getVariable();
             Expr inside = ((Lambda)expr).getInnerExpr();
             ret.add(var);
-            expr = inside.stripAnyParens();
+            expr = inside.stripOutermostParens();
         }
         return ret;
     }
 
     private void didUserRenameAFreeVariableOrDidntRenameConsistently(Expr expr, Expr answer, ArrayList hints, Set diagnoses) {
-        expr = expr.stripAnyParens();
-        answer = answer.stripAnyParens();
+        expr = expr.stripOutermostParens();
+        answer = answer.stripOutermostParens();
         if (!(expr instanceof FunApp) || !(answer instanceof FunApp)) {
             // exactly one of them is a FunApp
             if (expr instanceof FunApp || answer instanceof FunApp) return; // make sure user didn't try a lambda conversion

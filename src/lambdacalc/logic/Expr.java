@@ -130,10 +130,28 @@ public abstract class Expr {
      * This is used by equality tests, which all ignore parenthesis.
      * @return this expression, or the next-outermost non-paren expression if this expression is enclosed in parens
      */
-    public final Expr stripAnyParens() {
+    public final Expr stripOutermostParens() {
         if (this instanceof Parens)
-            return ((Parens)this).getInnerExpr().stripAnyParens();
+            return ((Parens)this).getInnerExpr().stripOutermostParens();
         return this;
+    }
+    
+    public final Expr stripAnyDoubleParens() {
+        
+        Expr result = this;
+        
+        if (this instanceof Parens 
+                && ((Parens) this).getInnerExpr() instanceof Parens) {
+            return ((Parens) this).getInnerExpr().stripAnyDoubleParens();
+        } //else...
+        Iterator subExpressions = this.getSubExpressions().iterator();
+        List newSubExpr = new Vector();
+        while (subExpressions.hasNext()) {
+            Expr next = (Expr) subExpressions.next();
+            next = next.stripAnyDoubleParens();
+            newSubExpr.add(next);
+        }
+        return createFromSubExpressions(newSubExpr);
     }
     
     /**

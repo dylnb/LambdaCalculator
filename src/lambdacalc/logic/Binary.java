@@ -50,7 +50,7 @@ public abstract class Binary extends Expr {
     protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
 
         // ignore parentheses for equality test
-        e = e.stripAnyParens();
+        e = e.stripOutermostParens();
 
         if (e instanceof Binary) {
             return this.equals((Binary) e, useMaps, thisMap, otherMap, collapseAllVars);
