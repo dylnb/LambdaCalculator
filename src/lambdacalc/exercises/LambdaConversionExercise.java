@@ -253,7 +253,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                     return AnswerStatus.Incorrect("Not so fast!  Do one " 
                             + Lambda.SYMBOL + "-conversion or alphabetical " +
                             "variant step at a time. (You're on the right track, but I'd " +
-                            "like to see your individual steps.");
+                            "like to see your individual steps.)");
 
                 // When this step is to create an alphabetical variant, the user
                 // must enter an expression that is alpha-equivalent

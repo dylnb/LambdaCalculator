@@ -1605,6 +1605,10 @@ public class TrainingWindow extends JFrame {
         
         }
         this.clearAllControls();
+        // switch back to non-presentation mode
+        if (this.inPresentationMode) {
+            jCheckBoxMenuItemPresentationMode.doClick();
+        }
         this.dispose();
     }
 

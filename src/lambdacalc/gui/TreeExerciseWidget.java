@@ -531,6 +531,8 @@ public class TreeExerciseWidget extends JPanel {
                         typeLabel.setText(expr.getType().toShortString());
                     } catch (TypeEvaluationException e) {
                         typeLabel.setText("Type unknown");
+                        typeLabel.setToolTipText(
+                                lambdacalc.Main.breakIntoLines(e.getMessage(), 50));
                         typeColor = java.awt.Color.RED;
                     }
                 }                

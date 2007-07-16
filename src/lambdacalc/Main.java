@@ -20,10 +20,10 @@ public class Main {
     
     public static final boolean GOD_MODE = false;
     
-    public static final boolean NOT_SO_FAST = true; 
+    public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
     
-    public static final String VERSION = "1.0.3";
+    public static final String VERSION = "1.0.4";
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {
@@ -34,10 +34,25 @@ public class Main {
     }
     
     /**
-     * The main entry point.  Show the main GUI window.
+     * The main entry point.  Show the main GUI window, or if the single 
+     * command line argument <pre>--version</pre> is given, prints the
+     * version number and mode (student edition, teacher edition) and exits.
+     *
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        if (args.length == 1 && args[0].equals("--version")) {
+            System.out.print("Lambda Calculator, version " + VERSION + ", ");
+            if (GOD_MODE) {
+                System.out.println("teacher edition");
+            } else {
+                System.out.println("student edition");
+            }
+            return;
+        }
+        
+        // else...
         
         try {
             java.awt.EventQueue.invokeLater(new Runnable() {

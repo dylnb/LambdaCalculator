@@ -233,12 +233,12 @@ public class ExerciseFileParser {
             
             char charstart, charend;
 
-            if (range.length() == 1) {
-                charstart = range.charAt(0);
-                charend = charstart;
-            } else if (range.length() == 3 && range.charAt(1) == '-') {
+            if (range.length() == 3 && range.charAt(1) == '-') {
                 charstart = range.charAt(0);
                 charend = range.charAt(2);
+            } else if (range.length() == 1 ) { //TODO || singleLetterIdentifiers == false) {
+                charstart = range.charAt(0);
+                charend = charstart;
             } else {
                 throw new ExerciseFileFormatException("You must have a letter or letter range in a type line", linenum, line);
             }
