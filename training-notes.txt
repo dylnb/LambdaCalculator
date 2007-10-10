@@ -25,6 +25,7 @@ DONE(half)    Give Paste Below an icon, move to left
 DONE    Buttons don't look like buttons
 LOW    Show student's name from saved work somewhere in main area
 MEDIUM    If user enters an answer and tries to go onto another exercise without Check Answer, do we stop them?
+MEDIUM	File->Reload is useful when developing an exercise file; should preserve which exercise in the file is active
 
 Scratch pad
 MEDIUM    Should get multiple letter identifier option from existing exercise
