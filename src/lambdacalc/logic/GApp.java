@@ -15,8 +15,7 @@ import java.util.Vector;
 
 /**
  * Represents the application of the variable-assignment function g
- * to an integer index, e.g. g(1). This class contains no notion of
- * whichever variable g maps 1 to.
+ * to an integer index, e.g. g(1).
  *
  * @author champoll
  */
@@ -34,10 +33,6 @@ public class GApp extends Expr {
         if (index < 0) throw new IllegalArgumentException("Attempted to" +
                 "create a GApp with a negative index");
         this.index=index;
-    }
-    
-    public GApp(Integer index) {
-        new GApp(index.intValue());
     }
     
     public int getIndex() {

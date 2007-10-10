@@ -31,11 +31,6 @@ public class AssignmentFunction extends HashMap {
         return (AssignmentFunction) put(new GApp(key), value);
     }
     
-    public Object put(Integer key, Var value) {
-        if (key == null || value == null) throw new IllegalArgumentException();
-        return super.put(new GApp((Integer) key), value);
-    }
-    
     public Object put(BareIndex key, Var value) {
         if (key == null || value == null) throw new IllegalArgumentException();
         return super.put(new GApp(key.getIndex()), value);
@@ -66,7 +61,7 @@ public class AssignmentFunction extends HashMap {
     
     public boolean containsKey(Object key) {
         if (key instanceof Integer) {
-            return super.containsKey(new GApp((Integer) key));
+            return super.containsKey(new GApp(((Integer) key).intValue()));
         } else if (key instanceof BareIndex) {
             return super.containsKey(new GApp(((BareIndex) key).getIndex()));
         } else {
@@ -80,7 +75,7 @@ public class AssignmentFunction extends HashMap {
     
     public Object get(Object key) {
         if (key instanceof Integer) {
-            return super.get(new GApp((Integer) key));
+            return super.get(new GApp(((Integer) key).intValue()));
         } else {
             return super.get(key);
         }
