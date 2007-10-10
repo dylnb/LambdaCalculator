@@ -154,10 +154,25 @@ public abstract class LFNode {
      */
     public abstract boolean isMeaningful();
     
-    public Expr getMeaning() throws MeaningEvaluationException {
-        return getMeaning(new AssignmentFunction());
+    /**
+     * This returns the bottom-up derived meaning of a node, as long as the
+     * node isMeaningful, has a nonterminal composition rule assigned, the
+     * rule is applicable, etc.
+     */
+    public final Expr getMeaning() throws MeaningEvaluationException {
+        return getMeaning(null);
     }
     
+    /**
+     * This returns the top-down derived meaning of a node, given an assignment
+     * function. Because the assignment function allows binders higher up to
+     * access variables below, any binders introduced within this node must not
+     * use a variable in the range of the assignment function or else it may
+     * accidentally bind a replaced instance of g(n).
+     *
+     * @param g an assignment function, or null to not associate GApp instances
+     * with an assignment function (as when doing bottom-up derivations).
+     */
     public abstract Expr getMeaning(AssignmentFunction g) 
     throws MeaningEvaluationException;
 

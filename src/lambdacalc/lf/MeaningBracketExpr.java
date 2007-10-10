@@ -21,13 +21,23 @@ public class MeaningBracketExpr extends Expr {
     
     private LFNode node;
     private AssignmentFunction g;
+    private boolean topDown;
     
+    public MeaningBracketExpr(LFNode node, AssignmentFunction g, boolean topDown) {
+        this.node = node;
+        this.g = g;
+        this.topDown = topDown;
+        if (g == null)
+            throw new IllegalArgumentException("g cannot be null");
+    }
+
     /**
      * @param g may be null
      */
     public MeaningBracketExpr(LFNode node, AssignmentFunction g) {
         this.node = node;
         this.g = g;
+        this.topDown = (g != null);
     }
 
     public int getOperatorPrecedence() {
@@ -77,9 +87,50 @@ public class MeaningBracketExpr extends Expr {
 
     public Type getType() throws TypeEvaluationException {
         try {
-            return node.getMeaning(g).getType();
+            return evaluate().getType();
         } catch (MeaningEvaluationException mee) {
             throw new TypeEvaluationException("The type of " + this + " could not be determined: " + mee.getMessage());
+        }
+    }
+    
+    /**
+     * Evaluates this expression by returning the denotation of the indicated node,
+     * with all meaning brackets removed.
+     */
+    public Expr evaluate() throws TypeEvaluationException, MeaningEvaluationException {
+        // When we evaluate this node, whether or not we can pass the assignment
+        // function down is determined by whether this node was created for
+        // top-down or bottom-up evaluation.
+        
+        if (topDown) {
+            // In top-down evaluation, the assignment function contains variables
+            // guaranteed not to conflict with variables higher up, and we pass
+            // g down because the subnodes must choose variables that don't
+            // conflict with the ones we've chosen higher up.
+            
+            Expr e = node.getMeaning(g); // with args is the top-down method
+            e = replaceAllMeaningBrackets(e);
+            return e;
+            
+        } else {
+            // In bottom-up evaluation, the variables in the assignment function
+            // have been chosen to not conflict with variables in use in the
+            // simplified subexpression. Thus, we must get the subexpression's
+            // denotation, replace any meaning brackets in it, simplify it,
+            // and then do a replacement of g(n) according to the assignment
+            // function.
+            // See LambdaAbstractionRule.applyTo(...).
+            
+            Expr e = node.getMeaning(); // no args is the bottom-up method
+            
+            e = replaceAllMeaningBrackets(e);
+            
+            e = e.simplifyFully();
+            
+            if (g != null)
+                e = e.replaceAll(g);
+            
+            return e;
         }
     }
     
@@ -99,15 +150,10 @@ public class MeaningBracketExpr extends Expr {
         ArrayList objs = new ArrayList();
         findMeaningBrackets(expr, objs);
         
-        // Then for each relace it with its evaluated value.
+        // Then for each replace it with its evaluated value.
         for (Iterator i = objs.iterator(); i.hasNext(); ) {
             MeaningBracketExpr mbe = (MeaningBracketExpr)i.next();
-
-            Expr value = mbe.node.getMeaning(mbe.g);
-            value = replaceAllMeaningBrackets(value);
-            value = value.replaceAll(mbe.g); // really we want to replace g(1) with gx/1(1) only, and leave it to someone else to replace gx/1(1) with x
-            value = value.simplifyFully();
-            
+            Expr value = mbe.evaluate();
             expr = expr.replace(mbe, value);
         }
         

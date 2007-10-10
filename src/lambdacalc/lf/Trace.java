@@ -36,8 +36,10 @@ public class Trace extends Terminal {
     }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-        //return (Expr) g.get(this.getIndex());
-        return new GApp(this.getIndex());
+        if (g == null)
+            return new GApp(this.getIndex());
+        else
+            return (Expr)g.get(getIndex());
     }    
 
     public void setLabel(String label) {

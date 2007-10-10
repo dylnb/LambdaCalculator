@@ -69,29 +69,48 @@ public class LambdaAbstractionRule extends CompositionRule {
         
         Var var;
         
-        // Get a fresh variable based on the meaning that we know we will eventually get
-        try {
-            Expr bodyMeaning = body.getMeaning();
-            try { bodyMeaning = 
-                    MeaningBracketExpr.
-                    replaceAllMeaningBrackets(bodyMeaning).simplifyFully(); 
-            } catch (TypeEvaluationException e) {
-            } // shouldn't throw since getMeaning worked
-            var = bodyMeaning.createFreshVar();
-        
-        // But if we can't get a meaning, choose a default variable
-            //TODO I think this is dangerous and we should provide a warning -Lucas
-        } catch (MeaningEvaluationException mee) {
-            mee.printStackTrace();
-            var = new Var("x", lambdacalc.logic.Type.E, false);
-        }
+        if (g == null) {
+            // We are evaluating bottom-up.
+            // Get a fresh variable based on the meaning that we know we will eventually get.
+            // Choose a variable that is not in use in the simplified inner expression.
+            // See MeaningBracketExpr.evaluate().
+            try {
+                Expr bodyMeaning = body.getMeaning();
+                try { bodyMeaning = 
+                        MeaningBracketExpr.
+                        replaceAllMeaningBrackets(bodyMeaning).simplifyFully(); 
+                } catch (TypeEvaluationException e) {
+                } // shouldn't throw since getMeaning worked
+                var = bodyMeaning.createFreshVar();
 
+            // But if we can't get a meaning, choose a default variable
+                //TODO I think this is dangerous and we should provide a warning -Lucas
+            } catch (MeaningEvaluationException mee) {
+                mee.printStackTrace();
+                var = new Var("x", lambdacalc.logic.Type.E, false);
+            }
+            
+        } else {
+            // We are evaluating top-down.
+            // Choose a variable that is not in the range of the assignment function
+            // being passed to us. Since we will add to the assignment function,
+            // expressions within us will be sure to not create independent variables
+            // that conflict with the one we choose.
+            
+            var = Expr.createFreshVar(Var.X, new java.util.HashSet(g.values()));
+        }
+        
         // Copy the assignment function being given to us and add the
         // new mapping from the bare index to a fresh variable.
         AssignmentFunction g2 = (g == null ? new AssignmentFunction() : new AssignmentFunction(g));
         g2.put(index, var);
         
-        return new Lambda(var, new MeaningBracketExpr(body, g2), true);
+        // When we evaluate the meaning bracket expression, we need to know whether
+        // we've chosen a fresh variable based on what's above (top-down) or
+        // below (bottom-up).
+        boolean topDown = (g != null);
+        
+        return new Lambda(var, new MeaningBracketExpr(body, g2, topDown), true);
     }
 }
 
