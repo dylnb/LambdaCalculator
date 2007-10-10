@@ -19,7 +19,8 @@ public class RuleList extends Vector {
             = new RuleList(new CompositionRule[] {
             FunctionApplicationRule.INSTANCE,
             NonBranchingRule.INSTANCE,
-            PredicateModificationRule.INSTANCE
+            PredicateModificationRule.INSTANCE,
+            LambdaAbstractionRule.INSTANCE
           // add other Heim & Kratzer rules here as we implement them
     });
   
