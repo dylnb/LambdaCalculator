@@ -467,18 +467,24 @@ public abstract class Expr {
      * of this expression that are equal to thisExpr
      * by byExpr. If this expression is equal to thisExpr then byExpr is returned.
      */
-    public Expr replace(Expr thisExpr, Expr byExpr) {
+    public final Expr replace(Expr thisExpr, Expr byExpr) {
         
         if (this.equals(thisExpr)) return byExpr;
         
         Iterator subExpressions = this.getSubExpressions().iterator();
         List newSubExpr = new Vector();
+        boolean madeChange = false;
         while (subExpressions.hasNext()) {
             Expr next = (Expr) subExpressions.next();
-            next = next.replace(thisExpr, byExpr);
-            newSubExpr.add(next);
+            Expr newnext = next.replace(thisExpr, byExpr);
+            newSubExpr.add(newnext);
+            if (next != newnext) madeChange = true;
         }
-        return createFromSubExpressions(newSubExpr);
+        
+        if (madeChange)
+	    return createFromSubExpressions(newSubExpr);
+	else
+	    return this;
     }
     
     /**
@@ -496,7 +502,7 @@ public abstract class Expr {
      * @param assignmentFunction a map from expressions to expressions
      * @return an expression
      */
-    public Expr replaceAll(Map assignmentFunction) {
+    public final Expr replaceAll(Map assignmentFunction) {
         Iterator iter = assignmentFunction.entrySet().iterator();
         Expr result = this;
         while (iter.hasNext()) {
