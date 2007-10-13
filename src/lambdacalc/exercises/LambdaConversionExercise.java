@@ -487,7 +487,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // result in the same list (for duplicated arguments), and that
         // means the user did the right thing.
         if (!userargs.equals(correctargs)) {
-            hints.add("The leftmost " + Lambda.SYMBOL + "-slot corresponds with the leftmost argument to be " + Lambda.SYMBOL + "-converted.  Start with the argument '" +  prevargs.get(prevargs.size()-1) + "'.");
+            hints.add("The leftmost " + Lambda.SYMBOL + "-slot corresponds to the leftmost argument to be " + Lambda.SYMBOL + "-converted.  Start with the argument '" +  prevargs.get(prevargs.size()-1) + "'.");
             diagnoses.add("leftmost-leftmost");
         }
         
@@ -544,7 +544,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         if (!uservars.equals(shift(correctvars))) {
             String response = "When doing " + Lambda.SYMBOL + "-conversion, start with the outermost " + Lambda.SYMBOL + ".";
             if (!diagnoses.contains("leftmost-leftmost"))
-                response += " Remember, the leftmost " + Lambda.SYMBOL + "-slot corresponds with the leftmost argument to be " + Lambda.SYMBOL + "-converted.";
+                response += " Remember, the leftmost " + Lambda.SYMBOL + "-slot corresponds to the leftmost argument to be " + Lambda.SYMBOL + "-converted.";
             hints.add(response);
         }
         
