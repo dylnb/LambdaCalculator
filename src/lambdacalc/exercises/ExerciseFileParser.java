@@ -219,6 +219,21 @@ public class ExerciseFileParser {
      */
     private static void parseTypeLine(int chop, boolean variable, String line, IdentifierTyper typer, 
             int linenum) throws ExerciseFileFormatException {
+           
+        String type_description = null;
+        
+        String[] lineparts = line.split(";");
+        line = lineparts[0];
+        for (int i = 1; i < lineparts.length; i++) {
+        	lineparts[i] = lineparts[i].trim();
+        	if (lineparts[i].startsWith("display as:")) {
+        		type_description = lineparts[i].substring("display as:".length()).trim();
+        	} else {
+	            throw new ExerciseFileFormatException("Unrecognized part of type line: '" + lineparts[i] + "'. Use semicolons only to introduce a 'display as:' command.", linenum, line);
+        	}
+        }
+        
+            
         int colon = line.indexOf(':');
         if (colon == -1)
             throw new ExerciseFileFormatException("A type line looks like \"constants of type e : a b-c\"", linenum, line);
@@ -248,7 +263,7 @@ public class ExerciseFileParser {
 
             try {
                 Type type = TypeParser.parse(typestr);
-                typer.addEntry(String.valueOf(charstart), String.valueOf(charend), variable, type);
+                typer.addEntry(String.valueOf(charstart), String.valueOf(charend), variable, type, type_description);
             } catch (SyntaxException e) {
                 throw new ExerciseFileFormatException(e.getMessage(), linenum, line);
             }

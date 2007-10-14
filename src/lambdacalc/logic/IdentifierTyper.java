@@ -22,12 +22,14 @@ public class IdentifierTyper {
         public String start, end;
         public boolean var;
         public Type type;
+        public String descr;
         
-        public Entry(String s, String e, boolean v, Type t) {
+        public Entry(String s, String e, boolean v, Type t, String descr) {
             start = s;
             end = e;
             var = v;
             type = t;
+            this.descr = descr;
         }
     }
     
@@ -52,10 +54,10 @@ public class IdentifierTyper {
     public static IdentifierTyper createDefault() {
         IdentifierTyper typer = new IdentifierTyper();
         typer.addEntry("a", "e", false, Type.E);
-        typer.addEntry("P", "Q", false, Type.ET);
-        typer.addEntry("R", "S", false, Type.ExET);
+        typer.addEntry("P", "Q", false, Type.ET, "one-place predicate");
+        typer.addEntry("R", "S", false, Type.ExET, "two-place predicate");
         typer.addEntry("u", "z", true, Type.E);
-        typer.addEntry("U", "Z", true, Type.ET);
+        typer.addEntry("U", "Z", true, Type.ET, "one-place predicate");
         return typer;
     }
     
@@ -71,14 +73,24 @@ public class IdentifierTyper {
      * overriding previous settings.
      */
     public void addEntry(String lex, boolean isVariable, Type type) {
-        addEntry(lex, lex, isVariable, type);
+        addEntry(lex, lex, isVariable, type, null);
     }
     
     /**
      * Sets the type of identifiers starting a character in the given range,
      * overriding previous settings.
+     * @param descr A description of the type to display to users, or null
      */
     public void addEntry(String start, String end, boolean isVariable, Type type) {
+        addEntry(start, end, isVariable, type, null);
+    }
+    
+    /**
+     * Sets the type of identifiers starting a character in the given range,
+     * overriding previous settings.
+     * @param descr A description of the type to display to users, or null
+     */
+    public void addEntry(String start, String end, boolean isVariable, Type type, String description) {
         if (start == null || end == null || start.length() == 0 || end.length() == 0)
             throw new IllegalArgumentException("start or end is null, or a zero-length string.");
         if (!Character.isLetter(start.charAt(0)) || !Character.isLetter(end.charAt(0)))
@@ -86,7 +98,7 @@ public class IdentifierTyper {
         if (Character.isLowerCase(start.charAt(0)) != Character.isLowerCase(end.charAt(0)))
             throw new IllegalArgumentException("In a range, the start and end of the range must be both uppercase or both lowercase.");
             
-        entries.add(new Entry(start, end, isVariable, type));
+        entries.add(new Entry(start, end, isVariable, type, description));
     }
     
     private Entry findEntry(String identifier) throws IdentifierTypeUnknownException {
@@ -152,7 +164,7 @@ public class IdentifierTyper {
         IdentifierTyper ret = new IdentifierTyper();
         for (int j = 0; j < entries.size(); j++) {
             Entry e = (Entry)entries.get(j);
-            ret.addEntry(e.start, e.end, e.var, e.type);
+            ret.addEntry(e.start, e.end, e.var, e.type, e.descr);
         }
         return ret;
     }
@@ -175,13 +187,10 @@ public class IdentifierTyper {
             else
                 ret += "constants";
             ret += " of type ";
-            if (m[i].type.equals(Type.ExET))
-                ret += "\n    two place predicate";
+            if (m[i].descr != null)
+                ret += m[i].descr;
             else
                 ret += m[i].type.toString();
-
-            if (m[i].type.equals(Type.ET))
-                ret += "\n    (one place predicate)";
         }
         return ret;
     }
@@ -191,7 +200,7 @@ public class IdentifierTyper {
         Set types = new HashSet();
         for (int i = 0; i < entries.size(); i++) {
             Entry e = (Entry)entries.get(i);
-            types.add(new TypeMapping(e.type, e.var));
+            types.add(new TypeMapping(e.type, e.var, e.descr));
         }
         
         // Create the type mapping array and put the types into a natural order
@@ -244,9 +253,10 @@ public class IdentifierTyper {
         public boolean var;
         public Type type;
         public CharRange[] ranges;
+        public String descr;
         
-        TypeMapping(Type t, boolean v) {
-            type = t; var = v;
+        TypeMapping(Type t, boolean v, String d) {
+            type = t; var = v; descr = d;
         }
         
         public int hashCode() { return type.hashCode(); }
@@ -280,7 +290,7 @@ public class IdentifierTyper {
     }
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(1); // format version marker
+        output.writeShort(2); // format version marker
         output.writeShort(entries.size());
         for (int i = 0; i < entries.size(); i++) {
             Entry e = (Entry)entries.get(i);
@@ -288,11 +298,12 @@ public class IdentifierTyper {
             output.writeUTF(e.end);
             output.writeBoolean(e.var);
             e.type.writeToStream(output);
+            output.writeUTF(e.descr);
         }
     }
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
         
-        if (input.readShort() != 1) throw new ExerciseFileVersionException();
+        if (input.readShort() != 2) throw new ExerciseFileVersionException();
         
         int nEntries = input.readShort();
         for (int i = 0; i < nEntries; i++) {
@@ -300,8 +311,9 @@ public class IdentifierTyper {
             String end = input.readUTF();
             boolean var = input.readBoolean();
             Type type = Type.readFromStream(input);
+            String descr = input.readUTF();
             
-            Entry e = new Entry(start, end, var, type);
+            Entry e = new Entry(start, end, var, type, descr);
             entries.add(e);
         }
     }
