@@ -48,7 +48,7 @@ public class AssignmentFunction extends HashMap {
         if (!(value instanceof Var)) throw new IllegalArgumentException();
         
         if (key instanceof Integer) {
-            return this.put((Integer) key, (Var) value);
+            return this.put(((Integer) key).intValue(), (Var) value);
         } else if (key instanceof GApp) {
             return this.put((GApp) key, (Var) value);
         } else if (key instanceof BareIndex) {
