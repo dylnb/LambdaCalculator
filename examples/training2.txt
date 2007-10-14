@@ -48,8 +48,6 @@ directions Note the typing conventions of P, R and S.
 
 instructions For the sentence in (1), make the structure below yield
 instructions the meaning in (2) by supplying the denotation of α.
-instructions Check your answer by having Lambda step through the
-instructions derivation. \\
 instructions (1) Carlos-SU α-shaves \\
 instructions (2) “Carlos shaves Carlos” (i.e., Carlos shaves himself)
 [.IP Carlos [.VP α shaves]]
