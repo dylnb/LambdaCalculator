@@ -318,9 +318,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 && correct_answer.operatorEquivalent(userAnswer) 
                 && !diagnoses.contains("leftmost-leftmost"))
                     responses.add("You made a mistake in your " + Lambda.SYMBOL + "-conversion. " +
-                            "Remember to substitute the argument for all free instances of the " 
-                            + Lambda.SYMBOL + " variable, and for nothing else. "
-                            + "Check that you didn't make any substitutions of variables not bound by the " + Lambda.SYMBOL + ".");
+                            "Remember to substitute the argument for all instances of the " 
+                            + Lambda.SYMBOL + " variable that are free in the body of the " + Lambda.SYMBOL + " expression, and for nothing else. "
+                            + "That is, make sure that you substituted into all and only the variable slots that were bound by the " + Lambda.SYMBOL + ".");
                 //TODO "check that you didn't..." is misleading in cases where the user didn't in fact
                 //do any such substitutions
                 
