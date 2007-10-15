@@ -588,7 +588,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
                 // either they differ in the renaming of some free var or in some more radical way
                 
                 // we guess the following...
-                hints.add("This is an incorrect alphabetical variant. Remember that only bound variables can be renamed and that you must rename variables consistently, paying attention to how each variable is bound.");
+                hints.add("This is an incorrect alphabetical variant. Remember that only bound variables can be rewritten as other variables while preserving truth conditions and that you must rename variables consistently, paying attention to how each variable is bound.");
                 diagnoses.add("incorrect-alphavary");
             }
             return;
@@ -619,7 +619,7 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
             if (lcr == null) return;
             if (lcr.alphabeticalVariant == null) return;
             if (lcr.substitutionWithoutAlphabeticalVariant.alphaEquivalent(answer))
-                hints.add("Your answer changed the truth conditions of the expression because a free variable was accidentally bound during substitution.");
+                hints.add("Your answer changed the truth conditions of the expression because a free variable in the argument was accidentally bound during substitution.");
         } catch (TypeEvaluationException ex) {
         }
     }
