@@ -298,6 +298,8 @@ public class IdentifierTyper {
             output.writeUTF(e.end);
             output.writeBoolean(e.var);
             e.type.writeToStream(output);
+            output.writeBoolean(e.descr != null);
+            if (e.descr != null) output.writeUTF(e.descr);
             output.writeUTF(e.descr);
         }
     }
@@ -311,6 +313,9 @@ public class IdentifierTyper {
             String end = input.readUTF();
             boolean var = input.readBoolean();
             Type type = Type.readFromStream(input);
+            String descr = null;
+            if (input.readBoolean())
+            	input.readUTF();
             String descr = input.readUTF();
             
             Entry e = new Entry(start, end, var, type, descr);
