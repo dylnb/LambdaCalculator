@@ -61,7 +61,7 @@ exercise tree
 title Formulating NatLg denotations as lambda-expressions
 directions In some languages, there is a morpheme (e.g., Middle Voice in Ancient 
 directions Greek, reflexivizing affix in Kannada, Passive Voice in Finnish, etc.) 
-directions that attaches to the verb stem and reduces its n-arity by one. Let us 
+directions that attaches to the verb stem and reduces its arity by one. Let us 
 directions take the following imaginary morphemes α, β, γ, and δ. 
 directions Assuming the syntactic structure given, give a denotation for each of 
 directions these morphemes (in lambda-notation, for any arbitrary situation). \\
@@ -72,32 +72,24 @@ directions Note the typing conventions of P, R and S.
 
 instructions For the sentence in (1), make the structure below yield
 instructions the meaning in (2) by supplying the denotation of α.
-instructions Check your answer by having Lambda step through the
-instructions derivation. \\
 instructions (1) Carlos-SU α-shaves \\
-instructions (2) “Carlos shaves Carlos” (i.e., Carlos shaves, or Carlos shaves himself)
+instructions (2) “Carlos shaves Carlos” (i.e., Carlos shaves himself)
 [.IP Carlos [.VP α shaves]]
 
 instructions For the sentence in (1), make the structure below yield
 instructions the meaning in (2) by supplying the denotation of β.
-instructions Check your answer by having Lambda step through the
-instructions derivation. \\
 instructions (1) Carlos-SU  β-introduces  Paco-DO. \\
 instructions (2) “Carlos introduces Paco to Carlos (himself).”
 [.IP Carlos [.VP [.V^0 β introduces] Paco ]]
 
 instructions For the sentence in (1), make the structure below yield
 instructions the meaning in (2) by supplying the denotation of γ.
-instructions Check your answer by having Lambda step through the
-instructions derivation. \\
 instructions (1) Carlos-SU  γ-introduces  Paco-DO. \\
 instructions (2) “Carlos introduces Paco to Paco (himself).”
 [.IP Carlos [.VP [.V^0 γ introduces] Paco ]]
 
 instructions For the sentence in (1), make the structure below yield
 instructions the meaning in (2) by supplying the denotation of δ.
-instructions Check your answer by having Lambda step through the
-instructions derivation. \\
 instructions (1) Carlos-SU  δ-introduces  Paco-IO. \\
 instructions (2) “Carlos introduces nobody but Carlos (himself) to Paco.”
 [.IP Carlos [.VP [.V^0 δ introduces] Paco ]]
