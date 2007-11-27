@@ -315,8 +315,7 @@ public class IdentifierTyper {
             Type type = Type.readFromStream(input);
             String descr = null;
             if (input.readBoolean())
-            	input.readUTF();
-            String descr = input.readUTF();
+                descr = input.readUTF();
             
             Entry e = new Entry(start, end, var, type, descr);
             entries.add(e);

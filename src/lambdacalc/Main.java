@@ -18,12 +18,12 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = false;
+    public static final boolean GOD_MODE = true;
     
     public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
     
-    public static final String VERSION = "1.0.4";
+    public static final String VERSION = "1.0.6";
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {
