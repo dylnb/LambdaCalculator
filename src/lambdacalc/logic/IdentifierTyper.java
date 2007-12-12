@@ -300,7 +300,6 @@ public class IdentifierTyper {
             e.type.writeToStream(output);
             output.writeBoolean(e.descr != null);
             if (e.descr != null) output.writeUTF(e.descr);
-            output.writeUTF(e.descr);
         }
     }
     public void readFromStream(java.io.DataInputStream input, int fileFormatVersion) throws java.io.IOException, ExerciseFileFormatException {
