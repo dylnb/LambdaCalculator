@@ -211,7 +211,9 @@ public class MeaningBracketExpr extends Expr {
             output.writeUTF((String)nodeToPath.get(mb.getNode()));
             
             // And write out the assignment function applied to the node.
-            mb.getAssignmentFunction().writeToStream(output);
+            output.writeBoolean(mb.getAssignmentFunction() != null);
+            if (mb.getAssignmentFunction() != null)
+	            mb.getAssignmentFunction().writeToStream(output);
             
             // And the special variable.
             Var key = (Var)replacements.get(mb);
@@ -236,8 +238,12 @@ public class MeaningBracketExpr extends Expr {
         for (int i = 0; i < n; i++) {
             LFNode node = (LFNode)pathToNode.get(input.readUTF());
             
-            AssignmentFunction g = new AssignmentFunction();
-            g.readFromStream(input);
+            AssignmentFunction g = null;
+            
+            if (input.readBoolean()) {
+	            g = new AssignmentFunction();
+    	        g.readFromStream(input);
+    	    }
             
             MeaningBracketExpr mb = new MeaningBracketExpr(node, g);
             
