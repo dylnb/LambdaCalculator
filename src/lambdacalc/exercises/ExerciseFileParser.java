@@ -73,6 +73,16 @@ public class ExerciseFileParser {
         BufferedReader b = new BufferedReader(reader);
         String line;
         while ((line = b.readLine()) != null) {
+            // Java does not recognize the UTF-8 byte order mark
+            // which may optionally appear at the beginnings of
+            // files. We look for it ourself and chop it off.
+            // It will only ever occur on the first line.
+            // The BOM is actually EF BB BF, but when we read it,
+            // Java gives us a single character at the beginning
+            // with the value FEFF (for some reason).
+            if (linectr == 0 && line.length() > 0 && line.charAt(0) == 0xFEFF)
+            	line = line.substring(1);
+            	
             linectr++;
             
             if (line.trim().equals("") || line.startsWith("#"))  continue;
