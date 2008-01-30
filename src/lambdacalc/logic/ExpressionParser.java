@@ -976,14 +976,12 @@ public class ExpressionParser {
         
         ParseResultSet trivialReturn, firstConjuncts;
         
+        firstConjuncts = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
+        if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
+
         if (allowFunctionApplicationSpaceInTrivialReturn) {
-            firstConjuncts = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
-            if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
             trivialReturn = firstConjuncts;
         } else {
-            firstConjuncts = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, true);
-            if (firstConjuncts.Exception != null) return firstConjuncts; // return any fatal errors immediately
-            
             trivialReturn = parseFunctionApplicationExpression(expression, start, context, whatIsExpected, false);
             if (trivialReturn.Exception != null) return trivialReturn; // shouldn't happen if the first one succeeds
         }
