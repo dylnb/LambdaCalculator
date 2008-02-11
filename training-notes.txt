@@ -131,3 +131,18 @@ MEDIUM add a way to reference (i.e. display) the definitions of the h&k composit
 
 scrollRectToVisible
 
+Notes from Lance:
+
+constants of type <e,<et>> : loves
+ --> doesn't work
+ 
+can't see the directions after moving on from first problem
+for first problem:
+	directions
+	instructions
+for the second and later:
+	instructions
+	"And here are the directions for this group..."
+	direction
+
+
