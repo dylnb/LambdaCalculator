@@ -139,9 +139,9 @@ instructions “I held the pot for Mukasa.”
 
 
 exercise tree
-title Top-Down Semantic Computations
+title Bottom-Up Semantic Computations
 
-instructions Do the semantic computation of (1) top-down, spelling
+instructions Do the semantic computation of (1) bottom-up, spelling
 instructions out the denotation of topmost. [You can use the PrL predicates
 instructions OVER (“to be over or on top of”) and UNDER (“to be under”),
 instructions but not the PrL predicate TOPMOST.] \\
