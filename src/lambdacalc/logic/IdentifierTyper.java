@@ -173,6 +173,9 @@ public class IdentifierTyper {
         String ret = "";
         TypeMapping[] m = getMapping();
         for (int i = 0; i < m.length; i++) {
+        	if (m[i].ranges.length == 0)
+        		continue;
+        	
             if (ret != "") ret += "\n";
             for (int k = 0; k < m[i].ranges.length; k++) {
                 if (k > 0) ret += " ";
@@ -215,6 +218,7 @@ public class IdentifierTyper {
             for (int j = 0; j < entries.size(); j++) {
                 Entry e = (Entry)entries.get(j);
                 if (!e.type.equals(ret[i].type) || e.var != ret[i].var) continue;
+                if (e.start.length() > 1) continue;
                 
                 for (int k = e.start.charAt(0) + (e.start.length() == 1 ? 0 : 1); k <= e.end.charAt(0); k++)
                     if (k >= 0 && k < letters.length)
