@@ -1389,6 +1389,8 @@ public class ExpressionParser {
         if (code.equals("phi")) return "\u03C6";
         if (code.equals("psi")) return "\u03C8";
         if (code.equals("omega")) return "\u03C9";
+        if (code.equals("sigma")) return "\u03A3";
+        if (code.equals("tau")) return "\u03A4";
         
         if (code.equals("Gamma")) return "\u03B1";
         if (code.equals("Delta")) return "\u03B1";
@@ -1399,6 +1401,8 @@ public class ExpressionParser {
         if (code.equals("Phi")) return "\u03A6";
         if (code.equals("Psi")) return "\u03A8";
         if (code.equals("Omega")) return "\u03A9";
+        if (code.equals("Sigma")) return "\u03C3";
+        if (code.equals("Tau")) return "\u03C4";
         return code;
     }
 }
