@@ -8,6 +8,8 @@
 				background-color: #EEEEEE;
 				padding: .5em;
 			}
+			th { padding-left: .75em; padding-right: .75em }
+			li { margin-bottom: .5em }
 		</style>
 	</head>
 	<body>
@@ -223,7 +225,7 @@ Student's responses:
   <tr><td style="text-align: center">=</td><td style="text-align: center">=</td></tr>
   <tr><td style="text-align: center">≠</td><td style="text-align: center">!=</td></tr>
   <tr><td style="text-align: center">∧</td><td style="text-align: center">&amp;</td></tr>
-  <tr><td style="text-align: center">∨</td><td style="text-align: center">V</td></tr>
+  <tr><td style="text-align: center">∨</td><td style="text-align: center">V</td> <td>(capital letter v)</td></tr>
   <tr><td style="text-align: center">→</td><td style="text-align: center">-&gt;</td></tr>
   <tr><td style="text-align: center">↔</td><td style="text-align: center">&lt;-&gt;</td></tr>
   </table>
@@ -243,6 +245,34 @@ For example, Ax[P(x)], AxEy[P(x) &amp; Q(y)], Lx[P(x)], LxLy.P(x,y) &amp; Q(y), 
 <li>Single Greek letters may be used as constants or variables by preceding the name of the letter
 with a backslash, as in LaTeX. For instance, \alpha for lowercase alpha or \Omega for a capital omega. (Not all Greek letters are supported.)
 <!-- note use of Greek letters in directions and in bracketed trees --></li>
+<li>Numeric connectives, which can be entered according to the table below:
+  <table>
+  <tr><th>Connective</th> <th>You Type</th></tr>
+  <tr><td style="text-align: center">⋅</td><td style="text-align: center">*</td> <td>(multiplication)</td></tr>
+  <tr><td style="text-align: center">&lt;</td><td style="text-align: center">&lt;</td> <td></td></tr>
+  <tr><td style="text-align: center">≤</td><td style="text-align: center">&lt;=</td> <td></td></tr>
+  <tr><td style="text-align: center">&gt;</td><td style="text-align: center">&gt;</td> <td></td></tr>
+  <tr><td style="text-align: center">≥</td><td style="text-align: center">&gt;=</td> <td></td></tr>
+  </table>
+<li>Sets, set connectives, and set operators, which can be entered according to the table below:
+  <table style="margin-bottom: 1em">
+  <tr><th>Set Expression</th> <th>You Type</th></tr>
+  <tr><td style="text-align: center">{ a, b, c, ... }</td><td style="text-align: center">curley braces and commas</td></tr>
+  <tr><td style="text-align: center">{ x | P(x) }</td><td style="text-align: center">curley braces and the pipe | key</td></tr>
+  </table>
+  <table>
+  <tr><th>Operator</th> <th>You Type</th></tr>
+  <tr><td style="text-align: center">| ... |</td><td style="text-align: center">the pipe | key</td> <td>(set cardinality)</td></tr>
+  <tr><td style="text-align: center">∩</td><td style="text-align: center">^^</td> <td>(two carrets)</td></tr>
+  <tr><td style="text-align: center">∪</td><td style="text-align: center">VV</td> <td>(two capital V's)</td></tr>
+  <tr><td style="text-align: center">⊆</td><td style="text-align: center">&lt;&lt;</td> <td></td></tr>
+  <tr><td style="text-align: center">⊈</td><td style="text-align: center">!&lt;&lt;</td> <td></td></tr>
+  <tr><td style="text-align: center">⊊</td><td style="text-align: center">&lt;&lt;&lt;</td> <td></td></tr>
+  <tr><td style="text-align: center">⊇</td><td style="text-align: center">&gt;&gt;</td> <td></td></tr>
+  <tr><td style="text-align: center">⊉</td><td style="text-align: center">!&gt;&gt;</td> <td></td></tr>
+  <tr><td style="text-align: center">⊋</td><td style="text-align: center">&gt;&gt;&gt;</td> <td></td></tr>
+  </table>
+  The intersection and union connectives bind more tightly than the other set connectives.</li>
 </ul>
 
 <h3>Tree Exercises</h3>

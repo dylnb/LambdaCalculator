@@ -1138,7 +1138,7 @@ public class ExpressionParser {
             
             else if (c == '^' && cnext == '^')
                 { c = SetRelation.Intersect.SYMBOL; start++; }
-            else if (c == 'v' && cnext == 'v')
+            else if (c == 'V' && cnext == 'V')
                 { c = SetRelation.Intersect.SYMBOL; start++; }
 
             else if (c == '!' && cnext == '<' && cnextnext == '<')
@@ -1306,7 +1306,7 @@ public class ExpressionParser {
         // Otherwise, we found just one operator in ops, the one at op_idx.
         char op = ops[op_idx];
         
-        boolean associative = (op == And.SYMBOL || op == Or.SYMBOL || op == Multiplication.SYMBOL);
+        boolean associative = (op == And.SYMBOL || op == Or.SYMBOL || op == Multiplication.SYMBOL || op == SetRelation.Intersect.SYMBOL || op == SetRelation.Union.SYMBOL);
         
         for (int i = 0; i+1 < operands.size(); i++) {
             boolean groupedLast = false;
