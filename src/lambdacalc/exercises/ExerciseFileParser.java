@@ -257,6 +257,7 @@ public class ExerciseFileParser {
             if (range.equals("")) continue;
             
             char charstart, charend;
+            boolean isSingleLetter = true;
 
             if (range.length() == 3 && range.charAt(1) == '-') {
                 charstart = range.charAt(0);
@@ -265,7 +266,10 @@ public class ExerciseFileParser {
                 charstart = range.charAt(0);
                 charend = charstart;
             } else {
-                throw new ExerciseFileFormatException("You must have a letter or letter range in a type line", linenum, line);
+                charstart = range.charAt(0);
+                charend = charstart;
+                isSingleLetter = false;
+                //throw new ExerciseFileFormatException("You must have a letter or letter range in a type line", linenum, line);
             }
 
             if (!Character.isLetter(charstart) || !Character.isLetter(charend))
@@ -273,7 +277,10 @@ public class ExerciseFileParser {
 
             try {
                 Type type = TypeParser.parse(typestr);
-                typer.addEntry(String.valueOf(charstart), String.valueOf(charend), variable, type, type_description);
+                if (isSingleLetter)
+	                typer.addEntry(String.valueOf(charstart), String.valueOf(charend), variable, type, type_description);
+	            else
+	                typer.addEntry(range, range, variable, type, type_description);
             } catch (SyntaxException e) {
                 throw new ExerciseFileFormatException(e.getMessage(), linenum, line);
             }
