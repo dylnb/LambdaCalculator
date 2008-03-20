@@ -9,7 +9,8 @@ package lambdacalc.logic;
 import java.awt.event.KeyEvent;
 
 /**
- * Represents the disjunction binary connective.
+ * Represents the subset and superset relations, and the negated and proper
+ * versions of each.
  */
 public abstract class SetRelation extends LogicalBinary {
     

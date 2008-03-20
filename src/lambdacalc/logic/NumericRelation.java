@@ -9,7 +9,7 @@ package lambdacalc.logic;
 import java.awt.event.KeyEvent;
 
 /**
- * Represents the disjunction binary connective.
+ * Represents the numeric less than and greater than (or equal) relations.
  */
 public abstract class NumericRelation extends LogicalBinary {
     

@@ -27,8 +27,8 @@ public abstract class Expr {
      * Gets an integer representing the (outermost) expression's operator precedence:
      *
      *   8   FunApp over Lambda Expression -- weakest
-     *   4   Binders and Logical Connectives (so that either inside the other always gets parenthesis for clarity and correctness)
-     *   3   Not, Cardinality
+     *   4   Binders and Connectives (so that either inside the other always gets parenthesis for clarity and correctness)
+     *   3   Not, Cardinality, Multiplication
      *   2   FunApp over Predicate
      *   1   Identifier
      *   0   Parens, ArgList (because ArgList is always parenthesized), GApp, SetWithElements, SetWithGenerator -- strongest
@@ -585,6 +585,7 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Iff")) return new Iff(input);
         if (exprType.equals("lambdacalc.logic.Iota")) return new Iota(input);
         if (exprType.equals("lambdacalc.logic.Lambda")) return new Lambda(input);
+        if (exprType.equals("lambdacalc.logic.Multiplication")) return new Multiplication(input);
         if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
         if (exprType.equals("lambdacalc.logic.NumericRelation.LessThan")) return new NumericRelation.LessThan(input);
         if (exprType.equals("lambdacalc.logic.NumericRelation.LessThanOrEqual")) return new NumericRelation.LessThanOrEqual(input);

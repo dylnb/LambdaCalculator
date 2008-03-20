@@ -1115,6 +1115,9 @@ public class ExpressionParser {
             else if (c == Or.INPUT_SYMBOL)
                 c = Or.SYMBOL;
                 
+            else if (c == Multiplication.INPUT_SYMBOL)
+                c = Multiplication.SYMBOL;
+
             else if (c == '-' && cnext == '>')
                 { c = If.SYMBOL; start++; }
 
@@ -1150,6 +1153,7 @@ public class ExpressionParser {
         // our expression. Since we've found something complete already, and we have no indication
         // that the user intended a connective, there's no need to return any error status.
         if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL
+                || c == Multiplication.SYMBOL
                 || c == NumericRelation.LessThan.SYMBOL || c == NumericRelation.LessThanOrEqual.SYMBOL || c == NumericRelation.GreaterThan.SYMBOL || c == NumericRelation.GreaterThanOrEqual.SYMBOL
                 || c == SetRelation.Subset.SYMBOL || c == SetRelation.ProperSubset.SYMBOL || c == SetRelation.NotSubset.SYMBOL
                 || c == SetRelation.Superset.SYMBOL || c == SetRelation.ProperSuperset.SYMBOL || c == SetRelation.NotSuperset.SYMBOL))
@@ -1161,7 +1165,8 @@ public class ExpressionParser {
         
         // If we're testing whether spaces are required around the operators,
         // if no space was found on either side, return an error condition.
-        if (testSpaceRequired && (!wsBefore || !wsAfter))
+        // Never require spaces around multiplication.
+        if (testSpaceRequired && (!wsBefore || !wsAfter) && c != Multiplication.SYMBOL)
             return new SyntaxException("Spaces are required around '" + c + "' connectives.", pstart);
 
         // Try to parse the right operand.
@@ -1223,6 +1228,7 @@ public class ExpressionParser {
             // are on the same level, then there's a problem because without an operator
             // precedence convention, it is ambiguous.
             char[][] operator_precedence = {
+                new char[] { Multiplication.SYMBOL },
                 new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL,
                     NumericRelation.LessThan.SYMBOL, NumericRelation.LessThanOrEqual.SYMBOL, NumericRelation.GreaterThan.SYMBOL, NumericRelation.GreaterThanOrEqual.SYMBOL,
                     SetRelation.Subset.SYMBOL, SetRelation.ProperSubset.SYMBOL, SetRelation.NotSubset.SYMBOL, SetRelation.Superset.SYMBOL, SetRelation.ProperSuperset.SYMBOL, SetRelation.NotSuperset.SYMBOL },
@@ -1289,7 +1295,7 @@ public class ExpressionParser {
         // Otherwise, we found just one operator in ops, the one at op_idx.
         char op = ops[op_idx];
         
-        boolean associative = (op == And.SYMBOL || op == Or.SYMBOL);
+        boolean associative = (op == And.SYMBOL || op == Or.SYMBOL || op == Multiplication.SYMBOL);
         
         for (int i = 0; i+1 < operands.size(); i++) {
             boolean groupedLast = false;
@@ -1309,6 +1315,7 @@ public class ExpressionParser {
                     case Iff.SYMBOL: binary = new Iff(left, right); break;
                     case Equality.EQ_SYMBOL: binary = new Equality(left, right, true); break;
                     case Equality.NEQ_SYMBOL: binary = new Equality(left, right, false); break;
+                    case Multiplication.SYMBOL: binary = new Multiplication(left, right); break;
                     case NumericRelation.LessThan.SYMBOL: binary = new NumericRelation.LessThan(left, right); break;
                     case NumericRelation.LessThanOrEqual.SYMBOL: binary = new NumericRelation.LessThanOrEqual(left, right); break;
                     case NumericRelation.GreaterThan.SYMBOL: binary = new NumericRelation.GreaterThan(left, right); break;
