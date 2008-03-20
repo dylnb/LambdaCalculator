@@ -158,6 +158,9 @@ public class LambdaEnabledTextField extends JTextField {
                  case Or.KEY_EVENT: 
                      c = Or.SYMBOL;
                      break;             
+                 case Subset.KEY_EVENT:
+                     c = Subset.SYMBOL;
+                     break;
                  
                  default:
                      super.processKeyEvent(e);

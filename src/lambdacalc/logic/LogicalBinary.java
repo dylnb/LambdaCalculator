@@ -12,7 +12,7 @@ import java.util.Vector;
 
 /**
  * Abstract base class of the logical binary connectives
- * (and, or, if, iff, equality).
+ * (and, or, if, iff, equality, and the set relations).
  */
 public abstract class LogicalBinary extends Binary {
     
@@ -41,6 +41,11 @@ public abstract class LogicalBinary extends Binary {
     public abstract String getSymbol();
 
     /**
+     * Gets the type that the operands must be. Not called if getType() is overridden.
+     */
+    public abstract Type getOperandType();
+    
+    /**
      * Gets the operator precedence of this operator.
      * All values are documented in Expr, so don't change the value here
      * without changing it there.
@@ -53,10 +58,10 @@ public abstract class LogicalBinary extends Binary {
         // Our default implementation checks that the operands are of type t,
         // but this is overridden in Equality which only checks that the
         // types of the operands are the same.
-        if (!getLeft().getType().equals(Type.T))
-            throw new TypeMismatchException("The parts of a logical connective must be of type t, but " + getLeft() + " is of type " + getLeft().getType() + ".");
-        if (!getRight().getType().equals(Type.T))
-            throw new TypeMismatchException("The parts of a logical connective must be of type t, but " + getRight() + " is of type " + getRight().getType() + ".");
+        if (!getLeft().getType().equals(getOperandType()))
+            throw new TypeMismatchException("The parts of the logical connective " + getSymbol() + " must be of type " + getOperandType() + ", but " + getLeft() + " is of type " + getLeft().getType() + ".");
+        if (!getRight().getType().equals(getOperandType()))
+            throw new TypeMismatchException("The parts of the logical connective " + getSymbol() + " must be of type " + getOperandType() + ", but " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }
     

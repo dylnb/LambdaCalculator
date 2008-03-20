@@ -591,6 +591,7 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Parens")) return new Parens(input);
         if (exprType.equals("lambdacalc.logic.SetWithElements")) return new SetWithElements(input);
         if (exprType.equals("lambdacalc.logic.SetWithGenerator")) return new SetWithGenerator(input);
+        if (exprType.equals("lambdacalc.logic.Subset")) return new Subset(input);
         if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
         
         throw new java.io.IOException("Invalid data.");

@@ -28,6 +28,10 @@ public class Iff extends LogicalBinary {
         return String.valueOf(SYMBOL);
     }
 
+    public Type getOperandType() {
+        return Type.T;
+    }
+
     protected Binary create(Expr left, Expr right) {
         return new Iff(left, right);
     }

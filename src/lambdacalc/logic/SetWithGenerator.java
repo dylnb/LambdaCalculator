@@ -32,10 +32,9 @@ public class SetWithGenerator extends Binary {
     }
 
     public Type getType() throws TypeEvaluationException {
-        getTemplate().getType(); // just check no exceptions are thrown
         if (!getFilter().getType().equals(Type.T))
             throw new TypeMismatchException("The right-hand part of the set " + toString() + " must have type t.");
-        return Type.T;
+        return new CompositeType(getTemplate().getType(), Type.T);
     }
     
     protected Binary create(Expr left, Expr right) {

@@ -487,7 +487,6 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             tellGUIProblemEntered();
             
         } catch (SyntaxException s) {
-            
             jButtonCheckAnswer.setEnabled(false);
             //if (this.ex!=null) { // user is trying to modify a problem on the fly
 //            if (false) { // user is trying to modify a problem on the fly
@@ -502,7 +501,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
                 txtEnterYourOwnProblem.setCaretPosition(s.getPosition());
             
-        } catch (Exception e) {
+        } catch (Exception e) { // e.g. TypeEvaluationException
             jButtonCheckAnswer.setEnabled(false);
             displayFeedback(e.getMessage());
             txtEnterYourOwnProblem.requestFocusInWindow();

@@ -37,6 +37,10 @@ public class And extends LogicalBinary {
         return String.valueOf(SYMBOL);
     }
     
+    public Type getOperandType() {
+        return Type.T;
+    }
+    
     protected Binary create(Expr left, Expr right) {
         return new And(left, right);
     }

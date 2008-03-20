@@ -1114,6 +1114,9 @@ public class ExpressionParser {
 
             else if (c == '!' && cnext == '=')
                 { c = Equality.NEQ_SYMBOL; start++; }
+
+            else if (c == '<' && cnext == '<')
+                { c = Subset.SYMBOL; start++; }
         }
             
         start++;
@@ -1121,7 +1124,8 @@ public class ExpressionParser {
         // If the next character isn't and, or, if, iff, eq, or neq, then we're at the end of
         // our expression. Since we've found something complete already, and we have no indication
         // that the user intended a connective, there's no need to return any error status.
-        if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL))
+        if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL
+                || c == Subset.SYMBOL))
             return null;
             
         // See if any white space is after the connective
@@ -1192,7 +1196,7 @@ public class ExpressionParser {
             // are on the same level, then there's a problem because without an operator
             // precedence convention, it is ambiguous.
             char[][] operator_precedence = {
-                new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL },
+                new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL, Subset.SYMBOL },
                 new char[] { And.SYMBOL, Or.SYMBOL },
                 new char[] { If.SYMBOL, Iff.SYMBOL }  };
                
@@ -1276,6 +1280,7 @@ public class ExpressionParser {
                     case Iff.SYMBOL: binary = new Iff(left, right); break;
                     case Equality.EQ_SYMBOL: binary = new Equality(left, right, true); break;
                     case Equality.NEQ_SYMBOL: binary = new Equality(left, right, false); break;
+                    case Subset.SYMBOL: binary = new Subset(left, right); break;
                     default: throw new RuntimeException(); // unreachable
                 }
                 operands.set(i, binary);

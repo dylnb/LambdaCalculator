@@ -24,6 +24,7 @@ public class ArgList extends NAry {
      */
     public ArgList(Expr[] innerExpressions) {
         super(innerExpressions);
+        if (innerExpressions.length <= 1) throw new IllegalArgumentException("ArgList must have more than one element.");
     }
     
     protected String getOpenSymbol() { return "("; }

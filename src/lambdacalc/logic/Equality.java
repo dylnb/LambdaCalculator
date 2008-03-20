@@ -42,6 +42,10 @@ public class Equality extends LogicalBinary {
             return String.valueOf(NEQ_SYMBOL);
     }
 
+    public Type getOperandType() {
+        return null; // doesn't matter since we override getType()
+    }
+    
     public Type getType() throws TypeEvaluationException {
         if (!getLeft().getType().equals(getRight().getType()))
             throw new TypeMismatchException("The types of the expressions on the left and right of an equality operator must be the same, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
