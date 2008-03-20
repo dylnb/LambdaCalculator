@@ -170,6 +170,9 @@ public class LambdaEnabledTextField extends JTextField {
                  case SetRelation.Superset.KEY_EVENT:
                      c = SetRelation.Superset.SYMBOL;
                      break;
+                 case SetWithElements.EMPTY_SET_KEY_EVENT:
+                     c = SetWithElements.EMPTY_SET_SYMBOL;
+                     break;
                  
                  default:
                      super.processKeyEvent(e);

@@ -726,7 +726,7 @@ public class ExpressionParser {
         int realStart = start;
         char c = expression.charAt(start);
         
-        if (!isLetter(c) && !(context.ASCII && c == '\\')) {
+        if (!isLetter(c) && !(context.ASCII && c == '\\') && !Character.isDigit(c) && c != SetWithElements.EMPTY_SET_SYMBOL) {
             if (isRightAfterBinder)
                 return new ParseResultSet(new BadCharacterException("I'm expecting a variable at the indicated location, but variables must start with a letter.", start));
             else
@@ -781,6 +781,7 @@ public class ExpressionParser {
         // If an underscore follows the name of the identifier, then the identifier's
         // type follows.
         Type specifiedType = null;
+        boolean specifiedTypeIsReallySpecified = true;
         if (start < expression.length() && getChar(expression, start, context) == '_') {
             start++;
             try {
@@ -794,6 +795,30 @@ public class ExpressionParser {
         
         boolean parsePredicate = true;
 
+        // For the emptyset symbol, we don't expect it to be defined in the typing
+        // conventions. Further, take an underscore type specification as the element
+        // type T, not its type <T, t>. Also don't allow parsing arguments after this
+        // symbol as if it were a predicate.
+        if (id.equals(Character.toString(SetWithElements.EMPTY_SET_SYMBOL))) {
+            if (specifiedType == null)
+                specifiedType = Type.E; // default element type
+            specifiedType = new CompositeType(specifiedType, Type.T);
+            parsePredicate = false;
+            specifiedTypeIsReallySpecified = false;
+        }
+        
+        // If the identifier looks like an integer, type it by default as type I.
+        if (specifiedType == null) {
+            try {
+                int asInt = Integer.parseInt(id);
+                specifiedType = Type.I;
+                parsePredicate = false;
+                specifiedTypeIsReallySpecified = false;
+            } catch (Exception e) {
+                // whatever
+            }
+        }
+        
         // If we're at the end of the expression, or if our caller does not permit us
         // to parse a predicate, we won't parse a predicate.
         if (start == expression.length() || isRightAfterBinder)
@@ -809,7 +834,7 @@ public class ExpressionParser {
                 
         if (!parsePredicate) {
             try {
-                Identifier ident = loadIdentifier(id, context, start, null, specifiedType, isRightAfterBinder);
+                Identifier ident = loadIdentifier(id, context, start, null, specifiedType, specifiedTypeIsReallySpecified, isRightAfterBinder);
                 return new ParseResultSet(new ParseResult(ident, start));
             } catch (IdentifierTypeUnknownException itue) {
                 return new ParseResultSet(new SyntaxException(itue.getMessage(), realStart));
@@ -892,7 +917,7 @@ public class ExpressionParser {
                     // should not reach here...?
                     return new ParseResultSet(new SyntaxException("Invalid identifier as an argument to " + id + ".", start));
                 try {
-                    arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false));
+                    arguments.add(loadIdentifier(String.valueOf(cc), context, start, null, null, false, false));
                 } catch (IdentifierTypeUnknownException itue) {
                     return new ParseResultSet(new SyntaxException(itue.getMessage(), start));
                 }
@@ -922,7 +947,7 @@ public class ExpressionParser {
         Identifier ident;
         
         try {
-            ident = loadIdentifier(id, context, start, inferType, specifiedType, false);
+            ident = loadIdentifier(id, context, start, inferType, specifiedType, specifiedTypeIsReallySpecified, false);
         } catch (IdentifierTypeUnknownException itue) {
             return new ParseResultSet(new SyntaxException(itue.getMessage(), realStart));
         }
@@ -967,7 +992,7 @@ public class ExpressionParser {
      * @throws IdentifierTypeUnknownException if the type of the identifier could not be determined
      * @return the new Identifier instance
      */
-    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferredType, Type specifiedType, boolean isRightAfterBinder) throws IdentifierTypeUnknownException{
+    private static Identifier loadIdentifier(String id, ParseOptions context, int start, Type inferredType, Type specifiedType, boolean specifiedTypeIsReallySpecified, boolean isRightAfterBinder) throws IdentifierTypeUnknownException{
         boolean isvar;
         Type type;
         
@@ -996,11 +1021,11 @@ public class ExpressionParser {
 
         Identifier ident;
         if (isvar)
-            ident = new Var(id, type, specifiedType != null);
+            ident = new Var(id, type, specifiedType != null && specifiedTypeIsReallySpecified);
         else
-            ident = new Const(id, type, specifiedType != null);
+            ident = new Const(id, type, specifiedType != null && specifiedTypeIsReallySpecified);
         
-        if (specifiedType != null)
+        if (specifiedType != null && specifiedTypeIsReallySpecified)
             context.explicitTypes.put(id, ident); // ident because it stores both type and isVar
 
         return ident;
@@ -1530,6 +1555,9 @@ public class ExpressionParser {
         if (code.equals("Omega")) return "\u03A9";
         if (code.equals("Sigma")) return "\u03C3";
         if (code.equals("Tau")) return "\u03C4";
+
+        if (code.equals("emptyset")) return Character.toString(SetWithElements.EMPTY_SET_SYMBOL);
+        
         return code;
     }
 }

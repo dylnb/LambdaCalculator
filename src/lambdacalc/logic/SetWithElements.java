@@ -9,11 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.awt.event.KeyEvent;
 
 /**
  * Represents a set of the form { a, b, c ... }.
  */
 public class SetWithElements extends NAry {
+    public static final char EMPTY_SET_SYMBOL = '\u2205';
+    public static final int EMPTY_SET_KEY_EVENT = KeyEvent.VK_0;
+
     Type elementType;
     
     /**
