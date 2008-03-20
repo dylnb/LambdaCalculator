@@ -33,7 +33,7 @@ public abstract class Expr {
      *   3   Not
      *   2   FunApp over Predicate
      *   1   Identifier
-     *   0   Parens, ArgList (because ArgList is always parenthesized), GApp -- strongest
+     *   0   Parens, ArgList (because ArgList is always parenthesized), GApp, SetWithElements, SetWithGenerator -- strongest
      * 
      * The parser implements this operator precedence independently so don't change it.
      * It is used only for the toString method.
@@ -589,6 +589,8 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
         if (exprType.equals("lambdacalc.logic.Or")) return new Or(input);
         if (exprType.equals("lambdacalc.logic.Parens")) return new Parens(input);
+        if (exprType.equals("lambdacalc.logic.SetWithElements")) return new SetWithElements(input);
+        if (exprType.equals("lambdacalc.logic.SetWithGenerator")) return new SetWithGenerator(input);
         if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
         
         throw new java.io.IOException("Invalid data.");

@@ -121,7 +121,7 @@ public class FunApp extends Binary {
                         + formalarity + " arguments but you provided " 
                         + actualarity + " arguments.");
             for (int i = 0; i < actualarity; i++) {
-                Expr arg = ((ArgList)getArg()).getArgs()[i];
+                Expr arg = ((ArgList)getArg()).getElements()[i];
                 Type actualtype = arg.getType();
                 Type formaltype = ((ProductType)domain).getSubTypes()[i];
                 if (!actualtype.equals(formaltype))

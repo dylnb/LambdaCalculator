@@ -478,7 +478,7 @@ public class ExpressionParser {
                 
                 return new ParseResultSet(result);
                 //break
-                
+
             case Not.SYMBOL:
                 // Get the possibilities for the subexpression
                 ParseResultSet negrs = parsePrefixExpression(expression, start+1, context, "an expression after the negation operator");
@@ -606,6 +606,70 @@ public class ExpressionParser {
                 return insides;
                 //break
                 
+            case '{':
+                Vector elements = new Vector();
+                
+                int next = start + 1;
+                boolean gotPipe = false;
+                Expr rightExpr = null;
+                
+                while (true) {
+                    // Read an expression.
+                    ParseResultSet elemrs = parseExpression(expression, next, context, "an expression");
+                    if (elemrs.Exception != null) return elemrs; // return fatal errors immediately
+                    
+                    // Be greedy and take the longest parseable expression at this location.
+                    Expr e = null;
+                    for (int i = 0; i < elemrs.Parses.size(); i++) {
+                        ParseResult elemr = (ParseResult)elemrs.Parses.get(i);
+                        if (e == null || elemr.Next > next) {
+                            e = elemr.Expression;
+                            next = elemr.Next;
+                        }
+                    }
+                    
+                    if (gotPipe) {
+                        // this is the part after the pipe
+                        rightExpr = e;
+                    } else {
+                        // Add this to the elements list.
+                        elements.add(e);
+                    }
+
+                    next = skipWhitespace(expression, next);
+                    if (next == -1)
+                        return new ParseResultSet(new SyntaxException("You need a '}' to complete the set.", expression.length()));
+                    
+                    char c2 = getChar(expression, next, context);
+                    
+                    if (c2 == '}') {
+                        next++;
+                        break;
+                    }
+                    
+                    // If we've gotten an expression after the pipe, we had better have been done.
+                    if (rightExpr != null)
+                        return new ParseResultSet(new SyntaxException("You need a '}' to complete the set.", next));
+                    
+                    if (c2 == '|') {
+                        if (elements.size() > 1)
+                            return new ParseResultSet(new SyntaxException("A vertical bar cannot be used in a set that also has a list of elements.", next));
+                        gotPipe = true;
+                    } else if (c2 != ',') {
+                        return new ParseResultSet(new SyntaxException("You need a ',' between elements in a set.", next));
+                    }
+
+                    next++;
+                }
+                
+                Vector results = new Vector();
+                if (rightExpr == null)
+                    results.add(new ParseResult(new SetWithElements((Expr[])elements.toArray(new Expr[0])), next));
+                else
+                    results.add(new ParseResult(new SetWithGenerator((Expr)elements.get(0), rightExpr), next));
+                return new ParseResultSet(results);
+                //break
+            
             default:
                 // Hope that it's an identifier or predicate. If not, a BadCharacterException is returned.
                 return parsePredicate(expression, start, context, whatIsExpected == null ? "an expression" : whatIsExpected, false);
