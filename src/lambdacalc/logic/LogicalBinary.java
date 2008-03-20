@@ -12,7 +12,7 @@ import java.util.Vector;
 
 /**
  * Abstract base class of the logical binary connectives
- * (and, or, if, iff, equality, and the set relations).
+ * (and, or, if, iff, equality, and the set and numeric relations).
  */
 public abstract class LogicalBinary extends Binary {
     
@@ -65,26 +65,6 @@ public abstract class LogicalBinary extends Binary {
         return Type.T;
     }
     
-    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
-        // We're looking for a lambda to convert. If we can do a conversion on the left,
-        // don't do a conversion on the right!
-        Expr a = getLeft().performLambdaConversion1(accidentalBinders);
-        if (a != null)
-            return create(a, getRight());
-        
-        Expr b = getRight().performLambdaConversion1(accidentalBinders);
-        if (b != null)
-            return create(getLeft(), b);
-        
-        return null;
-    }    
-
-    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
-        // We're in the scope of a lambda conversion. Just recurse.
-        return create(getLeft().performLambdaConversion2(var, replacement, binders, accidentalBinders),
-                getRight().performLambdaConversion2(var, replacement, binders, accidentalBinders));
-    }
-
     LogicalBinary(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }

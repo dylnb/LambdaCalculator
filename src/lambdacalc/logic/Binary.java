@@ -115,6 +115,26 @@ public abstract class Binary extends Expr {
                 getRight().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
     
+    protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
+        // We're looking for a lambda to convert. If we can do a conversion on the left,
+        // don't do a conversion on the right!
+        Expr a = getLeft().performLambdaConversion1(accidentalBinders);
+        if (a != null)
+            return create(a, getRight());
+        
+        Expr b = getRight().performLambdaConversion1(accidentalBinders);
+        if (b != null)
+            return create(getLeft(), b);
+        
+        return null;
+    }    
+
+    protected Expr performLambdaConversion2(Var var, Expr replacement, Set binders, Set accidentalBinders) throws TypeEvaluationException {
+        // We're in the scope of a lambda conversion. Just recurse.
+        return create(getLeft().performLambdaConversion2(var, replacement, binders, accidentalBinders),
+                getRight().performLambdaConversion2(var, replacement, binders, accidentalBinders));
+    }
+
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeUTF(getClass().getName());
         output.writeShort(0); // data format version
