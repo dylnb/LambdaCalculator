@@ -158,8 +158,11 @@ public class LambdaEnabledTextField extends JTextField {
                  case Or.KEY_EVENT: 
                      c = Or.SYMBOL;
                      break;             
-                 case Subset.KEY_EVENT:
-                     c = Subset.SYMBOL;
+                 case SetRelation.Subset.KEY_EVENT:
+                     c = SetRelation.Subset.SYMBOL;
+                     break;
+                 case SetRelation.Superset.KEY_EVENT:
+                     c = SetRelation.Superset.SYMBOL;
                      break;
                  
                  default:
@@ -257,7 +260,7 @@ public class LambdaEnabledTextField extends JTextField {
          
          /*
           * Unlike the above note, we will retain this method because it seems
-          * always OK to replace these multi-character special strings withour
+          * always OK to replace these multi-character special strings with our
           * unicode variants.
           */
          protected void insertUpdate(AbstractDocument.DefaultDocumentEvent chng,
@@ -295,8 +298,36 @@ public class LambdaEnabledTextField extends JTextField {
                           
                           // Nonequal: !=
                           
-                          } else if (c2 == '!' && c3 == '=') {
+                          } else if ((c2 == '!' || c2 == Not.SYMBOL) && c3 == '=') {
                               replace(i-1, 2, String.valueOf(Equality.NEQ_SYMBOL), null);
+                              foundChange = true;
+                              break;
+                              
+                          // Less than or equal, greater than or equal
+                          } else if (c2 == '<' && c3 == '=') {
+                              replace(i-1, 2, String.valueOf(NumericRelation.LessThanOrEqual.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          } else if (c2 == '>' && c3 == '=') {
+                              replace(i-1, 2, String.valueOf(NumericRelation.GreaterThanOrEqual.SYMBOL), null);
+                              foundChange = true;
+                              break;
+
+                          // Not-subset, proper subset, not superset, proper superset
+                          } else if ((c2 == '!' || c2 == Not.SYMBOL) && c3 == SetRelation.Subset.SYMBOL) {
+                              replace(i-1, 2, String.valueOf(SetRelation.NotSubset.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          } else if (c2 == SetRelation.Subset.SYMBOL && c3 == SetRelation.Subset.SYMBOL) {
+                              replace(i-1, 2, String.valueOf(SetRelation.ProperSubset.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          } else if ((c2 == '!' || c2 == Not.SYMBOL) && c3 == SetRelation.Superset.SYMBOL) {
+                              replace(i-1, 2, String.valueOf(SetRelation.NotSuperset.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          } else if (c2 == SetRelation.Superset.SYMBOL && c3 == SetRelation.Superset.SYMBOL) {
+                              replace(i-1, 2, String.valueOf(SetRelation.ProperSuperset.SYMBOL), null);
                               foundChange = true;
                               break;
                           }

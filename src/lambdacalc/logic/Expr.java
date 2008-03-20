@@ -23,14 +23,12 @@ import java.util.Vector;
  */
 public abstract class Expr {
     
-    
-    
     /**
      * Gets an integer representing the (outermost) expression's operator precedence:
      *
      *   8   FunApp over Lambda Expression -- weakest
      *   4   Binders and Logical Connectives (so that either inside the other always gets parenthesis for clarity and correctness)
-     *   3   Not
+     *   3   Not, Cardinality
      *   2   FunApp over Predicate
      *   1   Identifier
      *   0   Parens, ArgList (because ArgList is always parenthesized), GApp, SetWithElements, SetWithGenerator -- strongest
@@ -576,6 +574,7 @@ public abstract class Expr {
         
         if (exprType.equals("lambdacalc.logic.And")) return new And(input);
         if (exprType.equals("lambdacalc.logic.ArgList")) return new ArgList(input);
+        if (exprType.equals("lambdacalc.logic.Cardinality")) return new Cardinality(input);
         if (exprType.equals("lambdacalc.logic.Const")) return new Const(input);
         if (exprType.equals("lambdacalc.logic.Equality")) return new Equality(input);
         if (exprType.equals("lambdacalc.logic.Exists")) return new Exists(input);
@@ -587,11 +586,20 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Iota")) return new Iota(input);
         if (exprType.equals("lambdacalc.logic.Lambda")) return new Lambda(input);
         if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation.LessThan")) return new NumericRelation.LessThan(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation.LessThanOrEqual")) return new NumericRelation.LessThanOrEqual(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation.GreaterThan")) return new NumericRelation.GreaterThan(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation.GreaterThanOrEqual")) return new NumericRelation.GreaterThanOrEqual(input);
         if (exprType.equals("lambdacalc.logic.Or")) return new Or(input);
         if (exprType.equals("lambdacalc.logic.Parens")) return new Parens(input);
         if (exprType.equals("lambdacalc.logic.SetWithElements")) return new SetWithElements(input);
         if (exprType.equals("lambdacalc.logic.SetWithGenerator")) return new SetWithGenerator(input);
-        if (exprType.equals("lambdacalc.logic.Subset")) return new Subset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.Subset")) return new SetRelation.Subset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.ProperSubset")) return new SetRelation.ProperSubset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.NotSubset")) return new SetRelation.NotSubset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.Superset")) return new SetRelation.Superset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.ProperSuperset")) return new SetRelation.ProperSuperset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.NotSuperset")) return new SetRelation.NotSuperset(input);
         if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
         
         throw new java.io.IOException("Invalid data.");

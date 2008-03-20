@@ -430,10 +430,15 @@ public class ExpressionParser {
         switch (c) {
             case '(':
             case '[':
-                ParseResultSet parenrs = parseExpression(expression, start+1, context, "an expression inside your " + (c == '(' ? "parentheses" : "brackets"));
+            case '|':
+                String bracketname = null;
+                char closeChar = ' ';
+                if (c == '(') { bracketname = "parentheses"; closeChar = ')'; }
+                if (c == '[') { bracketname = "brackets"; closeChar = ']'; }
+                if (c == '|') { bracketname = "cardinality bars"; closeChar = '|'; }
+                
+                ParseResultSet parenrs = parseExpression(expression, start+1, context, "an expression inside your " + bracketname);
                 if (parenrs.Exception != null) return parenrs; // return any fatal errors directly
-
-                char closeChar = (c == '(') ? ')' : ']'; // what char do we need to close the parens?
 
                 int needCloseParenAt = -1; // a position that we need a close paren at, if no
                                            // possible parse of a subclass ends with the close paren character
@@ -463,7 +468,11 @@ public class ExpressionParser {
                     
                     // If it is followed by closeChar, wrap it in Parens and
                     // consider it a possible parse.
-                    result.add(new ParseResult(new Parens(parenr.Expression, c == '(' ? Parens.ROUND : Parens.SQUARE), newstart+1));
+                    Expr e = null;
+                    if (c == '(') { e = new Parens(parenr.Expression, Parens.ROUND); }
+                    if (c == '[') { e = new Parens(parenr.Expression, Parens.SQUARE); }
+                    if (c == '|') { e = new Cardinality(parenr.Expression); }
+                    result.add(new ParseResult(e, newstart+1));
                 }
                 
                 // If no possible parses are followed by closeChar, raise an exception
@@ -1115,8 +1124,24 @@ public class ExpressionParser {
             else if (c == '!' && cnext == '=')
                 { c = Equality.NEQ_SYMBOL; start++; }
 
+            else if (c == '<' && cnext == '=')
+                { c = NumericRelation.LessThanOrEqual.SYMBOL; start++; }
+            else if (c == '>' && cnext == '=')
+                { c = NumericRelation.GreaterThanOrEqual.SYMBOL; start++; }
+
+            else if (c == '!' && cnext == '<' && cnextnext == '<')
+                { c = SetRelation.NotSubset.SYMBOL; start++; }
+            else if (c == '<' && cnext == '<' && cnextnext == '<')
+                { c = SetRelation.ProperSubset.SYMBOL; start++; }
             else if (c == '<' && cnext == '<')
-                { c = Subset.SYMBOL; start++; }
+                { c = SetRelation.Subset.SYMBOL; start++; }
+
+            else if (c == '!' && cnext == '>' && cnextnext == '>')
+                { c = SetRelation.NotSuperset.SYMBOL; start++; }
+            else if (c == '>' && cnext == '>' && cnextnext == '>')
+                { c = SetRelation.ProperSuperset.SYMBOL; start++; }
+            else if (c == '>' && cnext == '>')
+                { c = SetRelation.Superset.SYMBOL; start++; }
         }
             
         start++;
@@ -1125,7 +1150,9 @@ public class ExpressionParser {
         // our expression. Since we've found something complete already, and we have no indication
         // that the user intended a connective, there's no need to return any error status.
         if (!(c == And.SYMBOL || c == Or.SYMBOL || c == If.SYMBOL || c == Iff.SYMBOL || c == Equality.EQ_SYMBOL || c == Equality.NEQ_SYMBOL
-                || c == Subset.SYMBOL))
+                || c == NumericRelation.LessThan.SYMBOL || c == NumericRelation.LessThanOrEqual.SYMBOL || c == NumericRelation.GreaterThan.SYMBOL || c == NumericRelation.GreaterThanOrEqual.SYMBOL
+                || c == SetRelation.Subset.SYMBOL || c == SetRelation.ProperSubset.SYMBOL || c == SetRelation.NotSubset.SYMBOL
+                || c == SetRelation.Superset.SYMBOL || c == SetRelation.ProperSuperset.SYMBOL || c == SetRelation.NotSuperset.SYMBOL))
             return null;
             
         // See if any white space is after the connective
@@ -1196,7 +1223,9 @@ public class ExpressionParser {
             // are on the same level, then there's a problem because without an operator
             // precedence convention, it is ambiguous.
             char[][] operator_precedence = {
-                new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL, Subset.SYMBOL },
+                new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL,
+                    NumericRelation.LessThan.SYMBOL, NumericRelation.LessThanOrEqual.SYMBOL, NumericRelation.GreaterThan.SYMBOL, NumericRelation.GreaterThanOrEqual.SYMBOL,
+                    SetRelation.Subset.SYMBOL, SetRelation.ProperSubset.SYMBOL, SetRelation.NotSubset.SYMBOL, SetRelation.Superset.SYMBOL, SetRelation.ProperSuperset.SYMBOL, SetRelation.NotSuperset.SYMBOL },
                 new char[] { And.SYMBOL, Or.SYMBOL },
                 new char[] { If.SYMBOL, Iff.SYMBOL }  };
                
@@ -1280,7 +1309,16 @@ public class ExpressionParser {
                     case Iff.SYMBOL: binary = new Iff(left, right); break;
                     case Equality.EQ_SYMBOL: binary = new Equality(left, right, true); break;
                     case Equality.NEQ_SYMBOL: binary = new Equality(left, right, false); break;
-                    case Subset.SYMBOL: binary = new Subset(left, right); break;
+                    case NumericRelation.LessThan.SYMBOL: binary = new NumericRelation.LessThan(left, right); break;
+                    case NumericRelation.LessThanOrEqual.SYMBOL: binary = new NumericRelation.LessThanOrEqual(left, right); break;
+                    case NumericRelation.GreaterThan.SYMBOL: binary = new NumericRelation.GreaterThan(left, right); break;
+                    case NumericRelation.GreaterThanOrEqual.SYMBOL: binary = new NumericRelation.GreaterThanOrEqual(left, right); break;
+                    case SetRelation.Subset.SYMBOL: binary = new SetRelation.Subset(left, right); break;
+                    case SetRelation.ProperSubset.SYMBOL: binary = new SetRelation.ProperSubset(left, right); break;
+                    case SetRelation.NotSubset.SYMBOL: binary = new SetRelation.NotSubset(left, right); break;
+                    case SetRelation.Superset.SYMBOL: binary = new SetRelation.Superset(left, right); break;
+                    case SetRelation.ProperSuperset.SYMBOL: binary = new SetRelation.ProperSuperset(left, right); break;
+                    case SetRelation.NotSuperset.SYMBOL: binary = new SetRelation.NotSuperset(left, right); break;
                     default: throw new RuntimeException(); // unreachable
                 }
                 operands.set(i, binary);

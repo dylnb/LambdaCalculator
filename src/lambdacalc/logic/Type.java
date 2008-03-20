@@ -37,6 +37,11 @@ public abstract class Type implements Comparable {
             new AtomicType('t'));
     
     /**
+     * The type of an integer.
+     */
+    public static final Type I = new AtomicType('i');
+
+    /**
      * Tests two types for equality (as you would expect).
      */
     public boolean equals(Object obj) {
