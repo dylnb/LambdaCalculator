@@ -9,8 +9,8 @@ package lambdacalc.logic;
 import java.awt.event.KeyEvent;
 
 /**
- * Represents the subset and superset relations, and the negated and proper
- * versions of each.
+ * Represents the subset and superset relations, the negated and proper
+ * versions of each, and intersection and union.
  */
 public abstract class SetRelation extends LogicalBinary {
     
@@ -22,13 +22,17 @@ public abstract class SetRelation extends LogicalBinary {
         return null; // doesn't matter since we override getType()
     }
     
+    protected abstract Type getResultingType() throws TypeEvaluationException;
+    
     public Type getType() throws TypeEvaluationException {
         Type lefttype = getLeft().getType();
         Type righttype = getRight().getType();
         if ((!(lefttype instanceof CompositeType) || !((CompositeType)lefttype).getRight().equals(Type.T))
             || (!(righttype instanceof CompositeType) || !((CompositeType)righttype).getRight().equals(Type.T)))
-            throw new TypeMismatchException("The types of the expressions on the left and right of a set relation connective like '" + getSymbol() + "' must be a set type, i.e. the type of the characteristic function of a set, such as " + Type.ET + ", but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
-        return Type.T;
+            throw new TypeMismatchException("The types of the expressions on the left and right of a set connective like '" + getSymbol() + "' must be a set type, i.e. the type of the characteristic function of a set, such as " + Type.ET + ", but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
+        if (!((CompositeType)lefttype).getLeft().equals(((CompositeType)righttype).getLeft()))
+            throw new TypeMismatchException("The sets on the left and right of a set connective like '" + getSymbol() + "' must be sets over the same kind of element.");
+        return getResultingType();
     }
 
     SetRelation(java.io.DataInputStream input) throws java.io.IOException {
@@ -41,6 +45,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final int KEY_EVENT = KeyEvent.VK_COMMA; // shift+comma = <, at least on standard keyboards
         public Subset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new Subset(left, right); }
         Subset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
@@ -48,6 +53,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u228A';
         public ProperSubset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new ProperSubset(left, right); }
         ProperSubset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
@@ -55,6 +61,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u2284';
         public NotSubset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new NotSubset(left, right); }
         NotSubset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
@@ -65,6 +72,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final int KEY_EVENT = KeyEvent.VK_PERIOD; // shift+period = >, at least on standard keyboards
         public Superset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new Superset(left, right); }
         Superset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
@@ -72,6 +80,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u228B';
         public ProperSuperset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new ProperSuperset(left, right); }
         ProperSuperset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
@@ -79,7 +88,27 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u2285';
         public NotSuperset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new NotSuperset(left, right); }
         NotSuperset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
+    }
+
+    public static class Intersect extends SetRelation {
+        public static final char SYMBOL = '\u2229';
+        public static final String INPUT_SYMBOL = "@I";
+        public Intersect(Expr left, Expr right) { super(left, right); }
+        public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
+        protected Binary create(Expr left, Expr right) { return new Intersect(left, right); }
+        Intersect(java.io.DataInputStream input) throws java.io.IOException { super(input); }
+    }
+    public static class Union extends SetRelation {
+        public static final char SYMBOL = '\u222A';
+        public static final String INPUT_SYMBOL = "@U";
+        public Union(Expr left, Expr right) { super(left, right); }
+        public String getSymbol() { return String.valueOf(SYMBOL); }
+        protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
+        protected Binary create(Expr left, Expr right) { return new Union(left, right); }
+        Union(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
 }

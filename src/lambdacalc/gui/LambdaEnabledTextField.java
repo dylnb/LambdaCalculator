@@ -153,10 +153,16 @@ public class LambdaEnabledTextField extends JTextField {
                  case KeyEvent.VK_6: // modifier on the key that's the same as "&" on English keyboards
                  case KeyEvent.VK_7: // modifier on the key that's the same as "^" on English keyboards   
                  case And.ALTERNATE_INPUT_SYMBOL: // alternative for "and": caret (^)
-                     c = And.SYMBOL;
+                     if (!e.isShiftDown())
+                        c = And.SYMBOL;
+                     else
+                         c = SetRelation.Intersect.SYMBOL;
                      break;
                  case Or.KEY_EVENT: 
-                     c = Or.SYMBOL;
+                     if (!e.isShiftDown())
+                        c = Or.SYMBOL;
+                     else
+                         c = SetRelation.Union.SYMBOL;
                      break;             
                  case SetRelation.Subset.KEY_EVENT:
                      c = SetRelation.Subset.SYMBOL;

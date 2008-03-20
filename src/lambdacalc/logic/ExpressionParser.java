@@ -1107,17 +1107,15 @@ public class ExpressionParser {
         if (context.ASCII) {
             char cnext = (start+1 < expression.length()) ? expression.charAt(start+1) : (char)0;
             char cnextnext = (start+2 < expression.length()) ? expression.charAt(start+2) : (char)0;
+
             if (c == And.INPUT_SYMBOL) // '&' //todo: also And.ALTERNATE_INPUT_SYMBOL?
                 c = And.SYMBOL; // wedge
-
-            // TODO: synchronize this with LambdaEnabledTextField
-
             else if (c == Or.INPUT_SYMBOL)
                 c = Or.SYMBOL;
                 
             else if (c == Multiplication.INPUT_SYMBOL)
                 c = Multiplication.SYMBOL;
-
+            
             else if (c == '-' && cnext == '>')
                 { c = If.SYMBOL; start++; }
 
@@ -1126,11 +1124,22 @@ public class ExpressionParser {
 
             else if (c == '!' && cnext == '=')
                 { c = Equality.NEQ_SYMBOL; start++; }
+            
+            // numeric connectives
 
             else if (c == '<' && cnext == '=')
                 { c = NumericRelation.LessThanOrEqual.SYMBOL; start++; }
             else if (c == '>' && cnext == '=')
                 { c = NumericRelation.GreaterThanOrEqual.SYMBOL; start++; }
+            
+            // all of the set connectives are doubled characters
+
+            // set intersection: double carets or double v's.
+            
+            else if (c == '^' && cnext == '^')
+                { c = SetRelation.Intersect.SYMBOL; start++; }
+            else if (c == 'v' && cnext == 'v')
+                { c = SetRelation.Intersect.SYMBOL; start++; }
 
             else if (c == '!' && cnext == '<' && cnextnext == '<')
                 { c = SetRelation.NotSubset.SYMBOL; start++; }
@@ -1156,7 +1165,8 @@ public class ExpressionParser {
                 || c == Multiplication.SYMBOL
                 || c == NumericRelation.LessThan.SYMBOL || c == NumericRelation.LessThanOrEqual.SYMBOL || c == NumericRelation.GreaterThan.SYMBOL || c == NumericRelation.GreaterThanOrEqual.SYMBOL
                 || c == SetRelation.Subset.SYMBOL || c == SetRelation.ProperSubset.SYMBOL || c == SetRelation.NotSubset.SYMBOL
-                || c == SetRelation.Superset.SYMBOL || c == SetRelation.ProperSuperset.SYMBOL || c == SetRelation.NotSuperset.SYMBOL))
+                || c == SetRelation.Superset.SYMBOL || c == SetRelation.ProperSuperset.SYMBOL || c == SetRelation.NotSuperset.SYMBOL
+                || c == SetRelation.Intersect.SYMBOL || c == SetRelation.Union.SYMBOL))
             return null;
             
         // See if any white space is after the connective
@@ -1228,10 +1238,11 @@ public class ExpressionParser {
             // are on the same level, then there's a problem because without an operator
             // precedence convention, it is ambiguous.
             char[][] operator_precedence = {
-                new char[] { Multiplication.SYMBOL },
+                new char[] { Multiplication.SYMBOL, SetRelation.Intersect.SYMBOL, SetRelation.Union.SYMBOL },
                 new char[] { Equality.NEQ_SYMBOL, Equality.EQ_SYMBOL,
                     NumericRelation.LessThan.SYMBOL, NumericRelation.LessThanOrEqual.SYMBOL, NumericRelation.GreaterThan.SYMBOL, NumericRelation.GreaterThanOrEqual.SYMBOL,
-                    SetRelation.Subset.SYMBOL, SetRelation.ProperSubset.SYMBOL, SetRelation.NotSubset.SYMBOL, SetRelation.Superset.SYMBOL, SetRelation.ProperSuperset.SYMBOL, SetRelation.NotSuperset.SYMBOL },
+                    SetRelation.Subset.SYMBOL, SetRelation.ProperSubset.SYMBOL, SetRelation.NotSubset.SYMBOL, SetRelation.Superset.SYMBOL, SetRelation.ProperSuperset.SYMBOL, SetRelation.NotSuperset.SYMBOL
+                },
                 new char[] { And.SYMBOL, Or.SYMBOL },
                 new char[] { If.SYMBOL, Iff.SYMBOL }  };
                
@@ -1326,6 +1337,8 @@ public class ExpressionParser {
                     case SetRelation.Superset.SYMBOL: binary = new SetRelation.Superset(left, right); break;
                     case SetRelation.ProperSuperset.SYMBOL: binary = new SetRelation.ProperSuperset(left, right); break;
                     case SetRelation.NotSuperset.SYMBOL: binary = new SetRelation.NotSuperset(left, right); break;
+                    case SetRelation.Intersect.SYMBOL: binary = new SetRelation.Intersect(left, right); break;
+                    case SetRelation.Union.SYMBOL: binary = new SetRelation.Union(left, right); break;
                     default: throw new RuntimeException(); // unreachable
                 }
                 operands.set(i, binary);

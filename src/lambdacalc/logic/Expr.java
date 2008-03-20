@@ -601,6 +601,8 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.SetRelation.Superset")) return new SetRelation.Superset(input);
         if (exprType.equals("lambdacalc.logic.SetRelation.ProperSuperset")) return new SetRelation.ProperSuperset(input);
         if (exprType.equals("lambdacalc.logic.SetRelation.NotSuperset")) return new SetRelation.NotSuperset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.Intersect")) return new SetRelation.Intersect(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation.Union")) return new SetRelation.Union(input);
         if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
         
         throw new java.io.IOException("Invalid data.");
