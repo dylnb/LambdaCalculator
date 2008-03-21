@@ -79,3 +79,6 @@ directions Do the derivation.
 [.S [.NP most boys] [.VP love [.NP some girl ] ] ]
 
 [.S [.NP no boy] [.VP loves [.NP a girl ] ] ]
+
+[.S [.NP no boy] [.VP loves [.NP every girl ] ] ]
+

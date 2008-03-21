@@ -12,6 +12,7 @@ package lambdacalc.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,7 @@ import java.util.Vector;
  * Abstract base class of the binders, including the propositional binders 
  * For All and Exists, the Iota operator, and Lambda.
  */
-public abstract class Binder extends Expr {
+public abstract class Binder extends Expr implements VariableBindingExpr {
     
     private Identifier ident; 
     // ident = what the binder binds.
@@ -209,6 +210,16 @@ public abstract class Binder extends Expr {
 
         // Recurse
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
+    }
+    
+    public boolean bindsAny(Set vars) {
+        Identifier bvi = getVariable();
+        for (Iterator fvs = vars.iterator(); fvs.hasNext(); ) {
+            Var fv = (Var)fvs.next();
+            if (fv.equals(bvi))
+                return true;
+        }
+        return false;
     }
     
     /**
