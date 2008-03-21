@@ -498,7 +498,7 @@ public class ScratchPadWindow extends javax.swing.JFrame {
             
             displayFeedback(s.getMessage());
             txtEnterYourOwnProblem.requestFocusInWindow();
-            if (s.getPosition() >= 0 && s.getPosition() <= txtUserAnswer.getText().length())
+            if (s.getPosition() >= 0 && s.getPosition() <= txtEnterYourOwnProblem.getText().length())
                 txtEnterYourOwnProblem.setCaretPosition(s.getPosition());
             
         } catch (Exception e) { // e.g. TypeEvaluationException
@@ -630,10 +630,8 @@ public class ScratchPadWindow extends javax.swing.JFrame {
                 txtUserAnswer.setText(string);
             }
             
-            if (ex == null) {
-                // TODO exception handling
-            }
             AnswerStatus status = ex.checkAnswer(string);
+
             displayFeedback(status.getMessage());
             if (status.isCorrect()) {
                 if (status.endsExercise()) {
