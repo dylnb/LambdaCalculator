@@ -27,8 +27,10 @@ public abstract class Expr {
      * Gets an integer representing the (outermost) expression's operator precedence:
      *
      *   8   FunApp over Lambda Expression -- weakest
-     *   4   Binders and Connectives (so that either inside the other always gets parenthesis for clarity and correctness)
-     *   3   Not, Cardinality, Multiplication
+     *   6   Connectives
+     *   5   Multiplication, Intersect, Union
+     *   4   Binders
+     *   3   Not, Cardinality
      *   2   FunApp over Predicate
      *   1   Identifier
      *   0   Parens, ArgList (because ArgList is always parenthesized), GApp, SetWithElements, SetWithGenerator -- strongest

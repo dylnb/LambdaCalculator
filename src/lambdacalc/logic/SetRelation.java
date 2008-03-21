@@ -97,6 +97,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u2229';
         public static final String INPUT_SYMBOL = "@I";
         public Intersect(Expr left, Expr right) { super(left, right); }
+        public final int getOperatorPrecedence() { return 5; }
         public String getSymbol() { return String.valueOf(SYMBOL); }
         protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
         protected Binary create(Expr left, Expr right) { return new Intersect(left, right); }
@@ -106,6 +107,7 @@ public abstract class SetRelation extends LogicalBinary {
         public static final char SYMBOL = '\u222A';
         public static final String INPUT_SYMBOL = "@U";
         public Union(Expr left, Expr right) { super(left, right); }
+        public final int getOperatorPrecedence() { return 5; }
         public String getSymbol() { return String.valueOf(SYMBOL); }
         protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
         protected Binary create(Expr left, Expr right) { return new Union(left, right); }

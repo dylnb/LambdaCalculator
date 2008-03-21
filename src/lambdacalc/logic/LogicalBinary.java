@@ -50,9 +50,10 @@ public abstract class LogicalBinary extends Binary {
      * Gets the operator precedence of this operator.
      * All values are documented in Expr, so don't change the value here
      * without changing it there.
+     * Intersect and Union override this for a lower precendence
      */
-    public final int getOperatorPrecedence() {
-        return 4;
+    public int getOperatorPrecedence() {
+        return 6;
     }
     
     public Type getType() throws TypeEvaluationException {

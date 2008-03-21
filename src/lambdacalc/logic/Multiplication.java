@@ -31,7 +31,7 @@ public class Multiplication extends Binary {
      * without changing it there.
      */
     public final int getOperatorPrecedence() {
-        return 3;
+        return 5;
     }
     
     protected Binary create(Expr left, Expr right) {
