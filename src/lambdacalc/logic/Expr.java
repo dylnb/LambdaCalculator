@@ -589,25 +589,25 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Lambda")) return new Lambda(input);
         if (exprType.equals("lambdacalc.logic.Multiplication")) return new Multiplication(input);
         if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
-        if (exprType.equals("lambdacalc.logic.NumericRelation.LessThan")) return new NumericRelation.LessThan(input);
-        if (exprType.equals("lambdacalc.logic.NumericRelation.LessThanOrEqual")) return new NumericRelation.LessThanOrEqual(input);
-        if (exprType.equals("lambdacalc.logic.NumericRelation.GreaterThan")) return new NumericRelation.GreaterThan(input);
-        if (exprType.equals("lambdacalc.logic.NumericRelation.GreaterThanOrEqual")) return new NumericRelation.GreaterThanOrEqual(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation$LessThan")) return new NumericRelation.LessThan(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation$LessThanOrEqual")) return new NumericRelation.LessThanOrEqual(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation$GreaterThan")) return new NumericRelation.GreaterThan(input);
+        if (exprType.equals("lambdacalc.logic.NumericRelation$GreaterThanOrEqual")) return new NumericRelation.GreaterThanOrEqual(input);
         if (exprType.equals("lambdacalc.logic.Or")) return new Or(input);
         if (exprType.equals("lambdacalc.logic.Parens")) return new Parens(input);
         if (exprType.equals("lambdacalc.logic.SetWithElements")) return new SetWithElements(input);
         if (exprType.equals("lambdacalc.logic.SetWithGenerator")) return new SetWithGenerator(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.Subset")) return new SetRelation.Subset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.ProperSubset")) return new SetRelation.ProperSubset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.NotSubset")) return new SetRelation.NotSubset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.Superset")) return new SetRelation.Superset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.ProperSuperset")) return new SetRelation.ProperSuperset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.NotSuperset")) return new SetRelation.NotSuperset(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.Intersect")) return new SetRelation.Intersect(input);
-        if (exprType.equals("lambdacalc.logic.SetRelation.Union")) return new SetRelation.Union(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$Subset")) return new SetRelation.Subset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$ProperSubset")) return new SetRelation.ProperSubset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$NotSubset")) return new SetRelation.NotSubset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$Superset")) return new SetRelation.Superset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$ProperSuperset")) return new SetRelation.ProperSuperset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$NotSuperset")) return new SetRelation.NotSuperset(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$Intersect")) return new SetRelation.Intersect(input);
+        if (exprType.equals("lambdacalc.logic.SetRelation$Union")) return new SetRelation.Union(input);
         if (exprType.equals("lambdacalc.logic.Var")) return new Var(input);
         
-        throw new java.io.IOException("Invalid data.");
+        throw new java.io.IOException("Invalid data: An expression type was used in the file that is not available in this version of the program: \"" + exprType + "\"");
     }
 
 }
