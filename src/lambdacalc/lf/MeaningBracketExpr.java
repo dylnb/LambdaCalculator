@@ -134,7 +134,7 @@ public class MeaningBracketExpr extends Expr {
         }
     }
     
-    protected boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars) {
+    protected boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         return (e instanceof MeaningBracketExpr) && (node == ((MeaningBracketExpr)e).node);
     }
     

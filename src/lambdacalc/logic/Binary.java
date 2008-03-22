@@ -47,22 +47,22 @@ public abstract class Binary extends Expr {
         return right;
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
 
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Binary) {
-            return this.equals((Binary) e, useMaps, thisMap, otherMap, collapseAllVars);
+            return this.equals((Binary) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
         } else {
             return false;
         }
     }
     
-    private boolean equals(Binary b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
+    private boolean equals(Binary b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         return equalsHelper(b)
-            && this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars)
-            && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars);
+            && this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+            && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
     }
     
     protected boolean equalsHelper(Binary b) {

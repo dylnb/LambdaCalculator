@@ -31,7 +31,7 @@ public class Const extends Identifier {
         return ret;
     }
 
-    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap) {
+    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap) {
         // ignore maps in all cases, since it only applies to variables
         if (i instanceof Const)
             return this.getType().equals(i.getType()) 

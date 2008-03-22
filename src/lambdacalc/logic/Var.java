@@ -35,7 +35,7 @@ public class Var extends Identifier {
         return ret;
     }
 
-    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap) {
+    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap) {
         // we use the map here...
         if (i instanceof Var) {
             if (!this.getType().equals(i.getType())) {
@@ -45,8 +45,32 @@ public class Var extends Identifier {
             Object thisside = (thisMap == null) ? null : thisMap.get(this);
             Object otherside = (otherMap == null) ? null : otherMap.get(i);
                     
-            if (thisside == null && otherside == null)
-                return getSymbol().equals(i.getSymbol());
+            if (thisside == null && otherside == null) {
+                if (freeVarMap == null) {
+                    // This variable is free on both sides. If we are not allowing for free variable
+                    // renaming, then just check that the symbols are the same.
+                    return getSymbol().equals(i.getSymbol());
+                } else {
+                    // We are allowing for the consistent renaming of free variables. See if we
+                    // already have a renaming in place for this variable.
+                    Var n = (Var)freeVarMap.get(this);
+                    if (n == null) {
+                        // No renaming yet. If something else maps to i, then we don't have a
+                        // consistent 1:1 renaming.
+                        if (freeVarMap.values().contains(i))
+                            return false;
+                        
+                        // Add this renaming and return true to indicating that
+                        // the consistent renaming is OK so far.
+                        freeVarMap.put(this, i);
+                        return true;
+                    } else {
+                        // We have a renaming of this variable already. Return whether the renaming
+                        // is consistent with this case.
+                        return i.equals(n);
+                    }
+                }
+            }
             
             // one side is bound but the other is not
             if (thisside == null || otherside == null)

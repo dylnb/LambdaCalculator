@@ -79,7 +79,7 @@ public class GApp extends Expr {
      */
     protected boolean equals
             (Expr e, boolean collapseBoundVars, Map thisMap, 
-            Map otherMap, boolean collapseAllVars) {
+            Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         e = e.stripOutermostParens();
         return (e instanceof GApp && this.getIndex()==((GApp) e).getIndex());
     }

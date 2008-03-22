@@ -54,13 +54,13 @@ public class Parens extends Unary {
         return getInnerExpr().getType();
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         
         // ignore parentheses for equality test
         // this line needs to be added to every equals method in every subclass of Expr
         e = e.stripOutermostParens();
 
-        return this.stripOutermostParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars);
+        return this.stripOutermostParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
     }
         
     protected Unary create(Expr inner) {

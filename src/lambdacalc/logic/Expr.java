@@ -88,7 +88,7 @@ public abstract class Expr {
         if (obj instanceof Expr)
             // call equals and specify not to collapse bound variables
             // (useMap=false)
-            return equals((Expr)obj, false, null, null, false); // null maps
+            return equals((Expr)obj, false, null, null, false, null); // null maps
         else
             return false;
     }
@@ -104,7 +104,7 @@ public abstract class Expr {
     public final boolean alphaEquivalent(Expr obj) {
         // call equals and specify to collapse bound variables
         // (useMap=true)
-        return equals(obj, true, null, null, false); // null maps
+        return equals(obj, true, null, null, false, null); // null maps
     }
 
     /**
@@ -122,7 +122,24 @@ public abstract class Expr {
      * @return true iff the expressions are equivalent modulo parens and identifiers
      */
     public final boolean operatorEquivalent(Expr obj) {
-        return equals(obj, false, null, null, true);
+        return equals(obj, false, null, null, true, null);
+    }
+
+    /**
+     * Tests if two expressions are equal, modulo parens and the consistent
+     * renaming of both bound and free variables.
+     * Thus, Lx.P(a,x) equals Lx.[P(b,x)].
+     *
+     * @param obj the other expression to compare
+     * @return a consistent mapping from free variables in this expression to
+     * free variables in obj, or null if no consistent mapping exists or the
+     * two expressions are structurally different.
+     */
+    public final Map getConsistentFreeVariableRenaming(Expr obj) {
+        Map m = new HashMap();
+        if (equals(obj, true, null, null, false, m))
+            return m;
+        return null;
     }
 
     /**
@@ -172,12 +189,18 @@ public abstract class Expr {
      * By convention, the map variables are always set to null when an external caller calls this function. They
      * are only used for recursion.
      *
-     * Finally, if collapseAllVars is set to true, then the method will regard two expressions as equal even
+     * Next, if collapseAllVars is set to true, then the method will regard two expressions as equal even
      * if they differ in some variable (free or bound). For example, the following expressions will all be equal:
      *
      * Lx.R(x,y)
      * Ly.R(y,z)
      * Ly.R(z,x)
+     *
+     * Finally, if freeVarMap is not null, then we build a consistent mapping from free variables
+     * in this Expr to free variables in the other expr, and we return true if a consistent mapping
+     * is possible. That is, this makes all other checks less restrictive by additionally allowing
+     * free variables to be renamed. It shouldn't be used with collapseAllVars, because that already
+     * allows for any variable to match any other variable.
      *
      * @param e the other expression to compare
      *
@@ -199,7 +222,7 @@ public abstract class Expr {
      * abstracting over bound variables (depending on the parameters)
      */
     
-    protected abstract boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars);
+    protected abstract boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap);
     // IMPLEMENTATION NOTES -- TODO cleanup
     /*    
      * , where variables in this and the other expression
