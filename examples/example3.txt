@@ -36,13 +36,13 @@ use rule lambda abstraction
 # times. Students are able to add their own lexical entries
 # as well.
 
-define happy : Lx[happy(x)]
-define boy,boys : Lx[boy(x)]
-define girl,girls : Lx[girl(x)]
-define love, loves : LyLx[love(x,y)]
-define someone, somebody : LP[Ex[P(x)]]
-define everyone, everybody : LP[Ax[P(x)]]
-define no-one, nobody : LP[~Ex[P(x)]]
+define happy : Lx.happy(x)
+define boy,boys : Lx.boy(x)
+define girl,girls : Lx.girl(x)
+define love, loves : LyLx.love(x,y)
+define someone, somebody : LP.Ex[P(x)]
+define everyone, everybody : LP.Ax[P(x)]
+define no-one, nobody : LP.~Ex[P(x)]
 define some,a : LP.LQ.Ex[P(x) & Q(x)]
 define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]
 define every : LP.LQ.P << Q
