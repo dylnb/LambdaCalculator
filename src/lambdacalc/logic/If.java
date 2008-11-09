@@ -15,6 +15,8 @@ public class If extends LogicalBinary {
      */
     public static final char SYMBOL = '\u2192';
 
+    public static final String LATEX_REPR = "\\rightarrow";
+
     /**
      * Constructs the connective.
      * @param left the expression on the left side of the connective
@@ -26,6 +28,10 @@ public class If extends LogicalBinary {
 
     public String getSymbol() {
         return String.valueOf(SYMBOL);
+    }
+
+    public String getLatexRepr() {
+        return LATEX_REPR;
     }
 
     public Type getOperandType() {

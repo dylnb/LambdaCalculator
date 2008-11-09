@@ -52,34 +52,47 @@ public class MeaningBracketExpr extends Expr {
         return g;
     }
     
-    protected String toString(boolean html) {
+    protected String toString(int mode) {
         String label = node.getLabel();
         if (label != null) {
             if (node.hasIndex()) {
-                if (!html)
+                if (mode == TXT)
                     label += "_" + node.getIndex();
-                else
+                else if (mode == HTML)
                     label += "<sub>" + node.getIndex() + "</sub>";
+                else // mode == LATEX
+                    label += "_{" + node.getIndex() + "}";
             }
         } else {
             label = node.toString();
         }
-        
-        label = escapeHTML("[[" + label + "]]", html);
-        
+
+        if (mode == HTML) {
+            label = escapeHTML("[[" + label + "]]");
+        } else if (mode == TXT) {
+            label = "[[" + label + "]]";
+        } else { // mode == LATEX
+            label = "[\\![" + label + "]\\!]";
+        }
         if (g != null) {
-            if (!html)
+            if (mode == TXT) {
                 label += "^";
-            else
+            } else if (mode == HTML) {
                 label += "<sup>";
+            } else { // mode == LATEX
+                label += "^{";
+            }
             label += "g";
             for (Iterator i = g.keySet().iterator(); i.hasNext(); ) {
                 GApp gapp = (GApp)i.next();
                 Var var = (Var)g.get(gapp);
                 label += " " + var + "/" + gapp.getIndex();
             }
-            if (html)
+            if (mode == HTML) {
                 label += "</sup>";
+            } else if (mode == LATEX) {
+                label += "}";
+            }
         }
         
         return label;

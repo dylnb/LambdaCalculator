@@ -28,8 +28,13 @@ public class AtomicType extends Type {
     public String toString() {
         return String.valueOf(this.symbol);
     }
+
     
     public String toShortString() {
+        return toString();
+    }
+
+    public String toLatexString() {
         return toString();
     }
     

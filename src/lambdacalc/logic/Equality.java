@@ -21,6 +21,8 @@ public class Equality extends LogicalBinary {
      * The not-equal character
      */
     public static final char NEQ_SYMBOL = '\u2260';
+
+    public static final String LATEX_REPR = "=";
     
     private boolean equality;
     
@@ -64,6 +66,10 @@ public class Equality extends LogicalBinary {
         super.writeToStream(output);
         output.writeShort(0); // data format version
         output.writeBoolean(equality);
+    }
+
+    public String getLatexRepr() {
+        return this.LATEX_REPR;
     }
 
     Equality(java.io.DataInputStream input) throws java.io.IOException {

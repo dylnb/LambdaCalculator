@@ -34,4 +34,8 @@ public class DummyTerminal extends Terminal {
     
     public void guessLexicalEntries(Lexicon lexicon) {
     }
+
+    public String toLatexString() {
+        return "\\mbox{"+this.getLabel()+"}";
+    }
 }

@@ -36,8 +36,12 @@ public class SetWithGenerator extends Binary implements VariableBindingExpr {
     
     public Expr getFilter() { return getRight(); }
 
-    protected String toString(boolean html) {
-        return "{ " + getTemplate() + " | " + getFilter() + " }";
+    protected String toString(int mode) {
+        if (mode == LATEX) {
+            return "\\{ " + getTemplate().toString(mode) + " | " + getFilter().toString(mode) + " \\}";
+        } else { // mode == TXT || mode == HTML
+            return "{ " + getTemplate().toString(mode) + " | " + getFilter().toString(mode) + " }";
+        }
     }
 
     public final int getOperatorPrecedence() {

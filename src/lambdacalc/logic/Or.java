@@ -18,6 +18,8 @@ public class Or extends LogicalBinary {
     public static final char SYMBOL = '\u2228';
     
     public static final char INPUT_SYMBOL = 'V';
+
+    public static final String LATEX_REPR = "\\lor";
     
     public static final int KEY_EVENT = KeyEvent.VK_V;
     
@@ -32,6 +34,10 @@ public class Or extends LogicalBinary {
     
     public String getSymbol() {
         return String.valueOf(SYMBOL);
+    }
+
+    public String getLatexRepr() {
+        return LATEX_REPR;
     }
 
     public Type getOperandType() {

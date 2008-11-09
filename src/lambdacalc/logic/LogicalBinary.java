@@ -25,21 +25,27 @@ public abstract class LogicalBinary extends Binary {
         super(left, right);
     }
     
-    protected String toString(boolean html) {
-        return partToString(getLeft(), html) + " " + getSymbol() + " " + partToString(getRight(), html);
+    protected String toString(int mode) {
+        String symbol = getSymbol();
+        if (mode == Expr.LATEX) {
+            symbol = this.getLatexRepr();
+        }
+        return partToString(getLeft(), mode) + " " + symbol + " " + partToString(getRight(), mode);
     }
     
-    private String partToString(Expr expr, boolean html) {
+    private String partToString(Expr expr, int mode) {
         // And, Or, Intersect, and Union are associative, so we omit parens for nested these.
         if (((this instanceof And || this instanceof Or || this instanceof SetRelation.Intersect || this instanceof SetRelation.Union))
-            && expr.getClass() == getClass()) return expr.toString(html);
-        return nestedToString(expr, html);
+            && expr.getClass() == getClass()) return expr.toString(mode);
+        return nestedToString(expr, mode);
     }
     
     /**
      * Gets the unicode symbol associated with the binary connective.
      */
     public abstract String getSymbol();
+
+    public abstract String getLatexRepr();
 
     /**
      * Gets the type that the operands must be. Not called if getType() is overridden.

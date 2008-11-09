@@ -88,6 +88,7 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     public String toString() {
         return treeroot.toString();
     }
+
     
     public String getUserAnswers() {
         StringBuffer sb = new StringBuffer();

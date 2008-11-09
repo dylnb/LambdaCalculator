@@ -19,11 +19,13 @@ public class And extends LogicalBinary {
     public static final char SYMBOL = '\u2227';
     
     public static final char INPUT_SYMBOL = '&';
+
+    public static final String LATEX_REPR = "\\land";
     
     public static final char ALTERNATE_INPUT_SYMBOL = '^';
     
     public static final int KEY_EVENT = KeyEvent.VK_AMPERSAND;
-    
+
     /**
      * Constructs the connective.
      * @param left the expression on the left side of the connective
@@ -36,7 +38,11 @@ public class And extends LogicalBinary {
     public String getSymbol() {
         return String.valueOf(SYMBOL);
     }
-    
+
+    public String getLatexRepr() {
+        return LATEX_REPR;
+    }
+
     public Type getOperandType() {
         return Type.T;
     }

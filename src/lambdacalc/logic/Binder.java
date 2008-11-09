@@ -91,6 +91,8 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
      * Gets the unicode symbol associated with the binder.
      */
     public abstract String getSymbol(); // lambda, exists, forall
+
+    public abstract String getLatexSymbol();
     
     /**
      * Overriden in derived classes to create a new instance of this
@@ -228,12 +230,13 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
      * a dot in program output.
      */
     public abstract boolean dotPolicy();
-    
-    protected String toString(boolean html) {
-        String inner = innerExpr.toString(html);
+
+    protected String toString(int mode) {
+        String inner = innerExpr.toString(mode);
         if (!(innerExpr instanceof Binder) 
           && innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
             inner = "[" + inner + "]";
+            
 //        } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {
 //            if (dotPolicy()) {
 //                inner = "." + inner;
@@ -252,8 +255,16 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
         if (dotPolicy()) {
             inner = "." + inner;
         }
-        
-        return getSymbol() + escapeHTML(ident.toString(), html) + inner;
+
+        if (mode == TXT) {
+            return getSymbol() + ident.toString(mode) + inner;
+        } else if (mode == HTML) {
+            return getSymbol() + escapeHTML(ident.toString(mode)) + inner;
+        } else if (mode == LATEX) {
+            return getLatexSymbol() + " " + ident.toString(mode) + inner;
+        }
+        // never reached
+        throw new IllegalArgumentException();
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {

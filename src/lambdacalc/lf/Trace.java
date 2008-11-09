@@ -61,6 +61,11 @@ public class Trace extends Terminal {
         return "Trace";
     }
 
+    public String toLatexString() {
+        // TODO should this be changed as in this.getMeaning?
+        return this.getLabel() + "$" + new GApp(this.getIndex()).toLatexString() + "$";
+    }
+
     /**
      * Nothing to do on a Trace.
      *

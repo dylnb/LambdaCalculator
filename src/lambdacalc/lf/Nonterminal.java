@@ -181,5 +181,22 @@ public class Nonterminal extends LFNode {
         ret += "]";
         return ret;
     }
+
+//    public String toLatexString() {
+//        String ret = "[.{";
+//        if (getLabel() != null) {
+//            ret += getLabel();
+//        }
+//        ret += "} ";
+//        for (int i = 0; i < children.size(); i++) {
+//            if (i > 0) ret += " ";
+//            ret += ((LFNode) children.get(i)).toLatexString();
+//        }
+//        ret += " ]";
+//        if (this.hasIndex()) {
+//            ret +="_{" + this.getIndex() + "}";
+//        }
+//        return ret;
+//    }
     
 }

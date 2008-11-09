@@ -17,6 +17,8 @@ public class ProductType extends Type {
      * The unicode cross character.
      */
     public static final char SYMBOL = '\u00D7';
+
+    public static final String LATEX_SYMBOL = "\\times";
     
     private Type[] subtypes;
     
@@ -66,13 +68,25 @@ public class ProductType extends Type {
     public String toShortString() {
         return toString();
     }
-    
+
     public String toString() {
+        return this.toStringHelper(String.valueOf(this.SYMBOL), false);
+    }
+
+    public String toLatexString() {
+        return this.toStringHelper(this.LATEX_SYMBOL, true);
+    }
+    
+    public String toStringHelper(String separator, boolean latex) {
         String ret = "";
         for (int i = 0; i < getSubTypes().length; i++) {
             if (i > 0)
-                ret += " " + SYMBOL + " ";
-            ret += getSubTypes()[i].toString();
+                ret += " " + separator + " ";
+            if (latex) {
+                ret += getSubTypes()[i].toLatexString();
+            } else {
+                ret += getSubTypes()[i].toString();
+            }
         }
         return ret;
     }

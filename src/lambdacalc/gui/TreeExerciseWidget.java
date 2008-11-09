@@ -67,6 +67,7 @@ public class TreeExerciseWidget extends JPanel {
 //    JButton btnFontDecrease = new JButton("A\u2193");
     JButton btnFontIncrease = new JButton("Larger");
     JButton btnFontDecrease = new JButton("Smaller");
+    JButton btnLatex = new JButton("LaTeX");
     
     // Selection listeners
     Vector listeners = new Vector();
@@ -208,6 +209,10 @@ public class TreeExerciseWidget extends JPanel {
         btnFontDecrease.addActionListener(new FontDecreaseActionListener());
         buttons.add(btnFontDecrease);
         btnFontDecrease.setToolTipText("Decrease font size.");
+
+        btnLatex.addActionListener(new LatexActionListener());
+        buttons.add(btnLatex);
+        btnLatex.setToolTipText("Export current view to Latex");
         
         // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
         // FullScreenTreeExerciseWidget
@@ -487,7 +492,61 @@ public class TreeExerciseWidget extends JPanel {
         
         this.setErrorMessage(evalError);
     }
-    
+
+    String exportCurrentViewToLatex() {
+        LFNode cur = this.getSelectedNode();
+        if (cur == null) cur = this.lftree;
+        return  "\\documentclass{article}\n"
+                + "\\usepackage[a3paper,left=0in,landscape]{geometry}\n"
+                + "\\usepackage{qtree}\n"
+                + "\\def\\qtreepadding{3pt}\n"
+                + "\\begin{document}\n\n"
+                + "\\Tree"
+                + this.recursivelyLatexify(cur)
+                + "\n\n\\end{document}\n";
+    }
+
+    private String recursivelyLatexify(LFNode cur) {
+        String res = "";
+        if (cur instanceof Nonterminal) {
+            res += "\n[";
+            Nonterminal nt = (Nonterminal) cur;
+            JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(cur);
+            if (lfToMeaningState.containsKey(cur)) { // has the node been evaluated?
+                MeaningState ms = (MeaningState)lfToMeaningState.get(cur);
+                if (ms.evaluationError == null) { // was there an error?
+                    Expr expr = ms.getCurrentExpression();
+                    res += ".{";
+                    if (cur.getLabel() != null) {
+                        res += cur.getLabel();
+                    }
+                    String type = "";
+                    if (isTypesDisplayed()) {
+                        try {
+                            type = (expr.getType().toLatexString());
+                        } catch (TypeEvaluationException e) {
+                            type = "Type unknown";
+                        }
+                        res += "\\\\\n$" + type + "$\n";
+                    }
+
+                    res += "\\\\\n$" + expr.toLatexString() + "$\n} ";
+                } else {  // error in evaluation
+                    res += ".{Problem!} ";
+                }
+            }
+            for (int i = 0; i < nt.size(); i++) {
+                res += " " +  recursivelyLatexify((LFNode) nt.getChild(i));
+            }
+            res += " ] ";
+        } else {
+            res += cur.toLatexString();
+        }
+
+        return res;
+    }
+
+
     // Update the visual display of the node. Called to
     // update the label, meaning, and focus state of a node
     // when it changes.
@@ -1042,6 +1101,11 @@ public class TreeExerciseWidget extends JPanel {
     class FullScreenActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             openFullScreenWindow();
+        }
+    }
+    class LatexActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            System.out.println(exportCurrentViewToLatex());
         }
     }
     

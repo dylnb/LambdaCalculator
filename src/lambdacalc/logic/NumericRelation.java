@@ -22,7 +22,7 @@ public abstract class NumericRelation extends LogicalBinary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.I) || !getRight().getType().equals(Type.I))
+        if (!getLeft().getType().equals(Type.N) || !getRight().getType().equals(Type.N))
             throw new TypeMismatchException("The types of the expressions on the left and right of a numeric relation connective like '" + getSymbol() + "' must be type i, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }
@@ -33,29 +33,37 @@ public abstract class NumericRelation extends LogicalBinary {
 
     public static class LessThan extends NumericRelation {
         public static final char SYMBOL = '<';
+        public static final String LATEX_REPR = "<";
         public LessThan(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Binary create(Expr left, Expr right) { return new LessThan(left, right); }
         LessThan(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class LessThanOrEqual extends NumericRelation {
         public static final char SYMBOL = '\u2264';
+        public static final String LATEX_REPR = "\\leq";
         public LessThanOrEqual(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Binary create(Expr left, Expr right) { return new LessThanOrEqual(left, right); }
         LessThanOrEqual(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class GreaterThan extends NumericRelation {
         public static final char SYMBOL = '>';
+        public static final String LATEX_REPR = ">";
         public GreaterThan(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Binary create(Expr left, Expr right) { return new GreaterThan(left, right); }
         GreaterThan(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class GreaterThanOrEqual extends NumericRelation {
         public static final char SYMBOL = '\u2265';
+        public static final String LATEX_REPR = "\\geq";
         public GreaterThanOrEqual(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Binary create(Expr left, Expr right) { return new GreaterThanOrEqual(left, right); }
         GreaterThanOrEqual(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }

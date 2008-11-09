@@ -42,25 +42,31 @@ public abstract class SetRelation extends LogicalBinary {
     public static class Subset extends SetRelation {
         public static final char SYMBOL = '\u2286'; // subset or equal to symbol (plain subset is 2282)
         public static final String INPUT_SYMBOL = "<<";
+        public static final String LATEX_REPR = "\\subseteq";
         public static final int KEY_EVENT = KeyEvent.VK_COMMA; // shift+comma = <, at least on standard keyboards
         public Subset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new Subset(left, right); }
         Subset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class ProperSubset extends SetRelation {
         public static final char SYMBOL = '\u228A';
+        public static final String LATEX_REPR = "\\subset";
         public ProperSubset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new ProperSubset(left, right); }
         ProperSubset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class NotSubset extends SetRelation {
         public static final char SYMBOL = '\u2284';
+        public static final String LATEX_REPR = "\\nsubseteq";
         public NotSubset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new NotSubset(left, right); }
         NotSubset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
@@ -69,25 +75,31 @@ public abstract class SetRelation extends LogicalBinary {
     public static class Superset extends SetRelation {
         public static final char SYMBOL = '\u2287'; // superset or equal symbol (plain superset is 2283)
         public static final String INPUT_SYMBOL = ">>";
+        public static final String LATEX_REPR = "\\supseteq";
         public static final int KEY_EVENT = KeyEvent.VK_PERIOD; // shift+period = >, at least on standard keyboards
         public Superset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new Superset(left, right); }
         Superset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class ProperSuperset extends SetRelation {
         public static final char SYMBOL = '\u228B';
+        public static final String LATEX_REPR = "\\supset";
         public ProperSuperset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new ProperSuperset(left, right); }
         ProperSuperset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
     }
     public static class NotSuperset extends SetRelation {
         public static final char SYMBOL = '\u2285';
+        public static final String LATEX_REPR = "\\nsupset";
         public NotSuperset(Expr left, Expr right) { super(left, right); }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return Type.T; }
         protected Binary create(Expr left, Expr right) { return new NotSuperset(left, right); }
         NotSuperset(java.io.DataInputStream input) throws java.io.IOException { super(input); }
@@ -96,9 +108,11 @@ public abstract class SetRelation extends LogicalBinary {
     public static class Intersect extends SetRelation {
         public static final char SYMBOL = '\u2229';
         public static final String INPUT_SYMBOL = "@I";
+        public static final String LATEX_REPR = "\\cap";
         public Intersect(Expr left, Expr right) { super(left, right); }
         public final int getOperatorPrecedence() { return 5; }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
         protected Binary create(Expr left, Expr right) { return new Intersect(left, right); }
         Intersect(java.io.DataInputStream input) throws java.io.IOException { super(input); }
@@ -106,9 +120,11 @@ public abstract class SetRelation extends LogicalBinary {
     public static class Union extends SetRelation {
         public static final char SYMBOL = '\u222A';
         public static final String INPUT_SYMBOL = "@U";
+        public static final String LATEX_REPR = "\\cup";
         public Union(Expr left, Expr right) { super(left, right); }
         public final int getOperatorPrecedence() { return 5; }
         public String getSymbol() { return String.valueOf(SYMBOL); }
+        public String getLatexRepr() { return LATEX_REPR; }
         protected Type getResultingType() throws TypeEvaluationException { return getLeft().getType(); }
         protected Binary create(Expr left, Expr right) { return new Union(left, right); }
         Union(java.io.DataInputStream input) throws java.io.IOException { super(input); }

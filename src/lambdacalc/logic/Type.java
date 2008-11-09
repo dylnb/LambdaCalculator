@@ -39,7 +39,7 @@ public abstract class Type implements Comparable {
     /**
      * The type of an integer.
      */
-    public static final Type I = new AtomicType('i');
+    public static final Type N = new AtomicType('n');
 
     /**
      * Tests two types for equality (as you would expect).
@@ -103,6 +103,8 @@ public abstract class Type implements Comparable {
      * A string representation that doesn't display more commas than needed.
      */
     public abstract String toShortString();
+
+    public abstract String toLatexString();
     
     /**
      * Writes a serialization of the type to a DataOutputStream.

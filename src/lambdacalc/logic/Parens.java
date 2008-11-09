@@ -43,8 +43,8 @@ public class Parens extends Unary {
         return 0;
     }
     
-    protected String toString(boolean html) {
-        return getOpenSymbol() + getInnerExpr().toString(html) + getCloseSymbol();
+    protected String toString(int mode) {
+        return getOpenSymbol() + getInnerExpr().toString(mode) + getCloseSymbol();
     }
     
     String getOpenSymbol() { return shape == ROUND ? "(" : "["; }

@@ -36,6 +36,8 @@ public abstract class Terminal extends LFNode {
     public List getChildren() {
         return children;
     }
+
+    public abstract String toLatexString();
     
     public String toStringTerminalsOnly() {
 //        if (this.getLabel() == null) return ""; else return this.getLabel();

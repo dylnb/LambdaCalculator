@@ -16,6 +16,8 @@ public class Not extends Unary {
     public static final char SYMBOL = '\u00AC';
     
     public static final char INPUT_SYMBOL = '~';
+
+    public static final String LATEX_REPR = "\\lnot";
     
     /**
      * Constructs negation around the given expression.
@@ -33,12 +35,18 @@ public class Not extends Unary {
         return 3;
     }
     
-    protected String toString(boolean html) {
+    protected String toString(int mode) {
+        String prefix;
+        if (mode == LATEX) {
+            prefix = this.LATEX_REPR;
+        } else { // mode == HTML || mode == TXT
+            prefix = String.valueOf(SYMBOL);
+        }
         // As a special case, we don't need to put parens around binders since it's unambiguous.
         if (getInnerExpr() instanceof Binder)
-            return SYMBOL + getInnerExpr().toString(html);
+            return prefix + getInnerExpr().toString(mode);
         else
-            return SYMBOL + nestedToString(getInnerExpr(), html);
+            return prefix + nestedToString(getInnerExpr(), mode);
     }
     
     public Type getType() throws TypeEvaluationException {

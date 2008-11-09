@@ -18,6 +18,8 @@ public class ForAll extends PropositionalBinder {
     public static final char SYMBOL = '\u2200';
     
     public static final char INPUT_SYMBOL = 'A';
+
+    public static final String LATEX_REPR = "\\forall";
     
     public static final int KEY_EVENT = KeyEvent.VK_A;
     
@@ -35,6 +37,10 @@ public class ForAll extends PropositionalBinder {
 
     public String getSymbol() {
         return String.valueOf(SYMBOL);
+    }
+
+    public String getLatexSymbol() {
+        return this.LATEX_REPR;
     }
     
     public boolean dotPolicy() {

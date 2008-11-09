@@ -176,7 +176,7 @@ public class GApp extends Expr {
         return new GApp(this.getIndex());
     }
     
-    protected String toString(boolean html) {
+    protected String toString(int mode) {
         return SYMBOL + OPEN_BRACKET + this.getIndex() + CLOSE_BRACKET;
     }
     

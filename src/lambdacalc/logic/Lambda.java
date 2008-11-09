@@ -18,6 +18,8 @@ public class Lambda extends Binder {
     public static final char SYMBOL = '\u03BB';
     
     public static final char INPUT_SYMBOL = 'L';
+
+    public static final String LATEX_REPR = "\\lambda";
     
     public static final int KEY_EVENT = KeyEvent.VK_L;
     
@@ -48,6 +50,10 @@ public class Lambda extends Binder {
     
     public String getSymbol() {
         return String.valueOf(SYMBOL);
+    }
+
+    public String getLatexSymbol() {
+        return this.LATEX_REPR;
     }
 
     public Type getType() throws TypeEvaluationException {

@@ -16,13 +16,18 @@ package lambdacalc.logic;
 public class Multiplication extends Binary {
     public static final char SYMBOL = '\u22C5'; // dot
     public static final char INPUT_SYMBOL = '*'; // asterisk
+    public static final String LATEX_SYMBOL = "\\cdot"; // central dot
     
     public Multiplication(Expr left, Expr right) {
         super(left, right);
     }
     
-    protected String toString(boolean html) {
-        return getLeft().toString(html) + SYMBOL + getRight().toString(html);
+    protected String toString(int mode) {
+        if (mode == LATEX) {
+            return getLeft().toString(mode) + LATEX_SYMBOL + getRight().toString(mode);
+        } else { // mode == HTML || mode == TXT
+            return getLeft().toString(mode) + SYMBOL + getRight().toString(mode);
+        }
     }
 
     /**
@@ -39,9 +44,9 @@ public class Multiplication extends Binary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.I) || !getRight().getType().equals(Type.I))
+        if (!getLeft().getType().equals(Type.N) || !getRight().getType().equals(Type.N))
             throw new TypeMismatchException("The types of the expressions on the left and right of the mulitiplication operator must be type i, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
-        return Type.I;
+        return Type.N;
     }
     
     Multiplication(java.io.DataInputStream input) throws java.io.IOException {

@@ -22,6 +22,8 @@ public abstract class Identifier extends Expr {
     public static final char PRIME = '\u02B9'; // 0x2032 is another one
     
     public static final char PRIME_INPUT_SYMBOL = '\'';
+
+    public static final String LATEX_PRIME_REPR = "^{\\prime}";
     
     private String symbol;
     private Type type;
@@ -69,13 +71,29 @@ public abstract class Identifier extends Expr {
         return null;
     }
     
-    protected String toString(boolean html) {
-        if (!isTypeExplicit())
-            return escapeHTML(symbol, html);
-        else if (!html)
-            return symbol + "_" + type.toString();
-        else
-            return escapeHTML(symbol, true) + "<sub>" + escapeHTML(type.toString(), true) + "</sub>";
+    protected String toString(int mode) {
+        if (!isTypeExplicit()) {
+            if (mode == HTML) {
+                return escapeHTML(this.symbol);
+            } else if (mode == TXT ) {
+                return  this.symbol;
+            } else  { // mode == LATEX
+                String res = this.symbol
+                        .replace(String.valueOf(PRIME), LATEX_PRIME_REPR)
+                        .replace(String.valueOf(PRIME_INPUT_SYMBOL), LATEX_PRIME_REPR);
+                String resTruncated = res.replace(LATEX_PRIME_REPR, "");
+                if (resTruncated.length() > 1) { // after stripping away primes, we still have multiple letters
+                    res = "\\mbox{" + res + "}";
+                }
+                return res;
+            }
+        } else if (mode == HTML) {
+            return escapeHTML(symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
+        } else if (mode == LATEX) {
+            return this.symbol + "_{" + type.toLatexString() + "}";
+        } else { // mode == TXT
+            return this.symbol + "_" + type.toLatexString() + "}";
+        }
     }
     
     /**

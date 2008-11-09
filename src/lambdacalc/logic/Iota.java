@@ -24,6 +24,8 @@ public class Iota extends Binder {
         // Latin small letter iota is \u0269
     
     public static final char INPUT_SYMBOL = 'I';
+
+    public static final String LATEX_REPR = "\\iota";
     
     public static final int KEY_EVENT = KeyEvent.VK_I;
     
@@ -41,6 +43,10 @@ public class Iota extends Binder {
 
     public String getSymbol() {
         return String.valueOf(SYMBOL);
+    }
+
+    public String getLatexSymbol() {
+        return this.LATEX_REPR;
     }
 
     protected Binder create(Identifier variable, Expr inner) {

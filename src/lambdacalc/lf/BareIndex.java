@@ -64,6 +64,10 @@ public class BareIndex extends Terminal {
     public void guessLexicalEntries(Lexicon lexicon) {
     
     }
+
+    public String toLatexString() {
+        return String.valueOf(this.getIndex());
+    }
     
     
     public String toString() {

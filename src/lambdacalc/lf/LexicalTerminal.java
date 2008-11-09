@@ -58,6 +58,21 @@ public class LexicalTerminal extends Terminal {
     public String getDisplayName() {
         return "Lexical terminal";
     }
+
+    public String toLatexString() {
+        if (hasMeaning()) {
+            String type = "Type unknown";
+            try {
+                type = "$" + this.meaning.getType().toLatexString() + "$";
+            } catch (lambdacalc.logic.TypeEvaluationException t) {
+                type = "\\emph{Type unknown}";  
+            }
+            return "\n{" + this.getLabel() + "\\\\" + type + "\\\\\n$" + this.meaning.toLatexString() + "$\n }";
+        } else {
+            return "\n{" + this.getLabel() + "}";
+        }
+        //TODO include indices
+    }
     
     /**
      * If the meaning of this terminal hasn't been set yet, 

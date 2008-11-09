@@ -56,16 +56,26 @@ public abstract class NAry extends Expr {
 
     protected abstract String getCloseSymbol();
     
-    protected String toString(boolean html) {
+    protected String toString(int mode) {
         String ret = null;
         for (int i = 0; i < exprs.length; i++) {
-            if (ret == null) ret = getOpenSymbol();
-            else ret += ",";
-            ret += exprs[i].toString(html); // note that we don't ever wrap it with parens because the comma separator here makes this unambiguous
+            if (ret == null) {
+                if (mode == LATEX && (getOpenSymbol().equals("[") || getOpenSymbol().equals("{"))) {
+                    ret += "\\";
+                }
+                ret = getOpenSymbol();
+            } else {
+                ret += ",";
+            }
+            ret += exprs[i].toString(mode); // note that we don't ever wrap it with parens because the comma separator here makes this unambiguous
+        }
+        if (mode == LATEX && (getCloseSymbol().equals("]") || getOpenSymbol().equals("}"))) {
+            ret += "\\";
         }
         ret += getCloseSymbol();
         return ret;
     }
+
     
     protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         // ignore parentheses for equality test

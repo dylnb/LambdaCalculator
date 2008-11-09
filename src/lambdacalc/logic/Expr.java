@@ -22,6 +22,10 @@ import java.util.Vector;
  * base class of all expression subclasses. All expressions are immutable.
  */
 public abstract class Expr {
+
+    public static final int TXT = 0;
+    public static final int HTML = 1;
+    public static final int LATEX = 2;
     
     /**
      * Gets an integer representing the (outermost) expression's operator precedence:
@@ -48,24 +52,27 @@ public abstract class Expr {
      * @returns the result of toString() on nestedExpr, except that when nestedExpr
      * has a higher or equal operator precedence than this, it is wrapped with parens.
      */
-    protected final String nestedToString(Expr nestedExpr, boolean html) {
+    protected final String nestedToString(Expr nestedExpr, int mode) {
         if (nestedExpr.getOperatorPrecedence() >= this.getOperatorPrecedence())
-            return "(" + nestedExpr.toString(html) + ")";
-        return nestedExpr.toString(html);
+            return "(" + nestedExpr.toString(mode) + ")";
+        return nestedExpr.toString(mode);
     }
     
     public final String toString() {
-        return toString(false);
+        return toString(TXT);
     }
     
     public final String toHTMLString() {
-        return toString(true);
+        return toString(HTML);
     }
-    
-    protected abstract String toString(boolean html);
 
-    protected String escapeHTML(String text, boolean html) {
-        if (!html) return text;
+    public final String toLatexString() {
+        return toString(LATEX);
+    }
+
+    protected abstract String toString(int mode);
+
+    protected String escapeHTML(String text) {
         // remember first arg to replaceAll is a regular expression
         return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }

@@ -811,7 +811,7 @@ public class ExpressionParser {
         if (specifiedType == null) {
             try {
                 int asInt = Integer.parseInt(id);
-                specifiedType = Type.I;
+                specifiedType = Type.N;
                 parsePredicate = false;
                 specifiedTypeIsReallySpecified = false;
             } catch (Exception e) {

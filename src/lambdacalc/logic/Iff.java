@@ -14,6 +14,8 @@ public class Iff extends LogicalBinary {
      * The unicode double arrow.
      */
     public static final char SYMBOL = '\u2194';
+
+    public static final String LATEX_REPR = "\\leftrightarrow";
     
     /**
      * Constructs the connective.
@@ -23,6 +25,11 @@ public class Iff extends LogicalBinary {
     public Iff(Expr left, Expr right) {
         super(left,right);
     }
+
+    public String getLatexRepr() {
+        return LATEX_REPR;
+    }
+
     
     public String getSymbol() {
         return String.valueOf(SYMBOL);

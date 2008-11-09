@@ -54,26 +54,47 @@ public class CompositeType extends Type {
     public int hashCode() {
         return left.hashCode() ^ right.hashCode(); // XOR of hash codes
     }
-    
-    // Examples: <e,t> <e,<et>>
+
     public String toString() {
+        return this.toStringHelper(
+                String.valueOf(LEFT_BRACKET),
+                String.valueOf(SEPARATOR),
+                String.valueOf(RIGHT_BRACKET),
+                false);
+    }
+
+    public String toLatexString() {
+        return this.toStringHelper("\\langle ", ",", "\\rangle ", true);
+    }
+
+    // Examples: <e,t> <e,<et>>
+    private String toStringHelper(String leftBracket, String separator, String rightBracket, boolean latex) {
         // Maribel wants the canonical form <e,t> to be used,
-        // but maybe we want to be able to give a shorter form
+        // but in the Latex output we want to be able to give a shorter form
         // for embedded types like <et, t>.
-        /*if (left instanceof AtomicType && right instanceof AtomicType) {
-            return String.valueOf(Type.LEFTBRACKET)
-            +String.valueOf(left)
-            +String.valueOf(right)
-            +String.valueOf(Type.RIGHTBRACKET);
-        } else*/ {
-            return String.valueOf(LEFT_BRACKET)
-            + left.toString()
-            + (left instanceof ProductType ? " " : "")
-            + String.valueOf(SEPARATOR)
-            + (left instanceof ProductType ? " " : "")
-            + right.toString()
-            + String.valueOf(RIGHT_BRACKET);
+        if (latex && left instanceof AtomicType && right instanceof AtomicType) {
+            return String.valueOf(left)
+            + String.valueOf(right);
+        } else {
+            String res = "";
+            res += leftBracket;
+            if (latex) {
+                res += left.toLatexString();
+            } else {
+                res += left.toString();
+            }
+            res += (left instanceof ProductType ? " " : "");
+            res += separator;
+            res += (left instanceof ProductType ? " " : "");
+            if (latex) {
+                res += right.toLatexString();
+            } else {
+                res += right.toString();
+            }
+            res += rightBracket;
+            return res;
         }
+        
     }
     
     public String toShortString() {
@@ -95,6 +116,7 @@ public class CompositeType extends Type {
             + String.valueOf(RIGHT_BRACKET);
         }     
     }
+
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeUTF("CompositeType");

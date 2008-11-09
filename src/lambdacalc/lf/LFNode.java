@@ -142,6 +142,8 @@ public abstract class LFNode {
             return "";
         }
     }
+
+    
     private String escapeHTML(String text) {
         // remember first arg to replaceAll is a regular expression
         return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
