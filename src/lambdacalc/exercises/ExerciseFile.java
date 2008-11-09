@@ -33,6 +33,7 @@ public class ExerciseFile {
     private String studentName;
     
     private String teacherComments;
+
     
     /**
      * Creates a new ExerciseFile.
@@ -46,6 +47,7 @@ public class ExerciseFile {
     public String toString() {
         return getTitle();
     }
+
 
     /**
      * Appends a new ExerciseGroup to the end of this exercise file and returns the group.
@@ -274,6 +276,8 @@ public class ExerciseFile {
      * instance with the serialized data.
      */
     public ExerciseFile(File source) throws IOException, ExerciseFileFormatException {
+
+
         InputStream stream = new FileInputStream(source);
         DataInputStream input = new DataInputStream(stream);
         
