@@ -539,8 +539,8 @@ public class TreeExerciseWidget extends JPanel {
                 res += " " +  recursivelyLatexify((LFNode) nt.getChild(i));
             }
             res += " ] ";
-        } else {
-            res += cur.toLatexString();
+        } else { // cur is a terminal
+            res += ((Terminal) cur).toLatexString();
         }
 
         return res;
