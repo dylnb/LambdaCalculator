@@ -7,8 +7,11 @@
 
 package lambdacalc.lf;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.GApp;
+import lambdacalc.logic.TypeEvaluationException;
 
 /**
  * A trace or a pronoun.
@@ -62,8 +65,18 @@ public class Trace extends Terminal {
     }
 
     public String toLatexString() {
-        // TODO should this be changed as in this.getMeaning?
-        return this.getLabel() + "$" + new GApp(this.getIndex()).toLatexString() + "$";
+        try {
+            // TODO should this be changed as in this.getMeaning?
+            return this.getLabel() + "_{" + this.getIndex() + "}" + "\\\\" + this.getMeaning(null).getType().toLatexString() + "\\\\$" + this.getMeaning(null).toLatexString() + "$";
+        } catch (MeaningEvaluationException ex) {
+            // we don't expect this to occur
+            ex.printStackTrace();
+            return "";
+        } catch (TypeEvaluationException ex) {
+            // we don't expect this to occur
+            ex.printStackTrace();
+            return "";
+        }
     }
 
     /**
