@@ -79,9 +79,10 @@ public abstract class Identifier extends Expr {
                 return  this.symbol;
             } else  { // mode == LATEX
                 String res = this.symbol
-                        .replace(String.valueOf(PRIME), LATEX_PRIME_REPR)
-                        .replace(String.valueOf(PRIME_INPUT_SYMBOL), LATEX_PRIME_REPR);
-                String resTruncated = res.replace(LATEX_PRIME_REPR, "");
+                        .replaceAll(String.valueOf(PRIME), LATEX_PRIME_REPR)
+                        .replaceAll(String.valueOf(PRIME_INPUT_SYMBOL), LATEX_PRIME_REPR)
+                        .replaceAll("\\prime}^{","\\prime ");// hack to merge multiple primes
+                String resTruncated = res.replaceAll(LATEX_PRIME_REPR, "");
                 if (resTruncated.length() > 1) { // after stripping away primes, we still have multiple letters
                     res = "\\mbox{" + res + "}";
                 }
