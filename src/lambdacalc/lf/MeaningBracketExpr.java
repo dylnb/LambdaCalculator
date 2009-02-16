@@ -5,6 +5,8 @@
 package lambdacalc.lf;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lambdacalc.logic.*;
 
 /**
@@ -85,7 +87,14 @@ public class MeaningBracketExpr extends Expr {
             label += "g";
             for (Iterator i = g.keySet().iterator(); i.hasNext(); ) {
                 GApp gapp = (GApp)i.next();
-                Var var = (Var)g.get(gapp);
+                Var var;
+                try {
+                    var = (Var) g.get(gapp.getIndex(),gapp.getType());
+                } catch (TypeEvaluationException ex) {
+                    // we don't expect this to happen because calling getType()
+                    // on GApp never fails
+                    throw new RuntimeException();
+                }
                 label += " " + var + "/" + gapp.getIndex();
             }
             if (mode == HTML) {
@@ -141,7 +150,7 @@ public class MeaningBracketExpr extends Expr {
             e = e.simplifyFully();
             
             if (g != null)
-                e = e.replaceAll(g);
+                e = g.applyTo(e);
             
             return e;
         }

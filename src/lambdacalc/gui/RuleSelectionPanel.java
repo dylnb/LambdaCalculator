@@ -169,7 +169,7 @@ implements PropertyChangeListener, SelectionListener {
         
         if (node == null) return;
         
-        // We want to make sure that any children of the seleted node
+        // We want to make sure that any children of the selected node
         // that ought to have a meaning have been fully simplified by the
         // user.
         for (java.util.Iterator i = node.getChildren().iterator(); i.hasNext(); ) {

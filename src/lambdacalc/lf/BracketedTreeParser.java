@@ -1,7 +1,10 @@
 package lambdacalc.lf;
 
 import java.util.*;
+import lambdacalc.logic.CompositeType;
 import lambdacalc.logic.SyntaxException;
+import lambdacalc.logic.Type;
+import lambdacalc.logic.TypeParser;
 
 /**
  * Parses bracketed tree expressions into LFNode trees.
@@ -12,8 +15,11 @@ import lambdacalc.logic.SyntaxException;
  * NODE -> NONTERMINAL | TERMINAL
  * NONTERMINAL -> `[` (.LABEL)? (=RULE;)? NODE+ `]`
  * TERMINAL -> LABEL(=EXPR;)?
- * LABEL => a text string, no white space, optionally followed by an underscore
- *          and an integral value (its index)
+ * LABEL => STRING(TYPE)?(_INDEX)?
+ * STRING => a text string, no white space
+ * TYPE => a type as defined by lambdacalc.logic.TypeParser; however it must be surounded
+ * by angle brackets; an overt type is only allowed if the terminal is a trace or a pronoun
+ * INDEX => a sequence of one or more digits
  * RULE => `fa`     (i.e. function application)
  * EXPR -> a predicate logic expression parsed by lambdacalc.logic.ExpressionParser.
  *
@@ -32,6 +38,7 @@ public class BracketedTreeParser {
     public static final String[] INDEX_WORDS = {
         "such", "that", "what", "which", "who"
     };
+
     
     public static boolean isPronoun(String word) {
         for (int i = 0; i < PRONOUNS.length; i++) {
@@ -64,6 +71,9 @@ public class BracketedTreeParser {
         
         // The node that we're currently setting the index of.
         LFNode curNodeForIndex = null;
+
+        // Holds the last type read in.
+        Type type = null;
         
         // The current state of the parser.
         int parseMode = 0;
@@ -80,7 +90,7 @@ public class BracketedTreeParser {
         //      [, ], = indicate end, must back-track
         //      _ indicates start of index
         //      everything else gets added to label
-        // 2 -> reading terminal label:
+        // 2 -> reading terminal label, possibly including type:
         //      space and brackets indicate end
         //      = is the start of a lambda expression to
         //        assign as the lexical entry, up until the next semicolon
@@ -94,6 +104,8 @@ public class BracketedTreeParser {
         for (int i = 0; i < tree.length(); i++) {
         
             char c = tree.charAt(i);
+
+            String rest = tree.substring(i);
             
             if (parseMode == 0) {
                 // Looking for a node.
@@ -195,8 +207,9 @@ public class BracketedTreeParser {
                              // set it back one here so that on next iteration
                              // we haven't moved)
                         break;
-                        
-                    case LFNode.INDEX_SEPARATOR:
+
+
+                    case LFNode.INDEX_SEPARATOR: // i.e. _
                         unescapeLabel(curnode);
                         curNodeForIndex = curnode;
                         parseMode = 3;
@@ -214,12 +227,13 @@ public class BracketedTreeParser {
                 // Reading the label of a terminal.
                 // Space and brackets indicate end. We'll back track in all
                 // cases so they are parsed in parseMode 0.
+
                 
                 switch (c) {
                     case ' ':
                     case ']':
                     case '[':
-                        finishTerminal(curnode, curterminal, c);
+                        finishTerminal(curnode, curterminal, c,null);
                         parseMode = 0;
                         curterminal = null;
                         i--; // back track so they are parsed in parseMode 0
@@ -240,13 +254,44 @@ public class BracketedTreeParser {
                         } catch (lambdacalc.logic.SyntaxException ex) {
                             throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
                         }
-                        finishTerminal(curnode, curterminal, c);
+                        finishTerminal(curnode, curterminal, c,null);
                         i = semi; // resume from next position (i is incremented at end of iteration)
                         parseMode = 0; // reading of terminal label is complete
                         break;
-                        
-                    case LFNode.INDEX_SEPARATOR:
-                        curNodeForIndex = finishTerminal(curnode, curterminal, c);
+
+                    case CompositeType.LEFT_BRACKET: // i.e. <
+                        // Reading the type of the terminal.
+                        // scan for right bracket
+                        int tstack = 1;
+                        int offset = 0;
+                        while (tstack != 0) {
+                            offset++;
+                            if (i+offset == tree.length()) {
+                                throw new SyntaxException("Unmatched open angle bracket.", i);
+                            }
+                            char d = tree.charAt(i+offset);
+                            if (d == CompositeType.LEFT_BRACKET) {
+                                tstack++;
+                            } else if (d == CompositeType.RIGHT_BRACKET) {
+                                tstack--;
+                            }
+                        }
+                        String typeString = tree.substring(i, i+offset+1);
+                        if (typeString.length() == 3) {
+                            typeString = typeString.substring(1,2); // hack to transform <e> into e to avoid stupid parsing error
+                        }
+                        type = null;
+                        try {
+                            type = TypeParser.parse(typeString);
+                        } catch (SyntaxException s) {
+                            throw new SyntaxException("Error reading type: " + s.getMessage(), i + s.getPosition());
+                        }
+                        i = i+offset; // resume from next position (i is incremented at end of iteration)
+                        //finishTerminal(curnode, curterminal, c, type);
+                        break;
+
+                    case LFNode.INDEX_SEPARATOR: // i.e. _
+                        curNodeForIndex = finishTerminal(curnode, curterminal, c, type);
                         parseMode = 3;
                         curterminal = null;
                         break;
@@ -290,13 +335,16 @@ public class BracketedTreeParser {
         if (label != null && label.startsWith("\\")) {
             String code = label.substring(1);
             String decode = lambdacalc.logic.ExpressionParser.translateEscapeCode(code);
-            if (decode != code)
+            if (!decode.equals(code))
                 node.setLabel(decode);
         }
     }
     
     private static Terminal finishTerminal
-            (Nonterminal parent, Terminal child, char lastCharacterRead) {
+            (Nonterminal parent, Terminal child, char lastCharacterRead, Type type) {
+
+        // Default type is e. At present, an overt type is only used on traces, bare indices and pronouns.
+        if (type == null) type = Type.E;
         
         unescapeLabel(child);
         
@@ -304,29 +352,30 @@ public class BracketedTreeParser {
         // load it as a BareIndex object.
         try {
             int idx = Integer.valueOf(child.getLabel()).intValue();
-            child = new BareIndex(idx);
+            child = new BareIndex(idx,type);
         } catch (NumberFormatException e) {
             // ignore parsing error: it's not a bare index
         }
+
 
         if (child.getLabel() != null && lastCharacterRead == LFNode.INDEX_SEPARATOR) {
             // If the terminal label was "t" and we expect to read an index,
             // load it as a Trace object.
             if (child.getLabel().equals(Trace.SYMBOL))
-                child = new Trace(child.getIndex());
+                child = new Trace(child.getIndex(),type);
             
             // If the label was a personal pronoun and we expect to read an index,
             // load it as a trace too.
             else if (isPronoun(child.getLabel())) {
                 //child = new Trace(child.getIndex());
-                child = new Trace(child.getLabel(), 0);
+                child = new Trace(child.getLabel(), 0,type);
                 // we temporarily set the index to zero --
                 // index arithmetic will take care of setting the actual index for us later
             
             // If the label was a relative pronoun and we expect to read an index,
             // return it as a BareIndex.
             } else if (isIndexWord(child.getLabel())) {  
-                child = new BareIndex(child.getLabel(), 0);
+                child = new BareIndex(child.getLabel(), 0,type);
 //                child = new BareIndex(child.getLabel(), child.getIndex());
             }
         }
@@ -335,6 +384,8 @@ public class BracketedTreeParser {
             child = new DummyTerminal(child.getLabel());
         
         parent.addChild(child);
+
+        type = null;
         return child;
     }
 

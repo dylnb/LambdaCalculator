@@ -850,8 +850,11 @@ public class ExpressionParser {
         // If we found the identifier 'g' and an open parenthesis,
         // then if we find a close parenthesis, and further if
         // what comes in the middle is an integer, then parse
-        // this predicate as a GApp. Otherwise, we fall through
+        // this predicate as a GApp of type e. Otherwise, we fall through
         // and parse this like a normal predicate.
+        //
+        // TODO: If we read in a GApp of type other than e then we don't
+        // notice this. Is this a problem?
         boolean mightBeG = false;
         if (id.equals("g") && parens) {
             int closeparen = expression.indexOf(')', start);
@@ -860,7 +863,7 @@ public class ExpressionParser {
                 String param = expression.substring(start, closeparen).trim();
                 try {
                     int idx = Integer.valueOf(param).intValue();
-                    return new ParseResultSet(new ParseResult(new GApp(idx), closeparen+1));
+                    return new ParseResultSet(new ParseResult(new GApp(idx,Type.E), closeparen+1));
                 } catch (NumberFormatException e) {
                     // fall through to treating this
                     // like a normal predicate

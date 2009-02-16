@@ -529,6 +529,13 @@ public abstract class Expr {
      * The replacements are performed in the order of traversal inherent to the map.
      * If the map is unsorted then no guarantee is given as to the order of replacements.
      *
+     * Note: An actual AssignmentFunction can't be given as an argument because
+     * it's not a Map. We don't provide replaceAll(AssignmentFunction) because
+     * we want to avoid dependencies to the lf package in this logic package.
+     * To achieve the result of replaceAll(AssignmentFunction), use the method
+     * applyTo(Expr) in the AssignmentFunction class. I.e. instead of writing
+     * e = replaceAll(assnFn), write e = assnFn.applyTo(e).
+     * 
      * @param assignmentFunction a map from expressions to expressions
      * @return an expression
      */

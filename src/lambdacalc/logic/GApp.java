@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents the application of the variable-assignment function g
@@ -26,13 +28,16 @@ public class GApp extends Expr {
     public static final String CLOSE_BRACKET = ")";
     
     private int index = -1;
+
+    private Type type;
     
     private GApp() {}
     
-    public GApp(int index) {
+    public GApp(int index,Type type) {
         if (index < 0) throw new IllegalArgumentException("Attempted to" +
                 "create a GApp with a negative index");
         this.index=index;
+        this.type=type;
     }
     
     public int getIndex() {
@@ -56,13 +61,13 @@ public class GApp extends Expr {
      * Gets the semantic type of this expression, that is, e.
      */
     public Type getType() throws TypeEvaluationException {
-        return Type.E;
+        return this.type;
     }
     
     
     /**
      * Returns true iff this is equal to the given expression, which is the case iff
-     * both are GApps with identical indices.
+     * both are GApps with identical indices and types.
      *
      * @param e the other expression to compare
      *
@@ -75,13 +80,14 @@ public class GApp extends Expr {
      * @param otherMap this parameter is ignored
      *
      *
-     * @return true iff both expressions are GApps and have the same index
+     * @return true iff both expressions are GApps and have the same index and type
      */
     protected boolean equals
             (Expr e, boolean collapseBoundVars, Map thisMap, 
             Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         e = e.stripOutermostParens();
-        return (e instanceof GApp && this.getIndex()==((GApp) e).getIndex());
+        return e instanceof GApp && this.getIndex() == ((GApp) e).getIndex()
+                    && this.type.equals(((GApp) e).type);
     }
     
     /**
@@ -173,7 +179,7 @@ public class GApp extends Expr {
      * @return a copy of this
      */    
     protected GApp create() {
-        return new GApp(this.getIndex());
+        return new GApp(this.getIndex(), this.type);
     }
     
     protected String toString(int mode) {
@@ -187,8 +193,9 @@ public class GApp extends Expr {
     public void writeToStream(java.io.DataOutputStream output)
         throws java.io.IOException {
         output.writeUTF(getClass().getName());
-        output.writeShort(0); // data format version
+        output.writeShort(1); // data format version
         output.writeInt(index);
+        type.writeToStream(output);
     }
    
    
@@ -199,7 +206,8 @@ public class GApp extends Expr {
      */
     GApp(java.io.DataInputStream input) throws java.io.IOException {
         // the class name has already been read
-        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        if (input.readShort() != 1) throw new java.io.IOException("Invalid data."); // future version?
         index = input.readInt();
+        type = Type.readFromStream(input);
     }
 }

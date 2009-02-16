@@ -7,16 +7,28 @@
 
 package lambdacalc.lf;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import lambdacalc.logic.Expr;
 import lambdacalc.logic.GApp;
+import lambdacalc.logic.Type;
+import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
+
 
 /**
  * A function from 
  * @author champoll
  */
-public class AssignmentFunction extends HashMap {
+public class AssignmentFunction {
+
+    private Map map = new HashMap();
+
+    private Map getUnderlyingMap() {
+        return this.map;
+    }
     
     /** Creates a new instance of AssignmentFunction */
     public AssignmentFunction() {
@@ -24,23 +36,35 @@ public class AssignmentFunction extends HashMap {
     
     /** Creates a new instance of AssignmentFunction based on another AssignmentFunction. */
     public AssignmentFunction(AssignmentFunction copyFrom) {
-        super(copyFrom);
-    }
-    
-    public AssignmentFunction put(int key, Var value) {
-        return (AssignmentFunction) put(new GApp(key), value);
-    }
-    
-    public Object put(BareIndex key, Var value) {
-        if (key == null || value == null) throw new IllegalArgumentException();
-        return super.put(new GApp(key.getIndex()), value);
+        map = new HashMap(copyFrom.getUnderlyingMap());
     }
 
-    public Object put(GApp key, Var value) {
-        if (key == null || value == null) throw new IllegalArgumentException();
-        return super.put(key, value);
+    public Expr applyTo(Expr e) {
+        return e.replaceAll(map);
     }
-    public Object put(Object key, Object value) {
+
+    public Collection keySet() {
+        return map.keySet();
+    }
+
+    public Collection values() {
+        return map.values();
+    }
+    
+    public void put(int key, Var value) {
+        map.put(new GApp(key,value.getType()), value);
+    }
+    
+    public void put(BareIndex key, Var value) {
+        if (key == null || value == null) throw new IllegalArgumentException();
+        map.put(new GApp(key.getIndex(),value.getType()), value);
+    }
+
+    public void put(GApp key, Var value) {
+        if (key == null || value == null) throw new IllegalArgumentException();
+        map.put(key, value);
+    }
+    public void put(Object key, Object value) {
         if (key == null || value == null) throw new IllegalArgumentException();
         if (!(key instanceof Integer) 
         && !(key instanceof GApp)
@@ -48,46 +72,32 @@ public class AssignmentFunction extends HashMap {
         if (!(value instanceof Var)) throw new IllegalArgumentException();
         
         if (key instanceof Integer) {
-            return this.put(((Integer) key).intValue(), (Var) value);
+            this.put(((Integer) key).intValue(), (Var) value);
         } else if (key instanceof GApp) {
-            return this.put((GApp) key, (Var) value);
+            this.put((GApp) key, (Var) value);
         } else if (key instanceof BareIndex) {
-            return this.put((BareIndex) key, (Var) value);
+            this.put((BareIndex) key, (Var) value);
         }
             { // can't get here
             throw new RuntimeException(); 
         }
     }
     
-    public boolean containsKey(Object key) {
+
+    
+    
+    public Object get(Object key, Type type) {
         if (key instanceof Integer) {
-            return super.containsKey(new GApp(((Integer) key).intValue()));
-        } else if (key instanceof BareIndex) {
-            return super.containsKey(new GApp(((BareIndex) key).getIndex()));
+            return map.get(new GApp(((Integer) key).intValue(),type));
         } else {
-            return super.containsKey(key);
+            return map.get(key);
         }
     }
     
-    public boolean containsKey(int key) {
-        return super.containsKey(new GApp(key));
-    }        
-    
-    public Object get(Object key) {
-        if (key instanceof Integer) {
-            return super.get(new GApp(((Integer) key).intValue()));
-        } else {
-            return super.get(key);
-        }
+    public Object get(int key, Type type) {
+        return map.get(new GApp(key,type));
     }
     
-    public Object get(int key) {
-        return super.get(new GApp(key));
-    }
-    
-    public Object remove(Object key) {
-        throw new UnsupportedOperationException();
-    }
     
     public String toString() {
         return "toString() not yet implemented";
@@ -95,10 +105,16 @@ public class AssignmentFunction extends HashMap {
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeByte(0); // version info
-        output.writeInt(size());
-        for (Iterator i = keySet().iterator(); i.hasNext(); ) {
+        output.writeInt(map.size());
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
             GApp index = (GApp)i.next();
-            Var var = (Var)get(index.getIndex());
+            Var var;
+            try {
+                var = (Var) get(index.getIndex(), index.getType());
+            } catch (TypeEvaluationException ex) {
+                // we don't expect it because getType on GApp never fails
+                throw new RuntimeException();
+            }
             output.writeInt(index.getIndex());
             var.writeToStream(output);
         }
@@ -112,7 +128,7 @@ public class AssignmentFunction extends HashMap {
         for (int i = 0; i < n; i++) {
             Integer index = new Integer(input.readInt());
             Var var = (Var)lambdacalc.logic.Expr.readFromStream(input);
-            put(index, var);
+            map.put(index, var);
         }
     }
 }

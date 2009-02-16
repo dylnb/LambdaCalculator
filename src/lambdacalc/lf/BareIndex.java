@@ -8,20 +8,25 @@
 package lambdacalc.lf;
 
 import lambdacalc.logic.Expr;
+import lambdacalc.logic.Type;
 
 /**
  *
  * @author champoll
  */
 public class BareIndex extends Terminal {
+
+    private Type type = Type.E; // default
     
-    public BareIndex(String label, int i) {
+    public BareIndex(String label, int i,Type type) {
         this.setLabel(label);
         this.setIndex(i);
+        this.type = type;
     }
     
-    public BareIndex(int i) {
+    public BareIndex(int i,Type type) {
         this.setIndex(i);
+        this.type = type;
     }
     
 //    public String getLabel() {
@@ -76,5 +81,11 @@ public class BareIndex extends Terminal {
         } else {
             return super.toString();
         }
+    }
+    /**
+     * @return the type of this bare index
+     */
+    public Type getType() {
+        return this.type;
     }
 }

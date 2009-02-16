@@ -7,10 +7,10 @@
 
 package lambdacalc.lf;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.GApp;
+import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
 
 /**
@@ -21,13 +21,17 @@ import lambdacalc.logic.TypeEvaluationException;
 public class Trace extends Terminal {
     
     public static final String SYMBOL = "t";
-    
-    public Trace(String label, int index) {
+
+    private Type type = Type.E;    // default type is e
+
+    public Trace(String label, int index, Type type) {
         super(label, index);
+        this.type = type;
     }
-    
-    public Trace(int index) {
-        this(SYMBOL, index);
+
+
+    public Trace(int index,Type type) {
+        this(SYMBOL, index, type);
     }
     
     public boolean isMeaningful() {
@@ -35,14 +39,14 @@ public class Trace extends Terminal {
     }
     
     public boolean isActualTrace() {
-        return this.getLabel().equals(this.SYMBOL);
+        return this.getLabel().equals(SYMBOL);
     }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
         if (g == null)
-            return new GApp(this.getIndex());
+            return new GApp(this.getIndex(),this.getType());
         else
-            return (Expr)g.get(getIndex());
+            return (Expr)g.get(getIndex(), getType());
     }    
 
     public void setLabel(String label) {
@@ -67,7 +71,10 @@ public class Trace extends Terminal {
     public String toLatexString() {
         try {
             // TODO should this be changed as in this.getMeaning?
-            return this.getLabel() + "_{" + this.getIndex() + "}" + "\\\\" + this.getMeaning(null).getType().toLatexString() + "\\\\$" + this.getMeaning(null).toLatexString() + "$";
+            return this.getLabel()
+                    + "_{" + this.getIndex() + "}"
+                    + "\\\\" + this.getMeaning(null).getType().toLatexString()
+                    + "\\\\$" + this.getMeaning(null).toLatexString() + "$";
         } catch (MeaningEvaluationException ex) {
             // we don't expect this to occur
             ex.printStackTrace();
@@ -86,6 +93,13 @@ public class Trace extends Terminal {
      */
     public void guessLexicalEntries(Lexicon lexicon) {
     
+    }
+
+    /**
+     * @return the type of this trace
+     */
+    public Type getType() {
+        return this.type;
     }
     
 }
