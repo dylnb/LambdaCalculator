@@ -208,7 +208,7 @@ public class TrainingWindow extends JFrame {
                 if (treeDisplay.getNodeExpressionState(selectedNode) != null) {
                     Expr current = treeDisplay.getNodeExpressionState(selectedNode);
                     try {
-                        LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, TrainingWindow.getSingleton().getCurrentTypingConventions());
+                        LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, TrainingWindow.getCurrentTypingConventions());
                         exercise.setParseSingleLetterIdentifiers(false);
                         jPanelLambdaConversion.initialize(exercise, treeDisplay);
                         cardLayout.show(jPanelNodeProperties, "lambdaConversion");
@@ -1684,12 +1684,13 @@ public class TrainingWindow extends JFrame {
 //        showExercise();
 }//GEN-LAST:event_menuItemReloadActionPerformed
     
-    public IdentifierTyper getCurrentTypingConventions() {
- 
+    public static IdentifierTyper getCurrentTypingConventions() {
+
+        Exercise currentEx = getSingleton().getCurrentExercise();
         IdentifierTyper result;
-        if (getCurrentExercise() != null 
-                && getCurrentExercise() instanceof HasIdentifierTyper) {
-            result = ((HasIdentifierTyper) getCurrentExercise()).getIdentifierTyper();
+        if (currentEx != null
+                && currentEx instanceof HasIdentifierTyper) {
+            result = ((HasIdentifierTyper) currentEx).getIdentifierTyper();
         } else {
             result = IdentifierTyper.createDefault();
         }

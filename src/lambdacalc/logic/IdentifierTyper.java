@@ -156,6 +156,23 @@ public class IdentifierTyper {
     public Type getType(String identifier) throws IdentifierTypeUnknownException {
         return findEntry(identifier).type;
     }
+
+    /**
+     * Gets a variable of a given type according to this IdentifierTyper.
+     * Returns null if the IdentifierTyper doesn't contain this type or only
+     * contains it as a type of constants.
+     */
+    public Var getVarForType(Type type, boolean markAsExplicitlyTyped) {
+        for (int j = 0; j < entries.size(); j++) {
+            Entry e = (Entry)entries.get(j);
+            if (e.type.equals(type) && e.var == true) {
+                String varSymbol = e.start;
+                return new Var(varSymbol, type, markAsExplicitlyTyped);
+            }
+        }
+        // didn't find anything
+        return null;
+    }
     
     /**
      * Clones this instance.

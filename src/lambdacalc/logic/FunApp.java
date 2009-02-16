@@ -73,8 +73,13 @@ public class FunApp extends Binary {
 
     public Type getType() throws TypeEvaluationException {
         if (!(getFunc().getType() instanceof CompositeType))
-            throw new TypeMismatchException(getFunc() + " cannot be applied as a function to what looks like an argument to its right (" + getArg().stripOutermostParens() + ") because " + getFunc() + " is of type " +
-                    getFunc().getType() + " according to the typing conventions in effect and therefore is not a function.");
+            throw new TypeMismatchException
+                    (getFunc() + " cannot be applied as a function " +
+                    "to what looks like an argument to its right ("
+                    + getArg().stripOutermostParens() + ") because " + getFunc()
+                    + " is of type " + getFunc().getType()
+                    + " according to the typing conventions in effect " +
+                    "and therefore is not a function.");
         
         CompositeType funcType = (CompositeType)getFunc().getType();
         Type domain = funcType.getLeft();
@@ -175,13 +180,16 @@ public class FunApp extends Binary {
         if (func instanceof FunApp) {
             Expr inside = func.performLambdaConversion1(accidentalBinders);
             if (inside != null)
-                return new FunApp(inside, getArg());
+                return new FunApp(inside, getArg()); // TODO why are we using getArg() and not just arg here?
 
         // If the function is in fact a Lambda, then we begin substitutions.
         } else if (func instanceof Lambda) {
             Lambda lambda = (Lambda)func;
             if (!(lambda.getVariable() instanceof Var))
-                throw new ConstInsteadOfVarException("A variable must be bound by the " + Lambda.SYMBOL + ", but " + lambda.getVariable() + " is a constant according to the typing conventions in effect.");
+                throw new ConstInsteadOfVarException
+                        ("A variable must be bound by the " + Lambda.SYMBOL
+                        + ", but " + lambda.getVariable() + " is a constant " +
+                        "according to the typing conventions in effect.");
             Var var = (Var)lambda.getVariable();
             
             Expr inside = lambda.getInnerExpr().stripOutermostParens();
@@ -191,6 +199,9 @@ public class FunApp extends Binary {
             
         // If the function is an identifier, it's OK, but we don't recurse into it.
         } else if (func instanceof Identifier) {
+
+        // The same thing happens if the function is a GApp (from a higher-type trace).
+        } else if (func instanceof GApp) {
 
         } else {
             throw new TypeMismatchException("The left hand side of a function application must be a lambda expression or a function-typed constant or variable: " + func);

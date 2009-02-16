@@ -7,8 +7,13 @@
 
 package lambdacalc.lf;
 
+import java.util.HashSet;
+import java.util.Set;
+import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.Expr;
+import lambdacalc.logic.IdentifierTyper;
 import lambdacalc.logic.Lambda;
+import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
 
@@ -53,6 +58,7 @@ public class LambdaAbstractionRule extends CompositionRule {
 
         BareIndex index = null;
         LFNode body = null;
+        Type type = null;
 
         LFNode left = node.getLeftChild();
         LFNode right = node.getRightChild();
@@ -66,8 +72,24 @@ public class LambdaAbstractionRule extends CompositionRule {
         } else { //should never be reached
             throw new RuntimeException();
         }
+
+        type = index.getType();
         
-        Var var;
+      
+
+        IdentifierTyper typingConventions = TrainingWindow.getCurrentTypingConventions();
+
+        // Choose a default variable --
+        // first using the current typing conventions and the type of the bare index,
+        // otherwise (if that fails) using type E -- trying to get the typing conventions for it
+
+        Var var = typingConventions.getVarForType(type, false);
+        if (var == null) {
+            var = typingConventions.getVarForType(Type.E, false);
+        }
+        if (var == null) {
+            var = new Var("x", Type.E, false);
+        }
         
         if (g == null) {
             // We are evaluating bottom-up.
@@ -81,13 +103,12 @@ public class LambdaAbstractionRule extends CompositionRule {
                         replaceAllMeaningBrackets(bodyMeaning).simplifyFully(); 
                 } catch (TypeEvaluationException e) {
                 } // shouldn't throw since getMeaning worked
-                var = bodyMeaning.createFreshVar();
+                var = bodyMeaning.createFreshVar(var);
 
-            // But if we can't get a meaning, choose a default variable
-                //TODO I think this is dangerous and we should provide a warning -Lucas
             } catch (MeaningEvaluationException mee) {
-                mee.printStackTrace();
-                var = new Var("x", lambdacalc.logic.Type.E, false);
+
+                // If we can't get the meaning, choose the default
+
             }
             
         } else {
@@ -96,8 +117,15 @@ public class LambdaAbstractionRule extends CompositionRule {
             // being passed to us. Since we will add to the assignment function,
             // expressions within us will be sure to not create independent variables
             // that conflict with the one we choose.
-            
-            var = Expr.createFreshVar(Var.X, new java.util.HashSet(g.values()));
+
+            Set variablesInUse = new HashSet(g.values());
+
+            var = Expr.createFreshVar(typingConventions.getVarForType(type, false),
+                    variablesInUse);
+            // fallback: use symbol x if we don't know what else to use:
+            if (var == null) {
+                var = Expr.createFreshVar(Var.X, variablesInUse);
+            }
         }
         
         // Copy the assignment function being given to us and add the
