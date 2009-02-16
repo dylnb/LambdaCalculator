@@ -93,7 +93,7 @@ public abstract class Identifier extends Expr {
         } else if (mode == LATEX) {
             return this.symbol + "_{" + type.toLatexString() + "}";
         } else { // mode == TXT
-            return this.symbol + "_" + type.toString() + "}";
+            return this.symbol + "_" + type.toShortString();
         }
     }
     
