@@ -233,7 +233,7 @@ public class BracketedTreeParser {
                     case ' ':
                     case ']':
                     case '[':
-                        finishTerminal(curnode, curterminal, c,null);
+                        finishTerminal(curnode, curterminal, c,type);
                         parseMode = 0;
                         curterminal = null;
                         i--; // back track so they are parsed in parseMode 0
@@ -254,7 +254,7 @@ public class BracketedTreeParser {
                         } catch (lambdacalc.logic.SyntaxException ex) {
                             throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
                         }
-                        finishTerminal(curnode, curterminal, c,null);
+                        finishTerminal(curnode, curterminal, c,type);
                         i = semi; // resume from next position (i is incremented at end of iteration)
                         parseMode = 0; // reading of terminal label is complete
                         break;

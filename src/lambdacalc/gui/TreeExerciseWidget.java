@@ -571,15 +571,17 @@ public class TreeExerciseWidget extends JPanel {
         // display the lambda expression.
         JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(node);
         meaningLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
+        java.awt.Color meaningColor;
+        java.awt.Color typeColor = new java.awt.Color(0,100,0);//dark green
+
         JLabel typeLabel = null;
         if (isTypesDisplayed()) {
             typeLabel = (JLabel)lfToTypeLabel.get(node);
             typeLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
         }
+
         if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-            java.awt.Color meaningColor;
-            java.awt.Color typeColor = new java.awt.Color(0,100,0);//dark green
             if (ms.evaluationError == null) { // was there an error?
                 //meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
                 Expr expr = ms.getCurrentExpression();
@@ -601,6 +603,7 @@ public class TreeExerciseWidget extends JPanel {
                 meaningColor = java.awt.Color.RED;
                 
             }
+
             meaningLabel.setForeground(meaningColor);
             meaningLabel.setVisible(true);
             if (isTypesDisplayed()) {
@@ -611,8 +614,15 @@ public class TreeExerciseWidget extends JPanel {
             meaningLabel.setVisible(false);
             meaningLabel.setText("");
             if (isTypesDisplayed()) {
-                typeLabel.setVisible(false);
-                typeLabel.setText("");
+                if (node instanceof BareIndex) { // hack to display types of bare indices
+                    BareIndex bareIndex = (BareIndex) node;
+                    typeLabel.setForeground(typeColor);
+                    typeLabel.setVisible(true);
+                    typeLabel.setText(bareIndex.getType().toShortString());
+                } else {
+                    typeLabel.setVisible(false);
+                    typeLabel.setText("");
+                }
             }
         }
         
