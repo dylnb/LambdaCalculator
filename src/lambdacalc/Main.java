@@ -18,12 +18,20 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = true;
+    public static final boolean GOD_MODE = false;
     
     public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
     
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.1.0 beta, special release for Mats Rooth";
+
+    public static final String AUTHORS_AND_YEAR =
+            "by Lucas Champollion, Joshua Tauberer, and Maribel Romero (2007-2009)";
+
+    public static final String AFFILIATION =
+            "The University of Pennsylvania";
+
+    public static final String WEBSITE = "http://www.ling.upenn.edu/lambda";
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {

@@ -931,7 +931,7 @@ public class TrainingWindow extends JFrame {
 
         jPanelLowerRight.setLayout(new java.awt.GridBagLayout());
 
-        jPanelCardLayout.setPreferredSize(new java.awt.Dimension(606, 230));
+        jPanelCardLayout.setPreferredSize(new java.awt.Dimension(606, 250));
         jPanelCardLayout.setLayout(new java.awt.CardLayout());
 
         jPanelTypesAndConversions.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, javax.swing.UIManager.getDefaults().getColor("Separator.foreground")));
@@ -1036,7 +1036,9 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneTrees.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPaneTrees.setResizeWeight(1.0);
+        jSplitPaneTrees.setMinimumSize(new java.awt.Dimension(5, 250));
         jSplitPaneTrees.setOneTouchExpandable(true);
+        jSplitPaneTrees.setPreferredSize(new java.awt.Dimension(751, 250));
 
         treeDisplay.setBackground(java.awt.Color.white);
         treeDisplay.setMinimumSize(new java.awt.Dimension(0, 84));
@@ -1049,15 +1051,18 @@ public class TrainingWindow extends JFrame {
         });
         jSplitPaneTrees.setLeftComponent(treeDisplay);
 
-        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(0, 150));
-        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 150));
+        jPanelNodeProperties.setMinimumSize(new java.awt.Dimension(0, 50));
+        jPanelNodeProperties.setPreferredSize(new java.awt.Dimension(180, 170));
         jPanelNodeProperties.setLayout(new java.awt.CardLayout());
+
+        jPanelDefault.setMinimumSize(new java.awt.Dimension(0, 200));
+        jPanelDefault.setPreferredSize(new java.awt.Dimension(602, 200));
 
         org.jdesktop.layout.GroupLayout jPanelDefaultLayout = new org.jdesktop.layout.GroupLayout(jPanelDefault);
         jPanelDefault.setLayout(jPanelDefaultLayout);
         jPanelDefaultLayout.setHorizontalGroup(
             jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 626, Short.MAX_VALUE)
+            .add(0, 747, Short.MAX_VALUE)
         );
         jPanelDefaultLayout.setVerticalGroup(
             jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1071,6 +1076,9 @@ public class TrainingWindow extends JFrame {
 
         jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
         jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
+
+        jPanelRuleSelection.setMinimumSize(new java.awt.Dimension(350, 180));
+        jPanelRuleSelection.setPreferredSize(new java.awt.Dimension(499, 180));
         jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
 
         jPanelTrace.setLayout(new java.awt.GridLayout(1, 0));
@@ -1116,8 +1124,8 @@ public class TrainingWindow extends JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelNodeHistoryLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanelNodeHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelNodeHistoryLayout.setVerticalGroup(
@@ -1159,11 +1167,11 @@ public class TrainingWindow extends JFrame {
         jPanelBlank.setLayout(jPanelBlankLayout);
         jPanelBlankLayout.setHorizontalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 630, Short.MAX_VALUE)
+            .add(0, 606, Short.MAX_VALUE)
         );
         jPanelBlankLayout.setVerticalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 501, Short.MAX_VALUE)
+            .add(0, 255, Short.MAX_VALUE)
         );
 
         jPanelCardLayout.add(jPanelBlank, "blank");
@@ -1514,7 +1522,7 @@ public class TrainingWindow extends JFrame {
  
         if (this.getCurrentExFile().getStudentName() == null) {
             String studentName = JOptionPane.showInputDialog
-                    (this, "Please enter your name (e.g. Noam Chomsky): ",
+                    (this, "Please enter your first and last name: ",
                     "Lambda", JOptionPane.QUESTION_MESSAGE);
             if (studentName == null) return; // cancelled
             if (studentName.trim().length() == 0) return; // treat as cancelled, not a valid student name, would cause setStudentName to throw

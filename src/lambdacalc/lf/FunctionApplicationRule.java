@@ -116,7 +116,7 @@ public class FunctionApplicationRule extends CompositionRule {
         return false;
     }
     
-    private Expr apply(LFNode left, LFNode right, AssignmentFunction g) {
-        return new FunApp(new MeaningBracketExpr(left, g), new MeaningBracketExpr(right, g));
+    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g) {
+        return new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
     }
 }

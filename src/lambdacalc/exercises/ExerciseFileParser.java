@@ -158,6 +158,9 @@ public class ExerciseFileParser {
                 } else if (rule.equals("lambda abstraction")) {
                     file.getRules().add(
                             lambdacalc.lf.LambdaAbstractionRule.INSTANCE);
+                } else if (rule.equals("intensional function application")) {
+                    file.getRules().add(
+                            lambdacalc.lf.IntensionalFunctionApplicationRule.INSTANCE);
                 } else
                     throw new ExerciseFileFormatException(
                        "'use rule' must be followed by 'function application' " +

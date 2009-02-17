@@ -25,6 +25,11 @@ public abstract class Type implements Comparable {
     public static final Type T = new AtomicType('t');
 
     /**
+     * The type of worlds used for Intensional Function Application, s.
+     */
+    public static final Type S = new AtomicType('s');
+
+    /**
      * The type of one place predicates, &lt;e,t&gt;.
      */
     public static final Type ET = new CompositeType(new AtomicType('e'), new AtomicType('t'));

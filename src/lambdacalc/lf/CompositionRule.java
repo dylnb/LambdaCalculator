@@ -41,7 +41,7 @@ public abstract class CompositionRule {
      * Implementations of this method should not alter the given node.
      *
      * @param onlyIfApplicable if this parameter is true, calls isApplicableTo and throws a 
-     * MeaningEvaluationException if that method returns falls. If the parameter
+     * MeaningEvaluationException if that method returns false. If the parameter
      * is false, we try as much as possible to "apply" this rule even if it's 
      * strictly speaking impossible, but we reserve the right to throw a 
      * MeaningEvaluationException if there is just no conceivable way of 
