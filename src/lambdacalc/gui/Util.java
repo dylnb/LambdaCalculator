@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
+// Hello world
+
 public class Util {
     static Font unicodeFont;
     static float fontSizeFactor;
