@@ -1,0 +1,41 @@
+Bug with higher order traces
+
+
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+variables of type e : x y z
+variables of type <e,t> : P Q
+
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+
+
+define everybody: LP.LQ.Ax.[P(x) -> Q(x)]
+define sleep,sleeps: Lx.sleep(x)
+
+
+
+exercise tree
+title everybody sleeps
+directions bla
+
+[ everybody [ 1<et,t> [ t<et,t>_1 sleeps ] ] ]
