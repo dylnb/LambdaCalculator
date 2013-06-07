@@ -72,7 +72,7 @@
     	     Import the class files from the dependencies. -->
     	<jar destfile="dist/LambdaCalculator.jar" update="true">
     		<zipfileset src="dist/lib/AbsoluteLayout.jar"/>
-    		<zipfileset src="dist/lib/swing-layout-1.0.3.jar"/>
+    		<zipfileset src="dist/lib/swing-layout-1.0.4.jar"/>
     	</jar>
     	
     	<!-- Create the Windows executable file. -->
