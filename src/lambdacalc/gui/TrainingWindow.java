@@ -495,7 +495,6 @@ public class TrainingWindow extends JFrame {
         return getCurrentGroup().getItem(currentEx);
     }
     
-    
     // called in:
     // showFirstExercise()
     // btnDoAgainActionPerformed()
@@ -1693,8 +1692,9 @@ public class TrainingWindow extends JFrame {
 }//GEN-LAST:event_menuItemReloadActionPerformed
     
     public static IdentifierTyper getCurrentTypingConventions() {
-
-        Exercise currentEx = getSingleton().getCurrentExercise();
+        
+        TrainingWindow sing = getSingleton();
+        Exercise currentEx = sing.getCurrentExercise();
         IdentifierTyper result;
         if (currentEx != null
                 && currentEx instanceof HasIdentifierTyper) {

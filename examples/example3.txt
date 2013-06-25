@@ -48,8 +48,8 @@ define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]
 define every : LP.LQ.P << Q
 define every : LP.LQ.{x | P(x)} << {x | Q(x)}
 define every : LP.LR.Ly.{x | P(x)} << {x | R(x)(y)}
-define most : LP.LQ.|P ^^ Q| >= k*|P|
-define most : LP.LQ.|{x | P(x)} ^^ {x | Q(x)}| >= k*|{x|P(x)}|
+define most : LP.LQ.[|P ^^ Q| >= k*|P|]
+define most : LP.LQ.[|{x | P(x)} ^^ {x | Q(x)}| >= k*|{x|P(x)}|]
 define no : LP.LQ.~Ex[P(x) & Q(x)]
 define no : LP.LQ.P ^^ Q = \emptyset
 define no : LP.LQ.|P ^^ Q| = 0

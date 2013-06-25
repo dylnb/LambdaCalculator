@@ -112,14 +112,7 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
             } else {
                 output.append(nt.toString());
             }
-            
-            output.append(": ");
-            
-            if (nt.getCompositionRule() == null) {
-                output.append("no composition rule selected");
-            } else {
-                output.append(nt.getCompositionRule().getName());
-            }
+             
             
             if (nt.getUserMeaningSimplification() == null) {
                 output.append(", no simplification performed");

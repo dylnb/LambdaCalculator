@@ -10,6 +10,7 @@ public class Nonterminal extends LFNode {
     private Vector children = new Vector();
     
     private CompositionRule compositor;
+    private int compositorHits = 0;
     private Vector userProvidedMeaningSimplification; //of Expr objects
     
     
@@ -26,6 +27,10 @@ public class Nonterminal extends LFNode {
     }
     public LFNode getChild(int index) {
         return (LFNode)children.get(index);
+    }
+    
+    public void setChild(int index, LFNode node) {
+        children.set(index, node);
     }
     
     public LFNode getLeftChild() {
@@ -151,7 +156,7 @@ public class Nonterminal extends LFNode {
         for (int i = 0; i < rules.size(); i++) {
             CompositionRule rule = (CompositionRule) rules.get(i);
             if (rule.isApplicableTo(this)) {
-                if (compositor == null) {
+                if (compositorHits == 0) {
                     // The first time we hit a compatible composition rule,
                     // assign it to ourself.
                     compositor = rule;
@@ -162,6 +167,7 @@ public class Nonterminal extends LFNode {
                     compositor = null;
                     return;
                 }
+                compositorHits += 1;
             }
         }
     }

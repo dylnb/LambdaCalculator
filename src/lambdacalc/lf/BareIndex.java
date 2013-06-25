@@ -15,18 +15,27 @@ import lambdacalc.logic.Type;
  * @author champoll
  */
 public class BareIndex extends Terminal {
-
-    private Type type = Type.E; // default
     
-    public BareIndex(String label, int i,Type type) {
+    public BareIndex(String label, int i, Type type) {
         this.setLabel(label);
         this.setIndex(i);
-        this.type = type;
+        this.setType(type);
+        this.switchOnExplicitType();
     }
     
-    public BareIndex(int i,Type type) {
+    public BareIndex(String label, int i) {
+        this.setLabel(label);
         this.setIndex(i);
-        this.type = type;
+    }
+    
+    public BareIndex(int i, Type type) {
+        this.setIndex(i);
+        this.setType(type);
+        this.switchOnExplicitType();
+    }
+    
+    public BareIndex(int i) {
+        this.setIndex(i);
     }
     
 //    public String getLabel() {
@@ -81,11 +90,5 @@ public class BareIndex extends Terminal {
         } else {
             return super.toString();
         }
-    }
-    /**
-     * @return the type of this bare index
-     */
-    public Type getType() {
-        return this.type;
     }
 }

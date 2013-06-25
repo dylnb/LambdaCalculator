@@ -28,7 +28,7 @@ import java.util.*;
  * the parses P(x) and P(x) & Q(x). parsePrefixExpression wraps each possibility
  * with the binder, so it returns the set: Ax.P(x) and Ax.P(x) & Q(x).
  * Above that, parseFunctionApplicationException scans to the right of each
- * possiblity looking for an argument, but it finds none so it just passed up
+ * possibility looking for an argument, but it finds none so it just passes up
  * those two possibilities. parseInfixExpression looks to the right of each possibility
  * for a connective. In the first case, it finds the ampersand, so it creates
  * a conjunction yielding [Ax.P(x)] & Q(x). In the second case, it hits the
@@ -41,7 +41,7 @@ import java.util.*;
  * For instance, in "[Lx.P(x)] ^", parseFunctionApplication will try to parse
  * the caret as an expression, but will fail, so it will return as much as
  * it could parse, which is "[Lx.P(x)]", but tagged with the SyntaxException
- * that ocurred parsing the next bit. This is used as the message for the user
+ * that occurred parsing the next bit. This is used as the message for the user
  * when the remainder of the string couldn't be parsed.
  */
 public class ExpressionParser {
@@ -248,7 +248,7 @@ public class ExpressionParser {
     /**
      * This method starts off the main work of the class. It tries to parse
      * an expression and then resolve the ambiguities, according to several
-     * constraints. If the expression could not be parsed at all, a SyntaxExceptin
+     * constraints. If the expression could not be parsed at all, a SyntaxException
      * is thrown.
      * To resolve ambiguities, first only the parses that read the longest
      * amount of the expression are considered. Then, if any parse is well-typed,

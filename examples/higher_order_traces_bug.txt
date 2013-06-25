@@ -34,6 +34,7 @@ use rule lambda abstraction
 define happy : Lx.happy(x)
 define boy,boys : Lx.boy(x)
 define girl,girls : Lx.girl(x)
+define sleep, sleeps : Lx.sleep(x)
 define love, loves : LyLx.love(x,y)
 define someone, somebody : LP.Ex[P(x)]
 define everyone, everybody : LP.Ax[P(x)]
@@ -59,7 +60,7 @@ exercise tree
 title everybody sleeps
 directions bla
 
-[ everybody [ 1<et,t> [ t<et,t>_1 sleeps ] ] ]
+[ everybody [ 1<et,t> [ t_1 sleeps ] ] ]
 
 [.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1] ] ] ]
 

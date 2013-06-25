@@ -45,7 +45,7 @@ public class IdentifierTyper {
     /**
      * Creates an IdentifierTyper with the usual defaults.
      * The defaults are as follows:
-     *    a-e : consants of type e
+     *    a-e : constants of type e
      *    P-Q : constants of type et (one place predicates)
      *    R-S : constants of type <e*e,t> (two place predicates: from a vector of two e's to a t)
      *    u-z : variables of type e
@@ -77,7 +77,7 @@ public class IdentifierTyper {
     }
     
     /**
-     * Sets the type of identifiers starting a character in the given range,
+     * Sets the type of identifiers starting with a character in the given range,
      * overriding previous settings.
      * @param descr A description of the type to display to users, or null
      */
@@ -86,7 +86,7 @@ public class IdentifierTyper {
     }
     
     /**
-     * Sets the type of identifiers starting a character in the given range,
+     * Sets the type of identifiers starting with a character in the given range,
      * overriding previous settings.
      * @param descr A description of the type to display to users, or null
      */

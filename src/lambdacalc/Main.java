@@ -6,8 +6,13 @@
 
 package lambdacalc;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import lambdacalc.gui.*;
+import lambdacalc.lf.MeaningEvaluationException;
+import lambdacalc.logic.SyntaxException;
+import lambdacalc.logic.TypeEvaluationException;
 
 /**
  * Here's the main entry point of the program.
@@ -56,6 +61,22 @@ public class Main {
                 System.out.println("teacher edition");
             } else {
                 System.out.println("student edition");
+            }
+            return;
+        }
+        
+        // for debugging BracketedTreeParser
+        if (args.length == 2 && args[0].equals("--BParser")) {
+            try {
+                System.out.println("treeparsing\n");
+                System.out.println("input: " + args[1] + "\n");
+                lambdacalc.lf.BracketedTreeParser.main(args[1]);
+            } catch (SyntaxException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MeaningEvaluationException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TypeEvaluationException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
             return;
         }

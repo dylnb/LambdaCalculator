@@ -54,6 +54,10 @@ public class BracketedTreeParser {
         return false;
     }    
 
+    // Stores the types of traces, so that abstraction indices don't need
+    // to be explicitly typed
+    public static HashMap traceTypes = new HashMap();
+
     public static Nonterminal parse(String tree) throws SyntaxException {
         // A quick and dirty recurive cfg parser.
         
@@ -72,8 +76,11 @@ public class BracketedTreeParser {
         // The node that we're currently setting the index of.
         LFNode curNodeForIndex = null;
 
+        // The node that we're currently setting the type of.
+        Terminal curNodeForType = null;
+
         // Holds the last type read in.
-        Type type = null;
+        // Type type = null;
         
         // The current state of the parser.
         int parseMode = 0;
@@ -146,6 +153,7 @@ public class BracketedTreeParser {
                                     throw new SyntaxException("Nothing can follow the end of the root element.", j);
                             }
                         }
+                        typeBareIndices(curnode);
                         return curnode;
                     }
                     break;
@@ -181,6 +189,7 @@ public class BracketedTreeParser {
                     if (curnode == null)
                         throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
                     curterminal = new LexicalTerminal(); 
+                    curNodeForType = curterminal;
                     // we always start by assuming that the current terminal is
                     // a lexical terminal; if necessary, we convert it later
                     // (in finishTerminal)
@@ -233,10 +242,10 @@ public class BracketedTreeParser {
                     case ' ':
                     case ']':
                     case '[':
-                        finishTerminal(curnode, curterminal, type);
+                        finishTerminal(curnode, curterminal);
                         parseMode = 0;
                         curterminal = null;
-                        type = null;
+                        //type = null;
                         i--; // back track so they are parsed in parseMode 0
                         break;
                     
@@ -255,13 +264,44 @@ public class BracketedTreeParser {
                         } catch (lambdacalc.logic.SyntaxException ex) {
                             throw new SyntaxException("The lambda expression being assigned to '" + curterminal.getLabel() + "' is invalid: " + ex.getMessage(), i);
                         }
-                        finishTerminal(curnode, curterminal, type);
+                        finishTerminal(curnode, curterminal);
                         i = semi; // resume from next position (i is incremented at end of iteration)
                         parseMode = 0; // reading of terminal label is complete
-                        type = null;
+                        //type = null;
                         break;
 
-                    case CompositeType.LEFT_BRACKET: // i.e. <
+                    case CompositeType.LEFT_BRACKET:
+                        curNodeForType = curterminal;
+                        parseMode = 3;
+                        i--;
+                        break;
+
+                    case LFNode.INDEX_SEPARATOR: // i.e. _
+                        //curNodeForIndex = finishTerminal(curnode, curterminal, type);
+                        curNodeForIndex = curterminal;
+                        parseMode = 3;
+                        //curterminal = null;
+                        break;
+                        
+                    default:
+                        curterminal.setLabel(curterminal.getLabel() + transformChar(c));
+                        break;
+                }
+                
+            } else if (parseMode == 3) {
+                // Reading the index or type of a node.
+                if (LFNode.INDEX_SEPARATOR == c) {
+                    curNodeForIndex = curterminal;
+                    
+                } else if (Character.isDigit(c)) {
+                    int idx = Integer.valueOf(String.valueOf(c)).intValue();
+                    if (curNodeForIndex.getIndex() == -1) {
+                        curNodeForIndex.setIndex(idx);
+                                               
+                    } else // perform arithmetic to do string concatenation
+                        curNodeForIndex.setIndex(curNodeForIndex.getIndex() * 10 + idx);
+                        
+                } else if (c == CompositeType.LEFT_BRACKET) {
                         // Reading the type of the terminal.
                         // scan for right bracket
                         int tstack = 1;
@@ -282,46 +322,21 @@ public class BracketedTreeParser {
                         if (typeString.length() == 3) {
                             typeString = typeString.substring(1,2); // hack to transform <e> into e to avoid stupid parsing error
                         }
-                        type = null;
+                    //type = null;
                         try {
-                            type = TypeParser.parse(typeString);
+                        Type type = TypeParser.parse(typeString);
+                        curNodeForType.setType(type);
+                        curNodeForType.switchOnExplicitType();
                         } catch (SyntaxException s) {
                             throw new SyntaxException("Error reading type: " + s.getMessage(), i + s.getPosition());
                         }
                         i = i+offset; // resume from next position (i is incremented at end of iteration)
-                        //finishTerminal(curnode, curterminal, type);
-                        break;
 
-                    case LFNode.INDEX_SEPARATOR: // i.e. _
-                        //curNodeForIndex = finishTerminal(curnode, curterminal, type);
-                        curNodeForIndex = curterminal;
-                        parseMode = 3;
-                        //curterminal = null;
-                        break;
-                        
-                    default:
-                        curterminal.setLabel(curterminal.getLabel() + transformChar(c));
-                        break;
-                }
-                
-            } else if (parseMode == 3) {
-                // Reading the index of a node.
-                if (Character.isDigit(c)) {
-                    int idx = Integer.valueOf(String.valueOf(c)).intValue();
-                    if (curNodeForIndex.getIndex() == -1) {
-                        curNodeForIndex.setIndex(idx);
-                                               
-                    } else // perform arithmetic to do string concatenation
-                        curNodeForIndex.setIndex(curNodeForIndex.getIndex() * 10 + idx);
-                        
-                } else if (c == CompositeType.LEFT_BRACKET) {
-                    parseMode = 2;
-                    i--;
                 } else {
-                    finishTerminal(curnode, curterminal, type);
+                    finishTerminal(curnode, curterminal);
                     parseMode = 0;
                     curterminal = null;
-                    type = null;
+                    //type = null;
                     i--; // back track so they are parsed in parseMode 0
                 }
             }
@@ -350,32 +365,53 @@ public class BracketedTreeParser {
     }
     
     private static Terminal finishTerminal
-            (Nonterminal parent, Terminal child, Type type) {
-
-        // Default type is e. At present, an overt type is only used on traces, bare indices and pronouns.
-        if (type == null) type = Type.E;
+            (Nonterminal parent, Terminal child) {
         
         unescapeLabel(child);
 
         if (child.getLabel() != null && child.hasIndex()) {
+            
             // If the terminal label was "t" and it has an index,
             // load it as a Trace object.
-            if (child.getLabel().equals(Trace.SYMBOL))
-                child = new Trace(child.getIndex(), type);
+            if (child.getLabel().equals(Trace.SYMBOL)) {
+                if (child.hasExplicitType()) {
+                    child = new Trace(child.getIndex(), child.getType());
+                }
+                else {
+                    child = new Trace(child.getIndex());
+                }
+                traceTypes.put(child.getIndex(), child.getType());
+            }
             
             // If the label was a personal pronoun and it has an index,
-            // load it as a trace too.
-            else if (isPronoun(child.getLabel()))
+            // load it as a Trace too.
+            else if (isPronoun(child.getLabel())) {
                 //child = new Trace(child.getIndex());
-                child = new Trace(child.getLabel(), 0, type);
+                if (child.hasExplicitType()) {
+                    child = new Trace(child.getLabel(), 0, child.getType());
+                }
+                else {
+                    child = new Trace(child.getLabel(), 0);
+                }               
+                
+                //child = new Trace(child.getLabel(), 0, child.getType());
                 // we temporarily set the index to zero --
                 // index arithmetic will take care of setting the actual index for us later
+            }
             
             // If the label was a relative pronoun and it has an index,
             // return it as a BareIndex.
-            else if (isIndexWord(child.getLabel()))  
-                child = new BareIndex(child.getLabel(), 0, type);
+            else if (isIndexWord(child.getLabel())) {
+                
+                if (child.hasExplicitType()) {
+                    child = new BareIndex(child.getLabel(), 0, child.getType());
+                }
+                else {
+                    child = new BareIndex(child.getLabel(), 0);
+                }  
+                child = new BareIndex(child.getLabel(), 0, child.getType());
                 // child = new BareIndex(child.getLabel(), child.getIndex());
+            }
         }
         
         if (child.getLabel() != null && !child.hasIndex() && child.getLabel().startsWith("(") && child.getLabel().endsWith(")"))
@@ -386,30 +422,73 @@ public class BracketedTreeParser {
         // load it as a BareIndex object.
         try {
             int idx = Integer.valueOf(child.getLabel()).intValue();
-            child = new BareIndex(idx, type);
+            // child = new BareIndex(idx, type);
+            if (child.hasExplicitType()) {
+                child = new BareIndex(idx, child.getType());
+            }
+            else {
+                child = new BareIndex(idx);
+            }
+            
         } catch (NumberFormatException e) {
             // ignore parsing error: it's not a bare index
         }
         
         parent.addChild(child);
-
-        type = null; // don't know why, but this doesn't actually do anything
         return child;
     }
 
-    // For debugging.
-    public static void main(String[] args) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
-        Nonterminal root = parse(args[0]);
-        System.out.println(root.toString());
-        lambdacalc.logic.Expr expr = root.getMeaning();
-        System.out.println(expr);
-        
-        while (true) {
-            lambdacalc.logic.Expr.LambdaConversionResult r = expr.performLambdaConversion();
-            if (r == null)
-                break;
-            expr = r.result;
-            System.out.println(expr);
+    // use the types of traces to infer the types of co-indexed abstraction indices
+    private static void typeBareIndices(Nonterminal node) {
+        List kids = node.getChildren();
+        for (int i = 0; i < kids.size(); i++) {
+            LFNode kid = (LFNode)kids.get(i);
+            if ("Bare index".equals(kid.getDisplayName()) && !((BareIndex)kid).hasExplicitType()) {
+                int bI = kid.getIndex();
+                Type bIType = (Type)traceTypes.get(bI);
+                ((BareIndex)kid).setType(bIType);
+            }
+            else if ("Nonterminal".equals(kid.getDisplayName())) {
+                typeBareIndices((Nonterminal)kid);
+            }
         }
+    }
+    
+    // for debugging
+    private static void printTypes(LFNode node) {
+        List kids = node.getChildren();
+        for (int i = 0; i < kids.size(); i++) {
+            LFNode kid = (LFNode)kids.get(i);
+            System.out.print(kid.toString());
+            if ("Nonterminal".equals(kid.getDisplayName())) {
+                System.out.println();
+                printTypes(kid);
+            }
+            else {
+                if (((Terminal)kid).hasExplicitType()) {
+                    System.out.print(", expTyped");
+                }
+                System.out.print(", Type: ");
+                System.out.println(((Terminal)kid).getType());
+            }
+            System.out.println();
+        }
+    }
+
+    // For debugging.
+    public static void main(String arg) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
+        Nonterminal root = parse(arg);
+        System.out.println(root.toString());
+        printTypes(root);
+//        lambdacalc.logic.Expr expr = root.getMeaning();
+//        System.out.println(expr);
+//        
+//        while (true) {
+//            lambdacalc.logic.Expr.LambdaConversionResult r = expr.performLambdaConversion();
+//            if (r == null)
+//                break;
+//            expr = r.result;
+//            System.out.println(expr);
+//        }
     }
 }

@@ -128,6 +128,8 @@ public class ExerciseFileParser {
                 group = null;
                 exindex = 0;
                 
+              // the mandatory space after "directions" makes it awkward to put reader-friendly paragraphs
+              // in the directions, a la "intensional-trace-1.txt"
             } else if (line.startsWith("directions ")) {
                 directions += line.substring("directions ".length()).trim() + " ";
                 group = null;

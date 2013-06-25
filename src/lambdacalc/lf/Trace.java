@@ -22,16 +22,20 @@ public class Trace extends Terminal {
     
     public static final String SYMBOL = "t";
 
-    private Type type = Type.E;    // default type is e
-
     public Trace(String label, int index, Type type) {
-        super(label, index);
-        this.type = type;
+        super(label, index, type);
     }
 
-
-    public Trace(int index,Type type) {
+    public Trace(int index, Type type) {
         this(SYMBOL, index, type);
+    }
+    
+    public Trace(String label, int index) {
+        super(label, index);
+    }
+    
+    public Trace(int index) {
+        super(SYMBOL, index);
     }
     
     public boolean isMeaningful() {
@@ -95,11 +99,6 @@ public class Trace extends Terminal {
     
     }
 
-    /**
-     * @return the type of this trace
-     */
-    public Type getType() {
-        return this.type;
-    }
+
     
 }

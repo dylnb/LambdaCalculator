@@ -1,11 +1,22 @@
 Bug report from Mats Rooth, 2/23/09
 
 directions Steps to reproduce: \\ \\
+directions 
 directions (i) Start Lambda Calculator \\
-directions (ii) Select CP below in the tree and click Evaluate Node Fully \\
+directions (ii) Select CP below in the tree and click Evaluate Node Fully \\ \\
 directions 
 directions This gives an error related to predicate modification, though IFA should apply. \\
-directions Now reload the file -- and continue. This time IFA works.\\
+directions Now reload the file -- and continue. This time IFA works. \\ \\
+directions 
+directions [DB]: This also happens if you just select CP and click Evaluate Node. \\ \\
+directions 
+directions [DB]: Another bug. To reproduce: \\ \\
+directions 
+directions (i) After reloading, (fully) evaluate the CP
+directions (ii) Undo until the CP is fully un-evaluated
+directions (iii) (Fully) evaluate again. \\ \\
+directions 
+directions This throws "do not know how to combine the children" error. \\
 
 
 constants of type e : c p r s m j
@@ -45,4 +56,4 @@ title Bug
 exercise tree
 
 
-[.CP [.AP asleep] [.S 2<s<e,t>> [.S Mary [.VP [.V believes] [.S [.NP John] [.VP to [.VP be [EXT t<s,<e,t>>_2]]]]]]]]
+[.CP [.AP asleep] [.S 2 [.S Mary [.VP [.V believes] [.S [.NP John] [.VP to [.VP be [EXT t_2<s,<e,t>>]]]]]]]]

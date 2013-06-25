@@ -9,18 +9,31 @@ package lambdacalc.lf;
 
 import java.util.List;
 import java.util.Vector;
+import lambdacalc.logic.Type;
 
 /**
  *
  * @author champoll
  */
 public abstract class Terminal extends LFNode {
+    
+    private Type type = null;
+    
+    private boolean explicitType = false;
+    
     protected Terminal() {
         super();
     }
     
     protected Terminal(String label, int index) {
         super(label, index);
+        this.type = type.E; // default type E
+    }
+    
+    protected Terminal(String label, int index, Type type) {
+        super(label, index);
+        this.type = type;
+        this.explicitType = true;
     }
     
     /**
@@ -43,5 +56,22 @@ public abstract class Terminal extends LFNode {
 //        if (this.getLabel() == null) return ""; else return this.getLabel();
         return this.toShortString();
     }
+    
+    public Type getType() {
+        return this.type;
+    }
+        
+    public void setType(Type t) {
+        this.type = t;
+    }
+    
+    public boolean hasExplicitType() {
+        return this.explicitType;
+    }
+    
+    public void switchOnExplicitType() {
+        this.explicitType = true;
+    }
+
 
 }

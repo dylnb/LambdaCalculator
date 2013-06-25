@@ -41,9 +41,13 @@ public class PredicateModificationRule extends CompositionRule {
     
     public boolean isApplicableTo(Nonterminal node) {
         try {
-            return (node.size() == 2
-                && node.getLeftChild().getMeaning().getType().equals(Type.ET)
-                && node.getRightChild().getMeaning().getType().equals(Type.ET));
+            Type ltype = node.getLeftChild().getMeaning().getType();
+            Type rtype = node.getRightChild().getMeaning().getType();
+            boolean l = ltype.equals(Type.ET);
+            boolean r = rtype.equals(Type.ET);
+            boolean s = node.size() == 2;
+            boolean ret = s && l && r;
+            return (ret);
                 
         // If either child could not be evaluated, then we
         // just return false.
