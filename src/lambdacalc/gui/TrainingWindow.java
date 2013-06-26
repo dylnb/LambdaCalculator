@@ -7,6 +7,7 @@
 package lambdacalc.gui;
 
 import java.awt.CardLayout;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
@@ -1228,7 +1229,7 @@ public class TrainingWindow extends JFrame {
             }
         });
 
-        menuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menuItemOpen.setMnemonic('O');
         menuItemOpen.setText("Open...");
         menuItemOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -1238,7 +1239,7 @@ public class TrainingWindow extends JFrame {
         });
         menuFile.add(menuItemOpen);
 
-        menuItemReload.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemReload.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menuItemReload.setText("Reload");
         menuItemReload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1247,7 +1248,7 @@ public class TrainingWindow extends JFrame {
         });
         menuFile.add(menuItemReload);
 
-        menuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK));
+        menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menuItemSave.setMnemonic('S');
         menuItemSave.setText("Save");
         menuItemSave.setEnabled(false);
@@ -1258,6 +1259,7 @@ public class TrainingWindow extends JFrame {
         });
         menuFile.add(menuItemSave);
 
+        menuItemSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
         menuItemSaveAs.setMnemonic('a');
         menuItemSaveAs.setText("Save As...");
         menuItemSaveAs.addActionListener(new java.awt.event.ActionListener() {
@@ -1268,6 +1270,7 @@ public class TrainingWindow extends JFrame {
         menuFile.add(menuItemSaveAs);
         menuFile.add(jSeparator1);
 
+        menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menuItemClose.setMnemonic('c');
         menuItemClose.setText("Close Window");
         menuItemClose.addActionListener(new java.awt.event.ActionListener() {
