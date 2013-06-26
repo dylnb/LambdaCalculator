@@ -749,7 +749,7 @@ public class TrainingWindow extends JFrame {
         jSplitPaneLeftHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPaneLeftHalf.setOneTouchExpandable(true);
 
-        jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14));
+        jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
         jTreeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 onExerciseTreeValueChanged(evt);
@@ -829,7 +829,7 @@ public class TrainingWindow extends JFrame {
         lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblIdentifierTypes.setColumns(20);
         lblIdentifierTypes.setEditable(false);
-        lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblIdentifierTypes.setLineWrap(true);
         lblIdentifierTypes.setRows(5);
         lblIdentifierTypes.setText(" ");
@@ -848,10 +848,10 @@ public class TrainingWindow extends JFrame {
 
         jPanelEnterExpressions.setPreferredSize(new java.awt.Dimension(0, 150));
 
+        lblHelpHeader.setEditable(false);
         lblHelpHeader.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblHelpHeader.setColumns(20);
-        lblHelpHeader.setEditable(false);
-        lblHelpHeader.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpHeader.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpHeader.setLineWrap(true);
         lblHelpHeader.setRows(5);
         lblHelpHeader.setText("When typing lambda expressions, use the following keyboard shortcuts:");
@@ -859,19 +859,19 @@ public class TrainingWindow extends JFrame {
         lblHelpHeader.setBorder(null);
         lblHelpHeader.setMinimumSize(new java.awt.Dimension(50, 16));
 
-        lblHelpLambda.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpLambda.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpLambda.setText(" ");
 
-        lblHelpBinders.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpBinders.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpBinders.setText(" ");
 
-        lblHelpBinaries.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpBinaries.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpBinaries.setText(" ");
 
-        lblHelpNot.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpNot.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpNot.setText(" ");
 
-        lblHelpConditionals.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblHelpConditionals.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         lblHelpConditionals.setText(" ");
 
         org.jdesktop.layout.GroupLayout jPanelEnterExpressionsLayout = new org.jdesktop.layout.GroupLayout(jPanelEnterExpressions);
@@ -885,12 +885,11 @@ public class TrainingWindow extends JFrame {
                     .add(jPanelEnterExpressionsLayout.createSequentialGroup()
                         .add(12, 12, 12)
                         .add(jPanelEnterExpressionsLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(lblHelpBinders, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                            .add(lblHelpBinaries, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                            .add(lblHelpBinders, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(lblHelpBinaries, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpLambda, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(lblHelpNot, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 16, Short.MAX_VALUE)))
+                            .add(lblHelpConditionals, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         jPanelEnterExpressionsLayout.setVerticalGroup(
@@ -908,7 +907,7 @@ public class TrainingWindow extends JFrame {
                 .add(lblHelpNot)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(lblHelpConditionals)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         jScrollPaneEnterExpressions.setViewportView(jPanelEnterExpressions);
@@ -955,10 +954,10 @@ public class TrainingWindow extends JFrame {
         jScrollPaneFeedback.setMinimumSize(new java.awt.Dimension(232, 150));
         jScrollPaneFeedback.setPreferredSize(new java.awt.Dimension(232, 150));
 
+        txtFeedback.setEditable(false);
         txtFeedback.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtFeedback.setColumns(20);
-        txtFeedback.setEditable(false);
-        txtFeedback.setFont(new java.awt.Font("SansSerif", 0, 12));
+        txtFeedback.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtFeedback.setLineWrap(true);
         txtFeedback.setRows(5);
         txtFeedback.setWrapStyleWord(true);
@@ -978,7 +977,7 @@ public class TrainingWindow extends JFrame {
         txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtQuestion.setBorder(null);
         txtQuestion.setEditable(false);
-        txtQuestion.setFont(new java.awt.Font("Serif", 0, 18));
+        txtQuestion.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
         txtQuestion.setPreferredSize(new java.awt.Dimension(460, 50));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -987,7 +986,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelQuestion.add(txtQuestion, gridBagConstraints);
 
-        btnTransfer.setFont(new java.awt.Font("Lucida Grande", 0, 10));
+        btnTransfer.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         btnTransfer.setText("Paste");
         btnTransfer.setMinimumSize(new java.awt.Dimension(60, 29));
         btnTransfer.setPreferredSize(new java.awt.Dimension(60, 29));
@@ -1002,7 +1001,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 5);
         jPanelQuestion.add(btnTransfer, gridBagConstraints);
 
-        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18));
+        txtUserAnswer.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
         txtUserAnswer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUserAnswerActionPerformed(evt);
@@ -1022,7 +1021,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanelTypesAndConversions.add(jPanelQuestion, gridBagConstraints);
 
-        jLabelAboveQuestion.setFont(new java.awt.Font("Lucida Grande", 1, 14));
+        jLabelAboveQuestion.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         jLabelAboveQuestion.setText(" ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1061,11 +1060,11 @@ public class TrainingWindow extends JFrame {
         jPanelDefault.setLayout(jPanelDefaultLayout);
         jPanelDefaultLayout.setHorizontalGroup(
             jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 747, Short.MAX_VALUE)
+            .add(0, 626, Short.MAX_VALUE)
         );
         jPanelDefaultLayout.setVerticalGroup(
             jPanelDefaultLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 150, Short.MAX_VALUE)
+            .add(0, 200, Short.MAX_VALUE)
         );
 
         jPanelNodeProperties.add(jPanelDefault, "default");
@@ -1076,7 +1075,6 @@ public class TrainingWindow extends JFrame {
         jPanelNodeProperties.add(jPanelLexicalTerminal, "lexicalTerminal");
         jPanelNodeProperties.add(jPanelLambdaConversion, "lambdaConversion");
 
-        jPanelRuleSelection.setMinimumSize(new java.awt.Dimension(350, 180));
         jPanelRuleSelection.setPreferredSize(new java.awt.Dimension(499, 180));
         jPanelNodeProperties.add(jPanelRuleSelection, "ruleSelection");
 
@@ -1124,7 +1122,7 @@ public class TrainingWindow extends JFrame {
                 .addContainerGap()
                 .add(jPanelNodeHistoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelNodeHistoryLayout.setVerticalGroup(
@@ -1132,7 +1130,7 @@ public class TrainingWindow extends JFrame {
             .add(jPanelNodeHistoryLayout.createSequentialGroup()
                 .add(jLabel4)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .add(jScrollPaneNodeHistory, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1166,11 +1164,11 @@ public class TrainingWindow extends JFrame {
         jPanelBlank.setLayout(jPanelBlankLayout);
         jPanelBlankLayout.setHorizontalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 606, Short.MAX_VALUE)
+            .add(0, 630, Short.MAX_VALUE)
         );
         jPanelBlankLayout.setVerticalGroup(
             jPanelBlankLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 255, Short.MAX_VALUE)
+            .add(0, 501, Short.MAX_VALUE)
         );
 
         jPanelCardLayout.add(jPanelBlank, "blank");
@@ -1195,7 +1193,7 @@ public class TrainingWindow extends JFrame {
         lblDirections.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblDirections.setColumns(20);
         lblDirections.setEditable(false);
-        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12));
+        lblDirections.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblDirections.setLineWrap(true);
         lblDirections.setWrapStyleWord(true);
         lblDirections.setBorder(null);
@@ -1210,7 +1208,7 @@ public class TrainingWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         jPanelUpperRight.add(jScrollPaneDirections, gridBagConstraints);
 
-        jLabelAboveDirections.setFont(new java.awt.Font("Lucida Grande", 1, 16));
+        jLabelAboveDirections.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabelAboveDirections.setText("Lambda Calculator");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
