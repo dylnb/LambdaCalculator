@@ -7,6 +7,7 @@
 package lambdacalc.gui;
 
 import java.awt.CardLayout;
+import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
@@ -1507,19 +1508,6 @@ public class TrainingWindow extends JFrame {
     // menuItemOpenActionPerformed()
     // prepareToExit()
     private void onSaveAs() {
-// to use native Mac OS save menu, use something like this:
-       
-//        if(xp.isMac()) {
-//            // use the native file dialog on the mac
-//            java.awt.FileDialog dialog =
-//               new java.awt.FileDialog(this, "Save",java.awt.FileDialog.SAVE);
-//            dialog.show();
-//        } else {
-//            // use a swing file dialog on the other platforms
-//            JFileChooser chooser = new JFileChooser();
-//            chooser.showOpenDialog(this);
-//        }
- 
         if (this.getCurrentExFile().getStudentName() == null) {
             String studentName = JOptionPane.showInputDialog
                     (this, "Please enter your first and last name: ",
@@ -1529,27 +1517,59 @@ public class TrainingWindow extends JFrame {
             this.getCurrentExFile().setStudentName(studentName);
         }
         
-       jFileChooser1.setSelectedFile(usersWorkFile);
-        
-        jFileChooser1.setFileFilter(this.onlySerializedFiles);               
-        int returnVal = jFileChooser1.showSaveDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File target = jFileChooser1.getSelectedFile();
-            if (target.exists()) {
-               int n = JOptionPane.showOptionDialog(this,
-                "Overwrite " + target.getPath() + "?",
-                "Lambda Calculator",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, null, null);
-               if (n != JOptionPane.OK_OPTION)
-                   return;
-            }
+        if(lambdacalc.gui.Util.isMac()) {
+            // use the native file dialog on the mac
+            FileDialog dialog = new FileDialog(this, "Save As", FileDialog.SAVE);
+            dialog.setFilenameFilter(new FilenameFilter(){
+               public boolean accept(File dir, String name){
+                   return name.endsWith(SERIALIZED_FILE_SUFFIX);
+               }
+            });
+            dialog.setFile(usersWorkFile.getName());
+            dialog.setDirectory(usersWorkFile.getParent());
+            dialog.setVisible(true);
+            String targetName = dialog.getFile();
+            String targetDir = dialog.getDirectory();
+            File target = new File(targetDir + targetName);
+            // Mac already asks for confirmation before saving
+//            if (target.exists()) {
+//                int n = JOptionPane.showOptionDialog(this,
+//                "Overwrite " + target.getPath() + "?",
+//                "Lambda Calculator",
+//                JOptionPane.OK_CANCEL_OPTION,
+//                JOptionPane.QUESTION_MESSAGE,
+//                null, null, null);
+//               if (n != JOptionPane.OK_OPTION)
+//                   return;
+//            }
             if (!target.toString().endsWith("."+SERIALIZED_FILE_SUFFIX)) {
                 target = new File(target.toString()+"."+SERIALIZED_FILE_SUFFIX);
             }
             writeUsersWorkFile(target);
+        } else {
+            jFileChooser1.setSelectedFile(usersWorkFile);
+
+            jFileChooser1.setFileFilter(this.onlySerializedFiles);               
+            int returnVal = jFileChooser1.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File target = jFileChooser1.getSelectedFile();
+                if (target.exists()) {
+                   int n = JOptionPane.showOptionDialog(this,
+                    "Overwrite " + target.getPath() + "?",
+                    "Lambda Calculator",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, null, null);
+                    if (n != JOptionPane.OK_OPTION)
+                        return;
+                }
+                if (!target.toString().endsWith("."+SERIALIZED_FILE_SUFFIX)) {
+                    target = new File(target.toString()+"."+SERIALIZED_FILE_SUFFIX);
+                }
+                writeUsersWorkFile(target);
+            }
         }
+
     }//GEN-LAST:event_menuItemSaveActionPerformed
 
     // called in:
@@ -1656,11 +1676,29 @@ public class TrainingWindow extends JFrame {
             }
         }
         
-        jFileChooser1.setFileFilter(this.allRecognizedFiles);
-        int returnVal = jFileChooser1.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            loadExerciseFile(jFileChooser1.getSelectedFile());            
-        }             
+        if (lambdacalc.gui.Util.isMac()) {
+            // If Mac, opens a native dialog window named "Open"
+            FileDialog dialog = new FileDialog(this, "Open", FileDialog.LOAD);
+            dialog.setFilenameFilter(new FilenameFilter(){
+               public boolean accept(File dir, String name){
+                   return (name.endsWith(".txt") || name.endsWith(SERIALIZED_FILE_SUFFIX));
+               }
+            });
+            dialog.setDirectory(System.getProperty("user.dir"));
+            dialog.setVisible(true);
+            String file = dialog.getFile();
+
+            if (file != null) {
+                String path = dialog.getDirectory() + file;
+                loadExerciseFile(new File(path));
+            }
+        } else {
+            jFileChooser1.setFileFilter(this.allRecognizedFiles);
+            int returnVal = jFileChooser1.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                loadExerciseFile(jFileChooser1.getSelectedFile());            
+            }
+        }
     }//GEN-LAST:event_menuItemOpenActionPerformed
 
     private void onExerciseTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_onExerciseTreeValueChanged
