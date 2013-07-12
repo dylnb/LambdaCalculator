@@ -47,6 +47,9 @@ public class TrainingWindow extends JFrame {
     private File currentFile; // this is null if no file has been loaded yet
     private ExerciseFile currentExFile; // this is null if no file has been loaded yet
     
+    // will be overridden by any exercise file that specifies type conventions
+    public static IdentifierTyper currentTypingConventions = IdentifierTyper.createDefault();
+    
     Exercise ex;
     int currentGroup = 0, currentEx = 0; // we start counting at zero
     ExerciseTreeModel treemodel;
@@ -1729,20 +1732,44 @@ public class TrainingWindow extends JFrame {
 //
 //        showExercise();
 }//GEN-LAST:event_menuItemReloadActionPerformed
-    
-    public static IdentifierTyper getCurrentTypingConventions() {
-        
-        TrainingWindow sing = getSingleton();
-        Exercise currentEx = sing.getCurrentExercise();
-        IdentifierTyper result;
-        if (currentEx != null
-                && currentEx instanceof HasIdentifierTyper) {
-            result = ((HasIdentifierTyper) currentEx).getIdentifierTyper();
-        } else {
-            result = IdentifierTyper.createDefault();
-        }
-        return result;
+
+    // This is set by any exercise that specifies types
+    public static void setCurrentTypingConventions(IdentifierTyper typer) {
+        currentTypingConventions = typer;
     }
+    public static IdentifierTyper getCurrentTypingConventions() {
+        return currentTypingConventions;
+    }
+
+    
+    // The problem with grabbing the typing conventions from the singleton's current exercise
+    // is that the ExerciseFileParser needs to know the typing conventions! So the training window
+    // singleton tries to set the typing conventions by parsing the exercise, and the exercise
+    // parser tries to proceed by looking up the typing conventions.
+    
+//    public static IdentifierTyper getCurrentTypingConventions() {
+//        
+//        TrainingWindow sing = getSingleton();
+//        Exercise currentEx = sing.getCurrentExercise();
+//        IdentifierTyper result;
+//        if (currentEx != null
+//                && currentEx instanceof HasIdentifierTyper) {
+//            System.out.println("ready to get identifier typer"); // debug
+//            result = ((HasIdentifierTyper) currentEx).getIdentifierTyper();
+//        } else {
+//            String xnull = "got ex"; // debug
+//            String notyper = "has typer"; // debug
+//            if (currentEx == null) { // debug
+//                xnull = "null currentEx"; //debug
+//            } // debug
+//            if (!(currentEx instanceof HasIdentifierTyper)) { // debug
+//                notyper = "doesn't have typer"; // debug
+//            } // debug
+//            System.out.println(xnull + ", " + notyper + ": making a default identifier typer"); // debug
+//            result = IdentifierTyper.createDefault();
+//        }
+//        return result;
+//    }
     
     
     // called in:

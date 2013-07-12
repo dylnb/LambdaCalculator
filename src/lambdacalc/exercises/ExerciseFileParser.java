@@ -31,6 +31,8 @@ import java.io.*;
 import java.text.*;
 import java.util.regex.*;
 import lambdacalc.logic.*;
+import lambdacalc.gui.TrainingWindow;
+
 
 /**
  * A parser for teacher-written exercise files in text format.
@@ -107,6 +109,9 @@ public class ExerciseFileParser {
                 } else if (line.startsWith("variable of type ")) {
                     parseTypeLine("variable of type ".length(), true, line, typer, linectr);
                 }
+                // Exercise Files directly set the static field of the TraininWindow class, bypassing
+                // the singleton instance
+                TrainingWindow.setCurrentTypingConventions(typer);
 
             } else if (line.startsWith("points per exercise ")) {
                 pointage = new java.math.BigDecimal(line.substring("points per exercise ".length()));

@@ -83,10 +83,7 @@ public class Main {
         
         // else...
         
-        String os = System.getProperty("os.name").toLowerCase();
-        boolean isMac = os.startsWith("mac os x");
-        
-        if(isMac) {
+        if(lambdacalc.gui.Util.isMac()) {
             // take the menu bar off the jframe
             System.setProperty("apple.laf.useScreenMenuBar", "true");
 

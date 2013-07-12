@@ -75,8 +75,6 @@ public class LambdaAbstractionRule extends CompositionRule {
 
         type = index.getType();
         
-      
-
         IdentifierTyper typingConventions = TrainingWindow.getCurrentTypingConventions();
 
         // Choose a default variable --

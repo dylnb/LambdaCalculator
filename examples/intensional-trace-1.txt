@@ -8,7 +8,7 @@ directions
 directions This gives an error related to predicate modification, though IFA should apply. \\
 directions Now reload the file -- and continue. This time IFA works. \\ \\
 directions 
-directions [DB]: This also happens if you just select CP and click Evaluate Node. \\ \\
+directions [DB]: This is fixed, but the next bug remains. \\ \\
 directions 
 directions [DB]: Another bug. To reproduce: \\ \\
 directions 
