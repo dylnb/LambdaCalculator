@@ -84,24 +84,16 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
            if (onlyIfApplicable) {
                throw mee;
            } else if (defaultApplyLeftToRight) {
-               System.out.println("caught mee; applying left to right"); // debug
-               System.out.println(node.toString()); // debug
                return apply(left, right, g);
             } else {
-               System.out.println("caught mee; applying right to left"); // debug
-               System.out.println(node.toString()); // debug
                return apply(right, left, g);
             }
         }
 
         if (isIntensionalFunctionOf(leftMeaning, rightMeaning)) {
-            System.out.println("is IFA; applying left to right"); // debug
-            System.out.println(node.toString()); // debug
             return apply(left, right, g);
         }
         if (isIntensionalFunctionOf(rightMeaning, leftMeaning)) {
-            System.out.println("is IFA; applying right to left"); // debug
-            System.out.println(node.toString()); // debug
             return apply(right, left, g);
         }
 
@@ -111,12 +103,8 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
                     "application.");
         } else {
             if (defaultApplyLeftToRight) {
-                System.out.println("just applying left to right"); // debug
-                System.out.println(node.toString()); // debug
                 return apply(left, right, g);
             } else {
-                System.out.println("just applying right to left"); // debug
-                System.out.println(node.toString()); // debug
                 return apply(right, left, g);
             }
         }

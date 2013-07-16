@@ -333,11 +333,16 @@ public class BracketedTreeParser {
                         i = i+offset; // resume from next position (i is incremented at end of iteration)
 
                 } else {
-                    finishTerminal(curnode, curterminal);
-                    parseMode = 0;
-                    curterminal = null;
-                    //type = null;
-                    i--; // back track so they are parsed in parseMode 0
+                    if ("Nonterminal".equals(curNodeForIndex.getDisplayName())) {
+                        parseMode = 0;
+                        i--;
+                    } else {
+                        finishTerminal(curnode, curterminal);
+                        parseMode = 0;
+                        curterminal = null;
+                        //type = null;
+                        i--; // back track so they are parsed in parseMode 0
+                    }
                 }
             }
         
@@ -388,10 +393,10 @@ public class BracketedTreeParser {
             else if (isPronoun(child.getLabel())) {
                 //child = new Trace(child.getIndex());
                 if (child.hasExplicitType()) {
-                    child = new Trace(child.getLabel(), 0, child.getType());
+                    child = new Trace(child.getLabel(), child.getIndex(), child.getType());
                 }
                 else {
-                    child = new Trace(child.getLabel(), 0);
+                    child = new Trace(child.getLabel(), child.getIndex());
                 }               
                 
                 //child = new Trace(child.getLabel(), 0, child.getType());
@@ -402,14 +407,13 @@ public class BracketedTreeParser {
             // If the label was a relative pronoun and it has an index,
             // return it as a BareIndex.
             else if (isIndexWord(child.getLabel())) {
-                
                 if (child.hasExplicitType()) {
-                    child = new BareIndex(child.getLabel(), 0, child.getType());
+                    child = new BareIndex(child.getLabel(), child.getIndex(), child.getType());
                 }
                 else {
-                    child = new BareIndex(child.getLabel(), 0);
+                    child = new BareIndex(child.getLabel(), child.getIndex());
                 }  
-                child = new BareIndex(child.getLabel(), 0, child.getType());
+//                child = new BareIndex(child.getLabel(), 0, child.getType());
                 // child = new BareIndex(child.getLabel(), child.getIndex());
             }
         }

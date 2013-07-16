@@ -149,7 +149,7 @@ public class TrainingWindow extends JFrame {
                 
         clearAllControls();
         
-        //loadExerciseFile("examples/tests.txt");
+        loadExerciseFile("examples/example2.txt");
     }
     
     public void updateLetterEnteringDisplay() {
