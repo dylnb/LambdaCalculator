@@ -1,0 +1,109 @@
+/*
+ * Main.java
+ *
+ * Created on May 29, 2006, 11:54 AM
+ */
+
+package lambdacalc;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import lambdacalc.gui.*;
+import lambdacalc.lf.MeaningEvaluationException;
+import lambdacalc.logic.SyntaxException;
+import lambdacalc.logic.TypeEvaluationException;
+
+/**
+ * Here's the main entry point of the program.
+ */
+public class Main {
+    // When changing these values, make sure to do a full rebuild (i.e. clean first)
+    // because it would seem that other class files hold onto the values here
+    // at compile time rather than getting them at run time. (An overzealous
+    // optimization probably.)
+    
+    public static final boolean GOD_MODE = true;
+    
+    public static final boolean NOT_SO_FAST = !GOD_MODE; 
+    // true means we force the user to do one step at a time in lambda conversions
+    
+    public static final String VERSION = "1.1.0 beta, special release for Gerhard Schaden";
+
+    public static final String AUTHORS_AND_YEAR =
+            "by Lucas Champollion, Joshua Tauberer, and Maribel Romero (2007-2009)";
+
+    public static final String AFFILIATION =
+            "The University of Pennsylvania";
+
+    public static final String WEBSITE = "http://www.ling.upenn.edu/lambda";
+
+    public static String breakIntoLines(String s, int n) {
+        for (int i = 0; i < s.length(); i = i + n) {
+            while (s.charAt(i) != ' ' && i < s.length()) {i++;}
+            s = s.substring(i)+"\n"+s.substring(i,s.length()); 
+        }
+        return s;
+    }
+    
+    /**
+     * The main entry point.  Show the main GUI window, or if the single 
+     * command line argument <pre>--version</pre> is given, prints the
+     * version number and mode (student edition, teacher edition) and exits.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        
+        if (args.length == 1 && args[0].equals("--version")) {
+            System.out.print("Lambda Calculator, version " + VERSION + ", ");
+            if (GOD_MODE) {
+                System.out.println("teacher edition");
+            } else {
+                System.out.println("student edition");
+            }
+            return;
+        }
+        
+        // for debugging BracketedTreeParser
+        if (args.length == 2 && args[0].equals("--BParser")) {
+            try {
+                System.out.println("treeparsing\n");
+                System.out.println("input: " + args[1] + "\n");
+                lambdacalc.lf.BracketedTreeParser.main(args[1]);
+            } catch (SyntaxException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MeaningEvaluationException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TypeEvaluationException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        }
+        
+        // else...
+        
+        if(lambdacalc.gui.Util.isMac()) {
+            // take the menu bar off the jframe
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+            // set the name of the application menu item
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Lambda Calculator");
+        }
+        
+        try {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+
+                    TrainingWindow.showWindow();
+
+                }
+            });
+        } catch (Exception e) {
+            Util.displayErrorMessage(
+                    WelcomeWindow.getSingleton(),
+                    e.toString(),
+                    e.getMessage());
+        }
+    }
+}

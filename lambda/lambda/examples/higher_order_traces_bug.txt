@@ -1,0 +1,67 @@
+Bug with higher order traces
+
+
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+constants of type e : a b c
+constants of type i : k
+variables of type e : x-z
+variables of type <e,t> : P-Q X-Z
+variables of type <e,et> : R-W
+
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+
+define happy : Lx.happy(x)
+define boy,boys : Lx.boy(x)
+define girl,girls : Lx.girl(x)
+define sleep, sleeps : Lx.sleep(x)
+define love, loves : LyLx.love(x,y)
+define someone, somebody : LP.Ex[P(x)]
+define everyone, everybody : LP.Ax[P(x)]
+define no-one, nobody : LP.~Ex[P(x)]
+define some,a : LP.LQ.Ex[P(x) & Q(x)]
+define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]
+define every : LP.LQ.P << Q
+define every : LP.LQ.{x | P(x)} << {x | Q(x)}
+define every : LP.LR.Ly.{x | P(x)} << {x | R(x)(y)}
+# define most : LP.LQ.|P ^^ Q| >= k*|P|
+# define most : LP.LQ.|{x | P(x)} ^^ {x | Q(x)}| >= k*|{x|P(x)}|
+define no : LP.LQ.~Ex[P(x) & Q(x)]
+define no : LP.LQ.P ^^ Q = \emptyset
+define no : LP.LQ.|P ^^ Q| = 0
+
+define Alice : a
+define Betty : b
+define Connor : c
+
+
+
+exercise tree
+title everybody sleeps
+directions bla
+
+[ everybody [ 1<et,t> [ t_1 sleeps ] ] ]
+
+[.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1] ] ] ]
+
+[.S [.NP everybody] [.S 1<et,t> [.S [.NP somebody] [.S 2 [.S t_2<et,t> [.VP loves t_1] ] ] ] ] ]
