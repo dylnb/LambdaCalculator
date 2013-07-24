@@ -45,7 +45,9 @@ public class ProductType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof ProductType) {
+        if (t instanceof VarType) {
+            return true;
+        } else if (t instanceof ProductType) {
             Type[] a1 = getSubTypes();
             Type[] a2 = ((ProductType)t).getSubTypes();
             if (a1.length != a2.length) return false;

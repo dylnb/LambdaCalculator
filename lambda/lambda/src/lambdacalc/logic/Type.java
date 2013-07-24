@@ -17,34 +17,34 @@ public abstract class Type implements Comparable {
     /**
      * The type of entities, e.
      */
-    public static final Type E = new AtomicType('e');
+    public static final Type E = new ConstType('e');
 
      /**
      * The type of truth values, t.
      */
-    public static final Type T = new AtomicType('t');
+    public static final Type T = new ConstType('t');
 
     /**
      * The type of worlds used for Intensional Function Application, s.
      */
-    public static final Type S = new AtomicType('s');
+    public static final Type S = new ConstType('s');
 
     /**
      * The type of one place predicates, &lt;e,t&gt;.
      */
-    public static final Type ET = new CompositeType(new AtomicType('e'), new AtomicType('t'));
+    public static final Type ET = new CompositeType(new ConstType('e'), new ConstType('t'));
 
     /**
      * The type of two place predicates, &lt;e x e , t&gt;.
      */
     public static final Type ExET = new CompositeType(
-            new ProductType(new Type[] { new AtomicType('e'), new AtomicType('e') }),
-            new AtomicType('t'));
+            new ProductType(new Type[] { new ConstType('e'), new ConstType('e') }),
+            new ConstType('t'));
     
     /**
      * The type of an integer.
      */
-    public static final Type N = new AtomicType('n');
+    public static final Type N = new ConstType('n');
 
     /**
      * Tests two types for equality (as you would expect).
@@ -124,7 +124,8 @@ public abstract class Type implements Comparable {
     public static Type readFromStream(java.io.DataInputStream input) throws java.io.IOException {
         String exprType = input.readUTF();
         
-        if (exprType.equals("AtomicType")) return new AtomicType(input);
+        if (exprType.equals("ConstType")) return new ConstType(input);
+        if (exprType.equals("VarType")) return new VarType(input);
         if (exprType.equals("CompositeType")) return new CompositeType(input);
         if (exprType.equals("ProductType")) return new ProductType(input);
         

@@ -12,6 +12,7 @@ Homework 3: Generalized Quantifiers
 constants of type e : a b c
 constants of type i : k
 variables of type e : x-z
+variables of type <a,t> : d-f
 variables of type <e,t> : P-Q X-Z
 variables of type <e,et> : R-W
 
@@ -41,7 +42,7 @@ define boy,boys : Lx.boy(x)
 define girl,girls : Lx.girl(x)
 define love, loves : LyLx.love(x,y)
 define someone, somebody : LP.Ex[P(x)]
-define everyone, everybody : LP.Ax[P(x)]
+define everyone, everybody : Lf.Ax[f(x)]
 define no-one, nobody : LP.~Ex[P(x)]
 define some,a : LP.LQ.Ex[P(x) & Q(x)]
 define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]

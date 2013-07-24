@@ -190,6 +190,7 @@ public class BracketedTreeParser {
                         throw new SyntaxException("An open bracket for the root node must appear before any other text.", i);
                     curterminal = new LexicalTerminal(); 
                     curNodeForType = curterminal;
+                    curNodeForIndex = curterminal;
                     // we always start by assuming that the current terminal is
                     // a lexical terminal; if necessary, we convert it later
                     // (in finishTerminal)
@@ -271,14 +272,14 @@ public class BracketedTreeParser {
                         break;
 
                     case CompositeType.LEFT_BRACKET:
-                        curNodeForType = curterminal;
+//                        curNodeForType = curterminal;
                         parseMode = 3;
                         i--;
                         break;
 
                     case LFNode.INDEX_SEPARATOR: // i.e. _
                         //curNodeForIndex = finishTerminal(curnode, curterminal, type);
-                        curNodeForIndex = curterminal;
+//                        curNodeForIndex = curterminal;
                         parseMode = 3;
                         //curterminal = null;
                         break;
@@ -291,7 +292,7 @@ public class BracketedTreeParser {
             } else if (parseMode == 3) {
                 // Reading the index or type of a node.
                 if (LFNode.INDEX_SEPARATOR == c) {
-                    curNodeForIndex = curterminal;
+//                    curNodeForIndex = curterminal;
                     
                 } else if (Character.isDigit(c)) {
                     int idx = Integer.valueOf(String.valueOf(c)).intValue();
@@ -302,6 +303,9 @@ public class BracketedTreeParser {
                         curNodeForIndex.setIndex(curNodeForIndex.getIndex() * 10 + idx);
                         
                 } else if (c == CompositeType.LEFT_BRACKET) {
+                    if ("Nonterminal".equals(curNodeForIndex.getDisplayName())) {
+                        throw new SyntaxException("Can't explicitly type a nonterminal.", i);
+                    } else {
                         // Reading the type of the terminal.
                         // scan for right bracket
                         int tstack = 1;
@@ -325,12 +329,14 @@ public class BracketedTreeParser {
                     //type = null;
                         try {
                         Type type = TypeParser.parse(typeString);
+                        System.out.println("Setting type of " + curNodeForType.getLabel() + " to " + type.toShortString()); // debug
                         curNodeForType.setType(type);
                         curNodeForType.switchOnExplicitType();
                         } catch (SyntaxException s) {
                             throw new SyntaxException("Error reading type: " + s.getMessage(), i + s.getPosition());
                         }
                         i = i+offset; // resume from next position (i is incremented at end of iteration)
+                    }
 
                 } else {
                     if ("Nonterminal".equals(curNodeForIndex.getDisplayName())) {

@@ -3,6 +3,7 @@ package lambdacalc.lf;
 import lambdacalc.logic.CompositeType;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.FunApp;
+import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
 
 public class FunctionApplicationRule extends CompositionRule {
@@ -79,9 +80,9 @@ public class FunctionApplicationRule extends CompositionRule {
                throw mee;
            } else if (defaultApplyLeftToRight) {
                 return apply(left, right, g);
-            } else {
+           } else {
                 return apply(right, left, g);
-            }
+           }
         }
 
         if (isFunctionOf(leftMeaning, rightMeaning))
@@ -106,9 +107,14 @@ public class FunctionApplicationRule extends CompositionRule {
         // Return true iff left is a composite type <X,Y>
         // and right is of type X.
         try {
-            if (left.getType() instanceof CompositeType) {
-                CompositeType t = (CompositeType)left.getType();
-                if (t.getLeft().equals(right.getType()))
+            Type l = left.getType();
+            Type r = right.getType();
+            if (l instanceof CompositeType) {
+                CompositeType t = (CompositeType)l;
+                System.out.println("left: " + left.toString() + ", type: " + t.toShortString()); // debug
+                System.out.println("right: " + right.toString() + ", type: " + r.toShortString()); // debug
+                if (t.getLeft().equals(r))
+                    System.out.println("types match"); // debug
                     return true;
             }
         } catch (TypeEvaluationException ex) {

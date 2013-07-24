@@ -42,7 +42,9 @@ public class CompositeType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof CompositeType) {
+        if (t instanceof VarType) {
+            return true;
+        } else if (t instanceof CompositeType) {
 //            CompositeType ct = (CompositeType) t;
             return (this.getLeft().equals(((CompositeType) t).getLeft())
                     && (this.getRight().equals(((CompositeType) t).getRight())));
