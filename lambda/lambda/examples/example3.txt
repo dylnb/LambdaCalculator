@@ -12,7 +12,7 @@ Homework 3: Generalized Quantifiers
 constants of type e : a b c
 constants of type i : k
 variables of type e : x-z
-variables of type <a,t> : d-f
+variables of type a : d-f
 variables of type <e,t> : P-Q X-Z
 variables of type <e,et> : R-W
 
@@ -45,15 +45,15 @@ define someone, somebody : LP.Ex[P(x)]
 define everyone, everybody : Lf.Ax[f(x)]
 define no-one, nobody : LP.~Ex[P(x)]
 define some,a : LP.LQ.Ex[P(x) & Q(x)]
-define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]
+#define some,a : LP.LR.Ly.Ex[P(x) & R(x)(y)]
 define every : LP.LQ.P << Q
-define every : LP.LQ.{x | P(x)} << {x | Q(x)}
-define every : LP.LR.Ly.{x | P(x)} << {x | R(x)(y)}
+#define every : LP.LQ.{x | P(x)} << {x | Q(x)}
+#define every : LP.LR.Ly.{x | P(x)} << {x | R(x)(y)}
 define most : LP.LQ.[|P ^^ Q| >= k*|P|]
-define most : LP.LQ.[|{x | P(x)} ^^ {x | Q(x)}| >= k*|{x|P(x)}|]
+#define most : LP.LQ.[|{x | P(x)} ^^ {x | Q(x)}| >= k*|{x|P(x)}|]
 define no : LP.LQ.~Ex[P(x) & Q(x)]
-define no : LP.LQ.P ^^ Q = \emptyset
-define no : LP.LQ.|P ^^ Q| = 0
+#define no : LP.LQ.P ^^ Q = \emptyset
+#define no : LP.LQ.|P ^^ Q| = 0
 
 define Alice : a
 define Betty : b

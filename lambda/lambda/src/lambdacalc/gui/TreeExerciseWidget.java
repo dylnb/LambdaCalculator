@@ -592,8 +592,10 @@ public class TreeExerciseWidget extends JPanel {
                         typeLabel.setText(expr.getType().toShortString());
                     } catch (TypeEvaluationException e) {
                         typeLabel.setText("Type unknown");
-                        typeLabel.setToolTipText(
-                                lambdacalc.Main.breakIntoLines(e.getMessage(), 50));
+                        String brokenMessage = lambdacalc.Main.breakIntoLines(e.getMessage(), 50);
+                        // breaking error message across lines doesn't seem to affect the way the tooltip
+                        // is displayed, at least on macs; might as well set the tip to e.getMessage()
+                        typeLabel.setToolTipText(brokenMessage);
                         typeColor = java.awt.Color.RED;
                     }
                 }                

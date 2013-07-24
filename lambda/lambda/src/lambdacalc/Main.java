@@ -40,8 +40,10 @@ public class Main {
 
     public static String breakIntoLines(String s, int n) {
         for (int i = 0; i < s.length(); i = i + n) {
-            while (s.charAt(i) != ' ' && i < s.length()) {i++;}
-            s = s.substring(i)+"\n"+s.substring(i,s.length()); 
+            while (i < s.length() && s.charAt(i) != ' ') {i++;}
+            String pre = s.substring(0,i);
+            String post = s.substring(i,s.length());
+            s = pre+"\n"+post; 
         }
         return s;
     }
@@ -81,6 +83,10 @@ public class Main {
             return;
         }
         
+        if (args.length == 1 && args[0].equals("--linebreak")) {
+            System.out.println(breakIntoLines("f cannot be applied as a function", 5));
+            return;
+        }
         // else...
         
         if(lambdacalc.gui.Util.isMac()) {

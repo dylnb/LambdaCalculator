@@ -111,10 +111,10 @@ public class FunctionApplicationRule extends CompositionRule {
             Type r = right.getType();
             if (l instanceof CompositeType) {
                 CompositeType t = (CompositeType)l;
-                System.out.println("left: " + left.toString() + ", type: " + t.toShortString()); // debug
-                System.out.println("right: " + right.toString() + ", type: " + r.toShortString()); // debug
+//                System.out.println("left: " + left.toString() + ", type: " + t.toShortString()); // debug
+//                System.out.println("right: " + right.toString() + ", type: " + r.toShortString()); // debug
                 if (t.getLeft().equals(r))
-                    System.out.println("types match"); // debug
+//                    System.out.println("types match"); // debug
                     return true;
             }
         } catch (TypeEvaluationException ex) {

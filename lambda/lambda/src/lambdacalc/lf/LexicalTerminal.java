@@ -88,7 +88,7 @@ public class LexicalTerminal extends Terminal {
         if (meaning != null)
             return;
         
-        Expr[] meanings = lexicon.getMeanings(getLabel());
+        Expr[] meanings = lexicon.getMeanings(this.getLabel());
         if (meanings.length == 1)
             meaning = meanings[0];    
     }
