@@ -52,6 +52,15 @@ public abstract class Terminal extends LFNode {
 
     public abstract String toLatexString();
     
+    public String toLatexString(int indent) {
+        if (this instanceof LexicalTerminal) {
+            return this.toLatexString(indent);
+        }
+        else {
+            return this.toLatexString();
+        }
+    }
+    
     public String toStringTerminalsOnly() {
 //        if (this.getLabel() == null) return ""; else return this.getLabel();
         return this.toShortString();

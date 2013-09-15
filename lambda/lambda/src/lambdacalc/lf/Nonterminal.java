@@ -3,6 +3,8 @@ package lambdacalc.lf;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Vector;
+import javax.swing.JOptionPane;
+import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.Expr;
 
 public class Nonterminal extends LFNode {
@@ -161,11 +163,36 @@ public class Nonterminal extends LFNode {
                     // assign it to ourself.
                     compositor = rule;
                 } else {
-                    // But on the next time we hit a compatible rule, clear
-                    // out what we set and return. We thus don't actually set
-                    // compositor unless there is a uniquely applicable rule.
-                    compositor = null;
-                    return;
+                    if (!lambdacalc.Main.GOD_MODE) {
+                        // But on the next time we hit a compatible rule, clear
+                        // out what we set and return. We thus don't actually set
+                        // compositor unless there is a uniquely applicable rule.
+                        compositor = null;
+                        return;
+                    } else {
+                        // With polymorphic types, it's possible for there to be 
+                        // two legitimate applicable composition rules. Absent a more
+                        // robust type-inference engine, we have to ask God which one to use.
+                        // TODO: make this less horrible.
+                        TrainingWindow singleton = TrainingWindow.getSingleton();
+                        Object[] options = {compositor.toString(), rule.toString()};
+                        int n = JOptionPane.showOptionDialog(singleton,
+                                this + " can be combined in multiple ways.\n" +
+                                "Which composition rule would you like?",
+                                "Compositor Choice",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,     //do not use a custom Icon
+                                options,  //the titles of buttons
+                                options[0]); //default button title
+                        switch(n) {
+                            case 1:
+                                compositor = rule;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
                 compositorHits += 1;
             }

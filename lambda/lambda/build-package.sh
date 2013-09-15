@@ -5,10 +5,11 @@
 # that it has no other dependencies.
 
 cd dist
-$JAVA_HOME/bin/jar xf lib/swing-layout-1.0.jar
-$JAVA_HOME/bin/jar xf lib/AbsoluteLayout.jar
-$JAVA_HOME/bin/jar uf LambdaCalculator.jar org
+jar xf lib/swing-layout-1.0.4.jar
+jar xf lib/AbsoluteLayout.jar
+jar uf LambdaCalculator.jar org
+
 
 cd ..
-launch4j/launch4j ../launch4j.xml
+launch4j/launch4j ../LC2.xml
 

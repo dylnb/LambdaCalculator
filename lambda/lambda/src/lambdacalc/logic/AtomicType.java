@@ -45,7 +45,7 @@ public abstract class AtomicType extends Type {
         } else { 
             return false;
         }
-    }  
+    }
     
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
@@ -62,5 +62,5 @@ public abstract class AtomicType extends Type {
 //        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
 //        symbol = input.readChar();
 //    }
-            
+    
 }

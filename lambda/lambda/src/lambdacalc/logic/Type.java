@@ -105,6 +105,13 @@ public abstract class Type implements Comparable {
     }
     
     /**
+     * Will be overridden by subclasses
+     */
+    public boolean containsVar() {
+        return false;
+    };
+    
+    /**
      * A string representation that doesn't display more commas than needed.
      */
     public abstract String toShortString();

@@ -7,6 +7,7 @@
 package lambdacalc.logic;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +159,13 @@ public abstract class NAry extends Expr {
         Expr[] e = new Expr[exprs.length];
         for (int i = 0; i < exprs.length; i++)
             e[i] = exprs[i].createAlphabeticalVariant(bindersToChange, variablesInUse, updates);
+        return createFromSubExpressions(e);
+    }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        Expr[] e = new Expr[exprs.length];
+        for (int i = 0; i < exprs.length; i++)
+            e[i] = exprs[i].createAlphatypicalVariant(alignments, variablesInUse, updates);
         return createFromSubExpressions(e);
     }
 

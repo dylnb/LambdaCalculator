@@ -318,6 +318,17 @@ public class MeaningBracketExpr extends Expr {
         return this;
     }
     
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        try {
+            return this.evaluate().createAlphatypicalVariant(alignments, variablesInUse, updates);
+        } catch (TypeEvaluationException ex) {
+            Logger.getLogger(MeaningBracketExpr.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MeaningEvaluationException ex) {
+            Logger.getLogger(MeaningBracketExpr.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return this;
+    }
+    
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         throw new java.io.IOException("This class cannot be serialized.");
     }

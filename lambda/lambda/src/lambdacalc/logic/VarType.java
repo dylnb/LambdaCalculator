@@ -47,6 +47,10 @@ public class VarType extends AtomicType {
         return true;
     }  
     
+    public boolean containsVar() {
+        return true;
+    }
+    
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
     }

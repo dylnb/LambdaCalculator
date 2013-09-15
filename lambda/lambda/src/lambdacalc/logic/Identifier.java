@@ -108,6 +108,11 @@ public abstract class Identifier extends Expr {
         return type;
     }
     
+    @Override
+    public void setType(Type t) {
+        type = t;
+    }
+    
     public boolean isTypeExplicit() {
         return typeIsExplicit;
     }

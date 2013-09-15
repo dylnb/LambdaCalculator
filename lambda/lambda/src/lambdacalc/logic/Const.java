@@ -6,6 +6,7 @@
 
 package lambdacalc.logic;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +56,10 @@ public class Const extends Identifier {
     }
     
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
+        return this;
+    }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
         return this;
     }
 

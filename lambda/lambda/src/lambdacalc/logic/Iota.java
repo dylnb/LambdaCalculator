@@ -71,7 +71,7 @@ public class Iota extends Binder {
         if (!getInnerExpr().getType().equals(Type.T))
             throw new TypeEvaluationException("The inside of the iota binder in " + toString() + " must be of type t.");
         return getVariable().getType();
-    }    
+    }
     
     Iota(java.io.DataInputStream input) throws java.io.IOException {
         super(input);

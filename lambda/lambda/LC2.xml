@@ -1,37 +1,33 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
-  <headerType>0</headerType>
-  <jar>dist/LambdaCalculator.jar</jar>
-  <outfile>dist/LambdaCalculator.exe</outfile>
+  <headerType>gui</headerType>
+  <jar>/Users/bumford/Code/NetBeansProjects/lambda/dist/LambdaCalculator.jar</jar>
+  <outfile>/Users/bumford/Code/NetBeansProjects/lambda/dist/LambdaCalculator.exe</outfile>
   <errTitle>Lambda</errTitle>
-  <jarArgs></jarArgs>
+  <cmdLine></cmdLine>
   <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
-  <icon>images/logo.ico</icon>
+  <manifest></manifest>
+  <icon>/Users/bumford/Code/NetBeansProjects/lambda/images/logo.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.4.0</minVersion>
     <maxVersion></maxVersion>
-    <initialHeapSize>0</initialHeapSize>
-    <maxHeapSize>0</maxHeapSize>
-    <args></args>
+    <jdkPreference>preferJre</jdkPreference>
   </jre>
-  <splash>
-    <file>images/splash.bmp</file>
-    <waitForWindow>true</waitForWindow>
-    <timeout>60</timeout>
-    <timeoutErr>true</timeoutErr>
-  </splash>
   <versionInfo>
-    <fileVersion>1.0.0.0</fileVersion>
-    <txtFileVersion>1.0.0</txtFileVersion>
+    <fileVersion>1.2.0.0</fileVersion>
+    <txtFileVersion>1.2.0</txtFileVersion>
     <fileDescription>Lambda Calculator: The Semantics Tool</fileDescription>
     <copyright>Copyright (2007) Lucas Champollion and Joshua Tauberer</copyright>
     <productVersion>1.2.0.0</productVersion>
     <txtProductVersion>1.2.0</txtProductVersion>
     <productName>Lambda Calculator: The Semantics Tool</productName>
-    <companyName>The University of Pennsylvania</companyName>
+    <companyName>The University of Pennsylvania, New York University</companyName>
     <internalName>Lambda</internalName>
     <originalFilename>Lambda.exe</originalFilename>
   </versionInfo>

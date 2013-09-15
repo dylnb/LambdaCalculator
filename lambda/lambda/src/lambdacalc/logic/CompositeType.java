@@ -6,6 +6,8 @@
 
 package lambdacalc.logic;
 
+import java.util.ArrayList;
+
 /**
  * Represents a composite (function) type, like &lt;et&gt;.
  */
@@ -41,6 +43,23 @@ public class CompositeType extends Type {
         return this.right;
     }
     
+    public ArrayList<Type> getAtomicTypes() {
+        ArrayList<Type> l = new ArrayList<Type>();        
+        ArrayList<Type> r = new ArrayList<Type>();
+        if (this.left instanceof CompositeType) {
+            l.addAll(((CompositeType)this.left).getAtomicTypes());
+        } else {
+            l.add(this.left);
+        }
+        if (this.right instanceof CompositeType) {
+            r.addAll(((CompositeType)this.right).getAtomicTypes());
+        } else {
+            r.add(this.right);
+        }
+        l.addAll(r);
+        return l;
+    }
+    
     protected boolean equals(Type t) {
         if (t instanceof VarType) {
             return true;
@@ -51,6 +70,10 @@ public class CompositeType extends Type {
         } else { 
             return false;
         }
+    }
+    
+    public boolean containsVar() {
+        return (left.containsVar() || right.containsVar());
     }
     
     public int hashCode() {
@@ -133,5 +156,4 @@ public class CompositeType extends Type {
         left = Type.readFromStream(input);
         right = Type.readFromStream(input);
     }
-    
 }

@@ -59,11 +59,19 @@ public class TypeParser {
             char c = type.charAt(i);
             
             if (isParsingProduct) {
-                // TODO: separate constant types from variable types
-                if (current.Right != null)
-                    current.Right = addProduct(current.Right, new ConstType(c));
-                else
-                    current.Left = addProduct(current.Left, new ConstType(c));
+                if (current.Right != null) {
+                    if ("etsnvi".contains(Character.toString(c))) {
+                        current.Right = addProduct(current.Right, new ConstType(c));
+                    } else {
+                        current.Right = addProduct(current.Right, new VarType(c));
+                    }
+                } else {
+                    if ("etsnvi".contains(Character.toString(c))) {
+                        current.Left = addProduct(current.Left, new ConstType(c));
+                    } else {
+                        current.Left = addProduct(current.Left, new VarType(c));
+                    }
+                }
                 isParsingProduct = false;
                 continue;
             }
@@ -161,7 +169,6 @@ public class TypeParser {
             } // TODO: make distinction between type primitives, like e and t, and
               // type variables more abstract; don't hard-code it in here
             else if ("etsnvi".contains(Character.toString(c))) {
-            //else if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
                 AtomicType at = new ConstType(c);
                 if (current.Left == null) {
                     if (stopSoon && stack.size() == 0 && !current.ReadBracket)

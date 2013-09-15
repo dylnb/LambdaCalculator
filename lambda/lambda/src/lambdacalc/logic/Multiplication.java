@@ -52,4 +52,5 @@ public class Multiplication extends Binary {
     Multiplication(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }
+
 }

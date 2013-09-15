@@ -4,6 +4,7 @@ package lambdacalc.lf;
 import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.CompositeType;
+import lambdacalc.logic.ConstType;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.FunApp;
 import lambdacalc.logic.IdentifierTyper;
@@ -119,7 +120,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
                 CompositeType t = (CompositeType)left.getType(); // t = <<s,X>,Y>
                 if (t.getLeft() instanceof CompositeType) {
                     CompositeType t2 = (CompositeType) t.getLeft(); // t2 = <s,X>
-                    if (t2.getLeft().equals(Type.S)  // t2.getLeft = s
+                    if (t2.getLeft() instanceof ConstType && t2.getLeft().equals(Type.S)  // t2.getLeft = s
                             && t2.getRight().equals(right.getType())) { // t2.getRight = X
                         return true;
                     }

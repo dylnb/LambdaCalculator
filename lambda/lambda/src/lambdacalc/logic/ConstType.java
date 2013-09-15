@@ -46,7 +46,11 @@ public class ConstType extends AtomicType {
         } else { 
             return false;
         }
-    }  
+    }
+    
+    public boolean containsVar() {
+        return false;
+    }
     
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
@@ -63,5 +67,4 @@ public class ConstType extends AtomicType {
         if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
         symbol = input.readChar();
     }
-            
 }

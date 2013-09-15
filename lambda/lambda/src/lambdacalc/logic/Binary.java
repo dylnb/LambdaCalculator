@@ -6,6 +6,7 @@
 
 package lambdacalc.logic;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +114,11 @@ public abstract class Binary extends Expr {
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getLeft().createAlphabeticalVariant(bindersToChange, variablesInUse, updates),
                 getRight().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
+    }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        return create(getLeft().createAlphatypicalVariant(alignments, variablesInUse, updates),
+                getRight().createAlphatypicalVariant(alignments, variablesInUse, updates));
     }
     
     protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {

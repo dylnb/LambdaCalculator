@@ -51,13 +51,26 @@ public class ProductType extends Type {
             Type[] a1 = getSubTypes();
             Type[] a2 = ((ProductType)t).getSubTypes();
             if (a1.length != a2.length) return false;
-            for (int i = 0; i < a1.length; i++)
-                if (!a1[i].equals(a2[i]))
+            for (int i = 0; i < a1.length; i++) {
+                Type l = a1[i];
+                Type r = a2[i];
+                boolean guard = a1[i].equals(a2[i]);
+                if (!guard)
                     return false;
+            }
             return true;
         } else { 
             return false;
         }
+    }
+    
+    public boolean containsVar() {
+        for (Type subtype : subtypes) {
+            if (subtype.containsVar()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public int hashCode() {

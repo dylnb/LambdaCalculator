@@ -329,7 +329,6 @@ public class BracketedTreeParser {
                     //type = null;
                         try {
                         Type type = TypeParser.parse(typeString);
-                        System.out.println("Setting type of " + curNodeForType.getLabel() + " to " + type.toShortString()); // debug
                         curNodeForType.setType(type);
                         curNodeForType.switchOnExplicitType();
                         } catch (SyntaxException s) {

@@ -1,0 +1,130 @@
+Polymorphic Variable-free semantics, Jacobson style
+
+# (cf. jacobson-variable-free.txt)
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+
+### Combinatorial Rules ###
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+
+### Type Conventions ###
+
+variables of type e: x y z
+constants of type e: j m b
+#
+variables of type v: e
+variables of type i: t
+#
+variables of type <e,t>: P
+constants of type <e,t>: boy man woman american win beautiful dancer
+#
+variables of type <v,t>: V
+constants of type <v,t>: true
+#
+constants of type <i,t>: year in-july
+#
+variables of type <e,e>: f g
+constants of type <e,e>: the-mother-of the-dog-of the-paycheck-of the-mistress-of the-wife-of
+#
+variables of type <e,<e,t>>: R
+constants of type <e,<e,t>>: love hate meet lose
+#
+variables of type <<e,t>,t>: Q
+#
+constants of type <e,<e,<e,t>>>: give
+constants of type <e,<e,<v,t>>>: love2 meet2
+#
+variables of type <t,<e,t>>: T
+constants of type <t,<e,t>>: think said
+variables of type <t,<v,t>>: M
+constants of type <t,<v,t>>: mink
+#
+variables of type t: p
+#
+## Polymorphic Types ##
+#
+variables of type a: a
+variables of type <a,b>: B
+variables of type <b,c>: C
+variables of type <b,<a,c>>: D
+constants of type <a,t>: beautiful2 dancer2
+
+
+### Lexical Entries ###
+
+define geach: LC.LB.La.C(B(a))
+define zeach: LR_<b,<a,c>>.LB.La.R(B(a))(a)
+define zeach2: LD.LB.La.D(B(a))(a)
+define z-tvt: LM.LV.Le.M(V(e))(e)
+define minks: Lp.Le.mink(p)(e)
+
+define love,loves,loved: Ly.Lx.love(x)(y)
+# convention: love(x)(y) means x loves y. Note that in Kubota and Uegaki, 
+# loves(x)(y) means y loves x. Keep this in mind esp as you read the argraising rule.
+define love2,loves2,loved2: Ly.Lx.Le[love2(x)(y)(e)]
+define meet2,meets2,met2: Ly.Lx.Le[meet2(x)(y)(e)]
+define win,wins,won: Lx.win(x)
+define hate,hates,hated: Ly.Lx.hate(x)(y)
+define meet,meets,met: Ly.Lx.meet(x)(y)
+define lose,loses,lost: Ly.Lx.lose(x)(y)
+define give,gives,gave: Lz.Ly.Lx.give(x)(z)(y)
+define John,john: j
+define Mary,mary: m
+define Bill,bill: b
+define him,her,he,she,it,He,She,It,himself,herself: Lx.x
+define his-mother: Lx.the-mother-of(x)
+define his-paycheck: Lx.the-paycheck-of(x)
+define his-wife: Lx.the-wife-of(x)
+define his-mistress: Lx.the-mistress-of(x)
+define his-dog: Lx.the-dog-of(x)
+define say,says,said: Lp.Lx.said(p)(x)
+define think,thinks,thought: Lp.Lx.think(p)(x)
+define everybody,Everybody,everyone,Everyone: LP.Ax.P(x)
+define Everyyear,everyyear: LP_<it>.At[year(t) -> P(t)]
+define every,Every: LP'.LP.Ay.[P'(y)->P(y)]
+define some,Some: LP'.LP.Ey.[P'(y) & P(y)]
+define boy: Lx.boy(x)
+define man: Lx.man(x)
+define woman: Lx.woman(x)
+define beautiful: Lx.beautiful(x)
+define beautiful2: La.beautiful(a)
+define dancer: Lx.dancer(x)
+define dancer2: La.dancer(a)
+
+
+###################################################################################################
+
+exercise tree
+title sandbox
+
+#instructions Everyone minks he wins
+#[ Everyone [ [ zeach minks ] [ he [ geach wins ] ] ] ]
+
+instructions Everyone thinks he wins
+[ Everyone [ [ zeach thinks ] [ he [ geach wins ] ] ] ]
+
+#instructions Everyone minks he wins
+#[ Everyone [ [ zeach2 thinks ] [ he [ geach wins ] ] ] ]
+
+#instructions Everyone minks he wins
+#[ Everyone [ [ zeach2 minks ] [ he [ geach wins ] ] ] ]
+
+instructions John is a boy and a man
+[ John [ boy man ] ]
+
+#instructions John is a beautiful dancer
+#[ John [ beautiful dancer2 ] ]
