@@ -62,6 +62,7 @@ variables of type <a,b>: B
 variables of type <b,c>: C
 variables of type <b,<a,c>>: D
 constants of type <a,t>: beautiful2 dancer2
+constants of type <a,a>: id
 
 
 ### Lexical Entries ###
@@ -101,9 +102,10 @@ define boy: Lx.boy(x)
 define man: Lx.man(x)
 define woman: Lx.woman(x)
 define beautiful: Lx.beautiful(x)
-define beautiful2: La.beautiful(a)
+define beautiful2: La.beautiful2(a)
 define dancer: Lx.dancer(x)
-define dancer2: La.dancer(a)
+define dancer2: La.dancer2(a)
+define id: La.a
 
 
 ###################################################################################################
@@ -111,20 +113,29 @@ define dancer2: La.dancer(a)
 exercise tree
 title sandbox
 
-#instructions Everyone minks he wins
-#[ Everyone [ [ zeach minks ] [ he [ geach wins ] ] ] ]
+instructions Everyone minks he wins
+[ Everyone [ [ zeach minks ] [ he [ geach wins ] ] ] ]
 
 instructions Everyone thinks he wins
 [ Everyone [ [ zeach thinks ] [ he [ geach wins ] ] ] ]
 
-#instructions Everyone minks he wins
-#[ Everyone [ [ zeach2 thinks ] [ he [ geach wins ] ] ] ]
+instructions Everyone minks he wins
+[ Everyone [ [ zeach2 thinks ] [ he [ geach wins ] ] ] ]
 
-#instructions Everyone minks he wins
-#[ Everyone [ [ zeach2 minks ] [ he [ geach wins ] ] ] ]
+instructions Everyone minks he wins
+[ Everyone [ [ zeach2 minks ] [ he [ geach wins ] ] ] ]
 
 instructions John is a boy and a man
 [ John [ boy man ] ]
 
-#instructions John is a beautiful dancer
-#[ John [ beautiful dancer2 ] ]
+instructions John is a beautiful dancer
+[ John [ beautiful dancer2 ] ]
+
+instructions John is a beautiful dancer
+[ John [ beautiful2 dancer ] ]
+
+instructions John is a beautiful dancer
+[ John [ beautiful2 dancer2 ] ]
+
+instructions Everyone is
+[ Everyone id ]

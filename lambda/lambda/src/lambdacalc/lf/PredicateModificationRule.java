@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lambdacalc.logic.And;
 import lambdacalc.logic.CompositeType;
+import lambdacalc.logic.ConstType;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.ExpressionParser;
@@ -53,9 +54,13 @@ public class PredicateModificationRule extends CompositionRule {
             boolean correctSize = node.size() == 2;
             boolean correctTypes = false;
             if (ltype instanceof CompositeType) {
-                if (((CompositeType)ltype).getRight().equals(Type.T)) {
+                CompositeType lt = (CompositeType)ltype;
+                Type ltR = lt.getRight();
+                if (ltR instanceof ConstType && ltR.equals(Type.T)) {
                     if (rtype instanceof CompositeType) {
-                        if (((CompositeType)rtype).getRight().equals(Type.T)) {
+                        CompositeType rt = (CompositeType)rtype;
+                        Type rtR = rt.getRight();
+                        if (rtR instanceof ConstType && rtR.equals(Type.T)) {
                             if (ltype.equals(rtype)) {
                                 correctTypes = true;
                             }

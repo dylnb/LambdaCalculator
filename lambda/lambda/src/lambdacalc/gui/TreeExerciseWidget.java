@@ -624,7 +624,12 @@ public class TreeExerciseWidget extends JPanel {
                     BareIndex bareIndex = (BareIndex) node;
                     typeLabel.setForeground(typeColor);
                     typeLabel.setVisible(true);
-                    typeLabel.setText(bareIndex.getType().toShortString());
+                    try {
+                        typeLabel.setText(bareIndex.getType().toShortString());
+                    } catch (java.lang.NullPointerException ex) {
+                        bareIndex.setType(Type.E);
+                        typeLabel.setText(bareIndex.getType().toShortString());
+                    }
                 } else {
                     typeLabel.setVisible(false);
                     typeLabel.setText("");

@@ -605,7 +605,8 @@ public abstract class Expr {
         // Need to walk down the type trees in parallel
         if (funcT instanceof CompositeType) {
             if (!(argT instanceof CompositeType)) {
-                throw new MeaningEvaluationException("argtype too small"); // debug
+                throw new MeaningEvaluationException("I'm seeing a function of type " + funcT +
+                        ", but an argument of type " + argT + ", which I can't match up"); // debug
             }
             Type funcLT = ((CompositeType)funcT).getLeft();
             Type funcRT = ((CompositeType)funcT).getRight();
@@ -632,8 +633,10 @@ public abstract class Expr {
             }
             productTypeHelper(((ProductType)funcT).getSubTypes(), ((ProductType)argT).getSubTypes(), matches);
         } else {
-            if (funcT instanceof VarType) {
+            if (argT instanceof ConstType && funcT instanceof VarType) {
                 matches.put(funcT, argT);
+            } else if (argT instanceof VarType && funcT instanceof ConstType) {
+                matches.put(argT,funcT);
             }
         }
         return matches;
