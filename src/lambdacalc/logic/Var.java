@@ -6,6 +6,7 @@
 
 package lambdacalc.logic;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -108,6 +109,13 @@ public class Var extends Identifier {
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         if (updates.containsKey(this))
             return (Expr)updates.get(this);
+        return this;
+    }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        if (updates.containsKey(this)) {
+            return (Expr)updates.get(this);
+        }
         return this;
     }
 

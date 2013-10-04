@@ -10,6 +10,8 @@
 
 package lambdacalc.logic;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -213,6 +215,41 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
         // Recurse
         return create(v, getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
     }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        Identifier v = getVariable();
+        Type vtype = v.getType();
+                
+        if (vtype instanceof AtomicType) {
+            if (alignments.containsKey(vtype)) {
+                if (v instanceof Const)
+                    v = new Var(v.getSymbol(), v.getType(), v.isTypeExplicit());
+                variablesInUse = new HashSet(variablesInUse);
+                variablesInUse.add(v);
+                v = createFreshVar((Var)v, variablesInUse);
+                v.setType(alignments.get(vtype));
+                
+                variablesInUse.add(v);
+                updates = new HashMap(updates);
+                updates.put(getVariable(), v);
+            }
+        } else if (vtype instanceof CompositeType) {
+            CompositeType compvtype = (CompositeType)vtype;
+            if (!Collections.disjoint(alignments.keySet(), compvtype.getAtomicTypes())) {
+                Type newtype = getAlignedType(compvtype, alignments);
+                variablesInUse = new HashSet(variablesInUse);
+                variablesInUse.add(v);
+                v = createFreshVar((Var)v, variablesInUse);
+                v.setType(newtype);
+                
+                variablesInUse.add(v);
+                updates = new HashMap(updates);
+                updates.put(getVariable(), v);
+            }
+        }        
+        return create(v, getInnerExpr().createAlphatypicalVariant(alignments, variablesInUse, updates));
+    }
+    
     
     public boolean bindsAny(Set vars) {
         Identifier bvi = getVariable();

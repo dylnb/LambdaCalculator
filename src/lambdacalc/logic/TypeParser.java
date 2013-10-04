@@ -59,10 +59,19 @@ public class TypeParser {
             char c = type.charAt(i);
             
             if (isParsingProduct) {
-                if (current.Right != null)
-                    current.Right = addProduct(current.Right, new AtomicType(c));
-                else
-                    current.Left = addProduct(current.Left, new AtomicType(c));
+                if (current.Right != null) {
+                    if ("etsnvi".contains(Character.toString(c))) {
+                        current.Right = addProduct(current.Right, new ConstType(c));
+                    } else {
+                        current.Right = addProduct(current.Right, new VarType(c));
+                    }
+                } else {
+                    if ("etsnvi".contains(Character.toString(c))) {
+                        current.Left = addProduct(current.Left, new ConstType(c));
+                    } else {
+                        current.Left = addProduct(current.Left, new VarType(c));
+                    }
+                }
                 isParsingProduct = false;
                 continue;
             }
@@ -157,8 +166,41 @@ public class TypeParser {
                     current.ReadComma = true;
                 }
             
-            } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
-                AtomicType at = new AtomicType(c);
+            } // TODO: make distinction between type primitives, like e and t, and
+              // type variables more abstract; don't hard-code it in here
+            else if ("etsnvi".contains(Character.toString(c))) {
+                AtomicType at = new ConstType(c);
+                if (current.Left == null) {
+                    if (stopSoon && stack.size() == 0 && !current.ReadBracket)
+                        return new ParseResult(at, i);
+                    current.Left = at;
+                } else if (current.Right == null) {
+                    if (!current.ReadBracket && !(current.Left instanceof AtomicType))
+                        throw new SyntaxException("Add a comma to separate " +
+                                "these types, and add the corresponding " +
+                                "angle brackets <>.", i);
+                    current.Right = at;
+                } else {
+                    if (!current.ReadBracket && current.ReadComma)
+                    throw new SyntaxException("I can only understand a complex " +
+                            "type with a comma when the type is surrounded by " +
+                            "angle brackets < >. Add brackets where needed, or " +
+                            "remove the comma if that doesn't introduce an " +
+                            "ambiguity.", i);
+                    else if (!current.ReadBracket && !current.ReadComma)
+                        // ett
+                        throw new SyntaxException("What you wrote is ambiguous. Add some angle brackets <> " +
+                                "in order to indicate what you mean.", i);
+                    else if (current.ReadBracket && current.ReadComma && current.Right instanceof AtomicType)
+                        // <e, et>
+                        current.Right = new CompositeType(current.Right, at);
+                    else
+                        throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
+                }
+
+                
+            } else if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
+                AtomicType at = new VarType(c);
                 if (current.Left == null) {
                     if (stopSoon && stack.size() == 0 && !current.ReadBracket)
                         return new ParseResult(at, i);

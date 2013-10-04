@@ -67,9 +67,27 @@ public class LexicalTerminal extends Terminal {
             } catch (lambdacalc.logic.TypeEvaluationException t) {
                 type = "\\emph{Type unknown}";  
             }
-            return "\n{" + this.getLabel() + "\\\\" + type + "\\\\\n$" + this.meaning.toLatexString() + "$\n }";
+            return "{" + this.getLabel() + " \\\\ " + type + " \\\\ $" + this.meaning.toLatexString() + "$}";
         } else {
-            return "\n{" + this.getLabel() + "}";
+            return "{" + this.getLabel() + "}";
+        }
+        //TODO include indices
+    }
+    
+    public String toLatexString(int indent) {
+        if (hasMeaning()) {
+            String type = "Type unknown";
+            try {
+                type = "$" + this.meaning.getType().toLatexString() + "$";
+            } catch (lambdacalc.logic.TypeEvaluationException t) {
+                type = "\\emph{Type unknown}";  
+            }
+            return "{" + this.getLabel() + " \\\\ "
+                    + type + " \\\\\n"
+                    + (new String(new char[indent + this.getLabel().length() + 5]).replace("\0", " "))
+                    + "$" + this.meaning.toLatexString() + "$}";
+        } else {
+            return "{" + this.getLabel() + "}";
         }
         //TODO include indices
     }
@@ -88,7 +106,7 @@ public class LexicalTerminal extends Terminal {
         if (meaning != null)
             return;
         
-        Expr[] meanings = lexicon.getMeanings(getLabel());
+        Expr[] meanings = lexicon.getMeanings(this.getLabel());
         if (meanings.length == 1)
             meaning = meanings[0];    
     }

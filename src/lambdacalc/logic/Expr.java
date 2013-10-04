@@ -9,6 +9,7 @@
 
 package lambdacalc.logic;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import lambdacalc.lf.MeaningEvaluationException;
 
 /**
  * An expression in the Lambda calculus.  This is the abstract
@@ -82,6 +84,10 @@ public abstract class Expr {
      * TypeEvaluationException if there is a type mismatch.
      */
     public abstract Type getType() throws TypeEvaluationException;
+
+    public void setType(Type t) throws TypeEvaluationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     /**
      * Tests if two expressions are equal, up to parens. Two expressions 
@@ -588,6 +594,98 @@ public abstract class Expr {
     * @return an expression with alphabetical variant performed
     */
     protected abstract Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates);
+    
+    public abstract Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates);
+    
+    public static HashMap<Type,Type> alignTypes(Type funcT, Type argT) throws MeaningEvaluationException {
+        // funcT is the domain type of some function, (eg the <b,t> in <<b,t>,t>)
+        // which has "matched" the type of argT (eg <e,t>)
+        HashMap<Type,Type> matches = new HashMap<Type,Type>();
+        
+        // Need to walk down the type trees in parallel
+        if (funcT instanceof CompositeType) {
+            if (!(argT instanceof CompositeType)) {
+                throw new MeaningEvaluationException("I'm seeing a function of type " + funcT +
+                        ", but an argument of type " + argT + ", which I can't match up"); // debug
+            }
+            Type funcLT = ((CompositeType)funcT).getLeft();
+            Type funcRT = ((CompositeType)funcT).getRight();
+            Type argLT = ((CompositeType)argT).getLeft();
+            Type argRT = ((CompositeType)argT).getRight();
+            HashMap<Type,Type> leftAlignments = alignTypes(funcLT, argLT);
+            HashMap<Type,Type> rightAlignments = alignTypes(funcRT, argRT);
+            matches.putAll(leftAlignments);
+            // make sure that a polymorphic type is not assigned to two different
+            // concrete types
+            for (Map.Entry<Type,Type> entry : matches.entrySet()) {
+                Type key = entry.getKey();
+                if (rightAlignments.containsKey(key)) {
+                    if (!rightAlignments.get(key).equals(entry.getValue())) {
+                        throw new MeaningEvaluationException("type variable " +
+                                entry.getKey() + " matches " + entry.getValue() + " and " + rightAlignments.get(key));
+                    }
+                }
+            }
+            matches.putAll(rightAlignments);
+        } else if (funcT instanceof ProductType) {
+            if (!(argT instanceof ProductType)) {
+                throw new MeaningEvaluationException("product problem"); // debug
+            }
+            productTypeHelper(((ProductType)funcT).getSubTypes(), ((ProductType)argT).getSubTypes(), matches);
+        } else {
+            if (argT instanceof ConstType && funcT instanceof VarType) {
+                matches.put(funcT, argT);
+            } else if (argT instanceof VarType && funcT instanceof ConstType) {
+                matches.put(argT,funcT);
+            }
+        }
+        return matches;
+    }
+    
+    public static void productTypeHelper(Type[] funcTypes, Type[] argTypes, HashMap<Type,Type> matches) throws MeaningEvaluationException {
+        if (!(funcTypes.length == 0)) {
+            Type fHead = funcTypes[0];
+            Type aHead = argTypes[0];
+            if (matches.containsKey(fHead)) {
+                if (!matches.get(fHead).equals(aHead)) {
+                    throw new MeaningEvaluationException("type variable " +
+                            fHead + " matches " + matches.get(fHead) + " and " + aHead);
+                }
+            } else {
+                if (fHead instanceof VarType) {
+                    matches.put(fHead, aHead);
+                }
+            }
+            productTypeHelper(Arrays.copyOfRange(funcTypes, 1, funcTypes.length),
+                              Arrays.copyOfRange(argTypes, 1, argTypes.length), matches);
+        }
+    }
+    
+    public static Type getAlignedType(CompositeType oldtype, HashMap<Type,Type> alignments) {
+        Type oldLeft = oldtype.getLeft();
+        Type oldRight = oldtype.getRight();
+        Type newLeft;
+        Type newRight;
+        if (oldLeft instanceof CompositeType) {
+            newLeft = getAlignedType(((CompositeType)oldLeft), alignments);
+        } else {
+            if (alignments.containsKey(oldLeft)) {
+                newLeft = alignments.get(oldLeft);
+            } else {
+                newLeft = oldLeft;
+            }
+        }
+        if (oldRight instanceof CompositeType) {
+            newRight = getAlignedType(((CompositeType)oldRight), alignments);
+        } else {
+            if (alignments.containsKey(oldRight)) {
+                newRight = alignments.get(oldRight);
+            } else {
+                newRight = oldRight;
+            }
+        }
+        return new CompositeType(newLeft, newRight);
+    }
     
     /**
      * Writes a serialization of the expression to a DataOutputStream.

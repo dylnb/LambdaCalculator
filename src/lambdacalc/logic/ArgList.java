@@ -46,4 +46,5 @@ public class ArgList extends NAry {
     ArgList(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }
+
 }

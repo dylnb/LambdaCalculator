@@ -1,25 +1,24 @@
 /*
- * AtomicType.java
- *
- * Created on May 30, 2006, 10:44 AM
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
-
 package lambdacalc.logic;
 
 /**
- * Represents an atomic type, such as e or t.
+ *
+ * @author dylnb
  */
-public abstract class AtomicType extends Type {
+public class ConstType extends AtomicType {
     
     private char symbol;
     
     /**
-     * Creates a new instance of AtomicType
+     * Creates a new instance of ConstType
      * @param symbol the type, like e or t
      */
-//    public AtomicType(char symbol) {
-//        this.symbol=symbol;
-//    }
+    public ConstType(char symbol) {
+        this.symbol=symbol;
+    }
         
     public char getSymbol() {
         return this.symbol;
@@ -39,12 +38,18 @@ public abstract class AtomicType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof AtomicType) {
-            AtomicType at = (AtomicType) t;
+        if (t instanceof VarType) {
+            return true;
+        } else if (t instanceof ConstType) {
+            ConstType at = (ConstType) t;
             return (this.getSymbol() == at.getSymbol());
         } else { 
             return false;
         }
+    }
+    
+    public boolean containsVar() {
+        return false;
     }
     
     public int hashCode() {
@@ -52,15 +57,14 @@ public abstract class AtomicType extends Type {
     }
     
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeUTF("AtomicType");
+        output.writeUTF("ConstType");
         output.writeShort(0); // data format version
         output.writeChar(symbol);
     }
     
-//    AtomicType(java.io.DataInputStream input) throws java.io.IOException {
-//        // the class string has already been read
-//        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
-//        symbol = input.readChar();
-//    }
-    
+    ConstType(java.io.DataInputStream input) throws java.io.IOException {
+        // the class string has already been read
+        if (input.readShort() != 0) throw new java.io.IOException("Invalid data."); // future version?
+        symbol = input.readChar();
+    }
 }

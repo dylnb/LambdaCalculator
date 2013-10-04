@@ -60,8 +60,8 @@ exercise tree
 title everybody sleeps
 directions bla
 
-[ everybody [ 1<et,t> [ t_1 sleeps ] ] ]
+#[ everybody [ 1 [ t_1<et> sleeps ] ] ]
 
-[.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1] ] ] ]
+#[.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1<<et,t>,t>] ] ] ]
 
-[.S [.NP everybody] [.S 1<et,t> [.S [.NP somebody] [.S 2 [.S t_2<et,t> [.VP loves t_1] ] ] ] ] ]
+[.S [.NP everybody] [.S 1 [.S [.NP somebody] [.S 2 [.S t_1<et,t> [.VP loves t_2<et,t>] ] ] ] ] ]

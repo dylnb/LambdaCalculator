@@ -76,7 +76,7 @@ public class TrainingWindow extends JFrame {
 
     private static TrainingWindow singleton=null;
     
-    static TrainingWindow getSingleton() {
+    public static TrainingWindow getSingleton() {
         return singleton;
     }
     
@@ -85,7 +85,8 @@ public class TrainingWindow extends JFrame {
             singleton = new TrainingWindow();
         }
          // maximize window
-        singleton.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//        singleton.setExtendedState(JFrame.MAXIMIZE_BOTH);         
+        singleton.setExtendedState(JFrame.NORMAL); 
     }
     
     public static void showWindow() {
@@ -114,6 +115,9 @@ public class TrainingWindow extends JFrame {
         
         initLookAndFeel();
         initComponents(); // calls the uneditable Netbeans-generated code
+        if (!lambdacalc.Main.GOD_MODE) {
+            menuTools.remove(menuItemTeacherTool);
+        }
         
         initializeJFileChooser(jFileChooser1, true, true);
         
@@ -149,7 +153,7 @@ public class TrainingWindow extends JFrame {
                 
         clearAllControls();
         
-        loadExerciseFile("examples/example2.txt");
+//        loadExerciseFile("examples/simple-jac.txt");
     }
     
     public void updateLetterEnteringDisplay() {
@@ -166,6 +170,13 @@ public class TrainingWindow extends JFrame {
         lblHelpNot.setText("Type the tilde (" + Not.INPUT_SYMBOL + ") for " + Not.SYMBOL);
         lblHelpConditionals.setText("Type -> for " + If.SYMBOL + " and <-> for " + Iff.SYMBOL);
         
+    }
+    
+    
+    public void updateNodePropertyPanel(String treeRep) {
+        CardLayout cardLayout = (CardLayout) jPanelNodeProperties.getLayout();
+        cardLayout.show(jPanelNodeProperties, "latex");
+        jTextPaneLatex.setText(treeRep);
     }
     
     public void updateNodePropertyPanel(LFNode selectedNode) {
@@ -185,7 +196,7 @@ public class TrainingWindow extends JFrame {
 
                 
                 
-//  display the entire node history at once
+                //  display the entire node history at once
                 java.util.Vector steps = nt.getUserMeaningSimplification();
                 // steps: a vector of Expr objects
                 if (steps != null) {
@@ -213,7 +224,7 @@ public class TrainingWindow extends JFrame {
                 if (treeDisplay.getNodeExpressionState(selectedNode) != null) {
                     Expr current = treeDisplay.getNodeExpressionState(selectedNode);
                     try {
-                        LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, TrainingWindow.getCurrentTypingConventions());
+                        LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, getCurrentTypingConventions());
                         exercise.setParseSingleLetterIdentifiers(false);
                         jPanelLambdaConversion.initialize(exercise, treeDisplay);
                         cardLayout.show(jPanelNodeProperties, "lambdaConversion");
@@ -719,6 +730,9 @@ public class TrainingWindow extends JFrame {
         jLabel5 = new javax.swing.JLabel();
         jPanelDummyTerminal = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
+        jPanelLatex = new javax.swing.JPanel();
+        jScrollPaneLatex = new javax.swing.JScrollPane();
+        jTextPaneLatex = new javax.swing.JTextPane();
         jPanelBlank = new javax.swing.JPanel();
         jPanelUpperRight = new javax.swing.JPanel();
         jScrollPaneDirections = new javax.swing.JScrollPane();
@@ -755,14 +769,14 @@ public class TrainingWindow extends JFrame {
         jSplitPaneLeftHalf.setOneTouchExpandable(true);
 
         jTreeExerciseFile.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTreeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
-            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                onExerciseTreeValueChanged(evt);
-            }
-        });
         jTreeExerciseFile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTreeExerciseFileMouseClicked(evt);
+            }
+        });
+        jTreeExerciseFile.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                onExerciseTreeValueChanged(evt);
             }
         });
         jScrollPaneUpperLeft.setViewportView(jTreeExerciseFile);
@@ -831,9 +845,9 @@ public class TrainingWindow extends JFrame {
         jScrollPaneIdentifierTypes.setMinimumSize(new java.awt.Dimension(23, 160));
         jScrollPaneIdentifierTypes.setPreferredSize(new java.awt.Dimension(239, 160));
 
+        lblIdentifierTypes.setEditable(false);
         lblIdentifierTypes.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         lblIdentifierTypes.setColumns(20);
-        lblIdentifierTypes.setEditable(false);
         lblIdentifierTypes.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblIdentifierTypes.setLineWrap(true);
         lblIdentifierTypes.setRows(5);
@@ -850,6 +864,7 @@ public class TrainingWindow extends JFrame {
 
         jScrollPaneEnterExpressions.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jScrollPaneEnterExpressions.setBorder(javax.swing.BorderFactory.createTitledBorder("How to Enter Special Characters"));
+        jScrollPaneEnterExpressions.setMinimumSize(new java.awt.Dimension(0, 0));
 
         jPanelEnterExpressions.setPreferredSize(new java.awt.Dimension(0, 150));
 
@@ -979,9 +994,9 @@ public class TrainingWindow extends JFrame {
 
         jPanelQuestion.setLayout(new java.awt.GridBagLayout());
 
+        txtQuestion.setEditable(false);
         txtQuestion.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         txtQuestion.setBorder(null);
-        txtQuestion.setEditable(false);
         txtQuestion.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
         txtQuestion.setPreferredSize(new java.awt.Dimension(460, 50));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1158,6 +1173,25 @@ public class TrainingWindow extends JFrame {
         jPanelDummyTerminal.add(jLabel6);
 
         jPanelNodeProperties.add(jPanelDummyTerminal, "dummyTerminal");
+
+        jScrollPaneLatex.setViewportView(jTextPaneLatex);
+
+        org.jdesktop.layout.GroupLayout jPanelLatexLayout = new org.jdesktop.layout.GroupLayout(jPanelLatex);
+        jPanelLatex.setLayout(jPanelLatexLayout);
+        jPanelLatexLayout.setHorizontalGroup(
+            jPanelLatexLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 626, Short.MAX_VALUE)
+            .add(jPanelLatexLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jScrollPaneLatex, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE))
+        );
+        jPanelLatexLayout.setVerticalGroup(
+            jPanelLatexLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 170, Short.MAX_VALUE)
+            .add(jPanelLatexLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(jScrollPaneLatex, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+        );
+
+        jPanelNodeProperties.add(jPanelLatex, "latex");
 
         jSplitPaneTrees.setRightComponent(jPanelNodeProperties);
 
@@ -1740,36 +1774,6 @@ public class TrainingWindow extends JFrame {
     public static IdentifierTyper getCurrentTypingConventions() {
         return currentTypingConventions;
     }
-
-    
-    // The problem with grabbing the typing conventions from the singleton's current exercise
-    // is that the ExerciseFileParser needs to know the typing conventions! So the training window
-    // singleton tries to set the typing conventions by parsing the exercise, and the exercise
-    // parser tries to proceed by looking up the typing conventions.
-    
-//    public static IdentifierTyper getCurrentTypingConventions() {
-//        
-//        TrainingWindow sing = getSingleton();
-//        Exercise currentEx = sing.getCurrentExercise();
-//        IdentifierTyper result;
-//        if (currentEx != null
-//                && currentEx instanceof HasIdentifierTyper) {
-//            System.out.println("ready to get identifier typer"); // debug
-//            result = ((HasIdentifierTyper) currentEx).getIdentifierTyper();
-//        } else {
-//            String xnull = "got ex"; // debug
-//            String notyper = "has typer"; // debug
-//            if (currentEx == null) { // debug
-//                xnull = "null currentEx"; //debug
-//            } // debug
-//            if (!(currentEx instanceof HasIdentifierTyper)) { // debug
-//                notyper = "doesn't have typer"; // debug
-//            } // debug
-//            System.out.println(xnull + ", " + notyper + ": making a default identifier typer"); // debug
-//            result = IdentifierTyper.createDefault();
-//        }
-//        return result;
-//    }
     
     
     // called in:
@@ -1821,6 +1825,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JPanel jPanelDummyTerminal;
     private javax.swing.JPanel jPanelEnterExpressions;
     private lambdacalc.gui.NonterminalReductionPanel jPanelLambdaConversion;
+    private javax.swing.JPanel jPanelLatex;
     private javax.swing.JPanel jPanelLexicalTerminal;
     private javax.swing.JPanel jPanelLowerLeft;
     private javax.swing.JPanel jPanelLowerRight;
@@ -1838,6 +1843,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JScrollPane jScrollPaneEnterExpressions;
     private javax.swing.JScrollPane jScrollPaneFeedback;
     private javax.swing.JScrollPane jScrollPaneIdentifierTypes;
+    private javax.swing.JScrollPane jScrollPaneLatex;
     private javax.swing.JScrollPane jScrollPaneNodeHistory;
     private javax.swing.JScrollPane jScrollPaneUpperLeft;
     private javax.swing.JSeparator jSeparator1;
@@ -1845,6 +1851,7 @@ public class TrainingWindow extends JFrame {
     private javax.swing.JSplitPane jSplitPaneMain;
     private javax.swing.JSplitPane jSplitPaneRightHalf;
     private javax.swing.JSplitPane jSplitPaneTrees;
+    private javax.swing.JTextPane jTextPaneLatex;
     private javax.swing.JTree jTreeExerciseFile;
     private javax.swing.JTextArea lblDirections;
     private javax.swing.JLabel lblHelpBinaries;

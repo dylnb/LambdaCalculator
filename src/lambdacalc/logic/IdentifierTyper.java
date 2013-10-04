@@ -234,7 +234,7 @@ public class IdentifierTyper {
             
             for (int j = 0; j < entries.size(); j++) {
                 Entry e = (Entry)entries.get(j);
-                if (!e.type.equals(ret[i].type) || e.var != ret[i].var) continue;
+                if (!e.type.equals(ret[i].type) || e.var != ret[i].var || e.type.containsVar() || ret[i].type.containsVar()) continue;
                 if (e.start.length() > 1) continue;
                 
                 for (int k = e.start.charAt(0) + (e.start.length() == 1 ? 0 : 1); k <= e.end.charAt(0); k++)

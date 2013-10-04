@@ -6,6 +6,7 @@
 
 package lambdacalc.logic;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,6 +100,10 @@ public abstract class Unary extends Expr {
 
     protected Expr createAlphabeticalVariant(Set bindersToChange, Set variablesInUse, Map updates) {
         return create(getInnerExpr().createAlphabeticalVariant(bindersToChange, variablesInUse, updates));
+    }
+    
+    public Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates) {
+        return create(getInnerExpr().createAlphatypicalVariant(alignments, variablesInUse, updates));
     }
 
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {

@@ -6,13 +6,17 @@
 
 package lambdacalc.gui;
 
+import java.awt.FileDialog;
 import java.io.*;
 import java.util.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.table.*;
 import lambdacalc.exercises.*;
+import static lambdacalc.gui.TrainingWindow.SERIALIZED_FILE_SUFFIX;
 
 /**
  *
@@ -66,7 +70,9 @@ public class TeacherToolWindow extends javax.swing.JFrame {
         
         jTextTeacherComments.getDocument().addDocumentListener(new DocumentListener());
         
-        setExtendedState(MAXIMIZED_BOTH);
+        // maximize window
+//        setExtendedState(MAXIMIZED_BOTH);
+        setExtendedState(NORMAL);
     }
     
     /** This method is called from within the constructor to
@@ -263,15 +269,42 @@ public class TeacherToolWindow extends javax.swing.JFrame {
     }
     
     private boolean onOpen() {
-        int returnVal = fileChooser.showOpenDialog(this);
-        if (returnVal == fileChooser.APPROVE_OPTION) {
-            directory = fileChooser.getSelectedFile();
-            jLabelCurrentDirectory.setText("Browsing: " + directory.getAbsolutePath());
-            scanForAssignments();
-            jListAssignments.setSelectedIndex(0); // there's always an entry for All Homeworks
-            return true;
+
+        if (lambdacalc.gui.Util.isMac()) {
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            // If Mac, opens a native dialog window named "Open"
+            FileDialog dialog = new FileDialog(this, "Open", FileDialog.LOAD);
+            dialog.setDirectory(System.getProperty("user.dir"));
+            dialog.setVisible(true);
+            String dir = dialog.getFile();
+            System.setProperty("apple.awt.fileDialogForDirectories", "false");
+
+            if (dir != null) {
+                String path = dialog.getDirectory() + dir;
+                directory = new File(path);
+                scanForAssignments();
+                jListAssignments.setSelectedIndex(0);
+                return true;
+            }
+            return false;
+        } else {
+            int returnVal = fileChooser.showOpenDialog(this);
+            if (returnVal == fileChooser.APPROVE_OPTION) {
+                directory = fileChooser.getSelectedFile();
+                jLabelCurrentDirectory.setText("Browsing: " + directory.getAbsolutePath());
+                scanForAssignments();
+                jListAssignments.setSelectedIndex(0); // there's always an entry for All Homeworks
+                return true;
+            }
+            return false;
         }
-        return false;
+        
+        
+        
+        
+        
+        
+        
     }//GEN-LAST:event_menuItemOpenActionPerformed
     
     private void menuItemCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCloseActionPerformed

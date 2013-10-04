@@ -3,6 +3,8 @@ package lambdacalc.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 import lambdacalc.logic.*;
@@ -12,7 +14,7 @@ import lambdacalc.gui.tree.TreeCanvas;
 
 /**
  * This widget wraps a TreeCanvas and controls the user interaction
- * with the LF tree, revealing the propostional content of nodes as
+ * with the LF tree, revealing the propositional content of nodes as
  * space and enter are pressed.
  * 
  * Each node in the tree can be in one of a few states:
@@ -105,12 +107,12 @@ public class TreeExerciseWidget extends JPanel {
             // Add the expression and simplification steps of it to exprs.
             
             exprs.add(meaning);
-
+            
             try {
                 Expr meaning2 = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
                 if (!meaning.equals(meaning2))
                     exprs.add(meaning2);
-                meaning = meaning2;
+                meaning = meaning2;               
             } catch (TypeEvaluationException tee) {
                 evaluationError = tee.getMessage();
                 return;
@@ -118,6 +120,7 @@ public class TreeExerciseWidget extends JPanel {
                 evaluationError = mee.getMessage();
                 return;
             }
+
             
             // When we're in God mode, we pre-simplify the expression so we know
             // all of the steps in the simplification ahead of time. When not in
@@ -213,6 +216,7 @@ public class TreeExerciseWidget extends JPanel {
         btnLatex.addActionListener(new LatexActionListener());
         buttons.add(btnLatex);
         btnLatex.setToolTipText("Export current view to Latex");
+        
         
         // fullScreenActionListener needs to be an instance var so we can access and remove it in the 
         // FullScreenTreeExerciseWidget
@@ -327,7 +331,7 @@ public class TreeExerciseWidget extends JPanel {
            try {
                Expr m = t.getMeaning();
                lfToMeaningState.put(t, new MeaningState(m));
-                propogateMeaningUpNonBranchingNodes(lfnode);
+               propogateMeaningUpNonBranchingNodes(lfnode);
            } catch (Exception e) {
            }
         }
@@ -501,15 +505,18 @@ public class TreeExerciseWidget extends JPanel {
                 + "\\usepackage{qtree}\n"
                 + "\\def\\qtreepadding{3pt}\n"
                 + "\\begin{document}\n\n"
-                + "\\Tree"
-                + this.recursivelyLatexify(cur)
+                + "\\Tree\n"
+                + this.recursivelyLatexify(cur, 0)
                 + "\n\n\\end{document}\n";
     }
-
-    private String recursivelyLatexify(LFNode cur) {
+    
+    private String recursivelyLatexify(LFNode cur, int indent) {
         String res = "";
-        if (cur instanceof Nonterminal) {
-            res += "\n[";
+        if (cur instanceof Terminal) {
+            res += ((Terminal)cur).toLatexString(indent);
+        }
+        else {
+            res += "[";
             Nonterminal nt = (Nonterminal) cur;
             JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(cur);
             if (lfToMeaningState.containsKey(cur)) { // has the node been evaluated?
@@ -518,31 +525,28 @@ public class TreeExerciseWidget extends JPanel {
                     Expr expr = ms.getCurrentExpression();
                     res += ".{";
                     if (cur.getLabel() != null) {
-                        res += cur.getLabel();
+                        res += cur.getLabel() + " \\\\ ";
                     }
                     String type = "";
                     if (isTypesDisplayed()) {
                         try {
                             type = (expr.getType().toLatexString());
                         } catch (TypeEvaluationException e) {
-                            type = "Type unknown";
+                            type = "\\emph{Type unknown}";
                         }
-                        res += "\\\\\n$" + type + "$\n";
+                        res += "$" + type + "$ \\\\ ";
                     }
-
-                    res += "\\\\\n$" + expr.toLatexString() + "$\n} ";
+                    res += "$" + expr.toLatexString() + "$}";
                 } else {  // error in evaluation
                     res += ".{Problem!} ";
                 }
             }
             for (int i = 0; i < nt.size(); i++) {
-                res += " " +  recursivelyLatexify((LFNode) nt.getChild(i));
+                res += "\n" + (new String(new char[indent+2]).replace("\0", " "))
+                        + recursivelyLatexify((LFNode) nt.getChild(i), indent+2);
             }
-            res += " ] ";
-        } else { // cur is a terminal
-            res += ((Terminal) cur).toLatexString();
+            res += "\n" + (new String(new char[indent]).replace("\0", " ")) + "]";
         }
-
         return res;
     }
 
@@ -592,8 +596,10 @@ public class TreeExerciseWidget extends JPanel {
                         typeLabel.setText(expr.getType().toShortString());
                     } catch (TypeEvaluationException e) {
                         typeLabel.setText("Type unknown");
-                        typeLabel.setToolTipText(
-                                lambdacalc.Main.breakIntoLines(e.getMessage(), 50));
+                        String brokenMessage = breakIntoLines(e.getMessage(), 50);
+                        // breaking error message across lines doesn't seem to affect the way the tooltip
+                        // is displayed, at least on macs; might as well set the tip to e.getMessage()
+                        typeLabel.setToolTipText(brokenMessage);
                         typeColor = java.awt.Color.RED;
                     }
                 }                
@@ -618,7 +624,12 @@ public class TreeExerciseWidget extends JPanel {
                     BareIndex bareIndex = (BareIndex) node;
                     typeLabel.setForeground(typeColor);
                     typeLabel.setVisible(true);
-                    typeLabel.setText(bareIndex.getType().toShortString());
+                    try {
+                        typeLabel.setText(bareIndex.getType().toShortString());
+                    } catch (java.lang.NullPointerException ex) {
+                        bareIndex.setType(Type.E);
+                        typeLabel.setText(bareIndex.getType().toShortString());
+                    }
                 } else {
                     typeLabel.setVisible(false);
                     typeLabel.setText("");
@@ -626,18 +637,22 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
         
-        //TODO the remainder of the code in this method
-        //is arguably logic related, not view-related, so it should
-        //be moved elsewhere
-        
-        
-        
         if (node.equals(this.lftree)) { // the root node has changed
             this.exercise.setDone(isTreeFullyEvaluated()); 
             // this makes the checkmark appear in the exercise tree to the left of the TrainingWindow GUI
             //TODO activate the "repeat" button if the exercise is done
         }
     }
+    
+    public String breakIntoLines(String s, int n) {
+        for (int i = 0; i < s.length(); i = i + n) {
+            while (i < s.length() && s.charAt(i) != ' ') {i++;}
+            String pre = s.substring(0,i);
+            String post = s.substring(i,s.length());
+            s = pre+"\n"+post; 
+        }
+        return s;
+    }    
     
   
     
@@ -1115,7 +1130,9 @@ public class TreeExerciseWidget extends JPanel {
     }
     class LatexActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            System.out.println(exportCurrentViewToLatex());
+            String treeRep = exportCurrentViewToLatex();
+            TrainingWindow s = TrainingWindow.getSingleton();
+            s.updateNodePropertyPanel(treeRep);
         }
     }
     
