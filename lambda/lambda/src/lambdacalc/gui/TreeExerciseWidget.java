@@ -596,7 +596,7 @@ public class TreeExerciseWidget extends JPanel {
                         typeLabel.setText(expr.getType().toShortString());
                     } catch (TypeEvaluationException e) {
                         typeLabel.setText("Type unknown");
-                        String brokenMessage = lambdacalc.Main.breakIntoLines(e.getMessage(), 50);
+                        String brokenMessage = breakIntoLines(e.getMessage(), 50);
                         // breaking error message across lines doesn't seem to affect the way the tooltip
                         // is displayed, at least on macs; might as well set the tip to e.getMessage()
                         typeLabel.setToolTipText(brokenMessage);
@@ -643,6 +643,16 @@ public class TreeExerciseWidget extends JPanel {
             //TODO activate the "repeat" button if the exercise is done
         }
     }
+    
+    public String breakIntoLines(String s, int n) {
+        for (int i = 0; i < s.length(); i = i + n) {
+            while (i < s.length() && s.charAt(i) != ' ') {i++;}
+            String pre = s.substring(0,i);
+            String post = s.substring(i,s.length());
+            s = pre+"\n"+post; 
+        }
+        return s;
+    }    
     
   
     

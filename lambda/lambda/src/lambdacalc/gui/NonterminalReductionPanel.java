@@ -55,7 +55,8 @@ public class NonterminalReductionPanel extends javax.swing.JPanel {
         //if (j.getText().equals("")) {
         //    j.setBackground(javax.swing.UIManager.getColor("TextField.inactiveBackground"));
         //}
-    }    
+    }
+       
 
     private void tellGUIProblemChanged() {
         //TODO check to what extent this corresponds with ScratchPadWindow

@@ -85,7 +85,8 @@ public class TrainingWindow extends JFrame {
             singleton = new TrainingWindow();
         }
          // maximize window
-        singleton.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//        singleton.setExtendedState(JFrame.MAXIMIZE_BOTH);         
+        singleton.setExtendedState(JFrame.NORMAL); 
     }
     
     public static void showWindow() {
@@ -114,6 +115,9 @@ public class TrainingWindow extends JFrame {
         
         initLookAndFeel();
         initComponents(); // calls the uneditable Netbeans-generated code
+        if (!lambdacalc.Main.GOD_MODE) {
+            menuTools.remove(menuItemTeacherTool);
+        }
         
         initializeJFileChooser(jFileChooser1, true, true);
         

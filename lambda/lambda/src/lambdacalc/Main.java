@@ -6,6 +6,8 @@
 
 package lambdacalc;
 
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -17,13 +19,20 @@ import lambdacalc.logic.SyntaxException;
 import lambdacalc.logic.TypeEvaluationException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationEvent;
-import lambdacalc.MacAdapter;
+
+import java.lang.reflect.*;
+//import lambdacalc.MacAdapter;
+
+
+//import org.simplericity.macify.eawt.*;
 
 /**
  * Here's the main entry point of the program.
  */
+
+// Macify class definition
+//public class Main extends JFrame implements ApplicationListener {
+
 public class Main {
     // When changing these values, make sure to do a full rebuild (i.e. clean first)
     // because it would seem that other class files hold onto the values here
@@ -35,7 +44,7 @@ public class Main {
     public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
     
-    public static final String VERSION = "1.2";
+    public static final String VERSION = "2.0 Beta";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
@@ -45,16 +54,6 @@ public class Main {
             "The University of Pennsylvania, New York University";
 
     public static final String WEBSITE = "http://www.ling.upenn.edu/lambda";
-
-    public static String breakIntoLines(String s, int n) {
-        for (int i = 0; i < s.length(); i = i + n) {
-            while (i < s.length() && s.charAt(i) != ' ') {i++;}
-            String pre = s.substring(0,i);
-            String post = s.substring(i,s.length());
-            s = pre+"\n"+post; 
-        }
-        return s;
-    }
     
     
     /**
@@ -122,31 +121,38 @@ public class Main {
             } 
             return;
         }
+        
         // else...
-        
         new Main();
-    }
-    
+    }   
+     
     public Main() {
-        
+   
         if(lambdacalc.gui.Util.isMac()) {
             // take the menu bar off the jframe
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             // set the name of the application menu item
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Lambda Calculator");
-            // create an instance of the Mac Application class, so i can handle the 
-            // mac quit event with the Mac ApplicationAdapter
-            Application macApplication = Application.getApplication();
-            MacAdapter macAdapter = new MacAdapter(this);
-            macApplication.addApplicationListener(macAdapter);
+
+            try {
+                Object app = Class.forName("com.apple.eawt.Application").getMethod("getApplication",
+                 (Class[]) null).invoke(null, (Object[]) null);
+
+                Object al = Proxy.newProxyInstance(Class.forName("com.apple.eawt.AboutHandler")
+                        .getClassLoader(), new Class[] { Class.forName("com.apple.eawt.AboutHandler") },
+                            new AboutListener());
+                app.getClass().getMethod("setAboutHandler", new Class[] {
+                    Class.forName("com.apple.eawt.AboutHandler") }).invoke(app, new Object[] { al });
+            }
+            catch (Exception e) {
+                //fail quietly
+            }            
         }
         
         try {
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-
                     TrainingWindow.showWindow();
-
                 }
             });
         } catch (Exception e) {
@@ -154,6 +160,24 @@ public class Main {
                     WelcomeWindow.getSingleton(),
                     e.toString(),
                     e.getMessage());
+        }
+    }
+    
+    public class AboutListener implements InvocationHandler {
+        public Object invoke(Object proxy, Method method, Object[] args) {
+            //Show About Dialog
+            String edition = "Student";
+            if (GOD_MODE) {
+                edition = "Teacher";
+            }
+            JOptionPane.showMessageDialog(null,
+            "<html><b>Lambda Calculator</b></html>\n" +
+            edition + "Edition, Version 2.0 Beta\n" +
+            "Developed at The University of Pennsylvania and New York University\n"
+            + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, and Dylan Bumford",
+            "About",
+            JOptionPane.INFORMATION_MESSAGE);
+            return null;
         }
     }
 }

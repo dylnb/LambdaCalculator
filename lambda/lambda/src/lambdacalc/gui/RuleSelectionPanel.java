@@ -80,6 +80,19 @@ implements PropertyChangeListener, SelectionListener {
         setVisiblePM(r.contains(PM_RULE));
         setVisibleLA(r.contains(LA_RULE));
         setVisibleIFA(r.contains(IFA_RULE));
+        if (r.contains(FA_RULE)) {
+            this.getRootPane().setDefaultButton(this.jButtonFA);
+            this.jButtonFA.requestFocus();
+        } else if (r.contains(PM_RULE)) {
+            this.getRootPane().setDefaultButton(this.jButtonPM);
+            this.jButtonPM.requestFocus();
+        } else if (r.contains(LA_RULE)) {
+            this.getRootPane().setDefaultButton(this.jButtonLA);
+            this.jButtonLA.requestFocus();
+        } else if (r.contains(IFA_RULE)) {
+            this.getRootPane().setDefaultButton(this.jButtonIFA);
+            this.jButtonIFA.requestFocus();
+        }
     }
     
     
