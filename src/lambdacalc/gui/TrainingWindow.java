@@ -226,6 +226,7 @@ public class TrainingWindow extends JFrame {
                     try {
                         LambdaConversionExercise exercise = new LambdaConversionExercise(current, -1, getCurrentTypingConventions());
                         exercise.setParseSingleLetterIdentifiers(false);
+                        exercise.setNotSoFast(getCurrentExercise().getNotSoFast());
                         jPanelLambdaConversion.initialize(exercise, treeDisplay);
                         cardLayout.show(jPanelNodeProperties, "lambdaConversion");
                         return;
@@ -1728,12 +1729,14 @@ public class TrainingWindow extends JFrame {
             if (file != null) {
                 String path = dialog.getDirectory() + file;
                 loadExerciseFile(new File(path));
+                setTitle(file);
             }
         } else {
             jFileChooser1.setFileFilter(this.allRecognizedFiles);
             int returnVal = jFileChooser1.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                loadExerciseFile(jFileChooser1.getSelectedFile());            
+                loadExerciseFile(jFileChooser1.getSelectedFile()); 
+                setTitle(jFileChooser1.getSelectedFile().getName());
             }
         }
     }//GEN-LAST:event_menuItemOpenActionPerformed

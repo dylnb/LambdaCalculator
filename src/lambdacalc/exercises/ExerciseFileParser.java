@@ -66,6 +66,7 @@ public class ExerciseFileParser {
         String title = null;
         String directions = ""; // group level
         String instructions = ""; // exercise level
+        boolean notSoFast = true;
         ExerciseGroup group = null;
         java.math.BigDecimal pointage = java.math.BigDecimal.valueOf(1);
         
@@ -150,6 +151,16 @@ public class ExerciseFileParser {
                 
             } else if (line.startsWith("define ")) {
                 parseLexiconLine(line, exprParseOpts, file, linectr);
+                
+            } else if (line.startsWith("multiple reductions")) {
+                if ("on".equals(line.substring("multiple reductions ".length()).trim())) {
+                    notSoFast = false;
+                } else if ("off".equals(line.substring("multiple reductions ".length()).trim())) {
+                    notSoFast = true;
+                } else {
+                    throw new ExerciseFileFormatException (
+                            "'multiple reductions' must be followed by 'on' or 'off'", linectr, line);
+                }
 
             } else if (line.startsWith("use rule ")) {
                 String rule = line.substring("use rule ".length());
@@ -221,6 +232,7 @@ public class ExerciseFileParser {
                     group.addItem(ex);
                     
                     ex.setPoints(pointage);
+                    ex.setNotSoFast(notSoFast);
                     
                     if (instructions.trim().equals(""))
                         ex.setInstructions(null);

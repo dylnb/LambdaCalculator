@@ -43,6 +43,8 @@ public class Main {
     
     public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
+    // Note that this can be set on an exercise-by-exercise basis with
+    // the line "multiple reductions on/off" in the exercise preamble
     
     public static final String VERSION = "2.0 Beta";
 

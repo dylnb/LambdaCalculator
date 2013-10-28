@@ -17,6 +17,7 @@ public abstract class Exercise {
     private boolean done;
     private java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
     private String instructions;
+    private boolean notSoFast = true;
     
     /**
      * Creates an Exercise with the given index in its ExerciseGroup.
@@ -41,6 +42,17 @@ public abstract class Exercise {
      */
     public java.math.BigDecimal getPoints() {
         return this.points;
+    }
+    
+    /**
+     * Are multiple reductions allowed at once?
+     */
+    public boolean getNotSoFast() {
+        return this.notSoFast;
+    }
+    
+    public void setNotSoFast(boolean nsf) {
+        this.notSoFast = nsf;
     }
     
     /**
