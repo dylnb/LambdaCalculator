@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docbase="/home/tauberer/dev/lambdacalc/lambda/images"
+   sodipodi:docname="splash.svg"
+   inkscape:export-filename="/home/tauberer/dev/lambdacalc/lambda/images/splash.bmp"
+   inkscape:export-xdpi="224.41"
+   inkscape:export-ydpi="224.41"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <filter
+       inkscape:collect="always"
+       id="filter3495">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.094179687"
+         id="feGaussianBlur3497" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3511">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.37671875"
+         id="feGaussianBlur3513" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3519">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.17411011"
+         id="feGaussianBlur3521" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3327">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.2629749"
+         id="feGaussianBlur3329" />
+    </filter>
+    <linearGradient
+       id="linearGradient2227">
+      <stop
+         style="stop-color:#003eb3;stop-opacity:1;"
+         offset="0"
+         id="stop2229" />
+      <stop
+         style="stop-color:#003eb3;stop-opacity:0.33000001;"
+         offset="1"
+         id="stop2231" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2227"
+       id="linearGradient2333"
+       x1="295.81717"
+       y1="333.77255"
+       x2="320.46182"
+       y2="293.32065"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.999888,0,0,1.0754866,2.9361525e-2,-20.26701)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.2743067"
+     inkscape:cx="287.87751"
+     inkscape:cy="757.8194"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="872"
+     inkscape:window-height="619"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:url(#linearGradient2333);fill-opacity:1;stroke:#000000;stroke-width:0.62801015;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1352"
+       width="199.89441"
+       height="74.854691"
+       x="162.0244"
+       y="268.64444" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:URW Palladio L"
+       x="167.01674"
+       y="284.43185"
+       id="text1322"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan1324"
+         x="167.01674"
+         y="284.43185"
+         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Bitstream Vera Serif">The Penn Lambda Calculator</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:110.00000238%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Serif"
+       x="167.44437"
+       y="302.55542"
+       id="text1326"
+       sodipodi:linespacing="110%"><tspan
+         sodipodi:role="line"
+         x="167.44437"
+         y="302.55542"
+         id="tspan1330"
+         style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:110.00000238%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Bitstream Vera Serif">For students and teachers of</tspan><tspan
+         sodipodi:role="line"
+         x="167.44437"
+         y="311.35542"
+         style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:110.00000238%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Bitstream Vera Serif"
+         id="tspan3601">natural language semantics.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="167.96663"
+       y="328.62564"
+       id="text2309"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2311"
+         x="167.96663"
+         y="328.62564"
+         style="font-size:6px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Bitstream Vera Serif">By Lucas Champollion, Joshua Tauberer, and Maribel Romero</tspan><tspan
+         sodipodi:role="line"
+         x="167.96663"
+         y="336.12564"
+         style="font-size:6px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Bitstream Vera Serif"
+         id="tspan3635">http://ling.upenn.edu/lambda/</tspan></text>
+    <g
+       id="g3622"
+       transform="translate(-65.074777,25.964067)">
+      <rect
+         ry="5.0507483"
+         rx="5.0472927"
+         y="261.20111"
+         x="376.28854"
+         height="34.597721"
+         width="35.355335"
+         id="rect3523"
+         style="opacity:0.67452829;fill:#003eb3;fill-opacity:0;stroke:none;stroke-width:0.74699998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         transform="matrix(0.818182,0,0,0.818182,272.88902,35.28388)"
+         d="M 166.64825 297.7814 A 17.721922 17.1001 0 1 1  131.20441,297.7814 A 17.721922 17.1001 0 1 1  166.64825 297.7814 z"
+         sodipodi:ry="17.1001"
+         sodipodi:rx="17.721922"
+         sodipodi:cy="297.7814"
+         sodipodi:cx="148.92633"
+         id="path2190"
+         style="opacity:1;fill:#840023;fill-opacity:1;stroke:none;stroke-width:0.59600002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3327)"
+         sodipodi:type="arc" />
+      <path
+         transform="matrix(0.818182,0,0,0.818182,271.81644,34.14445)"
+         d="M 166.64825 297.7814 A 17.721922 17.1001 0 1 1  131.20441,297.7814 A 17.721922 17.1001 0 1 1  166.64825 297.7814 z"
+         sodipodi:ry="17.1001"
+         sodipodi:rx="17.721922"
+         sodipodi:cy="297.7814"
+         sodipodi:cx="148.92633"
+         id="path1315"
+         style="opacity:1;fill:#a8003a;fill-opacity:1;stroke:none;stroke-width:0.59600002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3519)"
+         sodipodi:type="arc" />
+      <flowRoot
+         style="fill:#840023;fill-opacity:1;filter:url(#filter3511)"
+         transform="translate(353.70601,-1.1092392e-3)"
+         id="flowRoot3065"
+         xml:space="preserve"><flowRegion
+           id="flowRegion3067"><rect
+             style="fill:#840023;fill-opacity:1"
+             y="258.07648"
+             x="34.285713"
+             height="197.14285"
+             width="340"
+             id="rect3069" /></flowRegion><flowPara
+           style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#840023;fill-opacity:1;font-family:Times New Roman"
+           id="flowPara3071">λ</flowPara></flowRoot>      <flowRoot
+         style="filter:url(#filter3495)"
+         transform="translate(352.4272,-0.8556902)"
+         id="flowRoot1307"
+         xml:space="preserve"><flowRegion
+           id="flowRegion1309"><rect
+             y="258.07648"
+             x="34.285713"
+             height="197.14285"
+             width="340"
+             id="rect1311" /></flowRegion><flowPara
+           style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;font-family:Times New Roman"
+           id="flowPara1313">λ</flowPara></flowRoot>    </g>
+  </g>
+</svg>
