@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleName</key>
-	<string>Lambda C SE</string>
+	<string>Lambda Calculator SE</string>
 	<key>CFBundleIdentifier</key>
 	<string>lambdacalc.Main</string>
 	<key>CFBundleVersion</key>
