@@ -5,7 +5,7 @@
 	<key>CFBundleName</key>
 	<string>Lambda C SE</string>
 	<key>CFBundleIdentifier</key>
-	<string>Lambdacalc.Main</string>
+	<string>lambdacalc.Main</string>
 	<key>CFBundleVersion</key>
 	<string>2.01</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -25,13 +25,14 @@
 	<key>Java</key>
 	<dict>
 		<key>MainClass</key>
-		<string>Lambdacalc.Main</string>
+		<string>lambdacalc.Main</string>
 		<key>JVMVersion</key>
 		<string>1.5+</string>
 		<key>ClassPath</key>
 			<array>
 			<string>$JAVAROOT/AbsoluteLayout.jar</string>
 			<string>$JAVAROOT/swing-layout-1.0.4.jar</string>
+			<string>$JAVAROOT/LambdaCalculator.jar</string>
 			</array>
 		<key>Properties</key>
 		<dict>
