@@ -583,7 +583,7 @@ public class TrainingWindow extends JFrame {
         if (ex instanceof HasIdentifierTyper) {
             //lblIdentifierTypes.setVisible(true);
             IdentifierTyper typer = ((HasIdentifierTyper)ex).getIdentifierTyper();
-            
+            setCurrentTypingConventions(typer);
             lblIdentifierTypes.setText("Use the following typing conventions:\n" + typer.toString());
             ScratchPadWindow.setTypingConventions(typer);
         } else {
