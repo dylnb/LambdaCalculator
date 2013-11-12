@@ -105,8 +105,6 @@ instructions This tree reproduces tree (1) in Section 7.2.1 and exemplifies the 
 
 instructions Specify the lexical entry for 'nobody2' and calculate the truth conditions for the tree below, corresponding to "somebody1 greets nobody2". (Exercise 1, Section 7.2.1.)
 
-multiple reductions off
-
 [.S [.NP [.N somebody1]] [.VP [.V greets] [.NP [.N nobody2]]]]
 
 

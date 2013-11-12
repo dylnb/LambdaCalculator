@@ -24,7 +24,7 @@ import java.lang.reflect.*;
 //import lambdacalc.MacAdapter;
 
 
-//import org.simplericity.macify.eawt.*;
+//import org.simplericity.macify.eawt*;
 
 /**
  * Here's the main entry point of the program.

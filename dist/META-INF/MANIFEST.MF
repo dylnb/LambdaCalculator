@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.8.0
-Created-By: 1.6.0_37-b06 (Sun Microsystems Inc.)
-NetBeans-Own-Library: true
-

@@ -106,8 +106,8 @@ public class AssignmentFunction {
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
         output.writeByte(0); // version info
         output.writeInt(map.size());
-        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
-            GApp index = (GApp)i.next();
+        for (Iterator<GApp> i = map.keySet().iterator(); i.hasNext(); ) {
+            GApp index = i.next();
             Var var;
             try {
                 var = (Var) get(index.getIndex(), index.getType());
@@ -126,9 +126,9 @@ public class AssignmentFunction {
         
         int n = input.readInt();
         for (int i = 0; i < n; i++) {
-            Integer index = new Integer(input.readInt());
+            int index = input.readInt();
             Var var = (Var)lambdacalc.logic.Expr.readFromStream(input);
-            map.put(index, var);
+            this.put(index, var);
         }
     }
 }

@@ -16,14 +16,16 @@ Platform and Distribution
 Appearance and Convenience
 --------------------------
 
-* Add switch to exercise files that allows for multiple beta reductions in
-  student view
+* Separate out left and right function application options in student version.
+  This could help handling situations in which multiple composition rules are
+  applicable
 
+* Make the Latex button a toggle switch
 
 Polymorphism
 ------------
 
-* Figure out something to do when multiple compisition rules are applicable.
+* Figure out something to do when multiple composition rules are applicable.
   This probably requires a general change to the way meanings are computed,
   so that the entire tree isn't pre-computed upon loading an exercise (as it
   stands, all compositor ambiguity must be resolved before the exercise loads)
@@ -63,7 +65,3 @@ Miscellaneous Observations
   exercise fails to load with "Expecting a variable, but variables must start
   with a letter". Presumably this is because 'A', 'E', etc. are reserved logical
   symbols. The error message should be more informative.
-
-* Root node forgets its type in the very last step of reduction in
-  simple-jac.txt second example
-

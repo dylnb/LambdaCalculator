@@ -146,7 +146,12 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
     }
         
     public void writeToStream(java.io.DataOutputStream output) throws java.io.IOException {
-        output.writeShort(1); // for future use
+        output.writeShort(2);
+        // files saved before the "multiple reductions" switch were
+        // saved with output.writeShort(1) here
+        
+        // write whether multiple reductions are allowed for this exercise
+        output.writeBoolean(this.getNotSoFast());
         
         // write the tree & identifier typer in effect for this problem
         output.writeUTF(treeroot.toString());
@@ -198,15 +203,44 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
                     throw new RuntimeException(e.getMessage()); // not reachable since we already checked if it has a meaning assigned
                 }
             }
-        } else {
+        } else if (node instanceof Trace) {
             output.writeByte(2); // sanity check later
+            Trace t = (Trace)node;
+            if (t.getType() == null) {
+                output.writeByte(0);
+            } else {
+                output.writeByte(1);
+                try {
+                    t.getType().writeToStream(output);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage()); // not reachable
+                }
+            }
+        } else if (node instanceof BareIndex) {
+            output.writeByte(2); // sanity check later
+            BareIndex bi = (BareIndex)node;
+            if (bi.getType() == null) {
+                output.writeByte(0);
+            } else {
+                output.writeByte(1);
+                try {
+                    bi.getType().writeToStream(output);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage()); // not reachable
+                }
+            }
+        } else {
+            output.writeByte(3); // sanity check later
         }
     }
     
     TreeExercise(java.io.DataInputStream input, int fileFormatVersion, int index) throws java.io.IOException, ExerciseFileFormatException {
         super(index);
         
-        if (input.readShort() != 1) throw new ExerciseFileVersionException();
+        int mr = input.readShort();
+        if (!(mr == 1 || mr == 2)) throw new ExerciseFileVersionException();
+        
+        if (mr == 2) this.setNotSoFast(input.readBoolean());
         
         String bracketedtree = input.readUTF();
         try {
@@ -216,7 +250,7 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
         }
         this.types = new IdentifierTyper();
         this.types.readFromStream(input, fileFormatVersion);
-        
+                
         // read in the choices the user made
         readUserChoicesFromStream(treeroot, input);
     }
@@ -253,8 +287,24 @@ public class TreeExercise extends Exercise implements HasIdentifierTyper {
             } else {
                 lt.setMeaning(lambdacalc.logic.Expr.readFromStream(input));
             }
-        } else {
+        } else if (node instanceof Trace) {
             if (input.readByte() != 2) throw new java.io.IOException("Data format error.");
+            Trace t = (Trace)node;
+            if (input.readByte() == 0) {
+                t.setType(null);
+            } else {
+                t.setType(lambdacalc.logic.Type.readFromStream(input));
+            }
+        } else if (node instanceof BareIndex) {
+            if (input.readByte() != 2) throw new java.io.IOException("Data format error.");
+            BareIndex bi = (BareIndex)node;
+            if (input.readByte() == 0) {
+                bi.setType(null);
+            } else {
+                bi.setType(lambdacalc.logic.Type.readFromStream(input));
+            }
+        } else {
+            if (input.readByte() != 3) throw new java.io.IOException("Data format error.");
         }
     }
 }

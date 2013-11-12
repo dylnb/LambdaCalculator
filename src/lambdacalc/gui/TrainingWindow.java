@@ -520,7 +520,7 @@ public class TrainingWindow extends JFrame {
     // btnPrevActionPerformed()
     private void showExercise() {
         ex = getCurrentExercise();
-        
+                
         // Show the directions for this exercise. If there are both
         // group-level directions and exercise-level instructions,
         // only display both together for the first exercise in the
