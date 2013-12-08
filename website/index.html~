@@ -1,0 +1,197 @@
+<html>
+<head>
+	<title>The Penn Lambda Calculator</title>
+	<style>
+		body { line-height: 135% }
+		h3 { margin-top: 2em; border-bottom: 1px solid #CCCCFF }
+	</style>
+</head>
+<body style="margin: 2.5em; background-color: #ECECFF">
+
+<table>
+<tr>
+	<td style="padding-right: 2em; padding-left: .5em">
+		<img src="logo-large.png"/>
+	</td>
+	<td>
+<h1 style="margin-bottom: 4px">The Penn Lambda Calculator</h1>
+<h3 style="margin-top: 0px">For students and teachers of natural language semantics</h3>
+<div>Joint work by <a href="/~champoll">Lucas Champollion</a>, <a href="http://razor.occams.info">Josh Tauberer</a> and <a href="/~sanguesa">Maribel Romero</a></div>
+<div><a href="/">Department of Linguistics</a>, <a href="http://www.upenn.edu">University of Pennsylvania</a></div>
+	</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+	<p style="font-size: 90%; margin-top: 1em">Supported by a University of Pennsylvania SAS technology grant.</p>
+</td>
+</tr>
+</table>
+
+<hr size="1" style="margin-top: 1.5em; margin-bottom: 1.5em"/>
+
+<div style="float: right; margin-left: 1em">
+	<div style="margin-bottom: 2em">
+	<a href="screenshot1.png">
+		<img alt="Screenshot" title="Screenshot" src="screenshot1thumb.png"
+ 		style="border: 2px solid ; width: 461px; height: 334px;"/>
+	</a>
+	</div>
+	<div style="margin-bottom: 2em">
+	<a href="screenshot3.png">
+		<img alt="Screenshot" title="Screenshot" src="screenshot3thumb.png"
+ 		style="border: 2px solid ; width: 461px; height: 334px;"/>
+	</a>
+	</div>
+	<div style="margin-bottom: 2em">
+	<a href="screenshot4.png">
+		<img alt="Screenshot" title="Screenshot" src="screenshot4thumb.png"
+ 		style="border: 2px solid ; width: 461px; height: 259px;"/>
+	</a>
+	</div>
+</div>
+
+<p><i>The Penn Lambda Calculator</i> is an interactive, graphical, pedagogical
+computer program that helps students of formal semantics practice the typed
+lambda calculus. Click on the pictures to the right to see screenshots
+(<a href="screenshot1.png">1</a> <a href="screenshot3.png">2</a> <a href="screenshot4.png">3</a>).
+<i>Lambda</i>, as we call it for short, was started in June 2006.
+It was most recently used in Prof. <a href="/~sanguesa">Maribel Romero</a>'s course 
+"Introduction to Semantics" (<a
+href="https://coursework.stanford.edu/portal/site/Su07-LSA-328">LSA.328</a>)
+at the <a
+href="http://linginst07.stanford.edu">2007 LSA Institute</a> in Stanford.</p>
+
+<p>The goal of the <i>Penn Lambda Calculator</i> project is to provide teachers and students
+with a software that assists them in mastering the centerpiece of
+introductory courses to formal semantics: the lambda calculus. 
+The most important feature of this software is its
+sophisticated routines that detect common errors and return "smart"
+feedback to the student user. It also has a module for performing
+derivations of natural language phrases up a syntactic tree in the style
+of Heim &amp; Kratzer (1998).</p>
+
+<!--<p>The program is based on <a href="spec.pdf">this initial specification</a>
+by Professor Maribel Romero.</p>-->
+
+<p>The program is described thoroughly in our paper in the proceedings of GEAF 2007:</p>
+
+<p style="margin-left: 1.5em">Champollion, L., J. Tauberer and M. Romero. to appear. "The Penn Lambda Calculator: Pedagogical Software for Natural Language Semantics", in T. Holloway King and E. M. Bender (eds.), Proceedings of the Grammar Engineering across Frameworks (GEAF) 2007 Workshop, July 13-15 2007. CSLI On-line Publications
+[<a href="http://ling.upenn.edu/~sanguesa/papers/lambda-geaf.pdf">PDF</a>]</p>
+
+<p>But note that the program undergoes ongoing development and several
+new features have been added since the publication of the GEAF paper.</p>
+
+<h3>Downloading</h3>
+
+<p>You can download the current version, which is version 1.0.12 (March 29, 2008; <a href="ChangeLog.txt">Change Log</a>):</p>
+<div style="margin-left: 2em">
+	<p><a href="LambdaCalculator.exe">Windows EXE version</a> (no installation necessary; just download and double-click to start)</p>
+	<p><a href="LambdaCalculator.jar">Java JAR version</a> for all other platforms (Mac OS X, Linux).</p>
+	<p style="margin-left: 2em">On a Mac, just download and double-click to start.</p>
+	<p style="margin-left: 2em">On Linux, start with <tt>java -jar LambdaCalculator.jar</tt>. (But make sure you run it with Sun's Java, not GNU libgcj, which you can check with <tt>java -version</tt>.)</p>
+</div>
+
+<p>About installing Java:</p>
+
+<div style="margin-left: 2em">
+<p>Windows and Linux users will need to make sure they have the <a href="http://www.java.com/getjava">Java JRE 1.4</a> or
+newer installed. The Windows version of the calculator will check on
+startup if Java is installed, and if necessary, will take the user to a website where
+Java can be downloaded.</p>
+
+<p>On Mac OS, Java is already installed in most cases (e.g. Mac OS 10.4
+Tiger comes with Java 1.4 or higher installed by default). Otherwise, it
+can be installed via the Software Update option in the Apple menu. If you
+are not sure if your Mac has the right version of Java, just try and run
+the program. If nothing happens or if you get an error message, you'll need
+ to update Java.</p>
+</div>
+
+<p>The teacher edition, in which tree-derivation exercises are shown in
+a presentation mode that automatically computes denotations of nonterminals,
+is available upon request to bona fide instructors. Send an email from your
+academic email address to:</p>
+<img src="http://www.ling.upenn.edu/~champoll/email.jpg" style="margin-left: 2em"/>
+
+<p>Regardless of which edition you use, we're interested in hearing from
+you. We read all user feedback attentively. If you're an
+instructor, a student, or just a Web passerby, send us a line and tell us
+about how you use (or would like to use) the
+program and how we can improve it.</p>
+
+<p>Source code will be posted shortly.</p>
+
+
+<h3>Sample Exercise Files</h3>
+
+<p>We have three example exercise files:</p>
+<div style="margin-left: 2em">
+<p><a href="example1.txt">example1.txt</a>: Examples of 'semantic types' and 'lambda conversion' exercises.</p>
+<p><a href="example2.txt">example2.txt</a>: Examples of bottom-up tree derivation exercises.</p>
+<p><a href="example3.txt">example3.txt</a>: Examples of using bottom-up tree derivations with generalized quantifiers (including set notation).</p>
+<p>You can download these and then open them in the <i>Penn Lambda Calculator</i> to try them out.
+To download the files, right-click the link (on a PC) or control-click (on a Mac?) and choose "Save Link As..." to save the file to your computer.
+Remember where you saved the file. Then (download and) run the <i>Penn Lambda Calculator</i>.
+Choose the Interactive Exercise Solver, and in the File menu, choose Open, and
+open the exercise file you downloaded.</p>
+</div>
+
+<!--<p>Example one implements the example
+exercises in our original program specification for semantic types and lambda
+conversion. If in doubt, you may use the specification as a
+guide for what to type into the program if you would like to try it out.
+If you do that, it may seem like the program is following a prewritten
+script since the responses of the program follow very closely with the
+planned responses in the spec. But the program really is being smarter
+than that, trying to detect the various types of errors a student may
+make in a general way, not specific to the particular problems in this
+exercise file.)</p>
+
+<p>Example two includes sample problems for semantic derivations
+on syntactic trees.</p>-->
+
+<h3>Documentation</h3>
+
+<p><b>For students and instructors:</b> When typing predicate logic
+expressions in the program, some special keyboard combinations are
+used to enter logical symbols. See the <a href="specialsymbols.html">guide
+to entering special symbols</a> for instructions. Some help is also
+provided within the program.</p>
+
+<p><b>For instructors:</b> If you would like to write an exercise file, 
+you may read the <a href="exercisefiles.html">documentation for the exercise file format</a>
+or consult the <a href="example0.txt">complete and documented sample exercise file for instructors</a>.</p>
+
+<hr size="1" style="margin-top: 1.5em; margin-bottom: 1.5em"/>
+<center>
+
+<a
+href="http://www3.clustrmaps.com/counter/maps.php?url=http://www.ling.upenn.edu/lambda"
+id="clustrMapsLink"><img
+src="http://www3.clustrmaps.com/counter/index2.php?url=http://www.ling.upenn.edu/lambda"
+style="border:0px;" alt="Locations of visitors to this page"
+title="Locations of visitors to this page" id="clustrMapsImg"
+onError="this.onError=null;
+this.src='http://www2.clustrmaps.com/images/clustrmaps-back-soon.jpg';
+document.getElementById('clustrMapsLink').href='http://www2.clustrmaps.com'"
+/>
+</a>
+</center>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." :
+"http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-1637572-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
