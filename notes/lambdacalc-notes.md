@@ -22,6 +22,8 @@ Appearance and Convenience
 
 * Make the Latex button a toggle switch
 
+* Mavericks file bug: might be due to trying to find appropriate icons
+
 Polymorphism
 ------------
 
