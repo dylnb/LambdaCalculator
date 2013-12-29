@@ -13,11 +13,11 @@ jar uf LambdaCalculator.jar org
 cd ..
 if [ -z "$1" -o "$1" == "teacher" ]
 then
-  launch4j/launch4j ../LC_TE.xml
+  launch4j/launch4j LC_TE.xml
 else
   if [ "$1" == "student" ]
   then
-    launch4j/launch4j ../LC_SE.xml
+    launch4j/launch4j LC_SE.xml
   else
     echo "Argument should be student or teacher"
     exit 1

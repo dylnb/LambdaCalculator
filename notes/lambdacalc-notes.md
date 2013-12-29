@@ -2,6 +2,9 @@ TODO
 ====
 
 * Update the website
+  + Add links to stable version
+  + convert html code to markdown
+  + zip exercises up with executables
 
 * Write example files for polymorphism
 
