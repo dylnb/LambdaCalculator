@@ -1,0 +1,119 @@
+Lucas Champollion's companion file for Heim and Kratzer 1998, chapter 4
+
+# This file is meant as a companion to chapter 4 of Heim and Kratzer 1998.
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to the textbook Heim and Kratzer 1998 and all its contents remains with their authors.
+# Maximum points: 100
+
+constants of type e : amherst joe julius kaline lockhart four texas
+constants of type t: T F
+variables of type e: x-z
+variables of type t: p
+variables of type et: f g
+variables of type <et,et>: R
+
+use rule function application
+use rule predicate modification
+use rule non-branching nodes
+
+multiple letter identifiers
+
+define is: Lf.f
+define a: Lf.f
+define of: Lx.x
+define cat: Lx[cat(x)]
+define city: Lx[city(x)]
+define gray: Lx[gray(x)]
+define gray2: Lf.[Lx.gray(x) & f(x)]
+define in: Lx.[Ly.in(y,x)]
+define in2: Ly.[Lf.[Lx.f(x) & in(x,y)]]
+define fond: Lx.[Ly.fond-of(y,x)]
+define fond2: Ly.[Lf.[Lx.f(x) & fond-of(x,y)]]
+define the: Lf.Ix[f(x)]
+define negative: Lx.negative(x)
+define square-root: Ly.Lx.square-root-of(x,y)
+define four: four
+define book: Lx[book(x)]
+define on: Lx.[Ly.on(y,x)]
+define pillow: Lx[pillow(x)]
+
+define Joe: joe
+define Julius: julius
+define Texas: texas
+define Kaline: kaline
+define Lockhart: lockhart
+define Amherst: amherst
+
+exercise semantic types
+title Identifying types (preparation for Chapter 4)
+points per exercise 3
+
+directions Since the textbook introduces predicate modification as a new rule in this chapter, you will need to determine at every branching node in the trees in subsequent exercises whether the right rule to apply is function application or predicate modification. You can determine this by figuring out the types of the tree nodes. This part helps you practice reading types off their lambda expressions. When necessary, please refer to the type conventions in the lower left corner of this window. All predicate-argument structures such as "city(x)" or "in(y,texas)" in this exercise are of type t.
+
+Lx[Ly[in(y,x)]]
+Lx.x
+Lx.city(x)
+texas
+Ly[in(y,texas)]
+Lf.f
+Lx[Ly[fond-of(y,x)]]
+kaline
+
+
+exercise tree
+title Predicate modification and related matters (Sections 4.1-4.3)
+points per exercise 7
+
+directions This part corresponds to Sections 4.1 through 4.3 of the textbook. Semantically vacuous words are represented in round brackets. In this part, you are asked to compute the meanings of the indicated sentences.  
+
+instructions Compute the meaning of "Joe is in Texas". Start by determining whether to apply function application or predicate modification at the PP node, based on what you know from Part A. Select the appropriate rule by clicking Select. Reduce the lambda term as appropriate. Then, click on the S node until a blue rectangle appears around it. Proceed as in the previous exercises. 
+[.S [.NP [.N Joe]] [.VP is [.PP [.P in] [.NP [.N Texas]]]]]
+
+
+instructions Compute the meaning of "Joe is fond of Kaline" as before. 
+[.S [.NP [.N Joe]] [.VP is [.AP [.A fond] [.PP of [.NP [.N Kaline]]]]]]
+
+instructions Compute the meaning of "Kaline is a cat" as before. 
+[.S [.NP [.N Kaline]] [.VP is [.NP a [.N cat]]]]
+
+instructions Compute the meaning of "Lockhart is a city in Texas" as before. In this sentence, you will encounter predicate modification. 
+[.S [.NP [.N Lockhart]] [.VP is [.NP a [.NP [.N city] [.PP [.P in] [.NP [.N Texas]]]]]]]
+
+
+instructions Compute the meaning of "Kaline is a gray cat in Texas fond of Joe" as before. From now on, we adopt the convention of making "is", "a", and "of" semantically vacuous, as discussed in Section 4.1 of the chapter. Semantically vacuous words are represented in round brackets.
+[.S [.NP [.N Kaline]] [.VP (is) [.NP (a) [.N' [.N' [.N' [.A gray] [.N cat]] [.PP [.P in] [.NP [.N Texas]]]] [.AP [.A fond] [.PP (of) [.NP [.N Joe]]]]]]]]
+
+instructions In the following tree, denotations have been assigned to the words "gray2", "in2", and "fond2" that allow us to simulate predicate modification by function application, as discussed in Section 4.3.2 of the textbook. Compute the meaning of "Kaline is a gray cat in Texas fond of Joe" using these denotations and convince yourself that the sentence is assigned the same denotation as in the previous tree.
+[.S [.NP [.N Kaline]] [.VP (is) [.NP (a) [.N' [.N' [.N' [.A gray2] [.N cat]] [.PP [.P in2] [.NP [.N Texas]]]] [.AP [.A fond2] [.PP (of) [.NP [.N Joe]]]]]]]]
+
+instructions In the following tree (for "Julius is gray"), the word "is2" does not yet have a denotation. Your task is to design a denotation for "is2" that allows it to combine with "gray2" and then with "julius" in order to return the right truth value for the sentence (see section 4.3.2 of the textbook for discussion). To assign a denotation to "is2", make sure that the terminal node "is2" is selected (i.e. that it has a blue rectangle around it), and then click on the text "enter an expression" in the textfield below. You can then type in a lambda term. (Do not select a denotation from the list given below the textfield, as this list only contains lexical entries for the other words in this exercise.) 
+instructions \\
+instructions To enter special characters, follow the keyboard shortcuts specified on the left hand side of this window. To make use of constants and variables of certain types, refer to the typing conventions in the lower left hand corner. For example, R is a variable of type <et,et>, which is the type of gray2, and F and T are constants of type t (truth value). After you have typed in your lambda term, hit Return or click "Assign denotation". Proceed to compute the meaning of the tree as usual. The S node should evaluate to a formula that is logically equivalent to "gray(julius)", but it need not evaluate to exactly this formula. If you find that your denotation leads to the wrong result, click on the terminal "is2" again and assign it a new denotation. Once you are satisfied with your answer, click Next to go to the next exercise.
+[.S [.NP [.N Julius]] [.VP [.V is2] [.AP [.A gray2]]]]
+
+instructions In the following tree (for "Julius is in Amherst"), the word "is2" is again missing its denotation. Assign to it the same denotation as you did in the previous exercise. You will find this denotation in the list below the text field; click on it to assign it to "is2" once again. Then compute the meaning of the tree as usual. The solution should be a formula that is logically equivalent to "in(amherst,julius)", but once again, it need not be identical to it. 
+[.S [.NP [.N Julius]] [.VP [.V is2] [.PP [.P in2] [.NP [.N Amherst]]]]]
+
+
+
+exercise tree
+title The definite article (Section 4.4)
+points per exercise 8
+
+instructions Compute the meaning of the following tree, which stands for the DP "the negative square root of four". The entry for "the" is inspired by Frege. Please refer to Section 4.4.1 for discussion. 
+[.DP [.D the] [.NP [.AP [.A negative]] [.N' [.N square-root ] [.PP (of) four ]]]]
+
+
+exercise tree
+title Modifiers in definite descriptions (Sections 4.4-4.5)
+points per exercise 6
+
+directions The following two trees represent two answers to the question of whether restrictive modifiers within DPs form a constituent with the head noun to the exclusion of the determiner. Please refer to Section 4.5 for discussion. 
+
+instructions This tree corresponds to Figure (1) in that section. Compute the meaning for this tree and check whether it gives you the right semantics for the DP "the book on the pillow".
+[.DP the [.NP book [.PP on [ the pillow ]]]]
+
+instructions This tree corresponds to Figure (2) in section 4.5. Compute the meaning for this tree and check whether it gives you the right semantics for the DP "the book on the pillow".
+[.DP [.DP the book] [.PP on [ the pillow ]]]
+

@@ -1,0 +1,92 @@
+Heim and Kratzer 1998, chapter 6
+
+# This file is meant as a companion to chapter 6 of Heim and Kratzer 1998.
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to the textbook Heim and Kratzer 1998 and all its contents remains with their authors. 
+# Maximum points: 100
+
+variables of type e: u-z
+variables of type t: p
+variables of type <e,t>: f-g
+
+
+
+
+use rule function application
+use rule predicate modification
+use rule lambda abstraction
+use rule non-branching nodes
+
+multiple letter identifiers
+
+
+define vanished: Ly[vanish(y)]
+define nothing: Lf[~Ex[f(x)]]
+define everything: Lf[Ax[f(x)]]
+define something: Lf[Ex[f(x)]]
+define it-is-not-the-case-that: Lp.~p
+define asleep: Ly[asleep(y)]
+define no: Lf[Lg[~Ex[f(x) & g(x)]]]
+define every: Lf[Lg[Ax[f(x) -> g(x)]]]
+define some: Lf[Lg[Ex[f(x) & g(x)]]]
+define painting: Lz[painting(z)]
+
+exercise semantic types
+title Identifying types (preparation for Chapter 6)
+points per exercise 4
+
+directions This exercise file is meant as a companion to chapter 6 of Heim and Kratzer 1998. The bulk of that chapter talks about quantifiers and presuppositions. Since the lambda calculator does not currently support presuppositions, this file is rather short.
+directions \\
+directions We begin by considering the types of various expressions that occur in this chapter. Please enter the type of the following expressions. When necessary, please refer to the type conventions in the lower left corner of this window. 
+
+Lx[vanish(x)]
+Lf[Ex[f(x)]]
+Lf[Lg[~Ex[f(x) & g(x)]]]
+Lf[Lg[Ax[f(x) -> g(x)]]]
+Lf[Ax[f(x)]]
+
+exercise tree
+title Section 6.3
+points per exercise 10
+
+directions  The exercises in this part track the ones in Sections 6.3 and 6.4 of the textbook.
+
+instructions This and the following two trees correspond to the exercise in Section 6.3.1. Calculate the truth conditions for this tree, "nothing vanished".
+
+[.S [.DP [.N nothing]] [.VP [.V vanished]]]
+
+
+instructions Calculate the truth conditions for this tree, "everything vanished".
+
+[.S [.DP [.N everything]] [.VP [.V vanished]]]
+
+
+instructions Calculate the truth conditions for this tree, "something vanished".
+
+[.S [.DP [.N something]] [.VP [.V vanished]]]
+
+
+instructions This and the following tree correspond to the trees in (4a') and (4b') in Section 6.3.2. Calculate the truth conditions for these trees and observe that they are distinct. This tree corresponds to the sentence "it is not the case that everything is asleep".
+
+[.S it-is-not-the-case-that [.S everything [.VP (is) asleep]]]
+
+
+instructions This and the preceding tree correspond to the trees in (4a') and (4b') in Section 6.3.2. Calculate the truth conditions for these trees and observe that they are distinct. This tree corresponds to the sentence "Everything, it is not the case that is asleep", which is obtained from the previous sentence by topicalizing "everything". As discussed in the textbook, this sentence is actually ungrammatical, but don't let this bother you.
+
+[.TopicP everything [.CP which_1 [.S it-is-not-the-case-that [.S t_1 [.VP (is) asleep]]]]]
+
+
+instructions This and the following two trees correspond to the exercise in Section 6.4. Calculate the truth conditions for this tree, "no painting vanished".
+
+[.S [.DP [.D no] [.NP painting]] [.VP [.V vanished]]]
+
+
+instructions Calculate the truth conditions for this tree, "every painting vanished".
+
+[.S [.DP [.D every] [.NP painting]] [.VP [.V vanished]]]
+
+
+instructions Calculate the truth conditions for this tree, "some painting vanished".
+
+[.S [.DP [.D some] [.NP painting]] [.VP [.V vanished]]]

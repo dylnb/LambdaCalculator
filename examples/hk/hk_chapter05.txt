@@ -1,0 +1,56 @@
+Lucas Champollion's companion file for Heim and Kratzer 1998, chapter 5
+
+# This file is meant as a companion to chapter 5 of Heim and Kratzer 1998.
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to the textbook Heim and Kratzer 1998 and all its contents remains with their authors.
+# Maximum points: 100
+
+constants of type e: a-e m
+variables of type e: u-z
+variables of type <e,t>: P-Q U-Z
+constants of type <e,<e,t>>: R-S
+
+
+
+
+use rule function application
+use rule predicate modification
+use rule lambda abstraction
+use rule non-branching nodes
+
+multiple letter identifiers
+
+define the: LP[Ix[P(x)]]
+
+
+exercise tree
+title Section 5.3.4 (variable binding with assignments as functions)
+points per exercise 40
+
+directions This exercise file is meant as a companion to chapter 5 of Heim and Kratzer 1998. The textbook introduces assignments in two steps: assignments are first given a preliminary definition as individuals (Section 5.2.2); after reviewing various properties and problems of this analysis, assignments are then redefined as partial functions from indices to individuals (Section 5.3.4). The lambda calculator only implements the second definition, so we start following the textbook in Section 5.3.4. The calculator uses the convention of calling the assignment function "g" (which is more standard than the textbook's "a"), so the meaning of a trace t_1 is given as g(1) rather than a(1) and so on.
+
+instructions This example is reproduced from Section 5.3.4, example (5''). It demonstrates the use of multiple indexation. Please assign denotations to all the unindexed terminals in the tree except for "that", using the typing conventions listed in the lower left-hand corner of this window. Then compute the meaning of the tree up to the root node, keeping in mind that some of the nodes may require applying the new rule of lambda abstraction (called predicate abstraction in the textbook). You may find it helpful to start at the bottom of the tree because you can then interleave the tasks of assigning denotations and computing nonterminals. For example, after you've assigned a denotation to the terminal "wrote", you can immediately start working on the VP and S nodes immediately above it, and so on.
+
+[.NP [.NP man ] [.AP such_2 [.CP (that) [.S Mary [.VP reviewed [.DP the [.NP [.NP book] [.CP which_1 [.S [.DP he_2] [.VP wrote [.DP t_1]]]]]]]]]]]
+
+
+
+exercise tree
+title Section 5.5 (variable binding, continued)
+points per exercise 20
+
+
+instructions This example is reproduced from Section 5.5, example (4). Please assign denotations to the terminals in the tree and then compute the denotation of the tree as before. For those terminals to which you've already a meaning in the previous exercise, assign them the same meaning in this one. The list in the bottom area of this window contains all the denotations you've assigned previously. Click to select the right one. 
+
+[.DP the [.NP [.NP man ] [.AP such_1 [.CP (that) [.S [.DP he_1] [.VP left]]]]]]
+
+
+instructions This example is reproduced from Section 5.5, example (5). Please proceed as before and compute the denotation of the tree.
+
+[.DP the [.NP [.NP man ] [.CP who_1 [.S [.DP t_1] [.VP left]]]]]
+
+
+instructions This is the grammatical indexing of example (13) in Section 5.5. Please proceed as before and compute the denotation of the tree.
+
+[.DP the [.NP [.NP man ] [.CP who_1 [.S [.DP t_1] [.VP talked [.PP [.P (to) ] [.DP the [.NP [.NP boy] [.CP who_2 [.S [.DP t_2] [.VP visited [.DP him_1]]]]]]]]]]]]
