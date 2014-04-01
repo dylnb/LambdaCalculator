@@ -1,12 +1,8 @@
 TODO
 ====
 
-* Update the website
-  + Add links to stable version
-  + convert html code to markdown
-  + zip exercises up with executables
-
 * Write example files for polymorphism
+
 
 
 Platform and Distribution
@@ -14,6 +10,10 @@ Platform and Distribution
 
 * Find out about the Mac App Store, or about code-signing to avoid corruption
   messages
+
+* Get the thing working on Mavericks
+    + Mavericks file bug: might be due to trying to find appropriate icons
+
 
 
 Appearance and Convenience
@@ -25,7 +25,6 @@ Appearance and Convenience
 
 * Make the Latex button a toggle switch
 
-* Mavericks file bug: might be due to trying to find appropriate icons
 
 Polymorphism
 ------------
