@@ -1,0 +1,3 @@
+[submodule "notes/todo"]
+	path = notes/todo
+	url = https://gist.github.com/4f38a7012d2b7513af0e.git
