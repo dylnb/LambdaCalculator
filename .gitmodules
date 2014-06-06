@@ -1,6 +1,6 @@
-[submodule "notes/todo"]
-	path = notes/todo
-	url = https://gist.github.com/4f38a7012d2b7513af0e.git
-[submodule "docs"]
-	path = docs
+[submodule "docs/wiki"]
+	path = docs/wiki
 	url = https://github.com/dylnb/LambdaCalculator.wiki.git
+[submodule "docs/todo"]
+	path = docs/todo
+	url = https://gist.github.com/4f38a7012d2b7513af0e.git
