@@ -30,6 +30,7 @@ public class TypeParser {
     //    Composite Type:   AtomicType AtomicType
     //                      <Type,Type>
     //    Product Type:     AtomicType * AtomicType * ...
+    //    Type Variable:    'a
     
     /**
      * Parses the string into a Type.
@@ -54,27 +55,42 @@ public class TypeParser {
         ParseState current = new ParseState();
         
         boolean isParsingProduct = false;
+        boolean isParsingVarType = false;
         
         for (int i = start; i < type.length(); i++) {
             char c = type.charAt(i);
             
             if (isParsingProduct) {
-                if (current.Right != null) {
-                    if ("etsnvi".contains(Character.toString(c))) {
-                        current.Right = addProduct(current.Right, new ConstType(c));
+                System.out.println("parsing product: " + c);
+                System.out.println("Left: " + current.Left);
+                System.out.println("Right: " + current.Right);
+                if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
+                    if (current.Right != null) {
+                        if (isParsingVarType) {
+                            current.Right = addProduct(current.Right, new VarType(c));
+                            isParsingVarType = false;
+                        } else {
+                            current.Right = addProduct(current.Right, new ConstType(c));
+                        }
                     } else {
-                        current.Right = addProduct(current.Right, new VarType(c));
+                        if (isParsingVarType) {
+                            current.Left = addProduct(current.Left, new VarType(c));
+                            isParsingVarType = false;
+                        } else {
+                            current.Left = addProduct(current.Left, new ConstType(c));
+                        }
                     }
+                } else if (c == Type.VarTypeSignifier) {
+                    System.out.println("Got Type Variable");
+                    isParsingVarType = true;
+                    continue;
                 } else {
-                    if ("etsnvi".contains(Character.toString(c))) {
-                        current.Left = addProduct(current.Left, new ConstType(c));
-                    } else {
-                        current.Left = addProduct(current.Left, new VarType(c));
-                    }
+                    throw new SyntaxException("Product subtypes must be atomic", i);
                 }
                 isParsingProduct = false;
                 continue;
             }
+
             
             if (c == '<' || c == CompositeType.LEFT_BRACKET) {
                 if (current.Left == null) { // still on the left side
@@ -166,10 +182,17 @@ public class TypeParser {
                     current.ReadComma = true;
                 }
             
-            } // TODO: make distinction between type primitives, like e and t, and
-              // type variables more abstract; don't hard-code it in here
-            else if ("etsnvi".contains(Character.toString(c))) {
-                AtomicType at = new ConstType(c);
+            } else if (c == Type.VarTypeSignifier) {
+                isParsingVarType = true;
+                
+            } else if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
+                AtomicType at;
+                if (isParsingVarType) {
+                    at = new VarType(c);
+                    isParsingVarType = false;
+                } else {
+                    at = new ConstType(c);
+                }
                 if (current.Left == null) {
                     if (stopSoon && stack.size() == 0 && !current.ReadBracket)
                         return new ParseResult(at, i);
@@ -198,37 +221,6 @@ public class TypeParser {
                         throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
                 }
 
-                
-            } else if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
-                AtomicType at = new VarType(c);
-                if (current.Left == null) {
-                    if (stopSoon && stack.size() == 0 && !current.ReadBracket)
-                        return new ParseResult(at, i);
-                    current.Left = at;
-                } else if (current.Right == null) {
-                    if (!current.ReadBracket && !(current.Left instanceof AtomicType))
-                        throw new SyntaxException("Add a comma to separate " +
-                                "these types, and add the corresponding " +
-                                "angle brackets <>.", i);
-                    current.Right = at;
-                } else {
-                    if (!current.ReadBracket && current.ReadComma)
-                    throw new SyntaxException("I can only understand a complex " +
-                            "type with a comma when the type is surrounded by " +
-                            "angle brackets < >. Add brackets where needed, or " +
-                            "remove the comma if that doesn't introduce an " +
-                            "ambiguity.", i);
-                    else if (!current.ReadBracket && !current.ReadComma)
-                        // ett
-                        throw new SyntaxException("What you wrote is ambiguous. Add some angle brackets <> " +
-                                "in order to indicate what you mean.", i);
-                    else if (current.ReadBracket && current.ReadComma && current.Right instanceof AtomicType)
-                        // <e, et>
-                        current.Right = new CompositeType(current.Right, at);
-                    else
-                        throw new SyntaxException("The expression is ambiguous. Add some angle brackets <>.", i);
-                }
-                
             } else if (c == '*' || c == ProductType.SYMBOL) {
                 if (current.Left == null || (current.ReadComma && current.Right == null))
                     throw new SyntaxException("'*' is used to create a type " +
@@ -243,7 +235,6 @@ public class TypeParser {
                 
             } else if (Character.isWhitespace(c)) {
                 // do nothing
-              
             } else if (c == '(' || c == ')') {
                 throw new SyntaxException("Instead of parentheses, use " +
                         "the angle brackets '<' and '>'.", i);

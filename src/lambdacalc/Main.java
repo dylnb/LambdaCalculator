@@ -6,8 +6,8 @@
 
 package lambdacalc;
 
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
+//import com.apple.eawt.ApplicationAdapter;
+//import com.apple.eawt.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -39,7 +39,7 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = false;
+    public static final boolean GOD_MODE = true;
     
     public static final boolean NOT_SO_FAST = !GOD_MODE; 
     // true means we force the user to do one step at a time in lambda conversions
@@ -50,12 +50,12 @@ public class Main {
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
-            "and Dylan Bumford (2013)";
+            "and Dylan Bumford (2013-2014)";
 
     public static final String AFFILIATION =
             "The University of Pennsylvania, New York University";
 
-    public static final String WEBSITE = "http://www.ling.upenn.edu/lambda";
+    public static final String WEBSITE = "lambdacalculator.com";
     
     
     /**
@@ -104,8 +104,8 @@ public class Main {
                 
                 HashMap<lambdacalc.logic.Type,lambdacalc.logic.Type> alignments = null;
                 try {
-                    lambdacalc.logic.Type leftType = lambdacalc.logic.TypeParser.parse("<a*a*e*s,t>");
-                    lambdacalc.logic.Type rightType = lambdacalc.logic.TypeParser.parse("<n*n*e*s,t>");
+                    lambdacalc.logic.Type leftType = lambdacalc.logic.TypeParser.parse("<?a*?b*e*t,?a>");
+                    lambdacalc.logic.Type rightType = lambdacalc.logic.TypeParser.parse("<n*s*e*t,n>");
                     System.out.println("types match?: " + leftType.equals(rightType) + "\n");
                     
                     System.out.println("attempting to align regardless...");

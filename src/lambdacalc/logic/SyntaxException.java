@@ -17,11 +17,11 @@ public class SyntaxException extends Exception {
     
     /**
      * Constructs a SyntaxException with the given message for
-     * a problem occuring at the given position in the string
+     * a problem occurring at the given position in the string
      * being parsed.
      */
     public SyntaxException(String message, int position) {
-        super(message);
+        super(message + ". Pos: " + position);
         this.position = position;
     }
     

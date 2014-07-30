@@ -25,7 +25,7 @@ public class VarType extends AtomicType {
     }
     
     public String toString() {
-        return String.valueOf(this.symbol);
+        return VarTypeSignifier + String.valueOf(this.symbol);
     }
 
     
