@@ -35,6 +35,8 @@ import lambdacalc.logic.Expr;
  */
 public class DummyTerminal extends Terminal {
     
+    protected Expr meaning = null;
+    
     /** Creates a new instance of DummyTerminal */
     public DummyTerminal(String label) {
         setLabel(label);

@@ -28,7 +28,7 @@ import lambdacalc.logic.Var;
 
 public class LexicalTerminal extends Terminal {
 
-    protected Expr meaning;
+    protected Expr meaning = null;
     
     public void setMeaning(Expr meaning) {
         Expr oldMeaning = this.meaning;
@@ -37,7 +37,7 @@ public class LexicalTerminal extends Terminal {
     }
     
     public boolean hasMeaning() {
-        return meaning != null;
+        return this.meaning != null;
     }
 
     public boolean isMeaningful() {
@@ -45,11 +45,9 @@ public class LexicalTerminal extends Terminal {
     }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-        if (meaning == null)
-            throw new TerminalLacksMeaningException(this);
+        if (this.meaning == null) throw new TerminalLacksMeaningException(this);
         
-        if (g == null)
-            return meaning;
+        if (g == null) return this.meaning;
         
         // If an assignment function is in use, then we must make sure that
         // no variables in our denotation are in the range of the assignment
@@ -57,12 +55,12 @@ public class LexicalTerminal extends Terminal {
         // may have a variable accidentally bound from above.
         
         // Collect a list of all variables to avoid.
-        HashSet varsInUse = new HashSet(meaning.getAllVars());
-        for (Iterator i = g.values().iterator(); i.hasNext(); )
+        HashSet varsInUse = new HashSet(this.meaning.getAllVars());
+        for (Iterator i = g.values().iterator(); i.hasNext();)
             varsInUse.add((Var)i.next());
         
         // For each variable in the range of g, do any needed substitutions:
-        Expr m = meaning;
+        Expr m = this.meaning;
         
         for (Iterator i = g.values().iterator(); i.hasNext(); ) {
             Var v = (Var)i.next();
@@ -124,12 +122,12 @@ public class LexicalTerminal extends Terminal {
      * (maybe later it can be used for type-shifting rules)
      */
     public void guessLexicalEntries(Lexicon lexicon) {
-        if (meaning != null)
+        if (this.meaning != null)
             return;
         
         Expr[] meanings = lexicon.getMeanings(this.getLabel());
         if (meanings.length == 1)
-            meaning = meanings[0];    
+            this.meaning = meanings[0];    
     }
     
  

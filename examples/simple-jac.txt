@@ -57,18 +57,18 @@ variables of type t: p
 #
 ## Polymorphic Types ##
 #
-variables of type a: a
-variables of type <a,b>: B
-variables of type <b,c>: C
-variables of type <b,<a,c>>: D
-constants of type <a,t>: beautiful2 dancer2
-constants of type <a,a>: id
+variables of type ?a: a
+variables of type <?a,?b>: B
+variables of type <?b,?c>: C
+variables of type <?b,<?a,?c>>: D
+constants of type <?a,t>: beautiful2 dancer2
+constants of type <?a,?a>: id
 
 
 ### Lexical Entries ###
 
 define geach: LC.LB.La.C(B(a))
-define zeach: LR_<b,<a,c>>.LB.La.R(B(a))(a)
+define zeach: LR_<?b,<?a,?c>>.LB.La.R(B(a))(a)
 define zeach2: LD.LB.La.D(B(a))(a)
 define z-tvt: LM.LV.Le.M(V(e))(e)
 define minks: Lp.Le.mink(p)(e)

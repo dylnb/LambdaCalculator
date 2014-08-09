@@ -30,6 +30,7 @@ package lambdacalc.lf;
 
 import java.util.List;
 import java.util.Vector;
+import lambdacalc.logic.Expr;
 import lambdacalc.logic.Type;
 
 /**

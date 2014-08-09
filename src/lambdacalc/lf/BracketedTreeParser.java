@@ -256,9 +256,8 @@ public class BracketedTreeParser {
             
             } else if (parseMode == 2) {
                 // Reading the label of a terminal.
-                // Space and brackets indicate end. We'll back track in all
+                // Space and brackets indicate end. We'll backtrack in all
                 // cases so they are parsed in parseMode 0.
-
                 
                 switch (c) {
                     case ' ':
@@ -395,22 +394,17 @@ public class BracketedTreeParser {
         }
     }
     
-    private static Terminal finishTerminal
-            (Nonterminal parent, Terminal child) {
-        
+    private static Terminal finishTerminal(Nonterminal parent, Terminal child) {   
         unescapeLabel(child);
-
         if (child.getLabel() != null && child.hasIndex()) {
             
             // If the terminal label was "t" and it has an index,
             // load it as a Trace object.
             if (child.getLabel().equals(Trace.SYMBOL)) {
-                if (child.hasExplicitType()) {
+                if (child.hasExplicitType())
                     child = new Trace(child.getIndex(), child.getType());
-                }
-                else {
+                else
                     child = new Trace(child.getIndex());
-                }
                 traceTypes.put(child.getIndex(), child.getType());
             }
             
@@ -418,12 +412,10 @@ public class BracketedTreeParser {
             // load it as a Trace too.
             else if (isPronoun(child.getLabel())) {
                 //child = new Trace(child.getIndex());
-                if (child.hasExplicitType()) {
+                if (child.hasExplicitType())
                     child = new Trace(child.getLabel(), child.getIndex(), child.getType());
-                }
-                else {
-                    child = new Trace(child.getLabel(), child.getIndex());
-                }               
+                else
+                    child = new Trace(child.getLabel(), child.getIndex());          
                 
                 //child = new Trace(child.getLabel(), 0, child.getType());
                 // we temporarily set the index to zero --
@@ -433,12 +425,10 @@ public class BracketedTreeParser {
             // If the label was a relative pronoun and it has an index,
             // return it as a BareIndex.
             else if (isIndexWord(child.getLabel())) {
-                if (child.hasExplicitType()) {
+                if (child.hasExplicitType())
                     child = new BareIndex(child.getLabel(), child.getIndex(), child.getType());
-                }
-                else {
-                    child = new BareIndex(child.getLabel(), child.getIndex());
-                }  
+                else
+                    child = new BareIndex(child.getLabel(), child.getIndex()); 
 //                child = new BareIndex(child.getLabel(), 0, child.getType());
                 // child = new BareIndex(child.getLabel(), child.getIndex());
             }
@@ -446,24 +436,19 @@ public class BracketedTreeParser {
         
         if (child.getLabel() != null && !child.hasIndex() && child.getLabel().startsWith("(") && child.getLabel().endsWith(")"))
             child = new DummyTerminal(child.getLabel());
-        
-                
+              
         // If the terminal label was just an integer,
         // load it as a BareIndex object.
         try {
             int idx = Integer.valueOf(child.getLabel()).intValue();
             // child = new BareIndex(idx, type);
-            if (child.hasExplicitType()) {
+            if (child.hasExplicitType())
                 child = new BareIndex(idx, child.getType());
-            }
-            else {
-                child = new BareIndex(idx);
-            }
-            
+            else
+                child = new BareIndex(idx);  
         } catch (NumberFormatException e) {
             // ignore parsing error: it's not a bare index
         }
-        
         parent.addChild(child);
         return child;
     }
@@ -478,9 +463,8 @@ public class BracketedTreeParser {
                 Type bIType = (Type)traceTypes.get(bI);
                 ((BareIndex)kid).setType(bIType);
             }
-            else if ("Nonterminal".equals(kid.getDisplayName())) {
+            else if ("Nonterminal".equals(kid.getDisplayName()))
                 typeBareIndices((Nonterminal)kid);
-            }
         }
     }
     
@@ -495,9 +479,8 @@ public class BracketedTreeParser {
                 printTypes(kid);
             }
             else {
-                if (((Terminal)kid).hasExplicitType()) {
+                if (((Terminal)kid).hasExplicitType())
                     System.out.print(", expTyped");
-                }
                 System.out.print(", Type: ");
                 System.out.println(((Terminal)kid).getType());
             }

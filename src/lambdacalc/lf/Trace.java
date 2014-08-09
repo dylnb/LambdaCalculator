@@ -42,6 +42,8 @@ import lambdacalc.logic.TypeEvaluationException;
 public class Trace extends Terminal {
     
     public static final String SYMBOL = "t";
+    
+    protected Expr meaning = null;
 
     public Trace(String label, int index, Type type) {
         super(label, index, type);
@@ -68,11 +70,25 @@ public class Trace extends Terminal {
     }
     
     public Expr getMeaning(AssignmentFunction g) throws MeaningEvaluationException {
-        if (g == null)
-            return new GApp(this.getIndex(),this.getType());
-        else
-            return (Expr)g.get(getIndex(), getType());
-    }    
+        if (this.meaning != null) return this.meaning;
+        Expr m;
+        if (g == null) {
+            m = new GApp(this.getIndex(),this.getType());
+            setMeaning(m);
+            return m;
+        }
+        else {
+            m = (Expr)g.get(getIndex(), getType());
+            setMeaning(m);
+            return m;
+        }
+    }
+    
+    public void setMeaning(Expr meaning) {
+        Expr oldMeaning = this.meaning;
+        this.meaning = meaning;
+        changes.firePropertyChange("meaning", oldMeaning, this.meaning);
+    }
 
     public void setLabel(String label) {
         throw new UnsupportedOperationException("Tried to set the label of a trace.");

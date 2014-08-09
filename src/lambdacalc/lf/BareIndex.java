@@ -37,6 +37,8 @@ import lambdacalc.logic.Type;
  */
 public class BareIndex extends Terminal {
     
+    protected Expr meaning = null;
+    
     public BareIndex(String label, int i, Type type) {
         this.setLabel(label);
         this.setIndex(i);

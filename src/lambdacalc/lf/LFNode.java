@@ -37,9 +37,7 @@ public abstract class LFNode {
      * in the #toString() method.
      */
     public static final char INDEX_SEPARATOR = '_'; 
-
     private String label;
-    
     private int index = -1;
     
     protected LFNode() {
@@ -86,6 +84,43 @@ public abstract class LFNode {
      * (e.g. "terminal", "nonterminal", etc.)
      */
     public abstract String getDisplayName();
+    
+    /**
+     * This returns true for node types that, in principle, have denotations,
+     * which are Nonterminal and LexicalTerminal nodes. False for BareIndex
+     * and DummyNode.
+     */
+    public abstract boolean isMeaningful();
+    
+    /**
+     * This returns the bottom-up derived meaning of a node, as long as the
+     * node isMeaningful, has a nonterminal composition rule assigned, the
+     * rule is applicable, etc.
+     */
+    public final Expr getMeaning() throws MeaningEvaluationException {
+        return getMeaning(null);
+    }
+    
+    /**
+     * This returns the top-down derived meaning of a node, given an assignment
+     * function. Because the assignment function allows binders higher up to
+     * access variables below, any binders introduced within this node must not
+     * use a variable in the range of the assignment function or else it may
+     * accidentally bind a replaced instance of g(n).
+     *
+     * @param g an assignment function, or null to not associate GApp instances
+     * with an assignment function (as when doing bottom-up derivations).
+     */
+    public abstract Expr getMeaning(AssignmentFunction g) 
+    throws MeaningEvaluationException;
+
+    /**
+     * Sets composition rules of nonterminals in the tree where they haven't been 
+     * set yet and are uniquely determined. Note that calling this will usually
+     * be without effect unless guessLexicalEntries is called first.
+     *
+     * @param rules the rules
+     */ 
     
     /**
      * Returns a map of properties. Keys are Strings and values are Objects.
@@ -169,43 +204,7 @@ public abstract class LFNode {
         // remember first arg to replaceAll is a regular expression
         return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
-    
-    /**
-     * This returns true for node types that, in principle, have denotations,
-     * which are Nonterminal and LexicalTerminal nodes. False for BareIndex
-     * and DummyNode.
-     */
-    public abstract boolean isMeaningful();
-    
-    /**
-     * This returns the bottom-up derived meaning of a node, as long as the
-     * node isMeaningful, has a nonterminal composition rule assigned, the
-     * rule is applicable, etc.
-     */
-    public final Expr getMeaning() throws MeaningEvaluationException {
-        return getMeaning(null);
-    }
-    
-    /**
-     * This returns the top-down derived meaning of a node, given an assignment
-     * function. Because the assignment function allows binders higher up to
-     * access variables below, any binders introduced within this node must not
-     * use a variable in the range of the assignment function or else it may
-     * accidentally bind a replaced instance of g(n).
-     *
-     * @param g an assignment function, or null to not associate GApp instances
-     * with an assignment function (as when doing bottom-up derivations).
-     */
-    public abstract Expr getMeaning(AssignmentFunction g) 
-    throws MeaningEvaluationException;
-
-    /**
-     * Sets composition rules of nonterminals in the tree where they haven't been 
-     * set yet and are uniquely determined. Note that calling this will usually
-     * be without effect unless guessLexicalEntries is called first.
-     *
-     * @param rules the rules
-     */    
+   
     public abstract void guessRules(RuleList rules, boolean nonBranchingOnly);
     
     public abstract void guessLexicalEntries(Lexicon lexicon);
