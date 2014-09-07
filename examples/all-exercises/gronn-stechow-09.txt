@@ -1,0 +1,78 @@
+Implementation of Gronn and von Stechow 2009
+
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to Gronn and von Stechow's work remains with them.
+
+
+# Next, typing conventions are entered. If no typing conventions
+# are given, some defaults are used.
+
+constants of type e : c p r s j m
+constants of type i: now
+variables of type e : x-z
+variables of type i: t
+variables of type v : e
+variables of type <i,t>: P
+variables of type <e,t> : Q X-Z
+variables of type <e,et> : R
+variables of type <e,<e,et>> : S
+variables of type <v,t> : T
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+
+define John,john: j
+define Mary,mary: m
+define call,calls,called: Lt.Lx.calls-at(x,t)
+define buy,buys,bought: Lt.Ly.Lx.buys-at(x,y,t)
+define happy: Lt.Lx.happy-at(x,t)
+define alive: Lt.Lx.alive-at(x,t)
+define N: now
+define P, have, had: Lt.LP.Et'.[precedes(t',t) & P(t')]
+define will: Lt.LP.Et'.[succeeds(t',t) & P(t')]
+define is: Lt.LP.P(t)
+define a: LQ.LQ'.Ex[Q(x) & Q'(x)]
+define fish: Lx.fish(x)
+
+
+exercise tree
+title Gronn und von Stechow 2009
+
+instructions John called
+[N [ 0<i> [ (PRO) [.TP [.T P t<i>_0 ] [ 1<i> [ (PRO) [.VP John [called t<i>_1 ]]]]]]]]
+
+instructions Mary is happy
+[.TP [P N] [ 1<i> [ (PRO) [.VP [.V is t<i>_1] [ 2<i> [ (PRO) [.AP Mary [happy t<i>_2 ]]]]]]]]
+
+instructions John had called
+[ [P N] [ 1<i> [ (PRO) [.TP [.T had t<i>_1 ] [ 2<i> [ (PRO) [.VP John [called t<i>_2 ]]]]]]]]
+
+instructions John will call
+[ N [ 1<i> [ (PRO) [.TP [.T will t<i>_1 ] [ 2<i> [ (PRO) [.VP John [call t<i>_2 ]]]]]]]]
+
+instructions Mary will buy a fish that is alive (simultaneous reading: fish will be alive at time of buying)
+[ N [ 1<i> [ [ will t<i>_1 ] [ 2<i> [ [ [ Mary [[ buy t<i>_2] t<e>_6 ]] 6<e> ] [ a [ fish [ which<e>_3 [ [ (tpro) t<i>_2] [ 4<i> [ [.V is t<i>_4] [ 5<i> [ t<e>_3 [alive t<i>_5 ]]]]]]]]]]]]]]
+
+instructions Mary will buy a fish that is alive (deictic reading: fish is alive now)
+[ N [ 1<i> [ [ will t<i>_1 ] [ 2<i> [ [ [ Mary [[ buy t<i>_2] t<e>_6 ]] 6<e> ] [ a [ fish [ which<e>_3 [ [ (tpro) t<i>_1] [ 4<i> [ [.V is t<i>_4] [ 5<i> [ t<e>_3 [alive t<i>_5 ]]]]]]]]]]]]]]

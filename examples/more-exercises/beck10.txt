@@ -1,0 +1,175 @@
+Companion file to Beck 2010 (S&P), Quantifiers in Than-Clauses, doi:10.3765/sp.3.1
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to Sigrid Beck's work remains with her.
+
+# Next, typing conventions are entered. If no typing conventions
+# are given, some defaults are used.
+
+constants of type e : a b c paule knut john mary bill caroline ede otto
+variables of type n : d
+variables of type e : x-z
+variables of type <e,t> : Q X-Z
+variables of type <n,t> : D P
+constants of type <e*s,t>: girl person
+constants of type <e*s,n>: age height
+#constants of type <e*n*s,t>: age-at-least
+constants of type <nt,n>: max
+constants of type <n*n,n>: sum
+constants of type n: two-inches six-inches
+constants of type <t,t>: predicted
+variables of type s : w v w'
+variables of type <s,t> : p
+variables of type <st,t>: S
+variables of type <nt,t>: T
+constants of type <<nt,t>,nt>: the minf
+constants of type <nt,nt>: somewhere-below
+constants of type <<nt,t>,nt>: min-witness
+variables of type <n,et>: U
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+use rule intensional function application
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+define Knut: knut
+define Paule: paule
+define John: john
+define Mary: mary
+define Bill: bill
+define Caroline: caroline
+define Ede: ede
+define Otto: otto
+define every: LQ'.LQ.Ax.[Q'(x)->Q(x)]
+define everyone: LQ.Ax.[person(x,w)->Q(x)]
+define anyone: LQ.Ex.[person(x,w) & Q(x)]
+define no: LQ'.LQ.~Ex.[Q'(x)&Q(x)]
+define girl: Lx.girl(x,w)
+define old : Ld.Lx.[age(x,w) >= d]
+define tall : Ld.Lx.[height(x,w) >= d]
+define old2 : LD.Lx.D(age(x,w))
+define tall2 : LD.Lx.D(height(x,w))
+define tall3 : Ld.Lx.[height(x,w) = d]
+define er: Ld.Ld'.[d'>d]
+define er1: LD.LD'.[max(D') > max(D)]
+#define er-simplified: Ld.LD.[d'>max(D)]
+define er-diff: Ld.Ld'.Ld''.[d'' > sum(d,d')]
+define max: LD.max(D)
+define two-inches: two-inches
+define six-inches: LD.Ed.[d >= six-inches & D(d)]
+#define I-had-predicted: predicted
+#define I-had-predicted: Lp.Aw.[accessible(w) -> p]
+define I-had-predicted: Lp[Av.[accessible(w,v) -> p(v)]] 
+define has-to: Lp[Av.[accessible(w,v) -> p(v)]] 
+define Pi: LD.LP.D(max(P))
+define m-inf: LT.minf(T)
+define er-schwarz-wilk: LT.LT'.T(somewhere-below(min-witness(T')))
+define er-stechow: Ld.LU.Ld'.Lx.U(sum(d,d'))(x)
+
+# Finally, the exercises themselves are entered.
+
+exercise tree
+title Traditional analysis
+
+instructions Ede is at least six inches taller than Otto is (von Stechow 1984).
+[ [ (than) [max [ 1<n> [ Otto [(is) [ t<n>_1 tall3 ]]]]]] [ 2 [ six-inches [ 3 [ Ede [.VP (is) [.AP [.A' [.A' t<n>_3 er-stechow ] tall3 ] t<n>_2 ]]]]]]]
+
+instructions Paule is older than Knut is.
+instructions (traditional analysis: maximalization happens in "er")
+[ [ er1 [ (than) [2<n> [ Knut [(is) [t<n>_2 old ]]]]]] [ 2<n> [Paule [(is) [t<n>_2 old]]]]]
+
+instructions Paule is older than Knut is.
+instructions (Beck's innovation: maximalization happens separately from "er")
+[ [ er [ (than) [ max [2<n> [ Knut [(is) [t<n>_2 old ]]]]]]] [max [ 2<n> [Paule [(is) [t<n>_2 old]]]]]]
+
+
+
+instructions John is taller than every girl is.
+instructions (traditional analysis, realizes apparent wide scope as actual wide scope)
+#[ [every girl] [1<e> [ [ er [ (than) [ max [2<n> [ t<e>_1 [(is) [t<n>_2 tall ]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]]]]
+[[[[ er [ (than) [ max [2<n> [ t<e>_1 [(is) [t<n>_2 tall ]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]] 1<e>] [every girl]]
+#bug: not clear how traces acquire their types when not explicitly stated
+
+
+instructions John is taller than every girl is. 
+instructions (traditional analysis, in situ quantifier, empirically unavailable reading)
+[ [ er [ (than) [ max [2<n> [ [every girl] [(is) [t<n>_2 tall ]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]]
+
+instructions John is two inches taller than every girl is.
+instructions (traditional analysis, realizes apparent wide scope as actual wide scope)
+#[ [every girl] [1 [  [ two-inches [ er-diff [ (than) [ max [2<n> [ t<e>_1 [(is) [t<n>_2 tall ]]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]]]]
+[[[[ two-inches [ er-diff [ (than) [ max [2<n> [ t<e>_1 [(is) [t<n>_2 tall ]]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]] 1<e>] [every girl]]
+
+instructions John is two inches taller than every girl is. (in situ, unavailable reading)
+instructions (traditional analysis, in situ quantifier, empirically unavailable reading)
+[ [ two-inches [ er-diff [ (than) [ max [2<n> [ [every girl] [(is) [t<n>_2 tall ]]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]]
+
+instructions John is taller than I had predicted (in situ, unavailable reading)
+[ [ er [ (than) [ max [2<n> [ I-had-predicted [ John [(is) [t<n>_2 tall ]]]]]]]] [max [ 2<n> [John [(is) [t<n>_2 tall]]]]]]
+
+instructions Mary is taller than she has to be (in situ)
+[ [ er [ (than) [ max [2<n> [ has-to [ Mary [t<n>_2 tall ]]]]]]] [max [ 2<n> [Mary [(is) [t<n>_2 tall]]]]]]
+
+exercise tree
+title Schwarzschild and Wilkinson
+
+instructions John is taller than Mary is. 
+instructions (Schwarzschild and Wilkinson 2006 simplified)
+[ [ er-schwarz-wilk [ (than) [2<nt> [ Mary [(is) [t<nt>_2 tall2 ]]]]]] [ 2<nt> [John [(is) [t<nt>_2 tall2]]]]]
+
+
+instructions Caroline is taller than everyone else is. 
+instructions (Schwarzschild and Wilkinson 2006 simplified)
+[ [ er-schwarz-wilk [ (than) [2<nt> [ [everyone (else)] [(is) [t<nt>_2 tall2 ]]]]]] [ 2<nt> [Caroline [(is) [t<nt>_2 tall2]]]]]
+
+instructions John is taller than anyone else is. 
+instructions (Schwarzschild and Wilkinson 2006 simplified; derives unattested reading)
+[ [ er-schwarz-wilk [ (than) [2<nt> [ [anyone (else)] [(is) [t<nt>_2 tall2 ]]]]]] [ 2<nt> [John [(is) [t<nt>_2 tall2]]]]]
+
+exercise tree
+title Heim 2006b
+
+
+instructions John is taller than Mary is. (Heim 2006b)
+[.IP [.CP (than) [1<n,t> [.AP [Pi t<n,t>_1 ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+
+#instructions John is taller than Mary is. (Heim 2006b), in situ
+#[.CP (than) [.AP [Pi [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]] ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]
+
+
+instructions John is taller than every girl is. (Heim 2006b)
+[.IP [.CP (than) [1<n,t> [ [every girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+
+instructions Mary is taller than she has to be (Heim 2006b)
+[ [ (than) [1<nt> [[Pi t<nt>_1] [2<n> [has-to [Mary [t<n>_2 tall]]]]]]] [4 [[er t<n>_4 ] [ max [5 [Mary [(is) [t_5 tall]]]]]]]]
+
+instructions John is taller than no girl is. (Heim 2006b, leaves 'no girl' in situ, this overgenerates)
+[.IP [.CP (than) [1<n,t> [ [no girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+
+exercise tree
+title Beck 2010
+
+instructions John is taller than every girl is. (Beck 2010)
+[ max [ m-inf [ (than) [1<nt> [ [ every girl ] [ (is) [t<nt>_1 tall2 ]]]]]]]
+
+instructions John is taller than Bill is. (Beck 2010)
+[ max [ m-inf [ (than) [1<nt> [ Bill [ (is) [t<nt>_1 tall2 ]]]]]]]
+

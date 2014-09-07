@@ -1,0 +1,56 @@
+Presentation on the lexical semantics of "believe" using a doxastic alternative relation - (c) 2009 Mats Rooth
+
+constants of type e : c p r s m j
+variables of type e : x-y
+variables of type s : w v w'
+variables of type <e,t> : P-Q X-Z
+variables of type <s,t> : p
+variables of type <e,et> : R
+constants of type <s*e*s,t> : Dox
+
+multiple letter identifiers
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+use rule intensional function application
+
+define Mary : m
+define John : j
+define everybody : LwLQ.Ax.[person(w,x)->Q(x)]
+define somebody : LwLQ.Ex.[person(w,x) & Q(x)]
+define some : LPLQ.Ex.[P(x) & Q(x)]
+define asleep: Lx[sleep(w,x)]
+define yeti: Lx[yeti(w,x)]
+define to: LP.P
+define be: LP.P
+define believes: LpLx.[Av.[Dox(w,x,v) -> p(v)]] 
+
+exercise tree
+title Basic derivation for "believe"
+directions Intensional function application is triggered at the VP parent
+directions of "believes", binding the distinguished world variable w
+directions in the denotation of the complement of "believes".
+directions Dox(w,x,v) is read as "possible world v is a doxastic alternative
+directions for x in possible world w".
+directions The final result can be glossed as "in every doxastic alternative
+directions v for Mary in the base world, John is asleep".
+
+[.S Mary [.VP [.V believes] [.S [.NP John] [.VP to [.VP be [.AP asleep]]]]]]
+
+exercise tree
+title Narrow scope ("de dicto")
+directions This reading does not entail that there are yetis.
+directions The world argument of the predicate 'yeti' is the belief
+directions world, rather than the base world.
+
+[.S Mary [.VP [.V believes] [.S [.NP some [.N yeti]] [.VP to [.VP be [.AP asleep]]]]]]
+
+exercise tree
+title Wide scope ("de re")
+directions  This reading entails that there are yetis, because a
+directions witness for the existential quantifier must be a yeti in the base
+directions world.
+
+[.S  [.NP some [.N yeti]] [.S 1 [.S Mary [.VP [.V believes] [.S t_1 [.VP to [.VP be [.AP asleep]]]]]]]]

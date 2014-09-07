@@ -1,0 +1,71 @@
+Companion file to "Chinese dou and cumulative quantification" (Yanyan Sui and Lucas Champollion, MACSIM poster presentation 2010) -- Lucas Champollion, Apr 6 2010
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+
+# General constants and variables
+
+variables of type e : x y z X Y Z
+variables of type v : e
+variables of type <e,t> : P Q
+variables of type <v,t>: V
+variables of type <e,<v,t>>: R
+constants of type <v,e>: agent theme
+constants of type <<v,et>,<v,et>>: starstar
+
+multiple letter identifiers
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+
+#define dou: LR.LX.Le.starstar(Le'.Lx.[atom(x) & R(x)(e') & V(e')])(e)(X)
+define dou: LR.LP.LV.Le.EX.[P(X) & starstar(Le'.Lx.[atom(x) & R(x)(e') & V(e')])(e)(X)]
+
+define agent, v, ba: LX.Le.[agent(e)=X]
+define theme: LX.Le.[theme(e)=X]
+
+define three-kids: LX.three-kids(X)
+
+define ten-apples: LX.ten-apples(X)
+
+define eat: Le.eat(e)
+
+define existential-closure: LV.Ee.V(e)
+
+define lift: LR.LP.LV.Le.[ V(e) & EX.[P(X) & [R(X)(e)]]]
+
+##########################################################################################
+
+exercise tree
+title Example sentences
+
+instructions san-ge  haizi chi-le     shi-ge   pingguo \\
+instructions three-CL kid eat-ASP     ten-CL  apple \\
+instructions Cumulative reading
+[ existential-closure [ [ three-kids [ lift agent ]] [ eat [ ten-apples [ lift theme ]]]]]
+
+instructions san-ge     haizi dou chi-le     shi-ge   pingguo \\
+instructions three-CL kid    dou   eat-ASP  ten-CL apple \\
+instructions Distributive reading
+[ existential-closure [ [ three-kids [ dou agent ]] [ eat [ ten-apples [ lift theme ]]]]]
+
+instructions san-ge haizi ba shi-ge pingguo chi-le \\
+instructions three-CL kid CAUSE ten-CL  apple eat-ASP \\
+instructions Cumulative reading
+[ existential-closure [ [ three-kids [ lift ba ]] [[ ten-apples [ lift theme ]] eat ]]]
+
+instructions san-ge haizi ba shi-ge pingguo dou chi-le \\
+instructions three-CL kid CAUSE ten-CL apple DOU eat-ASP \\
+instructions Cumulative reading
+[ existential-closure [ [ three-kids [ lift ba ]] [[ ten-apples [ dou theme ]] eat ]]]
+
+instructions san-ge haizi dou ba shi-ge pingguo chi-le \\
+instructions three-CL kid DOU CAUSE ten-CL  apple eat-ASP \\
+instructions Distributive reading
+[ existential-closure [ [ three-kids [ dou ba ]] [[ ten-apples [ lift theme ]] eat ]]]
+
+
+

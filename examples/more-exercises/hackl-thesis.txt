@@ -1,0 +1,108 @@
+Martin Hackl thesis
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to Martin Hackl's work remains with him.
+
+variables of type s : w v w'
+constants of type e : a b c the-table the-rug john dennis michael my-mother speaker
+variables of type n : d
+variables of type e : x-z
+variables of type <e,t> : P Q X-Z
+variables of type <n,t> : D
+constants of type <e*s,t>: students tattoos scoring-titles at-the-party man stand-in-square
+constants of type <e,<e,<s,t>>>: has
+constants of type <e,<e,t>>: met
+variables of type <e,et>: R
+constants of type <e*s,n>: height card width length
+constants of type <nt,n>: max intensional-max
+constants of type n: six-feet five three
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+use rule intensional function application
+
+
+define the-table: the-table
+define the-rug: the-rug
+define john: john
+define dennis: dennis
+define michael: michael
+define my-mother: my-mother
+define I: speaker
+define tattoos: Lx.tattoos(x,w)
+define scoring-titles: Lx.scoring-titles(x,w)
+define man: Lx.man(x,w)
+define have,has: LyLx.has(x)(y)(w)
+define met: LyLx.met(x)(y)
+define were-standing-in-square-formation: Lx.stand-in-square(x,w)
+define students: Lx.students(x,w)
+define at-the-party: Lx.at-the-party(x,w)
+define tall : Ld.Lx.[height(x,w) >= d]
+define long : Ld.Lx.[length(x,w) >= d]
+define wide : Ld.Lx.[width(x,w) >= d]
+define many-trad : Ld.Lx.[card(x,w) >= d]
+define many : Ld.LP.LQ.Ex.[card(x,w) >= d & P(x) & Q(x)]
+define er-than-six-feet-hackl: LD.Ed.[D(d) & d >= six-feet ]
+define er-hackl: LD.LD'.[intensional-max(D') > intensional-max(D)]
+define six-feet: six-feet
+define BE: Ld'.Ld.[d=d']
+define AND: LD.LD'.Ld.[D(d)&D'(d)]
+define there: LQ.Ex.Q(x)
+define lift-tv: LQ.LR.Ly.Ex.[Q(x) & R(x)(y)]
+define three: 3
+define five: 5
+
+exercise tree
+title Martin Hackl thesis
+
+instructions John is six feet tall. (Martin Hackl: leaves out the zero)
+[.S john [ (is) [.AP  six-feet tall]]]
+
+instructions Measure phrase comparative: John is taller than six feet.
+[.S [ er-hackl [ six-feet BE ] ] [ 1<n> [ john [ (is) [ t<n>_1 tall ]]]]]
+
+instructions The table is longer than the rug is wide. \\
+instructions \\
+instructions 
+[ [er-hackl [2<n> [ the-rug [ (is) [ t<n>_2 wide ]]]]] [  (than) [ 1<n> [ the-table [ (is) [ t<n>_1 long ]]]]]]
+
+instructions There are more than five students at the party.
+instructions \\
+instructions what Hackl calls the "traditional" analysis. Following Ross and Bresnan, more is taken to be many+er. The "traditional" analysis does not account for the MNPG generalization in chapter 2.
+[ [er-hackl [ (than) [ five BE ] ] ] [ 1<n> [ there [ (are) [[[ t<n>_1 many-trad ]  students ] at-the-party ]]]]]
+
+instructions  Michael has more scoring titles than Dennis has tattoos.
+instructions \\
+instructions Comparative subdeletion. What Hackl calls the "traditional" analysis. 
+[ [er-hackl [ 2<n> [ dennis [ has [ lift-tv [[t<n>_2 many-trad ] tattoos ]]]]]] [ 1<n> [ michael [ has [ lift-tv [[ t<n>_1 many-trad ] scoring-titles ]]]]]]
+
+instructions  ??I met a taller man than my mother.
+instructions \\
+instructions abstracting away from QR of "a tall man"
+[ [er-hackl [2<n> [ my-mother [ (is) [ (a) [ [ t<n>_2 tall ] man ]]]]]] [ 1<n> [ I [ met [ (a) [ lift-tv [[ t<n>_1 tall ] man ]]]]]]]
+
+instructions  (I met a) man taller than my mother.
+instructions \\
+[ man [ 3<e> [ [er-hackl [2<n> [ my-mother [ (is) [ t<n>_2 tall ]]]]] [ 1<n> [ t<e>_3 [ (is) [ t<n>_1 tall ]]]]]]]
+
+
+instructions More than three students were standing in square formation.
+instructions \\
+instructions \\
+instructions Intensional max is defined in Hackl 2000, p. 109. There he intensionalizes the entire grammar. I didn't implement this in all detail here.
+instructions \\
+instructions Hackl writes that " the measure phrase/numeral moves inside the than-clause to the left periphery to create a derived degree predicate. It is also type-shifted into a predicative meaning to intersect with the landing site of the movement very much like a free relative. I.e. I  propose to extend the technical solution to measure phrase comparatives that was already needed in the classical analysis to the now enriched analysis of measure phrase comparatives with a clausal source for the than-constituent." The technical solution he refers to is the BE operator. But in order to get the intersection, you need to extend predicate modification to degree predicates. This is done with an ad hoc AND operator here. See Takahashi 2006 for another operator (NUM).
+[[er-hackl [ (than) [ [ [ three BE ] AND ] [ 1<n> [[[ t<n>_1 many ]  students ] were-standing-in-square-formation ]]]]] [ 1<n> [[[ t<n>_1 many ]  students ] were-standing-in-square-formation ]]]

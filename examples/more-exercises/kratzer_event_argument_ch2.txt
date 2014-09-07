@@ -1,0 +1,43 @@
+Angelika Kratzer, ch. 2 of The Event Argument and the Semantics of Verbs
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to Angelika Kratzer's work remains with her.
+
+multiple letter identifiers
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+
+variables of type <e,<v,t>>: R
+variables of type v: e
+variables of type e: x y z
+variables of type <v,t>: T
+variables of type <e,t>: P S
+
+constants of type <e,<v,t>>  : agent
+constants of type <v*v,t>: is-atomic-epart-of
+constants of type <e,<v,t>>: catch-kratzer patient
+constants of type <v,t>: catch
+variables of type <<e,<v,t>>,<v,t>>: Q
+variables of type <<e,t>,t>: U
+
+
+define every-mistake: LR.Le.Ay[mistake(y) ->Ee'.[is-atomic-epart-of(e',e) & R(y)(e')]]
+define every: LP.LS.Ax.[P(x)->S(x)]
+define mistake: Lx.mistake(x)
+define op: LU.LR.Le.U(Ly.Ee'.[is-atomic-epart-of(e',e) & R(y)(e')])
+define caught-kratzer: LQLxLe[agent(x)(e) & Q(catch-kratzer)(e)]
+define caught: LQLxLe[agent(x)(e) & catch(e) & Q(patient)(e)]
+define three-copy-editors: LR.Le.Ex[three-copy-editors(x) & R(x)(e)]
+
+define closure: LT.Ee.T(e)
+##########################################################################################
+
+exercise tree
+title page 10/11
+
+[ closure [ three-copy-editors [ caught-kratzer every-mistake ] ] ]
+[ closure [ three-copy-editors [ caught [ op [ every mistake ] ] ] ] ]

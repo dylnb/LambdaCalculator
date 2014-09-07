@@ -1,0 +1,167 @@
+Problem set on reflexivization, event semantics, and relative clauses
+
+# Author of this file: Maribel Romero
+
+constants of type e : c p r s j m speaker
+variables of type e : x-z
+variables of type v : e
+variables of type <e,t> : P-Q X-Z
+variables of type <e,et> : R
+variables of type <e,<e,et>> : S
+variables of type <v,t> : T
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+define sleep,sleeps : Lx[sleep(x)]
+define happy : Lx[happy(x)]
+define guy : Lx[guy(x)]
+define love, loves : LyLx[love(x,y)]
+define someone, somebody : LX[Ex[X(x)]]
+define everyone, everybody : LX[Ax[X(x)]]
+# TODO when we define "someone" as  LP[Ex[P(x)]],
+# we should get an immediate warning because P is declared above to 
+# be a constant
+define a : LX.LY.[Ex[X(x)&Y(x)]]
+define is : LX.Lx.[X(x)]
+define closure: LT[Ee[T(e)]]
+define khali: p
+define Nd-: speaker
+define Mukasa: m
+
+define hug: Le[hug(e)]
+define far: Le[hold(e)]
+
+# can we define "is" as LX.X?
+define John : j	
+define Mary : m
+
+
+# Finally, the exercises themselves are entered.
+
+exercise tree
+title Reflexivizing affixes as arity reducers
+directions In some languages, there is a morpheme (e.g., Middle Voice in Ancient 
+directions Greek, reflexivizing affix in Kannada, Passive Voice in Finnish, etc.) 
+directions that attaches to the verb stem and reduces its arity by one. Let us 
+directions take the following imaginary morphemes alpha, beta, gamma, and delta. 
+directions Assuming the syntactic structure given, give a denotation for each of 
+directions these morphemes (in lambda-notation, for any arbitrary situation). \\
+directions \\
+directions Note the typing conventions of P, R and S.
+
+# [.IP [NPsu [.VP [.V' [.V^0 MORPH Vstem] NPdo] NPio]]]
+
+instructions For the sentence in (1), make the structure below yield
+instructions the meaning in (2) by supplying the denotation of alpha.
+instructions (1) Carlos-SU alpha-shaves \\
+instructions (2) “Carlos shaves Carlos” (i.e., Carlos shaves himself)
+[.IP Carlos [.VP alpha shaves]]
+
+instructions For the sentence in (1), make the structure below yield
+instructions the meaning in (2) by supplying the denotation of beta.\\
+instructions (1) Carlos-SU  beta-introduces  Paco-DO. \\
+instructions (2) “Carlos introduces Paco to Carlos (ie. himself).”
+[.IP Carlos [.VP [.V^0 beta introduces] Paco ]]
+
+instructions For the sentence in (1), make the structure below yield
+instructions the meaning in (2) by supplying the denotation of gamma.\\
+instructions (1) Carlos-SU  gamma-introduces  Paco-DO. \\
+instructions (2) “Carlos introduces Paco to Paco (ie. himself).”
+[.IP Carlos [.VP [.V^0 gamma introduces] Paco ]]
+
+instructions For the sentence in (1), make the structure below yield
+instructions the meaning in (2) by supplying the denotation of delta.\\
+instructions (1) Carlos-SU  delta-introduces  Paco-IO. \\
+instructions (2) “Carlos introduces nobody but Carlos (ie. nobody but himself) to Paco.”
+[.IP Carlos [.VP [.V^0 delta introduces] Paco ]]
+
+exercise tree
+title Neo-Davidsonian semantics and applicatives
+directions We have assumed that, in the formal translation of a sentence,
+directions a predicate combines with its Agent, Patient, Goal, etc., directly,
+directions as shown in (2)-(3) (NOTE: For simplicity, in this entire exercise, assume that "the-pot" or "khali" denotes this particular pot p.)  \\
+directions  \\
+directions (1)	Ron hugged Sue. \\
+directions (2)	[[(1)]] = 1 iff {hug(r,s)} \\
+directions (3)	[[hug]] = {LxLy.hug(y,x)} \\
+directions \\
+directions An alternative view posits that the formal predicate combines only to
+directions its event argument, while the theta roles are introduced as separate
+directions formal predicates relating the event to the relevant argument. This
+directions approach, called neo-Davidsonian, is exemplified in (4), where e is
+directions an event variable, type v.  To achieve the truth conditions in (4),
+directions two compositional approaches have been pursued: (5) and (6). \\
+directions (4)	[[(1)]] = 1 iff {Ee.[hug(e) & ag(e,r) & pat(e,s)]} \\
+directions (5)	[[hug]] = {LxLyLe.hug(e) & ag(e,y) & pat(e,x)}  \\
+directions (6)	[[hug]]	= {Le.hug(e)} \\
+directions In this exercise we’ll concentrate in the second version of the
+directions neo-Davidsonian approach, in (6).
+
+instructions Ron hugged Sue in Philadelphia. \\
+instructions 1) Spell out the denotations of the functional head Ag0 and Pat0
+instructions as lambda-expressions of type <<v,t>,<e,<v,t>>>, 2) spell out the
+instructions denotation of the preposition in as a lambda-expression of type
+instructions <e,<vt,vt>>, and 3) do the semantic computation of the sentence step
+instructions by step.
+[.IP closure [.AgP [.NP Ron] [.Ag' Ag^0 [.PatP [.PatP [.Pat' [.V hug] Pat^0] [.NP Sue] ] [.PP in Philadelphia] ]]]]
+
+instructions Your second task is to apply the Neo-Davidsonian analysis to 
+instructions Venda, a Bantu language spoken by about one million people mainly in 
+instructions South Africa. Venda, like many Bantu languages, has an applicative morpheme,
+instructions that is to say, a morpheme that provides the means of adding an indirect
+instructions object to the argument structure of a verb. (In English, the word "John" in
+instructions "I baked John a cake" could be seen as having been introduced by a zero 
+instructions applicative morpheme.) In this exercise, we will develop a simplified
+instructions version of the analysis of high applicatives in Pylkkänen (2002). 
+instructions \\
+instructions Assuming the partial syntactic
+instructions structure below for example (1), provide the denotation of the
+instructions applicative el morpheme. Do the semantic interpretation of the entire
+instructions tree step by step, using the lexical entries you proposed in the
+instructions previous question. [NOTES: Use "benefactive" to name the thematic 
+instructions relation introduced by "el". Use English in your logical 
+instructions representations, e.g. {Le.hold(e)} rather than {Le.far(e)}. 
+instructions Conveniently ignore any morphemes not represented in the tree below.
+instructions Also, assume that khali denotes a particular pot p.] \\
+instructions \\
+instructions (1) Nd-o-far-el-a Mukasa khali \\
+instructions 1sg-PAST-hold-APPL-FINALVOWEL Mukasa pot \\
+instructions “I held the pot for Mukasa.” (Pylkkänen 2002, p. 25)
+
+[.IP closure [.AgP [.NP Nd- ] [.Ag' Ag^0 [.PatP [.Pat' [.ApplP [.Appl' [.V^0 far] [.Appl^0 el]] Mukasa] Pat^0] khali]]]]
+
+
+exercise tree
+title Relative clauses and binding - Skip this if using the new version of the calculator
+
+instructions Do the semantic computation of "the woman whose portrait pleased her husband", which we analyze as (1). Assume that "portrait-of" and "husband-of" are of type <e,<e,t>>, just like transitive verbs.
+instructions \\
+instructions (1) the woman who the portrait of pleased the husband of
+
+[.DP the [.NP woman [.CP who_1 [.IP [.DP the [.NP portrait-of t_1]] [.VP pleased [.DP the [.NP husband-of her_1]]]]]]]
+
+
+instructions Do the semantic computation of (1) below. 
+instructions \\
+instructions (1) the woman who1 introduced her1 niece to the rock-star (who3) she1 liked t3
+
+[.DP_1 the [.NP_1 woman [.CP_1 who_1 [.IP_1 t_1 [.VP_1 [.VP introduced [.DP_3 the [.NP_3 niece-of hers_1]]] [.PP (to) [.DP_3 the [.NP_3 rock-star [.CP_3 who_3 [.IP_3 she_1 [.VP liked t_3] ] ]] ]]]]]]]

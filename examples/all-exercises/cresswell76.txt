@@ -1,0 +1,61 @@
+Cresswell 1976 adapted
+
+# Author and license holder of this file: Lucas Champollion (champollion@nyu.edu)
+# This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). You are free to share — copy and redistribute the material in any medium or format; adapt — remix, transform, and build upon the material for any purpose, even commercially. 
+# The copyright to Max Cresswell's work remains with him.
+
+constants of type e: bill tom ophidia
+constants of type <e,t>: man snake
+variables of type e: x y z
+variables of type <e,t>: P
+variables of type n: d
+variables of type <n,t>: D
+constants of type <et,<e,nt>>: tall long
+constants of type <e,n>: length height
+
+
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+use rule intensional function application
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+define Bill: bill
+define Tom: tom
+define Ophidia: ophidia
+define man: man
+define snake: snake
+define tall: LP.Lx.Ld.[P(x) & height(x)=d]
+define long: LP.Lx.Ld.[P(x) & length(x)=d]
+define er-than: LD.LD'.Ad'.Ad.[D'(d') & D(d) -> d' > d]
+
+
+# Finally, the exercises themselves are entered.
+
+exercise tree
+title Traditional analysis
+
+
+
+instructions Bill is a taller man than Ophidia is a long snake.
+[[1<n> [[Bill [ tall man ]] t<n>_1]] [ er-than [2<n> [[Ophidia [ long snake ]] t<n>_2]]]]
+
+
+
