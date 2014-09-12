@@ -80,7 +80,7 @@ public class BracketedTreeParser {
     public static HashMap traceTypes = new HashMap();
 
     public static Nonterminal parse(String tree) throws SyntaxException {
-        // A quick and dirty recurive cfg parser.
+        // A quick and dirty recursive cfg parser.
         
         // A stack of the nonterminal nodes from the root down to (but not
         // including) the nonterminal node currently being processed.

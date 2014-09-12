@@ -131,7 +131,7 @@ public class ExerciseFileParser {
                 } else if (line.startsWith("variable of type ")) {
                     parseTypeLine("variable of type ".length(), true, line, typer, linectr);
                 }
-                // Exercise Files directly set the static field of the TraininWindow class, bypassing
+                // Exercise Files directly set the static field of the TrainingWindow class, bypassing
                 // the singleton instance
                 TrainingWindow.setCurrentTypingConventions(typer);
 
@@ -216,24 +216,27 @@ public class ExerciseFileParser {
                 } else if (extype.equals("semantic types")) {
                     try {
                         ex = new TypeExercise(line, exprParseOpts, exindex++, typer.cloneTyper());
-                    } catch (Exception e) {
+                    } catch (SyntaxException e) {
+                        throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
+                    } catch (TypeEvaluationException e) {
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
                     }
                 } else if (extype.equals("lambda conversion")) {
                     try {
                         ex = new LambdaConversionExercise(line, exprParseOpts, exindex++, typer.cloneTyper());
-                    } catch (Exception e) {
+                    } catch (SyntaxException e) {
+                        throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
+                    } catch (TypeEvaluationException e) {
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
                     }
                 } else if (extype.equals("tree")) {
                     try {
                         ex = new TreeExercise(line, exindex++, typer.cloneTyper());
                         ((TreeExercise)ex).getTree().guessLexicalEntries(file.getLexicon());
-                        boolean nonBranchingOnly = !lambdacalc.Main.GOD_MODE;
-                        ((TreeExercise)ex).getTree().guessRules(file.getRules(), nonBranchingOnly);
+//                        boolean nonBranchingOnly = !lambdacalc.Main.GOD_MODE;
+//                        ((TreeExercise)ex).getTree().guessRules(file.getRules(), nonBranchingOnly);
                             
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (SyntaxException e) {
                         throw new ExerciseFileFormatException(e.getMessage(), linectr, line);
                     }
                 }

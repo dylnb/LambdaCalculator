@@ -91,16 +91,14 @@ public class FunctionApplicationRule extends CompositionRule {
         LFNode left = node.getChild(0);
         LFNode right = node.getChild(1);
         
-        if (onlyIfApplicable && left instanceof BareIndex) {
+        if (onlyIfApplicable && left instanceof BareIndex)
             throw new MeaningEvaluationException("The left child of this node is" +
                     " an index for lambda abstraction. Function application is " +
                     "undefined on such a node.");
-        }
-        if (onlyIfApplicable && right instanceof BareIndex) {
+        if (onlyIfApplicable && right instanceof BareIndex)
             throw new MeaningEvaluationException("The right child of this node is" +
                     " an index for lambda abstraction. Function application is " +
                     "undefined on such a node.");
-        }
         
         Expr leftMeaning, rightMeaning;
         HashMap<Type,Type> typeMatches = new HashMap<Type,Type>();
@@ -108,13 +106,12 @@ public class FunctionApplicationRule extends CompositionRule {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();
         } catch (MeaningEvaluationException mee) {
-           if (onlyIfApplicable) {
+            if (onlyIfApplicable)
                throw mee;
-           } else if (defaultApplyLeftToRight) {
+            else if (defaultApplyLeftToRight)
                 return apply(left, right, g);
-           } else {
+            else
                 return apply(right, left, g);
-           }
         }
 
         if (isFunctionOf(leftMeaning, rightMeaning)) {
@@ -137,14 +134,13 @@ public class FunctionApplicationRule extends CompositionRule {
 
         if (onlyIfApplicable) {
             throw new MeaningEvaluationException("The children of the nonterminal "
-                    + (node.getLabel() == null ? node.toString() : node.getLabel())+ " are not of compatible types for function " +
-                    "application.");
+                + (node.getLabel() == null ? node.toString() : node.getLabel())+
+                " are not of compatible types for function application.");
         } else {
-            if (defaultApplyLeftToRight) {
+            if (defaultApplyLeftToRight)
                 return apply(left, right, g);
-            } else {
+            else
                 return apply(right, left, g);
-            }
         }
     }
     

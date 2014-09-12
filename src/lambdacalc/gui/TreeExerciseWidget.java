@@ -126,22 +126,20 @@ public class TreeExerciseWidget extends JPanel {
         
         public MeaningState(Expr meaning) {
             // Add the expression and simplification steps of it to exprs.
-            
-            exprs.add(meaning);
+            Expr m = meaning;
+            exprs.add(m);
             
             try {
-                Expr meaning2 = MeaningBracketExpr.replaceAllMeaningBrackets(meaning);
-                if (!meaning.equals(meaning2))
-                    exprs.add(meaning2);
-                meaning = meaning2;               
+                Expr m2 = MeaningBracketExpr.replaceAllMeaningBrackets(m);
+                if (!m.equals(m2)){
+                    exprs.add(m2);
+                }
+                m = m2;               
             } catch (TypeEvaluationException tee) {
                 evaluationError = tee.getMessage();
-                return;
             } catch (MeaningEvaluationException mee) {
                 evaluationError = mee.getMessage();
-                return;
             }
-
             
             // When we're in God mode, we pre-simplify the expression so we know
             // all of the steps in the simplification ahead of time. When not in
@@ -149,20 +147,22 @@ public class TreeExerciseWidget extends JPanel {
             // above of taking away the meaning brackets. Additional methods
             // are provided for advancing the simplification state, which appends
             // simplification steps into this state.
-//            if (!lambdacalc.Main.GOD_MODE)
-//                return;
-//            
-//            while (true) {
-//                try {
-//                    Expr.LambdaConversionResult r = meaning.performLambdaConversion();
-//                    if (r == null) break;
-//                    meaning = r.result;
-//                    exprs.add(meaning);
-//                } catch (TypeEvaluationException tee) {
-//                    evaluationError = tee.getMessage();
-//                    return;
-//                }
-//            }
+            if (!lambdacalc.Main.GOD_MODE) {
+                return;
+            }
+            while (true) {
+                try {
+                    Expr.LambdaConversionResult r = m.performLambdaConversion();
+                    if (r == null) {
+                      break;
+                    }
+                    m = r.result;
+                    exprs.add(m);
+                } catch (TypeEvaluationException tee) {
+                    evaluationError = tee.getMessage();
+                    return;
+                }
+            }
         }
         
         public MeaningState(Vector steps) {
@@ -174,8 +174,6 @@ public class TreeExerciseWidget extends JPanel {
             return (Expr)this.exprs.get(this.curexpr);
         }
     }
-    
-
     
     public interface SelectionListener {
         void selectionChanged(SelectionEvent evt);
@@ -189,10 +187,7 @@ public class TreeExerciseWidget extends JPanel {
     }
 
     public TreeExerciseWidget() {
-        
         setLayout(new BorderLayout());
-        
-
         
         scrollpane = new JScrollPane();
         canvas = new TreeCanvas();
@@ -388,13 +383,14 @@ public class TreeExerciseWidget extends JPanel {
            try {
                Expr m = t.getMeaning();
                lfToMeaningState.put(t, new MeaningState(m));
-           } catch (Exception e) {
-           }
-           
+           } catch (Exception e) {}
         } else {
-           // For nonterminals, we just clear the meaning state.
+            // For nonterminals, we  clear the meaning state, and delete
+            // both its meaning and its composition rule
             lfToMeaningState.remove(node);
             ((Nonterminal)node).setUserMeaningSimplification(null);
+            ((Nonterminal)node).setCompositionRule(null);
+            ((Nonterminal)node).setMeaning(null);
         }
 
         updateNode(node);
@@ -404,6 +400,8 @@ public class TreeExerciseWidget extends JPanel {
         while (ancestor != null) {
             lfToMeaningState.remove(ancestor);
             ancestor.setUserMeaningSimplification(null);
+            ancestor.setCompositionRule(null);
+            ancestor.setMeaning(null);
             updateNode(ancestor);
             ancestor = (Nonterminal)lfToParent.get(ancestor);
         }
@@ -458,11 +456,11 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     private void fireSelectedNodeChanged() {
-        // Notify listeners that the selected node changed.
-        for (int i = 0; i < listeners.size(); i++) {
-            SelectionListener sl = (SelectionListener)listeners.get(i);
-            sl.selectionChanged(new SelectionEvent(selectedNode));
-        }
+      // Notify listeners that the selected node changed.
+      for (int i = 0; i < listeners.size(); i++) {
+          SelectionListener sl = (SelectionListener)listeners.get(i);
+          sl.selectionChanged(new SelectionEvent(selectedNode));
+      }
     }
     
     void updateButtonEnabledState() {
@@ -472,8 +470,8 @@ public class TreeExerciseWidget extends JPanel {
         
         
         // if we're on a dummy node or index we switch the buttons off
-        // TODO switch them on and make it work without generating an error
-        // on these buttons
+        // TODO: switch them on and make it work without generating an error
+        //       on these buttons
         
         if (selectedNode != null && 
                (selectedNode instanceof BareIndex ||
@@ -483,8 +481,7 @@ public class TreeExerciseWidget extends JPanel {
             btnNextStep.setEnabled(false);
             btnPrevStep.setEnabled(false);
             return;
-        } else {
-        }
+        } else {}
         
     // Check what buttons should be enabled now
         btnSimplify.setEnabled(doSimplify(true));
@@ -496,11 +493,13 @@ public class TreeExerciseWidget extends JPanel {
         String simplifyText = "Simplify Node";
         //String unSimplifyText = "Undo Simplify";
         if (lambdacalc.Main.GOD_MODE) {
-            if (selectedNode != null && selectedNode instanceof Terminal)
-                simplifyText = "Next Node";
-            else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode))
-                simplifyText = "Evaluate Node";
-                //unSimplifyText = "Undo Eval";
+          if (selectedNode != null && selectedNode instanceof Terminal)
+              simplifyText = "Next Node";
+          else if (selectedNode != null
+                   && !lfToMeaningState.containsKey(selectedNode)) {
+            simplifyText = "Evaluate Node";
+            //unSimplifyText = "Undo Eval";
+          }
         }
         btnSimplify.setText(simplifyText);
         //btnUnsimplify.setText(unSimplifyText);
@@ -539,9 +538,9 @@ public class TreeExerciseWidget extends JPanel {
             res += "[";
             Nonterminal nt = (Nonterminal) cur;
             JLabel meaningLabel = (JLabel)lfToMeaningLabel.get(cur);
-            if (lfToMeaningState.containsKey(cur)) { // has the node been evaluated?
+            if (lfToMeaningState.containsKey(cur)) { // node has been evaluated
                 MeaningState ms = (MeaningState)lfToMeaningState.get(cur);
-                if (ms.evaluationError == null) { // was there an error?
+                if (ms.evaluationError == null) { // there was an error
                     Expr expr = ms.getCurrentExpression();
                     res += ".{";
                     if (cur.getLabel() != null) {
@@ -578,17 +577,18 @@ public class TreeExerciseWidget extends JPanel {
         JPanel nodePanel = (JPanel)lfToTreeLabelPanel.get(node);
 
         java.awt.Color borderColor = getBackground();
-        if (node == selectedNode)
+        if (node == selectedNode) {
             borderColor = java.awt.Color.BLUE;
+        }
         nodePanel.setBorder(new javax.swing.border.LineBorder(borderColor, 2, true));
     
         JTextPane orthoLabel = (JTextPane)lfToOrthoLabel.get(node);
         String labeltext = node.toHTMLString();
-        if (labeltext == null || labeltext.trim().length() == 0)
+        if (labeltext == null || labeltext.trim().length() == 0) {
             labeltext = "&nbsp;-&nbsp;";
-        orthoLabel.setText("<center style=\"font-size: " + curFontSize + "pt\">" + labeltext + "</font></center>");
-        
-        
+        }
+        orthoLabel.setText("<center style=\"font-size: " + curFontSize + "pt\">"
+                           + labeltext + "</font></center>");
         
         // Update the lambda expression displayed, if it's been evaluated.
         // If an error ocurred during evaluation, display it. Otherwise
@@ -604,10 +604,9 @@ public class TreeExerciseWidget extends JPanel {
             typeLabel.setFont(lambdacalc.gui.Util.getUnicodeFont(curFontSize));
         }
 
-        if (lfToMeaningState.containsKey(node)) { // has the node been evaluated?
+        if (lfToMeaningState.containsKey(node)) { // the node been evaluated
             MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-            if (ms.evaluationError == null) { // was there an error?
-                //meaningLabel.setText("<center><font color=blue>" + ((Expr)ms.exprs.get(ms.curexpr)).toHTMLString() + "</font></center>");
+            if (ms.evaluationError == null) { // evaluation was successful
                 Expr expr = ms.getCurrentExpression();
                 meaningLabel.setText(expr.toString());
                 meaningColor = java.awt.Color.BLUE;
@@ -616,18 +615,18 @@ public class TreeExerciseWidget extends JPanel {
                         typeLabel.setText(expr.getType().toShortString());
                     } catch (TypeEvaluationException e) {
                         typeLabel.setText("Type unknown");
-                        String brokenMessage = breakIntoLines(e.getMessage(), 50);
-                        // breaking error message across lines doesn't seem to affect the way the tooltip
-                        // is displayed, at least on macs; might as well set the tip to e.getMessage()
+                        // break error message for tool tip display
+                        // TODO: the tool tip seems to ignore newlines anyway,
+                        //       at least on Macs
+                        String brokenMessage =
+                            breakIntoLines(e.getMessage(), 50);
                         typeLabel.setToolTipText(brokenMessage);
                         typeColor = java.awt.Color.RED;
                     }
                 }                
             } else { // there was an error in evaluating the node
-                //meaningLabel.setText("<center><font color=red>Problem!</font></center>");
                 meaningLabel.setText("Problem!");
                 meaningColor = java.awt.Color.RED;
-                
             }
 
             meaningLabel.setForeground(meaningColor);
@@ -636,12 +635,13 @@ public class TreeExerciseWidget extends JPanel {
                 typeLabel.setForeground(typeColor);
                 typeLabel.setVisible(true);
             }
-        } else { // the noded has not been evaluated
+        } else { // the node has not been evaluated
             meaningLabel.setVisible(false);
             meaningLabel.setText("");
             if (isTypesDisplayed()) {
-                if (node instanceof BareIndex) { // hack to display types of bare indices
-                    BareIndex bareIndex = (BareIndex) node;
+                if (node instanceof BareIndex) {
+                    // TODO: why this special block for show BareIndex types?
+                    BareIndex bareIndex = (BareIndex)node;
                     typeLabel.setForeground(typeColor);
                     typeLabel.setVisible(true);
                     try {
@@ -659,8 +659,9 @@ public class TreeExerciseWidget extends JPanel {
         
         if (node.equals(this.lftree)) { // the root node has changed
             this.exercise.setDone(isTreeFullyEvaluated()); 
-            // this makes the checkmark appear in the exercise tree to the left of the TrainingWindow GUI
-            //TODO activate the "repeat" button if the exercise is done
+            // this makes the checkmark appear in the exercise tree to the left
+            // of the TrainingWindow GUI
+            // TODO: activate the "repeat" button if the exercise is done
         }
     }
     
@@ -758,41 +759,55 @@ public class TreeExerciseWidget extends JPanel {
         // moves on to another node. If testOnly, just check whether there
         // is any simplification to be done and return that.
         
-        if (selectedNode == null) // nothing is selected?
+        if (selectedNode == null) {
             return false;
+        }
         
-        // Make all of the children fully evaluated, and if that's not possible,
-        // don't do anything further here. If we're just testing, don't perform
-        // it.
-        if (!testOnly && !ensureChildrenEvaluated())
+        // Fully evaluate all children. If that's not possible,
+        // don't do anything further here. If we're just testing, don't bother
+        // with this. 
+        if (!testOnly && !ensureChildrenEvaluated()) {
             return false;
+        }
         
-        // Node hasn't been evaluated yet. Evaluate it.
-        if (!isNodeEvaluated(selectedNode)) {
-            // If non-God-mode, the user can simplify non-branching-nodes with this button.
-            if (!lambdacalc.Main.GOD_MODE)
-                if (!(selectedNode instanceof Nonterminal && NonBranchingRule.INSTANCE.isApplicableTo((Nonterminal)selectedNode)))
+        if (!isNodeEvaluated(selectedNode)) { // node not yet evaluated
+            // If non-God-mode, the user can only simplify non-branching-nodes
+            // with this button.
+            if (!lambdacalc.Main.GOD_MODE) {
+                if (!(selectedNode instanceof Nonterminal
+                      && NonBranchingRule
+                         .INSTANCE.isApplicableTo((Nonterminal)selectedNode)))
                     return false;
-            
-            if (testOnly) return true;
+            }
+            if (testOnly) {
+                return true;
+            }
+            // Conditions for evaluation met. Go ahead and evaluate the node.
             evaluateNode(selectedNode);
             canvas.invalidate();
         } else if (nodeHasError(selectedNode)) {
             return false; // can't go further
         } else if (!isNodeAtFinalSimplificationState(selectedNode)) {
-            // Node is evaluated but not fully simplified, so go to the next
-            // simplification step.
-            if (testOnly) return true;
+            // node is evaluated but not fully simplified
+            if (testOnly) {
+              return true;
+            }
+            // Advance the reduction by one step.
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             ms.curexpr++;
             updateNode(selectedNode);
             canvas.invalidate();
-        } else {
-            if (!lambdacalc.Main.GOD_MODE) return false;
-            // Node is fully evaluated, so move to the next node.
-            if (!lfToParent.containsKey(selectedNode))
+        } else { // node is fully evaluated
+            if (!lambdacalc.Main.GOD_MODE) {
+              return false;
+            }
+            // Move on up to the next node.
+            if (!lfToParent.containsKey(selectedNode)) {
                 return false;
-            if (testOnly) return true;
+            }
+            if (testOnly) {
+              return true;
+            }
             moveTo((LFNode)lfToParent.get(selectedNode));
         }
         
@@ -800,34 +815,30 @@ public class TreeExerciseWidget extends JPanel {
     }
     
     boolean doUnsimplify(boolean testOnly) {
-        if (selectedNode == null) // nothing is selected?
+        if (selectedNode == null) {
             return false;
-        
+        }
         if (!isNodeEvaluated(selectedNode)) {
             // nothing to do
             return false;
         } else if (selectedNode instanceof Terminal) {
             return false;
         } else if (nodeHasError(selectedNode)) {
-            if (testOnly) return true;
-            ((Nonterminal)selectedNode).setCompositionRule(null); // clear composition rule too so it can be chosen again by user
+            if (testOnly) {
+              return true;
+            }
             onUserChangedNodeMeaning(selectedNode);
-            
-            /*
-            lfToMeaningState.remove(selectedNode);
-            updateNode(selectedNode);
-            canvas.invalidate();
-             */
-        } else {
-            if (testOnly) return true;
-            
+        } else { // node ready to be rewound by one step
+            if (testOnly) {
+              return true;
+            }
+            // Back up to previous reduction step.
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             if (ms.curexpr > 0) {
                 ms.curexpr--;
                 updateNode(selectedNode);
                 canvas.invalidate();
             } else {
-                ((Nonterminal)selectedNode).setCompositionRule(null); // clear composition rule too so it can be chosen again by user
                 onUserChangedNodeMeaning(selectedNode);
             }
         }
@@ -837,42 +848,48 @@ public class TreeExerciseWidget extends JPanel {
 
     boolean doNextStep(boolean testOnly) {
         // This fully evaluates the current node, if it has not been
-        // evaluated yet, but if it has been fully evaluated, then
+        // evaluated yet. If it has been fully evaluated, then
         // we move to the next node and evaluate it, but don't
         // simplify it.
-        if (selectedNode == null)
+        if (selectedNode == null) {
             return false;
+        }
             
-        // Make all of the children fully evaluated, and if that's not possible,
-        // don't do anything further here. If we're just testing, don't actually
-        // do it.
+        // Fully evaluate all children. If that's not possible,
+        // don't do anything further here. If we're just testing, don't bother
+        // with it.
         if (!testOnly && !ensureChildrenEvaluated())
             return false;
         
         if (!isNodeAtFinalSimplificationState(selectedNode)) {
-            if (testOnly) return !nodeHasError(selectedNode);
+            if (testOnly) {
+              return !nodeHasError(selectedNode);
+            }
         
-            if (!isNodeEvaluated(selectedNode))
+            if (!isNodeEvaluated(selectedNode)) {
                 evaluateNode(selectedNode);
+            }
                 
             canvas.invalidate();
             
-            if (nodeHasError(selectedNode))
+            if (nodeHasError(selectedNode)) {
                 return false;
+            }
         
-            // Move the simplification state to the last step.
+            // Skip ahead to fully reduced form.
             MeaningState ms = (MeaningState)lfToMeaningState.get(selectedNode);
             if (ms.curexpr < ms.exprs.size()-1) {
-                // Move the evaluation to the end.
                 ms.curexpr = ms.exprs.size()-1;
                 updateNode(selectedNode);
                 canvas.invalidate();
             }
         }
         
-        // This expression is fully evaluated. 
+        // This expression is fully evaluated. Move on up to the next node. 
         if (lfToParent.containsKey(selectedNode)) {
-            if (testOnly) return true;
+            if (testOnly) {
+              return true;
+            }
             Nonterminal parent = (Nonterminal)lfToParent.get(selectedNode);
             moveTo(parent);
         }
@@ -932,12 +949,10 @@ public class TreeExerciseWidget extends JPanel {
         if (selectedNode instanceof Terminal)
             return false;
         
-        if (testOnly) return true;
-        lfToMeaningState.remove(selectedNode);
-        ((Nonterminal)selectedNode).setUserMeaningSimplification(null);
-        onUserChangedNodeMeaning(selectedNode);
-        canvas.invalidate();
-        
+        if (testOnly) {
+          return true;
+        }
+        onUserChangedNodeMeaning(selectedNode);     
         return false;
     }
     
@@ -953,11 +968,14 @@ public class TreeExerciseWidget extends JPanel {
     }
         
     public boolean isNodeAtFinalSimplificationState(LFNode node) {
-        if (!isNodeEvaluated(node))
-            return false; // definitely not fully evaluated if it hasn't been evaluated (i.e. evaluation started) at all
-        
+        if (!isNodeEvaluated(node)) {
+            return false;
+        }
+
         MeaningState ms = (MeaningState)lfToMeaningState.get(node);
-        if (ms.evaluationError != null) return false;
+        if (ms.evaluationError != null) {
+          return false;
+        }
         
         return ms.curexpr == ms.exprs.size() - 1;
     }
@@ -997,13 +1015,15 @@ public class TreeExerciseWidget extends JPanel {
         try {
             Expr m = node.getMeaning();
             MeaningState s = new MeaningState(m);
-            if (node instanceof Nonterminal)
+            if (node instanceof Nonterminal) {
                 ((Nonterminal)node).setUserMeaningSimplification(s.exprs);
+            }
             lfToMeaningState.put(node, s); // no error ocurred
         } catch (MeaningEvaluationException e) {
             lfToMeaningState.put(node, new MeaningState(e.getMessage()));
-            if (node instanceof Nonterminal)
+            if (node instanceof Nonterminal) {
                 ((Nonterminal)node).setUserMeaningSimplification(null);
+            }
         }
         updateNode(node);
         canvas.invalidate();
@@ -1076,18 +1096,23 @@ public class TreeExerciseWidget extends JPanel {
     private void propogateMeaningUpNonBranchingNodes(LFNode node) {
         while (true) {
             Nonterminal parent = (Nonterminal)lfToParent.get(node);
-            if (parent == null) return; // root node has no parent
-
-            if (!NonBranchingRule.INSTANCE.isApplicableTo(parent))
+            if (parent == null) { // root node has no parent
+              return;
+            }
+            if (!NonBranchingRule.INSTANCE.isApplicableTo(parent)) {
+                // parent is branching
                 return;
-            
+            }
+            // Parent must be non-branching. Go ahead and evaluate it.
             parent.setCompositionRule(NonBranchingRule.INSTANCE);
             evaluateNode(parent);
             MeaningState ms = (MeaningState)lfToMeaningState.get(parent);
-            if (ms != null && ms.evaluationError == null) // skip freebie
+            if (ms != null && ms.evaluationError == null) {
+                // Skip the first reduction step (bracket removal)
                 ms.curexpr = ms.exprs.size() - 1;
+            }
             updateNode(parent);
-            
+            // Move up to parent, and repeat...
             node = parent;
         }
     }

@@ -35,13 +35,16 @@ public class Nonterminal extends LFNode {
     private Vector children = new Vector();
     
     private CompositionRule compositor;
-    private int compositorHits = 0;
     private Vector userProvidedMeaningSimplification; //of Expr objects
     
     protected Type type = null;
     protected Expr meaning = null;
     
-    
+  /**
+   *
+   * @return
+   */
+  @Override
     public List getChildren() {
         return children;
     }
@@ -83,9 +86,9 @@ public class Nonterminal extends LFNode {
     }
     
     public void setCompositionRule(CompositionRule rule) {
-        CompositionRule oldRule = compositor;
+//        CompositionRule oldRule = compositor;
         compositor = rule;
-        changes.firePropertyChange("compositionRule", oldRule, compositor);
+//        changes.firePropertyChange("compositionRule", oldRule, compositor);
     }
     
     //returns vector of Expr objects
@@ -98,19 +101,23 @@ public class Nonterminal extends LFNode {
         userProvidedMeaningSimplification = simplificationSteps;
     }
     
+    @Override
     public String getDisplayName() {
         return "Nonterminal";
     }
     
+    @Override
     public boolean isMeaningful() {
         return true;
     }
     
+    @Override
     public Expr getMeaning(AssignmentFunction g)
-    throws MeaningEvaluationException {
+        throws MeaningEvaluationException {
         
-        if (this.meaning != null) return this.meaning;
-        
+        if (this.meaning != null) {
+            return this.meaning;
+        }
         if (lambdacalc.Main.GOD_MODE) {
             // Guess a composition rule, and if we don't find any, tell the user none seem to apply.
             if (compositor == null || !compositor.isApplicableTo(this))
@@ -120,19 +127,19 @@ public class Nonterminal extends LFNode {
                         "I do not know how to combine the children of the " + getLabel() + " node." +
                         " For instance, function application does not apply because neither child's " +
                         "denotation is a function whose domain is the type of the denotation of the other child.");
-            }
-            
-        } else if (compositor == null && NonBranchingRule.INSTANCE.isApplicableTo(this)) {
-            // We are always allowed to guess the non-branching rule, even when not in
-            // God mode.
-            compositor = NonBranchingRule.INSTANCE;
-            
+            } 
         } else {
-            if (compositor == null)
-                throw new NonterminalLacksCompositionRuleException
-                        (this, "Select a composition rule for the nonterminal "
+            if (compositor == null) { 
+                if (NonBranchingRule.INSTANCE.isApplicableTo(this))
+                    // We are always allowed to guess the non-branching rule, even when not in
+                    // God mode.
+                    compositor = NonBranchingRule.INSTANCE;
+                else
+                    throw new NonterminalLacksCompositionRuleException(this,
+                        "Select a composition rule for the nonterminal "
                         + toShortString() + " before you try" +
                         " to combine the children of this node.");
+            }
         }
         
         Expr m = compositor.applyTo(this, g, true);
@@ -145,14 +152,14 @@ public class Nonterminal extends LFNode {
         return m;
     }
     
-    public void setType (Type type) {
+    public void setType(Type type) {
         this.type = type;
     }
     
     public void setMeaning(Expr meaning) {
-        Expr oldMeaning = this.meaning;
+//        Expr oldMeaning = this.meaning;
         this.meaning = meaning;
-        changes.firePropertyChange("meaning", oldMeaning, this.meaning);
+//        changes.firePropertyChange("meaning", oldMeaning, this.meaning);
     }
     
     public boolean hasMeaning() {
@@ -166,6 +173,7 @@ public class Nonterminal extends LFNode {
      *
      * @return a sorted map of properties
      */
+    @Override
     public SortedMap getProperties() {
         SortedMap m = super.getProperties();
         m.put("Rule", this.getCompositionRule());
@@ -179,7 +187,9 @@ public class Nonterminal extends LFNode {
      * set yet and if it's uniquely determined.
      *
      * @param rules the rules
+     * @param nonBranchingOnly
      */
+    @Override
     public void guessRules(RuleList rules, boolean nonBranchingOnly) {
         for (int i = 0; i < children.size(); i++)
             getChild(i).guessRules(rules, nonBranchingOnly);
@@ -197,6 +207,7 @@ public class Nonterminal extends LFNode {
      *
      * @param lexicon the lexicon
      */
+    @Override
     public void guessLexicalEntries(Lexicon lexicon) {
         for (int i = 0; i < children.size(); i++)
             getChild(i).guessLexicalEntries(lexicon);
@@ -205,50 +216,54 @@ public class Nonterminal extends LFNode {
     
     
     private void guessCompositionRule(RuleList rules) {
-        for (int i = 0; i < rules.size(); i++) {
-            CompositionRule rule = (CompositionRule) rules.get(i);
-            if (rule.isApplicableTo(this)) {
-                if (compositorHits == 0) {
-                    // The first time we hit a compatible composition rule,
-                    // assign it to ourself.
-                    compositor = rule;
-                } else {
-                    if (!lambdacalc.Main.GOD_MODE) {
-                        // But on the next time we hit a compatible rule, clear
-                        // out what we set and return. We thus don't actually set
-                        // compositor unless there is a uniquely applicable rule.
-                        compositor = null;
-                        return;
-                    } else {
-                        // With polymorphic types, it's possible for there to be 
-                        // two legitimate applicable composition rules. Absent a more
-                        // robust type-inference engine, we have to ask God which one to use.
-                        // TODO: make this less horrible.
-                        TrainingWindow singleton = TrainingWindow.getSingleton();
-                        Object[] options = {compositor.toString(), rule.toString()};
-                        int n = JOptionPane.showOptionDialog(singleton,
-                                this + " can be combined in multiple ways.\n" +
-                                "Which composition rule would you like?",
-                                "Compositor Choice",
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE,
-                                null,     //do not use a custom Icon
-                                options,  //the titles of buttons
-                                options[0]); //default button title
-                        switch(n) {
-                            case 1:
-                                compositor = rule;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                compositorHits += 1;
+      int compositorHits = 0;
+
+      for (Object rule1 : rules) {
+        CompositionRule rule = (CompositionRule) rule1;
+        if (rule.isApplicableTo(this)) {
+          if (compositorHits == 0) {
+            // The first time we hit a compatible composition rule,
+            // assign it to ourself.
+            compositor = rule;
+          } else {
+            if (!lambdacalc.Main.GOD_MODE) {
+              // But on the next time we hit a compatible rule, clear
+              // out what we set and return. We thus don't actually set
+              // compositor unless there is a uniquely applicable rule.
+              compositor = null;
+              return;
+            } else {
+              // With polymorphic types, it's possible for there to be
+              // two legitimate applicable composition rules. We have
+              // to ask God which one to use.
+              // TODO: make this less horrible.
+              TrainingWindow singleton = TrainingWindow.getSingleton();
+              Object[] options = {compositor.toString(), rule.toString()};
+              String optionMessage = this + " can be combined in multiple ways."
+                 + "\n Which composition rule would you like?";
+              int n = JOptionPane.showOptionDialog(singleton,
+                                                   optionMessage,
+                                                   "Compositor Choice",
+                                                   JOptionPane.YES_NO_OPTION,
+                                                   JOptionPane.QUESTION_MESSAGE,
+                                                   null, //no custom Icon
+                                                   options, //button titles
+                                                   options[0]); //default title
+              switch(n) {
+                case 1:
+                  compositor = rule;
+                  break;
+                default:
+                  break;
+              }
             }
+          }
+          compositorHits += 1;
         }
+      }
     }
     
+    @Override
     public String toString() {
         String ret = "[";
         if (getLabel() != null) {

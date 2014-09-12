@@ -8,6 +8,8 @@ Polymorphic Variable-free semantics, Jacobson style
 
 multiple letter identifiers
 
+multiple reductions on
+
 # "use rule" directives are for tree evaluation exercises.
 # They indicate which composition rules are available
 # at nonterminals.
