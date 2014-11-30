@@ -1,3 +1,5 @@
+
+
 /*
  * IdentifierTyper.java
  *
@@ -5,7 +7,6 @@
  */
 
 package lambdacalc.logic;
-
 import java.util.*;
 import lambdacalc.exercises.Exercise;
 import lambdacalc.exercises.ExerciseFile;

@@ -22,7 +22,7 @@ import java.util.Vector;
 
 /**
  * Abstract base class of the binders, including the propositional binders 
- * For All and Exists, the Iota operator, and Lambda.
+ * For All and Exists, the Iota operator, the Gamma operator, and Lambda.
  */
 public abstract class Binder extends Expr implements VariableBindingExpr {
     
