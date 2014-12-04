@@ -180,10 +180,12 @@ public class TrainingWindow extends JFrame {
     public void updateLetterEnteringDisplay() {
         String mod = LambdaEnabledTextField.getModifier();
         lblHelpLambda.setText("Type " + mod + "-" + Character.toLowerCase(Lambda.INPUT_SYMBOL) + " for " + Lambda.SYMBOL);
-        lblHelpBinders.setText("Type " + mod + "-" + Character.toLowerCase(ForAll.INPUT_SYMBOL) + ", "
-                + mod + "-" + Character.toLowerCase(Exists.INPUT_SYMBOL) + ", and "
+        lblHelpBinders.setText("Type " 
+                + mod + "-" + Character.toLowerCase(ForAll.INPUT_SYMBOL) + ", "
+                + mod + "-" + Character.toLowerCase(Exists.INPUT_SYMBOL) + ", "
+                + mod + "-" + Character.toLowerCase(Gamma.INPUT_SYMBOL)+ ", and "
                 + mod + "-" + Character.toLowerCase(Iota.INPUT_SYMBOL) + " for " 
-                + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", and " + Iota.SYMBOL);
+                + ForAll.SYMBOL + ", " + Exists.SYMBOL + ", " + Gamma.SYMBOL + ", and " + Iota.SYMBOL);
         lblHelpBinaries.setText("Type " + And.INPUT_SYMBOL 
         + " or " + And.ALTERNATE_INPUT_SYMBOL + " for " + And.SYMBOL 
                 + " and " + mod + "-"

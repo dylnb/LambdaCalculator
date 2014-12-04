@@ -738,6 +738,7 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Exists")) return new Exists(input);
         if (exprType.equals("lambdacalc.logic.ForAll")) return new ForAll(input);
         if (exprType.equals("lambdacalc.logic.FunApp")) return new FunApp(input);
+        if (exprType.equals("lambdacalc.logic.Gamma")) return new Gamma(input);
         if (exprType.equals("lambdacalc.logic.GApp")) return new GApp(input);
         if (exprType.equals("lambdacalc.logic.If")) return new If(input);
         if (exprType.equals("lambdacalc.logic.Iff")) return new Iff(input);

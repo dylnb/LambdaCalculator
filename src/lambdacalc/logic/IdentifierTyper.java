@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright (C) 2007-2014 Dylan Bumford, Lucas Champollion, Maribel Romero
  * and Joshua Tauberer
@@ -26,7 +28,6 @@
  */
 
 package lambdacalc.logic;
-
 import java.util.*;
 import lambdacalc.exercises.Exercise;
 import lambdacalc.exercises.ExerciseFile;

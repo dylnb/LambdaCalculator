@@ -422,6 +422,8 @@ public class ExpressionParser {
                 case Exists.INPUT_SYMBOL: c = Exists.SYMBOL; break;
                 case Lambda.INPUT_SYMBOL: c = Lambda.SYMBOL; break;
                 case Iota.INPUT_SYMBOL: c = Iota.SYMBOL; break;
+                case Gamma.INPUT_SYMBOL: c = Gamma.SYMBOL; break;
+
             }
         }
         return c;
@@ -532,8 +534,8 @@ public class ExpressionParser {
             case ForAll.SYMBOL: //fall through
             case Exists.SYMBOL: //fall through
             case Lambda.SYMBOL: //fall through
-            case Iota.SYMBOL:
-                // Get the identifier that follows the binder.
+            case Iota.SYMBOL://fall through  
+            case Gamma.SYMBOL: //Get the identifier that follows the binder.
                 ParseResultSet vars = parseIdentifier(expression, start+1, context, "a variable");
                 if (vars.Exception != null) return vars; // return any fatal errors directly
                 ParseResult var = (ParseResult)vars.Parses.get(0); // parseIdentifier always returns a singleton, if anything
@@ -625,6 +627,8 @@ public class ExpressionParser {
                         case Exists.SYMBOL: bin = new Exists((Identifier)var.Expression, inside.Expression, hadPeriod); break;
                         case Lambda.SYMBOL: bin = new Lambda((Identifier)var.Expression, inside.Expression, hadPeriod); break;
                         case Iota.SYMBOL: bin = new Iota((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+                        case Gamma.SYMBOL: bin = new Gamma((Identifier)var.Expression, inside.Expression, hadPeriod); break;
+
                         default:
                             throw new RuntimeException(); // unreachable
                     }

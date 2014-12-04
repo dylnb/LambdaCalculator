@@ -169,6 +169,9 @@ public class LambdaEnabledTextField extends JTextField {
                  case Iota.KEY_EVENT:
                      c = Iota.SYMBOL;
                      break;
+                case Gamma.KEY_EVENT:
+                     c = Gamma.SYMBOL;
+                     break;
                  case And.KEY_EVENT:
                      //TODO localize the two following lines on intl keyboards!
                  case KeyEvent.VK_6: // modifier on the key that's the same as "&" on English keyboards
@@ -276,6 +279,7 @@ public class LambdaEnabledTextField extends JTextField {
                       case ForAll.INPUT_SYMBOL: revised[i] = ForAll.SYMBOL; break;
                       case Exists.INPUT_SYMBOL: revised[i] = Exists.SYMBOL; break;
                       case Iota.INPUT_SYMBOL: revised[i] = Iota.SYMBOL; break;
+                      case Gamma.INPUT_SYMBOL: revised[i] = Gamma.SYMBOL; break;
                       case And.INPUT_SYMBOL: revised[i] = And.SYMBOL; break;
                       //alternative way of entering And
                       case '^': revised[i] = And.SYMBOL; break;
