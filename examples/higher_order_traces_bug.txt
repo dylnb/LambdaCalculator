@@ -9,7 +9,7 @@ Bug with higher order traces
 multiple letter identifiers
 
 constants of type e : a b c
-constants of type i : k
+constants of type n : k
 variables of type e : x-z
 variables of type <e,t> : P-Q X-Z
 variables of type <e,et> : R-W
@@ -60,8 +60,8 @@ exercise tree
 title everybody sleeps
 directions bla
 
-#[ everybody [ 1 [ t_1<et> sleeps ] ] ]
+[ everybody [ 1 [ t_1<et> sleeps ] ] ]
 
-#[.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1<<et,t>,t>] ] ] ]
+[.S [.NP everybody] [.S 1<et> [.S [.NP Alice] [.VP loves t_1<<et,t>,t>] ] ] ]
 
 [.S [.NP everybody] [.S 1 [.S [.NP somebody] [.S 2 [.S t_1<et,t> [.VP loves t_2<et,t>] ] ] ] ] ]
