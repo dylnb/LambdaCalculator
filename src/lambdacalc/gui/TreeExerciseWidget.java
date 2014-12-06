@@ -134,7 +134,7 @@ public class TreeExerciseWidget extends JPanel {
                 if (!m.equals(m2)){
                     exprs.add(m2);
                 }
-                m = m2;               
+                m = m2;
             } catch (TypeEvaluationException tee) {
                 evaluationError = tee.getMessage();
             } catch (MeaningEvaluationException mee) {
@@ -765,7 +765,7 @@ public class TreeExerciseWidget extends JPanel {
         
         // Fully evaluate all children. If that's not possible,
         // don't do anything further here. If we're just testing, don't bother
-        // with this. 
+        // with this.
         if (!testOnly && !ensureChildrenEvaluated()) {
             return false;
         }
@@ -885,7 +885,7 @@ public class TreeExerciseWidget extends JPanel {
             }
         }
         
-        // This expression is fully evaluated. Move on up to the next node. 
+        // This expression is fully evaluated. Move on up to the next node.
         if (lfToParent.containsKey(selectedNode)) {
             if (testOnly) {
               return true;
@@ -952,7 +952,7 @@ public class TreeExerciseWidget extends JPanel {
         if (testOnly) {
           return true;
         }
-        onUserChangedNodeMeaning(selectedNode);     
+        onUserChangedNodeMeaning(selectedNode);
         return false;
     }
     
@@ -1046,7 +1046,7 @@ public class TreeExerciseWidget extends JPanel {
                 updateNode(node);
                 canvas.invalidate();
             }
-        }        
+        }
         updateButtonEnabledState();
         
         if (node == selectedNode)
