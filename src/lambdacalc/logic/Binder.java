@@ -113,7 +113,7 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
     /**
      * Gets the unicode symbol associated with the binder.
      */
-    public abstract String getSymbol(); // lambda, exists, forall
+    public abstract String getSymbol(); // lambda, exists, forall, etc.
 
     public abstract String getLatexSymbol();
     
@@ -291,8 +291,8 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
 
     protected String toString(int mode) {
         String inner = innerExpr.toString(mode);
-        if (!(innerExpr instanceof Binder) 
-          && innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
+        if (!(innerExpr instanceof Binder) &&
+            innerExpr.getOperatorPrecedence() >= this.getOperatorPrecedence()) {
             inner = "[" + inner + "]";
             
 //        } else if (hasPeriod || ExpressionParser.isIdentifierChar(inner.charAt(0))) {

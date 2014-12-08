@@ -75,7 +75,7 @@ public class Iota extends Binder {
     }
     
     public boolean dotPolicy() {
-        return false;
+        return true;
     }
     
     /**
@@ -84,7 +84,7 @@ public class Iota extends Binder {
      * without changing it there.
      */
     public int getOperatorPrecedence() {
-        return 4;
+        return 8;
     }
     
     public Type getType() throws TypeEvaluationException {

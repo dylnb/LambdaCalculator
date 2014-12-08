@@ -50,7 +50,7 @@ public abstract class PropositionalBinder extends Binder {
      * without changing it there.
      */
     public int getOperatorPrecedence() {
-        return 4;
+        return 8;
     }
     
     public Type getType() throws TypeEvaluationException {

@@ -69,7 +69,7 @@ public class Exists extends PropositionalBinder {
     }
     
     public boolean dotPolicy() {
-        return false;
+        return true;
     }
     
     Exists(java.io.DataInputStream input) throws java.io.IOException {

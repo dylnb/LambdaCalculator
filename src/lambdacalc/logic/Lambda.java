@@ -62,7 +62,7 @@ public class Lambda extends Binder {
      * without changing it there.
      */
     public int getOperatorPrecedence() {
-        return 4;
+        return 8;
     }
     
     public boolean dotPolicy() {

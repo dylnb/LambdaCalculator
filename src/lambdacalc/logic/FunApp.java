@@ -68,7 +68,7 @@ public class FunApp extends Binary {
         if (getFunc() instanceof Identifier)
             return 2;
         else
-            return 8;
+            return 2;
     }
     
     /**

@@ -65,7 +65,7 @@ public class ForAll extends PropositionalBinder {
     }
     
     public boolean dotPolicy() {
-        return false;
+        return true;
     }
 
     protected Binder create(Identifier variable, Expr inner) {
