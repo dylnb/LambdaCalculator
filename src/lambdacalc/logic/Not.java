@@ -74,7 +74,20 @@ public class Not extends Unary {
         if (!getInnerExpr().getType().equals(Type.T))
             throw new TypeMismatchException("Negation can only be applied to something of type t, but " + getInnerExpr() + " is of type " + getInnerExpr().getType() + ".");
         return Type.T;
-    }    
+    }
+    
+    public Boolean dominatesBinder() {
+      Expr ie = getInnerExpr();
+      if (ie instanceof Binder) {
+        System.out.println("dominates binder: " + ie.toString());
+        return true;
+      } else if (ie instanceof Not && ((Not)ie).dominatesBinder()) {
+        return true;
+      }
+      return false;
+    }
+    
+    
 
     protected Unary create(Expr inner) {
         return new Not(inner);

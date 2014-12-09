@@ -329,8 +329,8 @@ public class ExpressionParser {
           throw r.HowToContinue;
         }
       }
-      throw new SyntaxException("\"" + expression.substring(maxParse)
-                                + "\" doesn't look like a complete lambda expression.",
+      throw new SyntaxException("\"" + expression.substring(maxParse) +
+                                "\" doesn't look like a complete lambda expression.",
                                 maxParse);
     }
 
@@ -339,7 +339,9 @@ public class ExpressionParser {
     for (int i = 0; i < rs.Parses.size(); i++) {
       ParseResult r = (ParseResult) rs.Parses.get(i);
       try {
-        r.Expression.getType(); // return value is not important
+        Type t = r.Expression.getType(); // return value is not important
+        System.out.println("good parse: " + r.Expression.toString());
+        System.out.println("type: " + t.toString());
         hasWellTyped = true; // not executed if type evaluation fails
       } catch (TypeEvaluationException tee) {
       }
@@ -371,6 +373,7 @@ public class ExpressionParser {
      if (n > minFreeVars) { rs.Parses.remove(i); i--; } // decrement i to repeat iteration at same index
      }
      */
+  
     // If more than one parse remains, tell the user his expression is ambiguous.
     if (rs.Parses.size() > 1) {
       Vector alternatives = new Vector();
@@ -378,9 +381,16 @@ public class ExpressionParser {
         ParseResult r = (ParseResult) rs.Parses.get(i);
         alternatives.add(r.Expression.toString());
       }
-      throw new AmbiguousStringException(
-          "Your expression is ambiguous between the following possibilities and should be corrected by adding parentheses",
-          alternatives);
+      String ase;
+      if (hasWellTyped) {
+        ase = "Your expression is ambiguous between the following possibilities " +
+               "and should be corrected by adding parentheses";
+      } else {
+        ase = "Your expression is not well-formed, but it's not clear what exatly " +
+              "you were going for. Please add parentheses to see more information about " +
+              "what went wrong. For instance";
+      }
+      throw new AmbiguousStringException(ase, alternatives);
     }
 
     return (ParseResult) rs.Parses.get(0);
@@ -1360,9 +1370,18 @@ public class ExpressionParser {
     for (int i = 0; i < firstConjuncts.Parses.size(); i++) {
       ParseResult firstConjunct = (ParseResult) firstConjuncts.Parses.get(i);
       
-      if (firstConjunct.Expression instanceof Binder) { // binders outscope conjunctions
+      if (firstConjunct.Expression instanceof Binder) {
+        // binders have lower precedence than FA and infixes, so shouldn't
+        // appear as left hand side of either binary expression
         continue;
       }
+//      if (firstConjunct.Expression instanceof LogicalBinary) {
+//        System.out.println("got logical binary first conject");
+//        if (((LogicalBinary) firstConjunct.Expression).getRight() instanceof Binder) {
+//          System.out.println("got right-side binder");
+//          continue;
+//        }
+//      }
 
       ArrayList operators = new ArrayList();
       ArrayList operands = new ArrayList();
@@ -1518,6 +1537,8 @@ public class ExpressionParser {
     // nondeterministic path, and recursively parse for more operands.
     for (int i = 0; i < nextoperands.Parses.size(); i++) {
       ParseResult right = (ParseResult) nextoperands.Parses.get(i);
+      
+      System.out.println("rightparse: " + right.Expression.toString());
 
       // Clone the list of operators and operands that we have so
       // far and add our latest operator/operand to them.
@@ -1534,11 +1555,14 @@ public class ExpressionParser {
       if (err2 != null) {
         return err2;
       }
-
+      
+//      if (right.Expression instanceof Binder ||
+//          right.Expression instanceof Not && ((Not) right.Expression).dominatesBinder()) {
+//        continue;
+//      }
       // Try to parse more infix operators...
       SyntaxException err = parseInfixExpressionRemainder(
-        expression, right.Next, context,
-        operators2, operands2, results, testSpaceRequired
+        expression, right.Next, context, operators2, operands2, results, testSpaceRequired
       );
       if (err != null) {
         return err;
@@ -1568,6 +1592,13 @@ public class ExpressionParser {
     operators = new ArrayList(operators);
 
     if (operands.size() > 1) {
+      int s = operands.size() - 1;
+      for (int i = 1; i < s; i++) {
+        Expr o = (Expr) operands.get(i);
+        if (o instanceof Binder) {
+          return null;
+        }
+      }
       // Group first the eq/neq's, then the and/or's, and lastly the if/iffs.
       // But we do them in pairs because if we find that and and or, for instance,
       // are on the same level, then there's a problem because without an operator
@@ -1602,7 +1633,9 @@ public class ExpressionParser {
         }
       }
     }
-
+    if (operands.size() > 1) {
+      return null;
+    }
     results.add(new ParseResult((Expr) operands.get(0), next, continuationException));
 
     return null;
@@ -1622,7 +1655,7 @@ public class ExpressionParser {
    * present, or else an exception is thrown for having an ambiguity, since
    * these operators have the same precedence.
    * @throws SyntaxException when operators of the same precedence (-> and <->)
-   * are used next to eachother.
+   * are used next to each other.
    */
   private static SyntaxException groupOperands(ArrayList operands, ArrayList operators, char[] ops) {
     // Make sure that only one of the operators in ops is used, since they
@@ -1685,6 +1718,16 @@ public class ExpressionParser {
             " connectives without parenthesis, and this connective is not associative. Add parenthesis.",
             -1
           );
+        }
+        
+        if (left instanceof LogicalBinary) {
+          System.out.println("logical binary on left");
+          Expr r = ((LogicalBinary)left).getRight();
+          if (r instanceof Binder ||
+              r instanceof Not && ((Not)r).dominatesBinder()) {
+            System.out.println("caught it");
+            break;
+          }
         }
 
         Expr binary;
@@ -1877,11 +1920,15 @@ public class ExpressionParser {
     if (rights.Exception != null) {
       try {
         Type t = left.Expression.getType();
+        System.out.println("left: " + left.Expression.toString());
+        System.out.println("type: " + t.toString());
         if (!(t instanceof CompositeType)) {
           results.add(left);
           return;
         }
       } catch (TypeEvaluationException tee) {
+        System.out.println("left: " + left.Expression.toString());
+        System.out.println("doesn't have a type");
         // nevermind
       }
     }
@@ -1914,6 +1961,8 @@ public class ExpressionParser {
     for (int j = 0; j < rights.Parses.size(); j++) {
       ParseResult right = (ParseResult) rights.Parses.get(j);
       Expr expr = new FunApp(left.Expression, right.Expression); // left associativity
+      System.out.println("for some reason, assembling funapp:");
+      System.out.println(expr.toString());
       parseFunctionApplicationRemainder(
         expression, context, new ParseResult(expr, right.Next), results, allowSpace
       );

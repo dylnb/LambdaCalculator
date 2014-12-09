@@ -42,10 +42,10 @@ public class AmbiguousStringException extends SyntaxException {
      * to the input that would resolve the ambiguity. The elements
      * in the Vector must be strings.
      */
-    public AmbiguousStringException(String message, Vector alternatives) {
+   public AmbiguousStringException(String message, Vector alternatives) {
         super(message
             + (alternatives != null && alternatives.size() > 0 ?
-                  ": " + stringify(alternatives) : "")
+                  ":\n " + stringify(alternatives) : "")
             , -1);
         this.alternatives = alternatives;
     }
@@ -53,7 +53,7 @@ public class AmbiguousStringException extends SyntaxException {
     private static String stringify(Vector alternatives) {
         String ambiguity = "";
         for (int i = 0; i < alternatives.size(); i++) {
-            if (i > 0) ambiguity += ", ";
+            if (i > 0) ambiguity += ",\n ";
             ambiguity += (String)alternatives.get(i);
         }
         return ambiguity;

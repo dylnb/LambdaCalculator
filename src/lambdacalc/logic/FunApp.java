@@ -87,11 +87,17 @@ public class FunApp extends Binary {
     
     protected String toString(int mode) {
         String arg = getArg().toString(mode);
-        if (!(getArg() instanceof Parens) && !(getArg() instanceof ArgList))
+        String func = getFunc().toString(mode);
+        if (!(getArg() instanceof Parens) && !(getArg() instanceof ArgList)) {
             arg = "(" + arg + ")";
-        if (!(getFunc() instanceof Identifier))
+        }
+        if (!(getFunc() instanceof Identifier)) {
             arg = " " + arg;
-        return getFunc().toString(mode) + arg;
+            if (!(getFunc() instanceof Parens)) {
+              func = "(" + func + ")";
+            }
+        }
+        return func + arg;
     }
     
     protected Binary create(Expr left, Expr right) {
