@@ -321,8 +321,8 @@ public class ExpressionParser {
     // want to read to the end of the string.) We'll just take the first error message
     // we can find in a HowToContinue field, or throw a generic one if there aren't any
     // prepared messages.
-    if (readFully && maxParse != expression.length() && skipWhitespace(
-        expression, maxParse) != -1) {
+    if (readFully && maxParse != expression.length() &&
+        skipWhitespace(expression, maxParse) != -1) {
       for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-maximal parses
         ParseResult r = (ParseResult) rs.Parses.get(i);
         if (r.HowToContinue != null) {
@@ -379,6 +379,13 @@ public class ExpressionParser {
       Vector alternatives = new Vector();
       for (int i = 0; i < rs.Parses.size(); i++) {
         ParseResult r = (ParseResult) rs.Parses.get(i);
+        if (i != 0) {
+          ParseResult r0 = (ParseResult) rs.Parses.get(i-1);
+          if (r.Expression.equals(r0.Expression)) {
+            System.out.println("equal parses");
+            continue;
+          }
+        }
         alternatives.add(r.Expression.toString());
       }
       String ase;
@@ -390,7 +397,9 @@ public class ExpressionParser {
               "you were going for. Please add parentheses to see more information about " +
               "what went wrong. For instance";
       }
-      throw new AmbiguousStringException(ase, alternatives);
+      if (alternatives.size() > 1) {
+        throw new AmbiguousStringException(ase, alternatives);
+      }
     }
 
     return (ParseResult) rs.Parses.get(0);
@@ -1370,7 +1379,8 @@ public class ExpressionParser {
     for (int i = 0; i < firstConjuncts.Parses.size(); i++) {
       ParseResult firstConjunct = (ParseResult) firstConjuncts.Parses.get(i);
       
-      if (firstConjunct.Expression instanceof Binder) {
+      if (firstConjunct.Expression instanceof Binder ||
+          firstConjunct.Expression instanceof Not && ((Not)firstConjunct.Expression).dominatesBinder()) {
         // binders have lower precedence than FA and infixes, so shouldn't
         // appear as left hand side of either binary expression
         continue;
@@ -1535,6 +1545,7 @@ public class ExpressionParser {
 
     // For each possible right operand, record what we have so far as the end of a
     // nondeterministic path, and recursively parse for more operands.
+    recordrecurse:
     for (int i = 0; i < nextoperands.Parses.size(); i++) {
       ParseResult right = (ParseResult) nextoperands.Parses.get(i);
       
@@ -1547,6 +1558,21 @@ public class ExpressionParser {
 
       operators2.add(String.valueOf(c));
       operands2.add(right.Expression);
+      
+//      // Give up on any expressions that would parse a binder in between two operands;
+//      // (any bare binding expression --- without parens, that is --- should be first
+//      // or last among the list of operands
+//      if (operands2.size() > 1) {
+//        int s = operands2.size() - 1;
+//        for (int j = 1; j < s; j++) {
+//          Expr o = (Expr) operands2.get(j);
+//          if (o instanceof Binder ||
+//              o instanceof Not && ((Not)o).dominatesBinder()) {
+//            System.out.println("middle binder parse: " + o.toString());
+//            continue recordrecurse;
+//          }
+//        }
+//      }
 
       // Record the nondeterministic path of ending here.
       SyntaxException err2 = parseInfixExpressionFinish(
@@ -1595,7 +1621,8 @@ public class ExpressionParser {
       int s = operands.size() - 1;
       for (int i = 1; i < s; i++) {
         Expr o = (Expr) operands.get(i);
-        if (o instanceof Binder) {
+        if (o instanceof Binder ||
+            o instanceof Not && ((Not)o).dominatesBinder()) {
           return null;
         }
       }
@@ -1661,10 +1688,14 @@ public class ExpressionParser {
     // Make sure that only one of the operators in ops is used, since they
     // are at the same precedence level and would have ambiguous bracketing.
     int op_idx = -1;
+    int hit_idx = -1;
     for (int i = 0; i + 1 < operands.size(); i++) {
       // Is this operator one that is listed in ops?
       for (int j = 0; j < ops.length; j++) {
         if (((String) operators.get(i)).charAt(0) == ops[j]) {
+          if (hit_idx == -1) {
+            hit_idx = i;
+          }
           if (op_idx == -1) {
             // This is the first operator in ops we found
             op_idx = j;
@@ -1676,12 +1707,27 @@ public class ExpressionParser {
             } else {
               // We encountered a different operator in the past,
               // which means we have an ambiguous bracketing situation.
-              return new SyntaxException(
-                "Your expression is ambiguous because it has adjacent " +
-                ops[op_idx] + " and " + ops[j] +
-                " connectives without parenthesis. Add parentheses.",
-                -1
-              );
+              List interveners = operands.subList(hit_idx, i + 1);
+              System.out.println("hit_idx: " + hit_idx + ", i: " + i);
+              System.out.println("interveners: " + interveners);
+              Boolean binderInBetween = false;
+              for(int v = 1; v < interveners.size(); v++) {
+                Expr o = (Expr) interveners.get(v);
+                if (o instanceof Binder ||
+                    o instanceof Not && ((Not)o).dominatesBinder()) {
+                  System.out.println("middle binder parse: " + o.toString());
+                  binderInBetween = true;
+                }
+              }
+              if (!binderInBetween) {
+                System.out.println("!binderInBetween");
+                return new SyntaxException(
+                  "Your expression is ambiguous because it has adjacent " +
+                  ops[op_idx] + " and " + ops[j] +
+                  " connectives without parenthesis. Add parentheses.",
+                  -1
+                );
+              }
             }
           }
           break;
@@ -1890,7 +1936,8 @@ public class ExpressionParser {
       return;
     }
     
-    if (left.Expression instanceof Binder) {
+    if (left.Expression instanceof Binder ||
+        left.Expression instanceof Not && ((Not) left.Expression).dominatesBinder()) {
       // binders have lower precedence than FA or infixes, so shouldn't
       // appear as the left hand side of either binary expression
       results.add(left);
