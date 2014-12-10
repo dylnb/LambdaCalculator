@@ -115,9 +115,9 @@ public class ExpressionParser {
     public boolean singleLetterIdentifiers = false;
 
     /**
-     * This turns on ASCII mode. These symbols become special: A, E, L, ~, &, |,
-     * ->, <->
-     * for for all, exists, lambda, not, and, or, if, iff
+     * This turns on ASCII mode.
+     * These symbols become special: A, E, L, ~, &, |, ->, <->
+     * forall, exists, lambda, not, and, or, if, iff
      */
     public boolean ASCII = false;
 
@@ -145,16 +145,13 @@ public class ExpressionParser {
 
     }
 
-    public ParseOptions(boolean singleLetterIdentifiers,
-                        boolean ASCII,
-                        IdentifierTyper typer) {
+    public ParseOptions(boolean singleLetterIdentifiers, boolean ASCII, IdentifierTyper typer) {
       this.singleLetterIdentifiers = singleLetterIdentifiers;
       this.ASCII = ASCII;
       this.typer = typer;
     }
 
-    public ParseOptions(boolean singleLetterIdentifiers,
-                        boolean ASCII) {
+    public ParseOptions(boolean singleLetterIdentifiers, boolean ASCII) {
       this.singleLetterIdentifiers = singleLetterIdentifiers;
       this.ASCII = ASCII;
     }
@@ -340,8 +337,6 @@ public class ExpressionParser {
       ParseResult r = (ParseResult) rs.Parses.get(i);
       try {
         Type t = r.Expression.getType(); // return value is not important
-        System.out.println("good parse: " + r.Expression.toString());
-        System.out.println("type: " + t.toString());
         hasWellTyped = true; // not executed if type evaluation fails
       } catch (TypeEvaluationException tee) {
       }
@@ -357,47 +352,37 @@ public class ExpressionParser {
         }
       }
     }
-
-    /*
-     // Lastly, minimize the number of free variables by tossing out parses
-     // that have more free variables than the parse with the fewest free variables.
-     int minFreeVars = -1;
-     for (int i = 0; i < rs.Parses.size(); i++) { // scan for the fewest number of free vars
-     ParseResult r = (ParseResult)rs.Parses.get(i);
-     int n = r.Expression.getFreeVars().size();
-     if (minFreeVars == -1 || n < minFreeVars) minFreeVars = n;
-     }
-     for (int i = 0; i < rs.Parses.size(); i++) { // filter out non-minimal parses
-     ParseResult r = (ParseResult)rs.Parses.get(i);
-     int n = r.Expression.getFreeVars().size();
-     if (n > minFreeVars) { rs.Parses.remove(i); i--; } // decrement i to repeat iteration at same index
-     }
-     */
   
-    // If more than one parse remains, tell the user his expression is ambiguous.
+    // If more than one parse remains, the expression might be ambiguous.
     if (rs.Parses.size() > 1) {
       Vector alternatives = new Vector();
+      parses:
       for (int i = 0; i < rs.Parses.size(); i++) {
         ParseResult r = (ParseResult) rs.Parses.get(i);
+        // This shouldn't happen, but just in case two parsing paths produced the 
+        // same expression, keep only one of them
         if (i != 0) {
-          ParseResult r0 = (ParseResult) rs.Parses.get(i-1);
-          if (r.Expression.equals(r0.Expression)) {
-            System.out.println("equal parses");
-            continue;
+          for (int j = 0; j < i; j++) {
+            ParseResult r0 = (ParseResult) rs.Parses.get(j);
+            if (r.Expression.equals(r0.Expression)) {
+              continue parses;
+            }
           }
         }
         alternatives.add(r.Expression.toString());
       }
-      String ase;
-      if (hasWellTyped) {
-        ase = "Your expression is ambiguous between the following possibilities " +
-               "and should be corrected by adding parentheses";
-      } else {
-        ase = "Your expression is not well-formed, but it's not clear what exatly " +
-              "you were going for. Please add parentheses to see more information about " +
-              "what went wrong. For instance";
-      }
+      
+      // Two distinct parses available. Tell the user to clarify
       if (alternatives.size() > 1) {
+        String ase;
+        if (hasWellTyped) {
+          ase = "Your expression is ambiguous between the following possibilities " +
+                 "and should be corrected by adding parentheses";
+        } else {
+          ase = "Your expression is not well-formed, but it's not clear what exatly " +
+                "you were going for. Please add parentheses to see more information about " +
+                "what went wrong. For instance";
+        }
         throw new AmbiguousStringException(ase, alternatives);
       }
     }
@@ -493,7 +478,6 @@ public class ExpressionParser {
   private static ParseResultSet parsePrefixExpression(
     String expression, int start, ParseOptions context, String whatIsExpected
   ) {
-    System.out.println("parsePrefixExpression: " + start);
     start = skipWhitespace(expression, start);
     if (start == -1) {
       return new ParseResultSet(
@@ -523,12 +507,10 @@ public class ExpressionParser {
           bracketname = "cardinality bars";
           closeChar = '|';
         }
-        System.out.println("got a left brace: " + c);
         ParseResultSet parenrs = parseExpression(
           expression, start + 1, context, "an expression inside your " + bracketname
         );
         if (parenrs.Exception != null) {
-          System.out.println("parenrs isn't null");
           return parenrs; // return any fatal errors directly
         }
         int needCloseParenAt = -1; // a position that we need a close paren at, if no
@@ -625,7 +607,6 @@ public class ExpressionParser {
       case Exists.SYMBOL: //fall through
       case Lambda.SYMBOL: //fall through
       case Iota.SYMBOL:
-        System.out.println("got binder: " + c);
         // Get the identifier that follows the binder.
         ParseResultSet vars = parseIdentifier(expression, start + 1, context, "a variable");
         if (vars.Exception != null) {
@@ -668,91 +649,19 @@ public class ExpressionParser {
         ParseOptions context2 = context.cloneContext();
         Identifier varid = (Identifier) var.Expression;
         context2.typer.addEntry(varid.getSymbol(), varid instanceof Var, varid.getType());
-        
-        System.out.println("index of inner exp: " + start);
 
-        // Get the possible parses of the inner expression.
-        // First look to see if we can parse parens right there, because parens
-        // always indicate the scope of the binder.
-//        ParseResultSet insides = parsePrefixExpression(
-//          expression, start, context2, "the expression in the scope of the " + c + " binder"
-//        );
-
-        // Check if any of the expressions we parse on the inside is a parenthesized expression.
-//        boolean insideIsParen = false;
-//        if (insides.Exception == null) {
-//          for (Iterator i = insides.Parses.iterator(); i.hasNext();) {
-//            ParseResult e = (ParseResult) i.next();
-//            if (e.Expression instanceof Parens) {
-//              insideIsParen = true;
-//              break;
-//            }
-//          }
-//        }
-
-//        if (insideIsParen) {
-//          // this is the inner expression
-//
-//          // If there was no space or period, then only prefix expressions may be
-//          // in the scope of the binder. We've already parsed it, hopefully.
-//        } else if (!hadWhiteSpace && !hadPeriod) {
-//          if (insides.Exception != null) {
-//            return insides; // return any fatal errors immediately
-//          }
-//          // However, unless a paren or bracket followed (which we've already covered above),
-//          // in which case we can be sure
-//          // that the scope of the binder was indicated by the bracketing, we want to
-//          // make sure that the user hasn't given us something that might mean he
-//          // wanted an infix expression in the scope of the binder. That is,
-//          // LxP(x) & Q(x) means the conjunction takes wide scope (i.e. only parse
-//          // a prefix expression in the scope of the binder), but, crucially,
-//          // LxP(x)&Q(x) is just strange, and we want to reject it outright. (If we
-//          // treat it ambiguously, the type-sanity preference will rule out one
-//          // of the parses, but we want the end result to be an ambiguity error, so
-//          // we must treat it as a fatal error.)
-//          // In order to test this, we attempt to parse an infix expression in the
-//          // scope of the binder, but flagged as "testSpaceRequired". If the first infix
-//          // operator is not surrounded by spaces, parseInfixExpression returns an
-//          // error, and we pass it on. If it succeeds, we discard the result because
-//          // in fact we want the infix operator to have wide scope.
-//
-//          ParseResultSet infixes = parseInfixExpression(
-//            expression, start, context2,
-//            "the expression in the scope of the " + c + " binder", true, false
-//          );
-//          if (infixes.Exception != null) {
-//            return infixes; // return any fatal errors immediately
-//          }
-//        } else {
-//          // Just parse anything inside the scope of the lambda, but don't allow function
-//          // application with a space between the function and the argument.
-//
-//          insides = parseInfixExpression(
-//            expression, start, context2,
-//            "the expression in the scope of the " + c + " binder", false, false
-//          );
-//          if (insides.Exception != null) {
-//            return insides; // return any fatal errors immediately
-//          }
-//        }
-
-        // Just parse anything inside the scope of the binder, but don't allow function
-        // application with a space between the function and the argument.
-
+        // Just parse anything inside the scope of the binder
         ParseResultSet insides = parseInfixExpression(
           expression, start, context2,
           "the expression in the scope of the " + c + " binder", true, true
         );
         if (insides.Exception != null) {
-          System.out.println("inside of binder " + c + " didn't work");
           return insides; // return any fatal errors immediately
         }
 
-        System.out.println("insides:");
         // Wrap each possible parse inside a Binder expression
         for (int i = 0; i < insides.Parses.size(); i++) {
           ParseResult inside = (ParseResult) insides.Parses.get(i);
-          System.out.println(inside.Expression.toString());
 
           Binder bin;
           switch (c) {
@@ -865,9 +774,8 @@ public class ExpressionParser {
 
       default:
         // Hope that it's an identifier or predicate. If not, a BadCharacterException is returned.
-        return parsePredicate(expression, start, context,
-                              whatIsExpected == null ? "an expression" : whatIsExpected,
-                              false);
+        String exp = whatIsExpected == null ? "an expression" : whatIsExpected;
+        return parsePredicate(expression, start, context, exp, false);
     }
   }
 
@@ -1209,14 +1117,12 @@ public class ExpressionParser {
 
     if (arguments.size() == 1) { // P(a) : a is an identifier; there is no ArgList
       ParseResult pr = new ParseResult(new FunApp(ident, (Expr) arguments.get(0)), start);
-      System.out.println("got term: " + pr.Expression.toString());
       return new ParseResultSet(pr);
     } else { // P(a,b) : (a,b) is an ArgList
       ParseResult pr = new ParseResult(
         new FunApp(ident, new ArgList((Expr[]) arguments.toArray(new Expr[0]))),
         start
       );
-      System.out.println("got term: " + pr.Expression.toString());
       return new ParseResultSet(pr);
     }
   }
@@ -1315,12 +1221,11 @@ public class ExpressionParser {
    * expression, e.g. X & Y | Z -> Q, is not parsed recursively, but rather as a
    * simple list of expressions separated by operators as in [X, &, Y, |, Z, ->
    * , Q]. Then the operator precedence is taken care of. The operator
-   * precedence is: Equal, Not Equal -- binds strongest And, Or If, Iff -- bind
-   * weakest
-   *
-   * Ambiguity of expressions like Lx.P & Q as Vx.[P & Q] or [Vx.P] & Q are
-   * handled by returning not a single result, but for expressions like A & B &
-   * C, a list of possible parses: { A, A & B, A & B & C }.
+   * precedence is:
+   *   Number-valued, Set-valued operations
+   *   Equality, Ordering
+   *   And, Or
+   *   If, Iff
    *
    * @param expression the text string being parsed
    * @param start the position at which to start scanning for an infix
@@ -1340,7 +1245,6 @@ public class ExpressionParser {
     String expression, int start, ParseOptions context, String whatIsExpected,
     boolean testSpaceRequired, boolean allowFunctionApplicationSpaceInTrivialReturn
   ) {
-    System.out.println("parseInfixExpression: " + start);
     Vector results = new Vector();
 
     // The first thing to do is parse the first operand. However, if the
@@ -1381,17 +1285,10 @@ public class ExpressionParser {
       
       if (firstConjunct.Expression instanceof Binder ||
           firstConjunct.Expression instanceof Not && ((Not)firstConjunct.Expression).dominatesBinder()) {
-        // binders have lower precedence than FA and infixes, so shouldn't
-        // appear as left hand side of either binary expression
+        // Binders have lower precedence than all binary operators, so shouldn't
+        // appear as left hand side of any binary expression
         continue;
       }
-//      if (firstConjunct.Expression instanceof LogicalBinary) {
-//        System.out.println("got logical binary first conject");
-//        if (((LogicalBinary) firstConjunct.Expression).getRight() instanceof Binder) {
-//          System.out.println("got right-side binder");
-//          continue;
-//        }
-//      }
 
       ArrayList operators = new ArrayList();
       ArrayList operands = new ArrayList();
@@ -1545,12 +1442,9 @@ public class ExpressionParser {
 
     // For each possible right operand, record what we have so far as the end of a
     // nondeterministic path, and recursively parse for more operands.
-    recordrecurse:
     for (int i = 0; i < nextoperands.Parses.size(); i++) {
       ParseResult right = (ParseResult) nextoperands.Parses.get(i);
       
-      System.out.println("rightparse: " + right.Expression.toString());
-
       // Clone the list of operators and operands that we have so
       // far and add our latest operator/operand to them.
       ArrayList operators2 = new ArrayList(operators);
@@ -1558,21 +1452,6 @@ public class ExpressionParser {
 
       operators2.add(String.valueOf(c));
       operands2.add(right.Expression);
-      
-//      // Give up on any expressions that would parse a binder in between two operands;
-//      // (any bare binding expression --- without parens, that is --- should be first
-//      // or last among the list of operands
-//      if (operands2.size() > 1) {
-//        int s = operands2.size() - 1;
-//        for (int j = 1; j < s; j++) {
-//          Expr o = (Expr) operands2.get(j);
-//          if (o instanceof Binder ||
-//              o instanceof Not && ((Not)o).dominatesBinder()) {
-//            System.out.println("middle binder parse: " + o.toString());
-//            continue recordrecurse;
-//          }
-//        }
-//      }
 
       // Record the nondeterministic path of ending here.
       SyntaxException err2 = parseInfixExpressionFinish(
@@ -1581,11 +1460,7 @@ public class ExpressionParser {
       if (err2 != null) {
         return err2;
       }
-      
-//      if (right.Expression instanceof Binder ||
-//          right.Expression instanceof Not && ((Not) right.Expression).dominatesBinder()) {
-//        continue;
-//      }
+
       // Try to parse more infix operators...
       SyntaxException err = parseInfixExpressionRemainder(
         expression, right.Next, context, operators2, operands2, results, testSpaceRequired
@@ -1617,6 +1492,10 @@ public class ExpressionParser {
     operands = new ArrayList(operands);
     operators = new ArrayList(operators);
 
+    // Give up on any parses in which a binder intervenes between two infix
+    // operators, since infixes always take precedence over binders.
+    // In other words, binding expressions should always be first or last
+    // in this array of operands
     if (operands.size() > 1) {
       int s = operands.size() - 1;
       for (int i = 1; i < s; i++) {
@@ -1626,7 +1505,8 @@ public class ExpressionParser {
           return null;
         }
       }
-      // Group first the eq/neq's, then the and/or's, and lastly the if/iffs.
+      // Group first the arithmetic operations, then the eq/neq's, then the and/or's,
+      // and lastly the if/iffs.
       // But we do them in pairs because if we find that and and or, for instance,
       // are on the same level, then there's a problem because without an operator
       // precedence convention, it is ambiguous.
@@ -1650,8 +1530,15 @@ public class ExpressionParser {
           SetRelation.ProperSuperset.SYMBOL,
           SetRelation.NotSuperset.SYMBOL
         },
-        new char[]{And.SYMBOL, Or.SYMBOL},
-        new char[]{If.SYMBOL, Iff.SYMBOL}};
+        new char[]{
+          And.SYMBOL,
+          Or.SYMBOL
+        },
+        new char[]{
+          If.SYMBOL,
+          Iff.SYMBOL
+        }
+      };
 
       for (int i = 0; i < operator_precedence.length; i++) {
         SyntaxException ex = groupOperands(operands, operators, operator_precedence[i]);
@@ -1673,7 +1560,8 @@ public class ExpressionParser {
    * its left and right together in a new instance of the appropriate Expr
    * class. Left associativity is assumed. The operands/operators lists are
    * modified in place and after this method returns, operands contains a single
-   * Expr object that represents the whole sequence of operands/operators.
+   * Expr object that represents the whole sequence of operands/operators
+   * (assuming things went well). 
    *
    * @param operands the sequence of operand in the string
    * @param operators the sequence of operators in the string (one less than the
@@ -1688,17 +1576,19 @@ public class ExpressionParser {
     // Make sure that only one of the operators in ops is used, since they
     // are at the same precedence level and would have ambiguous bracketing.
     int op_idx = -1;
-    int hit_idx = -1;
+    int hit_idx = -1; // carries operand index of first hit within ops group
     for (int i = 0; i + 1 < operands.size(); i++) {
       // Is this operator one that is listed in ops?
       for (int j = 0; j < ops.length; j++) {
         if (((String) operators.get(i)).charAt(0) == ops[j]) {
-          if (hit_idx == -1) {
-            hit_idx = i;
-          }
+//          if (hit_idx == -1) {
+//            // This is the first 
+//            hit_idx = i;
+//          }
           if (op_idx == -1) {
             // This is the first operator in ops we found
             op_idx = j;
+            hit_idx = i;
           } else {
             // We've encountered an operator in ops before.
             if (op_idx == j) {
@@ -1706,21 +1596,21 @@ public class ExpressionParser {
               // so we're ok.
             } else {
               // We encountered a different operator in the past,
-              // which means we have an ambiguous bracketing situation.
+              // which means we might have an ambiguous bracketing situation.
+              // However, if a binding expression intervenes between the two
+              // operators, then the expression is not actually ambiguous,
+              // since the binder creates a new scope for the second operator
               List interveners = operands.subList(hit_idx, i + 1);
-              System.out.println("hit_idx: " + hit_idx + ", i: " + i);
-              System.out.println("interveners: " + interveners);
               Boolean binderInBetween = false;
               for(int v = 1; v < interveners.size(); v++) {
                 Expr o = (Expr) interveners.get(v);
                 if (o instanceof Binder ||
                     o instanceof Not && ((Not)o).dominatesBinder()) {
-                  System.out.println("middle binder parse: " + o.toString());
                   binderInBetween = true;
                 }
               }
+              // If no intervening binder, string is ambiguous
               if (!binderInBetween) {
-                System.out.println("!binderInBetween");
                 return new SyntaxException(
                   "Your expression is ambiguous because it has adjacent " +
                   ops[op_idx] + " and " + ops[j] +
@@ -1766,12 +1656,13 @@ public class ExpressionParser {
           );
         }
         
+        // Skip over any parses that would cut off a binding expression between two
+        // infix operators. For instance, ignore the parse of P(x) & Ay.Q(y) & Q(z)
+        // on which P(x) & Ay.Q(y) is a constituent
         if (left instanceof LogicalBinary) {
-          System.out.println("logical binary on left");
           Expr r = ((LogicalBinary)left).getRight();
           if (r instanceof Binder ||
               r instanceof Not && ((Not)r).dominatesBinder()) {
-            System.out.println("caught it");
             break;
           }
         }
@@ -1865,9 +1756,9 @@ public class ExpressionParser {
    * E1 using parseInfixExpression and any Ei for i>=1 using
    * parsePrefixExpression. The reason for using the less inclusive method
    * parsePrefixExpression on Ei i>1 is that we don't allow any of those Ei to
-   * be infix expressions. E.g. we disallow Lx. ~x a & b and require the user to
-   * disambiguate thus: Lx. ~x (a & b) In the former formula, a & b is an infix
-   * expression. In the latter one, (a & b) is a prefix expression.
+   * be infix expressions. E.g. (Lp.~p) a & b is parsed as (Lp.~p)(a) & b. To
+   * generate the alternative parse, parens are needed (which create a prefix
+   * expression): (Lp.~p) (a & b)
    *
    * @param expression the text string being parsed
    * @param start the position at which to start scanning for a function
@@ -1883,7 +1774,6 @@ public class ExpressionParser {
   ) {
     // Parse the left-hand side of the function application, which can be
     // any type of expression besides function application.
-    System.out.println("parseFunctionApplicationExpression: " + start);
     ParseResultSet lefts = parsePrefixExpression(expression, start, context, whatIsExpected);
     if (lefts.Exception != null) {
       return lefts; // return any fatal errors immediately
@@ -1935,11 +1825,13 @@ public class ExpressionParser {
       results.add(left);
       return;
     }
-    
+
+    // Binders have lower precedence than function application, so shouldn't
+    // appear as the function of any FunApp pair. This excludes things like
+    // Lx.P(x) a  ~~>  P(a). To achieve this, parens are needed around the lambda
+    // expression: (Lx.P(x)) a
     if (left.Expression instanceof Binder ||
         left.Expression instanceof Not && ((Not) left.Expression).dominatesBinder()) {
-      // binders have lower precedence than FA or infixes, so shouldn't
-      // appear as the left hand side of either binary expression
       results.add(left);
       return;
     }
@@ -1967,15 +1859,11 @@ public class ExpressionParser {
     if (rights.Exception != null) {
       try {
         Type t = left.Expression.getType();
-        System.out.println("left: " + left.Expression.toString());
-        System.out.println("type: " + t.toString());
         if (!(t instanceof CompositeType)) {
           results.add(left);
           return;
         }
       } catch (TypeEvaluationException tee) {
-        System.out.println("left: " + left.Expression.toString());
-        System.out.println("doesn't have a type");
         // nevermind
       }
     }
@@ -2008,8 +1896,6 @@ public class ExpressionParser {
     for (int j = 0; j < rights.Parses.size(); j++) {
       ParseResult right = (ParseResult) rights.Parses.get(j);
       Expr expr = new FunApp(left.Expression, right.Expression); // left associativity
-      System.out.println("for some reason, assembling funapp:");
-      System.out.println(expr.toString());
       parseFunctionApplicationRemainder(
         expression, context, new ParseResult(expr, right.Next), results, allowSpace
       );
@@ -2033,7 +1919,6 @@ public class ExpressionParser {
   private static ParseResultSet parseExpression(
     String expression, int start, ParseOptions context, String whatIsExpected
   ) {
-    System.out.println("parse Expression");
     return parseInfixExpression(expression, start, context, whatIsExpected, false, true);
   }
 
