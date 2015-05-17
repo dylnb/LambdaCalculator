@@ -101,7 +101,7 @@ public class FunctionApplicationRule extends CompositionRule {
                     "undefined on such a node.");
         
         Expr leftMeaning, rightMeaning;
-        HashMap<Type,Type> typeMatches = new HashMap<Type,Type>();
+        HashMap<Type,Type> typeMatches = new HashMap<>();
         try {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();

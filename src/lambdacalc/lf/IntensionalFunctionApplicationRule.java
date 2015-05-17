@@ -22,6 +22,8 @@
 //To do: Most of this class has been copied from FunctionApplication. Generalize?
 package lambdacalc.lf;
 
+import java.util.HashMap;
+import java.util.Map;
 import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.CompositeType;
@@ -99,6 +101,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         }
         
         Expr leftMeaning, rightMeaning;
+        HashMap<Type,Type> typeMatches = new HashMap<>();
         try {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();
@@ -113,10 +116,23 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         }
 
         if (isIntensionalFunctionOf(leftMeaning, rightMeaning)) {
-            return apply(left, right, g);
-        }
-        if (isIntensionalFunctionOf(rightMeaning, leftMeaning)) {
-            return apply(right, left, g);
+            try {
+                CompositeType lt = (CompositeType)leftMeaning.getType();
+                CompositeType rt = new CompositeType(Type.S, rightMeaning.getType());
+                typeMatches = Expr.alignTypes(lt.getLeft(), rt);
+            } catch (TypeEvaluationException ex) {
+                throw new MeaningEvaluationException(ex.getMessage());
+            }
+            return apply(left, right, g, typeMatches);
+        } else if (isIntensionalFunctionOf(rightMeaning, leftMeaning)) {
+            try {
+                CompositeType rt = (CompositeType)rightMeaning.getType();
+                CompositeType lt = new CompositeType(Type.S, leftMeaning.getType());
+                typeMatches = Expr.alignTypes(rt.getLeft(),lt);
+            } catch (TypeEvaluationException ex) {
+                throw new MeaningEvaluationException(ex.getMessage());
+            }
+            return apply(right, left, g, typeMatches);
         }
 
         if (onlyIfApplicable) {
@@ -137,12 +153,17 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         // and right is of type X.
 
         try {
-            if (left.getType() instanceof CompositeType) {
-                CompositeType t = (CompositeType)left.getType(); // t = <<s,X>,Y>
-                if (t.getLeft() instanceof CompositeType) {
-                    CompositeType t2 = (CompositeType) t.getLeft(); // t2 = <s,X>
-                    if (t2.getLeft() instanceof ConstType && t2.getLeft().equals(Type.S)  // t2.getLeft = s
-                            && t2.getRight().equals(right.getType())) { // t2.getRight = X
+            Type l = left.getType();
+            Type r = right.getType();
+            if (l instanceof CompositeType) {
+                CompositeType t = (CompositeType)l; // t = <<s,X>,Y>
+                Type tl = t.getLeft();
+                if (tl instanceof CompositeType) {
+                    CompositeType t2 = (CompositeType)tl; // t2 = <s,X>
+                    Type t2l = t2.getLeft(); // t2l = s
+                    Type t2r = t2.getRight(); // t2r = X
+                    if (t2l instanceof ConstType && t2l.equals(Type.S)
+                            && t2r.equals(r)) {
                         return true;
                     }
                 }
@@ -154,6 +175,10 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
 
     
     private Expr apply(LFNode fun, LFNode app, AssignmentFunction g) {
+        return new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
+    }
+    
+    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, HashMap<Type,Type> alignments) {
 
         IdentifierTyper typingConventions = TrainingWindow.getCurrentTypingConventions();
 
@@ -214,10 +239,19 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
 //        boolean topDown = (g != null);
 //
 //        return new Lambda(var, new MeaningBracketExpr(body, g2, topDown), true);
-
-        // create Lambda w.[[app]]^g 1/w
+        
         Expr app2 = new Lambda(var, new MeaningBracketExpr(app, g), true);
 
-        return new FunApp(new MeaningBracketExpr(fun, g), app2);
+        FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), app2, alignments);
+        if (!alignments.isEmpty()) {
+            Map updates = new HashMap();
+            fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);
+        }
+        return fa;
+        
+        // create Lambda w.[[app]]^g 1/w
+//        Expr app2 = new Lambda(var, new MeaningBracketExpr(app, g), true);
+//
+//        return new FunApp(new MeaningBracketExpr(fun, g), app2);
     }
 }

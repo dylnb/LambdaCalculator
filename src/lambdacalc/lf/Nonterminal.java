@@ -121,7 +121,7 @@ public class Nonterminal extends LFNode {
         if (lambdacalc.Main.GOD_MODE) {
             // Guess a composition rule, and if we don't find any, tell the user none seem to apply.
             if (compositor == null || !compositor.isApplicableTo(this))
-                guessCompositionRule(RuleList.HEIM_KRATZER);
+                guessCompositionRule(TrainingWindow.getCurrentExFile().getRules());
             if (compositor == null) {
                 throw new NonterminalLacksCompositionRuleException(this,
                         "I do not know how to combine the children of the " + getLabel() + " node." +

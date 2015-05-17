@@ -66,7 +66,7 @@ public class TrainingWindow extends JFrame {
     public static final int TYPES_AND_CONVERSIONS = 2;
 
     private File currentFile; // this is null if no file has been loaded yet
-    private ExerciseFile currentExFile; // this is null if no file has been loaded yet
+    private static ExerciseFile currentExFile; // this is null if no file has been loaded yet
     
     // will be overridden by any exercise file that specifies type conventions
     public static IdentifierTyper currentTypingConventions = IdentifierTyper.createDefault();
@@ -1814,7 +1814,7 @@ public class TrainingWindow extends JFrame {
 	throw new CloneNotSupportedException();
     }
 
-    public ExerciseFile getCurrentExFile() {
+    public static ExerciseFile getCurrentExFile() {
         return currentExFile;
     }
     
