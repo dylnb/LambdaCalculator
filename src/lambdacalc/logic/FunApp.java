@@ -92,9 +92,11 @@ public class FunApp extends Binary {
             arg = "(" + arg + ")";
         }
         if (!(getFunc() instanceof Identifier)) {
-            arg = " " + arg;
+//            arg = " " + arg;
             if (!(getFunc() instanceof Parens)) {
-              func = "(" + func + ")";
+              func = "[" + func + "]";
+            } else {
+              ((Parens)getFunc()).setSquare();
             }
         }
         return func + arg;

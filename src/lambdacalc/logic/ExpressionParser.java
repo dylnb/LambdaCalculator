@@ -830,8 +830,8 @@ public class ExpressionParser {
     int realStart = start;
     char c = expression.charAt(start);
 
-    if (!isLetter(c) && !(context.ASCII && c == '\\') &&
-        !Character.isDigit(c) && c != SetWithElements.EMPTY_SET_SYMBOL) {
+    if (!isIdentifierChar(c) && !(context.ASCII && c == '\\') &&
+        c != SetWithElements.EMPTY_SET_SYMBOL) {
       if (isRightAfterBinder) {
         return new ParseResultSet(
           new BadCharacterException(
@@ -856,7 +856,7 @@ public class ExpressionParser {
     // the next letter too.
     String id = String.valueOf(c);
     start++;
-
+    
     // If the first character was a backslash, we have to read
     // in the next character literally. In the loop below, it is
     // already translating characters according to our conventions.
@@ -1142,6 +1142,7 @@ public class ExpressionParser {
     return isLetter(ic) ||
            Character.isDigit(ic) ||
            isPrime(ic) ||
+           ic == '*' || 
            ic == '-';
   }
 
@@ -1167,11 +1168,15 @@ public class ExpressionParser {
    * @return the new Identifier instance
    */
   private static Identifier loadIdentifier(
-    String id, ParseOptions context, int start, Type inferredType,
+    String raw_id, ParseOptions context, int start, Type inferredType,
     Type specifiedType, boolean specifiedTypeIsReallySpecified, boolean isRightAfterBinder
   ) throws IdentifierTypeUnknownException {
     boolean isvar;
     Type type;
+    boolean starred = raw_id.startsWith("*");
+    String id = starred ? raw_id.substring(1) : raw_id;
+    if (!starred) System.out.println("id: " + id + "; raw_id: " + raw_id);
+
 
     if (specifiedType == null) {
       try {
@@ -1199,11 +1204,10 @@ public class ExpressionParser {
 
     Identifier ident;
     if (isvar) {
-      ident = new Var(id, type, specifiedType != null && specifiedTypeIsReallySpecified);
+      ident = new Var(id, type, specifiedType != null && specifiedTypeIsReallySpecified, starred);
     } else {
-      ident = new Const(id, type, specifiedType != null && specifiedTypeIsReallySpecified);
+      ident = new Const(id, type, specifiedType != null && specifiedTypeIsReallySpecified, starred);
     }
-
     if (specifiedType != null && specifiedTypeIsReallySpecified) {
       context.explicitTypes.put(id, ident); // ident because it stores both type and isVar
     }
@@ -1340,6 +1344,8 @@ public class ExpressionParser {
         c = Or.SYMBOL;
       } else if (c == Multiplication.INPUT_SYMBOL) {
         c = Multiplication.SYMBOL;
+      } else if (c == Fusion.INPUT_SYMBOL) {
+        c = Fusion.SYMBOL;
       } else if (c == '-' && cnext == '>') {
         c = If.SYMBOL;
         start++;
@@ -1382,6 +1388,9 @@ public class ExpressionParser {
       } else if (c == '>' && cnext == '>') {
         c = SetRelation.Superset.SYMBOL;
         start++;
+      } else if (c == '<' && cnext == ':') {
+        c = MereologicalRelation.PartOf.SYMBOL;
+        start++;
       }
     }
 
@@ -1397,6 +1406,7 @@ public class ExpressionParser {
           c == Equality.EQ_SYMBOL ||
           c == Equality.NEQ_SYMBOL ||
           c == Multiplication.SYMBOL ||
+          c == Fusion.SYMBOL ||
           c == NumericRelation.LessThan.SYMBOL ||
           c == NumericRelation.LessThanOrEqual.SYMBOL ||
           c == NumericRelation.GreaterThan.SYMBOL ||
@@ -1408,7 +1418,8 @@ public class ExpressionParser {
           c == SetRelation.ProperSuperset.SYMBOL ||
           c == SetRelation.NotSuperset.SYMBOL ||
           c == SetRelation.Intersect.SYMBOL ||
-          c == SetRelation.Union.SYMBOL)
+          c == SetRelation.Union.SYMBOL ||
+          c == MereologicalRelation.PartOf.SYMBOL)
         ) {
       return null;
     }
@@ -1419,9 +1430,9 @@ public class ExpressionParser {
 
     // If we're testing whether spaces are required around the operators,
     // if no space was found on either side, return an error condition.
-    // Never require spaces around multiplication.
+    // Never require spaces around multiplication or fusion.
     if (testSpaceRequired && (!wsBefore || !wsAfter) &&
-        c != Multiplication.SYMBOL) {
+        c != Multiplication.SYMBOL && c != Fusion.SYMBOL) {
       return new SyntaxException(
         "Spaces are required around '" + c + "' connectives.", pstart
       );
@@ -1513,6 +1524,7 @@ public class ExpressionParser {
       char[][] operator_precedence = {
         new char[]{
           Multiplication.SYMBOL,
+          Fusion.SYMBOL,
           SetRelation.Intersect.SYMBOL,
           SetRelation.Union.SYMBOL
         },
@@ -1528,7 +1540,8 @@ public class ExpressionParser {
           SetRelation.NotSubset.SYMBOL,
           SetRelation.Superset.SYMBOL,
           SetRelation.ProperSuperset.SYMBOL,
-          SetRelation.NotSuperset.SYMBOL
+          SetRelation.NotSuperset.SYMBOL,
+          MereologicalRelation.PartOf.SYMBOL
         },
         new char[]{
           And.SYMBOL,
@@ -1637,6 +1650,7 @@ public class ExpressionParser {
       op == And.SYMBOL ||
       op == Or.SYMBOL ||
       op == Multiplication.SYMBOL ||
+      op == Fusion.SYMBOL ||
       op == SetRelation.Intersect.SYMBOL ||
       op == SetRelation.Union.SYMBOL
     );
@@ -1690,6 +1704,9 @@ public class ExpressionParser {
           case Multiplication.SYMBOL:
             binary = new Multiplication(left, right);
             break;
+          case Fusion.SYMBOL:
+            binary = new Fusion(left, right);
+            break;
           case NumericRelation.LessThan.SYMBOL:
             binary = new NumericRelation.LessThan(left, right);
             break;
@@ -1725,6 +1742,9 @@ public class ExpressionParser {
             break;
           case SetRelation.Union.SYMBOL:
             binary = new SetRelation.Union(left, right);
+            break;
+          case MereologicalRelation.PartOf.SYMBOL:
+            binary = new MereologicalRelation.PartOf(left, right);
             break;
           default:
             throw new RuntimeException(); // unreachable

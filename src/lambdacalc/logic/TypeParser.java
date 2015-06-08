@@ -82,9 +82,6 @@ public class TypeParser {
             char c = type.charAt(i);
             
             if (isParsingProduct) {
-                System.out.println("parsing product: " + c);
-                System.out.println("Left: " + current.Left);
-                System.out.println("Right: " + current.Right);
                 if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
                     if (current.Right != null) {
                         if (isParsingVarType) {

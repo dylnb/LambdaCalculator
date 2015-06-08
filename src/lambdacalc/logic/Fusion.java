@@ -27,19 +27,19 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package lambdacalc.logic;
 
 /**
- * Represents numeric multiplication, as in the denotation of the 'most'
- * generalized quantifier.
+ * Represents plural sum formation, as in the collective interpretation of
+ * 'John and Mary'
  */
-public class Multiplication extends Binary {
-    public static final char SYMBOL = '\u22C5'; // dot
-    public static final char INPUT_SYMBOL = '*'; // asterisk
-    public static final String LATEX_SYMBOL = "\\cdot"; // central dot
+
+public class Fusion extends Binary {
+    public static final char SYMBOL = '\u2295'; // circled plus
+    public static final char INPUT_SYMBOL = '+'; // plus
+    public static final String LATEX_SYMBOL = "\\oplus"; // central dot
     
-    public Multiplication(Expr left, Expr right) {
+    public Fusion(Expr left, Expr right) {
         super(left, right);
     }
     
@@ -61,23 +61,24 @@ public class Multiplication extends Binary {
     }
     
     protected Binary create(Expr left, Expr right) {
-        return new Multiplication(left, right);
+        return new Fusion(left, right);
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.N) ||
-            !getRight().getType().equals(Type.N)) {
+        if (!getLeft().getType().equals(Type.E) ||
+            !getRight().getType().equals(Type.E)) {
             String msg = "The types of the expressions on the left and right " +
                          "of the mulitiplication operator must be type <e>, " +
                          "but " + getLeft() + " is of type " + getLeft().getType() +
                          " and " + getRight() + " is of type " + getRight().getType() + ".";
             throw new TypeMismatchException(msg);
         }
-        return Type.N;
+        return Type.E;
     }
     
-    Multiplication(java.io.DataInputStream input) throws java.io.IOException {
+    Fusion(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
     }
 
 }
+

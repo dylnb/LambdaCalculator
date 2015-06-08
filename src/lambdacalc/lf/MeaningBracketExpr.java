@@ -90,40 +90,40 @@ public class MeaningBracketExpr extends Expr {
             label = node.toString();
         }
 
-        if (mode == HTML) {
-            label = escapeHTML("[[" + label + "]]");
-        } else if (mode == TXT) {
-            label = "[[" + label + "]]";
-        } else { // mode == LATEX
-            label = "[\\![" + label + "]\\!]";
-        }
-        if (g != null) {
-            if (mode == TXT) {
-                label += "^";
-            } else if (mode == HTML) {
-                label += "<sup>";
-            } else { // mode == LATEX
-                label += "^{";
-            }
-            label += "g";
-            for (Iterator i = g.keySet().iterator(); i.hasNext(); ) {
-                GApp gapp = (GApp)i.next();
-                Var var;
-                try {
-                    var = (Var) g.get(gapp.getIndex(),gapp.getType());
-                } catch (TypeEvaluationException ex) {
-                    // we don't expect this to happen because calling getType()
-                    // on GApp never fails
-                    throw new RuntimeException();
-                }
-                label += " " + var + "/" + gapp.getIndex();
-            }
-            if (mode == HTML) {
-                label += "</sup>";
-            } else if (mode == LATEX) {
-                label += "}";
-            }
-        }
+//        if (mode == HTML) {
+//            label = escapeHTML(label + "<sup>" + "T" + "</sup>");
+//        } else if (mode == TXT) {
+//            label = label + "^T";
+//        } else { // mode == LATEX
+//            label = label + "^{\\top}";
+//        }
+//        if (g != null) {
+//            if (mode == TXT) {
+//                label += "^";
+//            } else if (mode == HTML) {
+//                label += "<sup>";
+//            } else { // mode == LATEX
+//                label += "^{";
+//            }
+//            label += "g";
+//            for (Iterator i = g.keySet().iterator(); i.hasNext(); ) {
+//                GApp gapp = (GApp)i.next();
+//                Var var;
+//                try {
+//                    var = (Var) g.get(gapp.getIndex(),gapp.getType());
+//                } catch (TypeEvaluationException ex) {
+//                    // we don't expect this to happen because calling getType()
+//                    // on GApp never fails
+//                    throw new RuntimeException();
+//                }
+//                label += " " + var + "/" + gapp.getIndex();
+//            }
+//            if (mode == HTML) {
+//                label += "</sup>";
+//            } else if (mode == LATEX) {
+//                label += "}";
+//            }
+//        }
         
         return label;
     }

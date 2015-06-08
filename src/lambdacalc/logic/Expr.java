@@ -50,6 +50,8 @@ public abstract class Expr {
     public static final int HTML = 1;
     public static final int LATEX = 2;
     
+    private boolean starred;
+    
     /**
      * Gets an integer representing the (outermost) expression's operator precedence:
      *
@@ -418,7 +420,7 @@ public abstract class Expr {
      * Helper method for performLambdaConversion. This method is called recursively
      * down the tree to perform lambda conversion, looking for the lambda to convert.
      * The lambda that we are converting may not be at top scope
-     * (it may be embedded as in e.g. Ax[ Ly.P(y) (x) ].)
+     * (it may be embedded as in e.g. Ax.[Ly.P(y)](x).)
      * Once we find the lambda we are converting, performLambdaConversion2 takes
      * over and goes down the rest of the subtree.
      *
@@ -743,6 +745,7 @@ public abstract class Expr {
         if (exprType.equals("lambdacalc.logic.Iota")) return new Iota(input);
         if (exprType.equals("lambdacalc.logic.Lambda")) return new Lambda(input);
         if (exprType.equals("lambdacalc.logic.Multiplication")) return new Multiplication(input);
+        if (exprType.equals("lambdacalc.logic.Fusion")) return new Fusion(input);
         if (exprType.equals("lambdacalc.logic.Not")) return new Not(input);
         if (exprType.equals("lambdacalc.logic.NumericRelation$LessThan")) return new NumericRelation.LessThan(input);
         if (exprType.equals("lambdacalc.logic.NumericRelation$LessThanOrEqual")) return new NumericRelation.LessThanOrEqual(input);

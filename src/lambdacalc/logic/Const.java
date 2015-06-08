@@ -45,7 +45,10 @@ public class Const extends Identifier {
      * @param type the type of the constant
      */
     public Const(String symbol, Type type, boolean isTypeExplicit) {
-        super(symbol, type, isTypeExplicit); 
+        super(symbol, type, isTypeExplicit);
+    }
+    public Const(String symbol, Type type, boolean isTypeExplicit, boolean starred) {
+        super(symbol, type, isTypeExplicit, starred); 
     }    
 
     protected Set getVars(boolean unboundOnly) {

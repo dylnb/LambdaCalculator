@@ -194,6 +194,9 @@ public class LambdaEnabledTextField extends JTextField {
                  case SetWithElements.EMPTY_SET_KEY_EVENT:
                      c = SetWithElements.EMPTY_SET_SYMBOL;
                      break;
+                 case MereologicalRelation.PartOf.KEY_EVENT:
+                     c = MereologicalRelation.PartOf.SYMBOL;
+                     break;
                  
                  default:
                      super.processKeyEvent(e);
@@ -231,6 +234,7 @@ public class LambdaEnabledTextField extends JTextField {
                  case Not.INPUT_SYMBOL: c = Not.SYMBOL; break;
                  case Identifier.PRIME_INPUT_SYMBOL: c = Identifier.PRIME; break;
                  case Multiplication.INPUT_SYMBOL: c = Multiplication.SYMBOL; break;
+                 case Fusion.INPUT_SYMBOL: c = Fusion.SYMBOL; break;
                  default:
                      super.processKeyEvent(e);
                      return;
@@ -359,6 +363,12 @@ public class LambdaEnabledTextField extends JTextField {
                               break;
                           } else if (c2 == SetRelation.Superset.SYMBOL && c3 == SetRelation.Superset.SYMBOL) {
                               replace(i-1, 2, String.valueOf(SetRelation.ProperSuperset.SYMBOL), null);
+                              foundChange = true;
+                              break;
+                          
+                          // part-of
+                          } else if (c2 == '<' && c3 == ':') {
+                              replace(i-1, 2, String.valueOf(MereologicalRelation.PartOf.SYMBOL), null);
                               foundChange = true;
                               break;
                           }

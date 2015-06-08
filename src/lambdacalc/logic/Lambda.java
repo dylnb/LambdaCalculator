@@ -44,6 +44,8 @@ public class Lambda extends Binder {
     
     public static final int KEY_EVENT = KeyEvent.VK_L;
     
+    private boolean starred;
+    
     /**
      * Constructs the binder.
      * @param ident the identifier the binder binds, which may
@@ -52,8 +54,13 @@ public class Lambda extends Binder {
      * @param hasPeriod indicates whether this binder's string
      * representation includes a period after the identifier.
      */
+    public Lambda(Identifier ident, Expr innerExpr, boolean hasPeriod, boolean starred) {
+        super(ident,innerExpr,hasPeriod);
+        this.starred = starred;
+    }
     public Lambda(Identifier ident, Expr innerExpr, boolean hasPeriod) {
         super(ident,innerExpr,hasPeriod);
+        this.starred = false;
     }
 
     /**
@@ -67,6 +74,10 @@ public class Lambda extends Binder {
     
     public boolean dotPolicy() {
         return true;
+    }
+    
+    public boolean isStarred() {
+        return starred; 
     }
     
     public String getSymbol() {

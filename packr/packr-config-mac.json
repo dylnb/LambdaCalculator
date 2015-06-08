@@ -1,0 +1,16 @@
+{
+    "platform": "mac",
+    "jdk": "../dist/openjdk-1.7.0-u80-unofficial-macosx-x86_64-image.zip",
+    "executable": "Lambda Calculator",
+    "appjar": "../dist/LambdaCalculator.jar",
+    "mainclass": "lambdacalc/Main",
+    "vmargs": [
+      "-Xmx1G"
+    ],
+    "resources": [
+      "../images",
+      "../examples"
+    ],
+    "minimizejre": "soft",
+    "outdir": "Lambda Calculator.app"
+}

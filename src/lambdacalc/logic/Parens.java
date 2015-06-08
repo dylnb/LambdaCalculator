@@ -75,6 +75,10 @@ public class Parens extends Unary {
         return getInnerExpr().getType();
     }
     
+    public void setSquare() {
+        this.shape = SQUARE;
+    }
+    
     protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         
         // ignore parentheses for equality test

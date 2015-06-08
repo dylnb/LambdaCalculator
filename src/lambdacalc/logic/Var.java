@@ -50,6 +50,9 @@ public class Var extends Identifier {
     public Var(String repr, Type type, boolean isTypeExplicit) {
         super(repr, type, isTypeExplicit);
     }
+    public Var(String repr, Type type, boolean isTypeExplicit, boolean starred) {
+        super(repr, type, isTypeExplicit, starred);
+    }
 
     protected Set getVars(boolean unboundOnly) {
         HashSet ret = new HashSet();

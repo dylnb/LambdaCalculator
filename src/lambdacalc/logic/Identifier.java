@@ -49,12 +49,17 @@ public abstract class Identifier extends Expr {
     private String symbol;
     private Type type;
     private boolean typeIsExplicit;
+    private boolean starred;
     
-    /** Creates a new instance of Identifier */
     public Identifier(String symbol, Type type, boolean isTypeExplicit) {
+        this(symbol, type, isTypeExplicit, false);
+    }
+    /** Creates a new instance of Identifier */
+    public Identifier(String symbol, Type type, boolean isTypeExplicit, boolean starred) {
         this.symbol = symbol; 
         this.type = type;
         this.typeIsExplicit = isTypeExplicit;
+        this.starred = starred;
         if (symbol == null) throw new IllegalArgumentException();
         if (type == null) throw new IllegalArgumentException();
     }
@@ -95,11 +100,11 @@ public abstract class Identifier extends Expr {
     protected String toString(int mode) {
         if (!isTypeExplicit()) {
             if (mode == HTML) {
-                return escapeHTML(this.symbol);
+                return escapeHTML((this.starred ? "*" : "") + this.symbol);
             } else if (mode == TXT ) {
-                return  this.symbol;
+                return (this.starred ? "*" : "") + this.symbol;
             } else  { // mode == LATEX
-                String res = this.symbol
+                String res = (this.starred ? "*" : "") + this.symbol
                         .replace(String.valueOf(PRIME), LATEX_PRIME_REPR)
                         .replace(String.valueOf(PRIME_INPUT_SYMBOL), LATEX_PRIME_REPR)
                         .replace("\\prime}^{","\\prime ");// hack to merge multiple primes
@@ -110,11 +115,11 @@ public abstract class Identifier extends Expr {
                 return res;
             }
         } else if (mode == HTML) {
-            return escapeHTML(symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
+            return escapeHTML((this.starred ? "*" : "") + symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
         } else if (mode == LATEX) {
-            return this.symbol + "_{" + type.toLatexString() + "}";
+            return (this.starred ? "{}^*" : "") + this.symbol + "_{" + type.toLatexString() + "}";
         } else { // mode == TXT
-            return this.symbol + "_" + type.toShortString();
+            return (this.starred ? "*" : "") + this.symbol + "_" + type.toShortString();
         }
     }
     
@@ -136,6 +141,10 @@ public abstract class Identifier extends Expr {
     
     public boolean isTypeExplicit() {
         return typeIsExplicit;
+    }
+    
+    public boolean isStarred() {
+        return starred;
     }
     
     /**
@@ -175,6 +184,7 @@ public abstract class Identifier extends Expr {
         output.writeUTF(symbol);
         type.writeToStream(output);
         output.writeBoolean(typeIsExplicit);
+        output.writeBoolean(starred);
     }
     
     Identifier(java.io.DataInputStream input) throws java.io.IOException {
@@ -183,5 +193,6 @@ public abstract class Identifier extends Expr {
         symbol = input.readUTF();
         type = Type.readFromStream(input);
         typeIsExplicit = input.readBoolean();
+        starred = input.readBoolean();
     }
 }

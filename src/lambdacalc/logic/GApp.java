@@ -209,7 +209,8 @@ public class GApp extends Expr {
     }
     
     protected String toString(int mode) {
-        return SYMBOL + OPEN_BRACKET + this.getIndex() + CLOSE_BRACKET;
+//        return SYMBOL + OPEN_BRACKET + this.getIndex() + CLOSE_BRACKET;
+        return "v" + this.getIndex();
     }
     
     /**

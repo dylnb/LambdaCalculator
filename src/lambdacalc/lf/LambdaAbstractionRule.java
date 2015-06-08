@@ -102,13 +102,15 @@ public class LambdaAbstractionRule extends CompositionRule {
         // first using the current typing conventions and the type of the bare index,
         // otherwise (if that fails) using type E -- trying to get the typing conventions for it
 
-        Var var = typingConventions.getVarForType(type, false);
-        if (var == null) {
-            var = typingConventions.getVarForType(Type.E, false);
-        }
-        if (var == null) {
-            var = new Var("x", Type.E, false);
-        }
+//        Var var = typingConventions.getVarForType(type, false);
+//        if (var == null) {
+//            var = typingConventions.getVarForType(Type.E, false);
+//        }
+//        if (var == null) {
+//            var = new Var("x", Type.E, false);
+//        }
+        
+        Var var = new Var("v" + index.getIndex(), type, false);
         
         if (g == null) {
             // We are evaluating bottom-up.
