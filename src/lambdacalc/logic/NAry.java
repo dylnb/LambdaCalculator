@@ -130,13 +130,18 @@ public abstract class NAry extends Expr {
         Expr[] e = new Expr[exprs.length];
         boolean didConversion = false;
         for (int i = 0; i < exprs.length; i++) {
-            if (!didConversion) {
-                e[i] = exprs[i].performLambdaConversion1(accidentalBinders);
-                if (e[i] != null)
-                    didConversion = true;
-                else
-                    e[i] = exprs[i];
-            }
+//            if (!didConversion) {
+//                e[i] = exprs[i].performLambdaConversion1(accidentalBinders);
+//                if (e[i] != null)
+//                    didConversion = true;
+//                else
+//                    e[i] = exprs[i];
+//            }
+            e[i] = exprs[i].performLambdaConversion1(accidentalBinders);
+            if (e[i] != null)
+                didConversion = true;
+            else
+                e[i] = exprs[i];
         }
         
         if (!didConversion) // nothing happened
