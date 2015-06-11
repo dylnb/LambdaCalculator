@@ -12,7 +12,7 @@ Homework 3: Generalized Quantifiers
 constants of type e : a b c
 constants of type n : k
 variables of type e : x-z
-variables of type <?a,?b> : d-f
+variables of type <'a,'b> : d-f
 variables of type <e,t> : P-Q X-Z
 variables of type <e,et> : R-W
 

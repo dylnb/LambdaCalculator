@@ -1,0 +1,66 @@
+Superlatives
+
+# Penka Stateva (2005)
+
+# Next, typing conventions are entered. If no typing conventions
+# are given, some defaults are used.
+
+constants of type e : c p r s j m
+variables of type e : x-z
+variables of type m : d m
+variables of type <e,t> : C X-Z
+variables of type <m,et> : G R
+variables of type <m,t> : P
+
+# The following directive instructs the program to
+# interpret multiple-letter constants and variables
+# properly.
+
+multiple letter identifiers
+
+# "use rule" directives are for tree evaluation exercises.
+# They indicate which composition rules are available
+# at nonterminals.
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+#use rule lambda abstraction
+
+# Next, lexical entries provided to the student are given.
+# A word (i.e. "sleep") can be given any number of lexical
+# entry choices by repeating the "define" directive multiple
+# times. Students are able to add their own lexical entries
+# as well.
+
+define mountain : Lx. mtn(x)
+define tall : Ld . Lx. tall(x,d)
+define impressive : Ld.Lx. impressive(x,d)
+define max : LP. Id. P(d) & Am. P(m) -> leq(m,d)
+
+define happy : Lx. happy(x)
+define guy : Lx. guy(x)
+define love, loves : Ly.Lx. love(x,y)
+
+define someone, somebody : LX. Ex. X(x)
+define everyone, everybody : LX. Ax. X(x)
+
+define a : LX.LY. Ex. X(x) & Y(x)
+
+define is : LX.Lx. X(x)
+define the : LX.Lx. X(x)
+
+define John : j 
+define Mary : m
+
+define C : C
+
+define est : LC. LR. Lx. greater(Id.R(d)(x), Id.Ay.[neq(y,x) & C(y)] -> R(d)(y))
+
+
+# Finally, the exercises themselves are entered.
+
+title Basics
+exercise tree
+
+[.IP [.DP John [.I' [.I is ] [.DP [.D the ] [.AP [.DegP est C ] [.A impressive ] ] ] ] ] ]

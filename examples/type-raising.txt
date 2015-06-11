@@ -1,0 +1,100 @@
+Binary Boolean type raising. (c) 2013, 2015 Mats Rooth.
+
+variables of type e : x y
+constants of type e : m j
+#
+variables of type t : p q
+#
+variables of type <e,t> : P Q
+constants of type <e,t> : sleep yeti god green yawn
+#
+variables of type <e,et> : R
+constants of type <e*e,t> : like admire
+
+## Polymorphic Types ##
+# Argument type of higher conjunct, e for <e,t> conjunct
+variables of type 'a: a
+# Higher conjunct, <e,t> for <e,t> conjunct
+variables of type <'a,'b>: b b'
+# Lower conjunction, <t,<t,t>> for <e,t> conjunct
+# c is supposed to be any conjoinable type, but
+# the constraint to conjoinable types is not imposed.
+variables of type <'b,<'b,'b>>: c
+
+multiple letter identifiers
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+define Mary : m
+define Jehovah : j
+#
+define asleep: Lx.sleep(x)
+define yeti: Lx.yeti(x)
+define god: Lx.god(x)
+define green: Lx.green(x)
+define yawned: Lx.yawn(x)
+
+
+#
+define admires: LyLx.admire(x,y)
+define likes: LyLx.like(x,y)
+
+define to: LP.P
+define is: LP.P
+define a: LP.P
+
+#
+define some: LPLQ.Ex.[P(x) & Q(x)]
+define every: LPLQ.Ax.[P(x) -> Q(x)]
+
+# Type t conjunction
+define and: LpLq[q & p]
+
+# <e,t> conjunction, should be equivalent to [B and]
+define and-et: LPLQLx[P(x) & Q(x)]
+
+# Binary boolean type raising
+define B: Lc.Lb.Lb'.La[[c(b(a))](b'(a))]
+
+
+exercise tree
+
+title Example 1
+directions Jehovah is green and Jehovah is a yeti
+
+[.S [.S Jehovah [.VP [.V is] [.AP [.A green]]]] [.S [.C and] [.S Jehovah [.VP [.V is] [.DP [.D a] [.NP [.N yeti]]]]]]]
+
+title Example 2
+directions Raise t conjunction to <e,t> with B.
+
+[.S Jehovah [.VP [.VP [.V is] [.AP [.A green]]] [.VP [.C B [.C and]] [.VP [.V is] [.DP [.D a] [.NP [.N yeti]]]]]]]
+
+title Example 3
+directions Raise t conjunction to <<e,t>,t> with B.
+directions The calculator reports it can not infer type of [[B and] [some god]].
+directions The lambda term is Lb".La[b"(a) & Ex[god(x) ^ a(x)] is correct,
+directions and the derivation succeeds to the top.
+[.S [[every yeti] [[B and] [some god]]] yawned]
+
+
+title Example 4
+directions Raise <e,t> conjunction to <e,<e,t>. with B. This starts from and-et.
+directions Again the lambda term looks right, but calculator reports 'Type unknown'
+directions for the type-raised conjunction. It accepts on argument (likes),
+directions but not the second (admires).
+[admires [[B and-et] likes]]
+
+
+title Example 5
+directions Raise t conjunction to <e,<e,t>. with two B's.
+directions The calculator reports 'Type unknown'
+directions for [B [B and]]. The lambda term 
+directions Lb.Lb'.La.La'[(b'(a)(a')) & (b(a)(a'))]] is correct if the extra ()'s are
+directions okay.  The first argument but not the second is accepted.
+
+[admires [[B [B and]] likes]]
+
+

@@ -621,19 +621,19 @@ public abstract class Expr {
     
     public static HashMap<Type,Type> alignTypes(Type funcT, Type argT) throws MeaningEvaluationException {
         // funcT is the domain type of some function, (eg the <b,t> in <<b,t>,t>)
-        // which has "matched" the type of argT (eg <e,t>)
+        // which has "matched" the type of argT (eg <et,t>)
         HashMap<Type,Type> matches = new HashMap<Type,Type>();
-        
+                
         // Need to walk down the type trees in parallel
         if (funcT instanceof CompositeType) {
             if (!(argT instanceof CompositeType)) {
                 throw new MeaningEvaluationException("I'm seeing a function of type " + funcT +
                         ", but an argument of type " + argT + ", which I can't match up"); // debug
             }
-            Type funcLT = ((CompositeType)funcT).getLeft();
-            Type funcRT = ((CompositeType)funcT).getRight();
-            Type argLT = ((CompositeType)argT).getLeft();
-            Type argRT = ((CompositeType)argT).getRight();
+            Type funcLT = ((CompositeType)funcT).getLeft(); // b
+            Type funcRT = ((CompositeType)funcT).getRight(); // t
+            Type argLT = ((CompositeType)argT).getLeft(); // et
+            Type argRT = ((CompositeType)argT).getRight(); // t
             HashMap<Type,Type> leftAlignments = alignTypes(funcLT, argLT);
             HashMap<Type,Type> rightAlignments = alignTypes(funcRT, argRT);
             matches.putAll(leftAlignments);
@@ -655,9 +655,9 @@ public abstract class Expr {
             }
             productTypeHelper(((ProductType)funcT).getSubTypes(), ((ProductType)argT).getSubTypes(), matches);
         } else {
-            if (argT instanceof ConstType && funcT instanceof VarType) {
+            if ((argT instanceof ConstType || argT instanceof CompositeType) && funcT instanceof VarType) {
                 matches.put(funcT, argT);
-            } else if (argT instanceof VarType && funcT instanceof ConstType) {
+            } else if (argT instanceof VarType && (funcT instanceof ConstType || funcT instanceof CompositeType)) {
                 matches.put(argT,funcT);
             }
         }

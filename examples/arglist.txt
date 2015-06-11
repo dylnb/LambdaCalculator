@@ -1,0 +1,30 @@
+Arglist Bug
+
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+
+constants of type e: mary
+variables of type e: x
+variables of type <e,e>: f
+
+multiple reductions on
+
+define relnoun: Lx.[mary]
+define P: Lf.Lx.[smile(f(x))]
+define Q1: Lf.Lx.[meet(f(x),x)]
+define Q2: Lf.Lx.[meet(x,f(x))]
+define R1: Lf.Lx.[put(f(x),x,x)]
+define R2: Lf.Lx.[put(x,f(x),x)]
+define R3: Lf.Lx.[put(x,x,f(x))]
+
+exercise tree
+title Sentences
+
+[.S1 P relnoun]
+[.S2 Q1 relnoun]
+[.S3 Q2 relnoun]
+[.S4 R1 relnoun]
+[.S5 R2 relnoun]
+[.S6 R3 relnoun]

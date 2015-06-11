@@ -119,14 +119,14 @@ public class Main {
             try {
                 System.out.println("typechecking\n");
                 System.out.println("input: " + args[1]);
-                lambdacalc.logic.CompositeType type = (lambdacalc.logic.CompositeType)lambdacalc.logic.TypeParser.parse(args[1]);
+                lambdacalc.logic.CompositeType type = (lambdacalc.logic.CompositeType)lambdacalc.logic.TypeParser.parse("<'at,<'at,'at>>");
                 ArrayList<lambdacalc.logic.Type> types = type.getAtomicTypes();
                 System.out.println("atomic types: " + types + "\n");
                 
                 HashMap<lambdacalc.logic.Type,lambdacalc.logic.Type> alignments = null;
                 try {
-                    lambdacalc.logic.Type leftType = lambdacalc.logic.TypeParser.parse("<?a*?b*e*t,?a>");
-                    lambdacalc.logic.Type rightType = lambdacalc.logic.TypeParser.parse("<n*s*e*t,n>");
+                    lambdacalc.logic.Type leftType = lambdacalc.logic.TypeParser.parse("<'a,t>");
+                    lambdacalc.logic.Type rightType = lambdacalc.logic.TypeParser.parse("<et,t>");
                     System.out.println("types match?: " + leftType.equals(rightType) + "\n");
                     
                     System.out.println("attempting to align regardless...");

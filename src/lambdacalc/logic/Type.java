@@ -38,7 +38,7 @@ public abstract class Type implements Comparable {
     /**
      * Type variables identified by preceding apostrophe
      */
-    public static final char VarTypeSignifier = '?';
+    public static final char VarTypeSignifier = '\'';
     
     /**
      * The type of entities, e.
