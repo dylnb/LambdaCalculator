@@ -56,8 +56,13 @@ public abstract class LogicalBinary extends Binary {
     
     private String partToString(Expr expr, int mode) {
         // And, Or, Intersect, and Union are associative, so we omit parens for nested these.
-        if (((this instanceof And || this instanceof Or || this instanceof SetRelation.Intersect || this instanceof SetRelation.Union))
-            && expr.getClass() == getClass()) return expr.toString(mode);
+        if ((this instanceof And ||
+             this instanceof Or ||
+             this instanceof SetRelation.Intersect ||
+             this instanceof SetRelation.Union)
+            && expr.getClass() == getClass()) {
+            return expr.toString(mode);
+        }
         return nestedToString(expr, mode);
     }
     

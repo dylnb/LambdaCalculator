@@ -75,7 +75,7 @@ public class ExerciseFileParser {
         // options for parsing lambda expressions
         ExpressionParser.ParseOptions exprParseOpts = new ExpressionParser.ParseOptions();
         exprParseOpts.ASCII = true;
-        exprParseOpts.singleLetterIdentifiers = true;
+        exprParseOpts.singleLetterIdentifiers = false;
         exprParseOpts.typer = typer;
         
         // the file of exercises to be returned

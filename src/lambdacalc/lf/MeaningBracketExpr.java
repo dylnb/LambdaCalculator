@@ -90,13 +90,13 @@ public class MeaningBracketExpr extends Expr {
             label = node.toString();
         }
 
-//        if (mode == HTML) {
-//            label = escapeHTML(label + "<sup>" + "T" + "</sup>");
-//        } else if (mode == TXT) {
-//            label = label + "^T";
-//        } else { // mode == LATEX
-//            label = label + "^{\\top}";
-//        }
+        if (mode == HTML) {
+            label = escapeHTML(" |~ " + label + " ~| ");
+        } else if (mode == TXT) {
+            label = " |~ " + label + " ~| ";
+        } else { // mode == LATEX
+            label = "|\\!\\!\\sim\\," + label + "\\,\\backsim\\!\\!|";
+        }
 //        if (g != null) {
 //            if (mode == TXT) {
 //                label += "^";

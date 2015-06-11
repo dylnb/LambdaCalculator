@@ -785,6 +785,7 @@ public class TrainingWindow extends JFrame {
 
         jSplitPaneMain.setDividerLocation(300);
         jSplitPaneMain.setOneTouchExpandable(true);
+        jSplitPaneMain.setPreferredSize(new java.awt.Dimension(1280, 720));
 
         jSplitPaneLeftHalf.setDividerLocation(300);
         jSplitPaneLeftHalf.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);

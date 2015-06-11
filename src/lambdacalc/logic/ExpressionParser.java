@@ -1175,7 +1175,6 @@ public class ExpressionParser {
     Type type;
     boolean starred = raw_id.startsWith("*");
     String id = starred ? raw_id.substring(1) : raw_id;
-    if (!starred) System.out.println("id: " + id + "; raw_id: " + raw_id);
 
 
     if (specifiedType == null) {
@@ -1226,7 +1225,7 @@ public class ExpressionParser {
    * simple list of expressions separated by operators as in [X, &, Y, |, Z, ->
    * , Q]. Then the operator precedence is taken care of. The operator
    * precedence is:
-   *   Number-valued, Set-valued operations
+   *   Number-valued, Set-valued, Entity-valued operations
    *   Equality, Ordering
    *   And, Or
    *   If, Iff
@@ -1545,9 +1544,9 @@ public class ExpressionParser {
         },
         new char[]{
           And.SYMBOL,
-          Or.SYMBOL
-        },
-        new char[]{
+          Or.SYMBOL,
+//        },
+//        new char[]{
           If.SYMBOL,
           Iff.SYMBOL
         }

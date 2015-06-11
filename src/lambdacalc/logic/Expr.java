@@ -78,7 +78,7 @@ public abstract class Expr {
      */
     protected final String nestedToString(Expr nestedExpr, int mode) {
         if (nestedExpr.getOperatorPrecedence() >= this.getOperatorPrecedence())
-            return "(" + nestedExpr.toString(mode) + ")";
+            return "[" + nestedExpr.toString(mode) + "]";
         return nestedExpr.toString(mode);
     }
     

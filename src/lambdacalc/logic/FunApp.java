@@ -91,12 +91,14 @@ public class FunApp extends Binary {
         if (!(getArg() instanceof Parens) && !(getArg() instanceof ArgList)) {
             arg = "(" + arg + ")";
         }
-        if (!(getFunc() instanceof Identifier)) {
-//            arg = " " + arg;
-            if (!(getFunc() instanceof Parens)) {
+        if (!(getFunc() instanceof Identifier || getFunc() instanceof FunApp)) {
+            arg = " " + arg;
+            if (!(getFunc() instanceof Parens || getFunc() instanceof FunApp)) {
               func = "[" + func + "]";
             } else {
-              ((Parens)getFunc()).setSquare();
+              if (getFunc() instanceof Parens) {
+                ((Parens)getFunc()).setSquare();
+              }
             }
         }
         return func + arg;
