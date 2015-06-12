@@ -44,11 +44,15 @@ public class NonBranchingRule extends CompositionRule {
     }
     
     public boolean isApplicableTo(Nonterminal node) {
-        // Count up the children of node that are not DummyTerminal's. If there's
+        if (node instanceof DummyNonterminal) {
+            return true;
+        }
+        // Count up the children of node that are not dummies. If there's
         // just one, then we are a non-branching node.
         int nChildren = 0;
         for (int i = 0; i < node.size(); i++)
-            if (!(node.getChild(i) instanceof DummyTerminal))
+            if (!(node.getChild(i) instanceof DummyTerminal ||
+                  node.getChild(i) instanceof DummyNonterminal))
                 nChildren++;
         return nChildren == 1;
     }
@@ -61,10 +65,13 @@ public class NonBranchingRule extends CompositionRule {
                     "one child.");
         
         // Find first non-DummyTerminal.
-        for (int i = 0; i < node.size(); i++)
-            if (!(node.getChild(i) instanceof DummyTerminal))
+        for (int i = 0; i < node.size(); i++) {
+            if (!(node.getChild(i) instanceof DummyTerminal ||
+                  node.getChild(i) instanceof DummyNonterminal)) {
                 return new MeaningBracketExpr(node.getChild(i), g);
-       
-        throw new RuntimeException(); // not reachable
+            }
+        }
+        // All nodes were dummy terminals; return the first
+        return new MeaningBracketExpr(node.getChild(0), g);
     }
 }

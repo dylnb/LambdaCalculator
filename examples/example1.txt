@@ -22,9 +22,9 @@ directions argument(s) match, simplify the following expressions performing
 directions one lambda-conversion at a time.
 points per exercise 10
 
-Lx[P(x) & Q(x)] (a)
-LxLy[R(a,y) & Q(x)] (a) (b)
-Lx.Ey[R(y,x)] (y)
-Lx[a] (b)
-Lx[P(x) -> Ex[R(x,b)]] (a)
-LxLx[P(x) -> R(x,c)] (a) (b)
+[Lx.P(x) & Q(x)] (a)
+[LxLy.R(a,y) & Q(x)] (a) (b)
+[Lx.Ey[R(y,x)]] (y)
+[Lx.a] (b)
+[Lx.P(x) -> Ex.R(x,b)] (a)
+[LxLx.P(x) -> R(x,c)] (a) (b)

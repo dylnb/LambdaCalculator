@@ -149,20 +149,20 @@ title Heim 2006b
 
 
 instructions John is taller than Mary is. (Heim 2006b)
-[.IP [.CP (than) [1<n,t> [.AP [Pi t<n,t>_1 ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+[.IP [.CP (than) [1<n,t> [.AP [Pi t<n,t>_1 ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t<n>_5 tall]]]]]]]]
 
 #instructions John is taller than Mary is. (Heim 2006b), in situ
-#[.CP (than) [.AP [Pi [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]] ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]
+#[.CP (than) [.AP [Pi [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t<n>_5 tall]]]]]]] ] [3<n> [.AP Mary [(is) [t<n>_3 tall]]]]]]
 
 
 instructions John is taller than every girl is. (Heim 2006b)
-[.IP [.CP (than) [1<n,t> [ [every girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+[.IP [.CP (than) [1<n,t> [ [every girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t<n>_5 tall]]]]]]]]
 
 instructions Mary is taller than she has to be (Heim 2006b)
 [ [ (than) [1<nt> [[Pi t<nt>_1] [2<n> [has-to [Mary [t<n>_2 tall]]]]]]] [4 [[er t<n>_4 ] [ max [5 [Mary [(is) [t_5 tall]]]]]]]]
 
 instructions John is taller than no girl is. (Heim 2006b, leaves 'no girl' in situ, this overgenerates)
-[.IP [.CP (than) [1<n,t> [ [no girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t_5 tall]]]]]]]]
+[.IP [.CP (than) [1<n,t> [ [no girl] [2<e> [.AP [Pi t<n,t>_1 ] [3<n> [.AP t<e>_2 [(is) [t<n>_3 tall]]]]]]]]] [.IP 4<n> [[er t<n>_4 ] [ max [5 [John [(is) [t<n>_5 tall]]]]]]]]
 
 exercise tree
 title Beck 2010

@@ -174,7 +174,9 @@ public class BracketedTreeParser {
                                     throw new SyntaxException("Nothing can follow the end of the root element.", j);
                             }
                         }
+                        // post-process the tree
                         typeBareIndices(curnode);
+                        scrubDummies(curnode);
                         return curnode;
                     }
                     break;
@@ -434,8 +436,10 @@ public class BracketedTreeParser {
             }
         }
         
-        if (child.getLabel() != null && !child.hasIndex() && child.getLabel().startsWith("(") && child.getLabel().endsWith(")"))
+        if (child.getLabel() != null && !child.hasIndex() &&
+            child.getLabel().startsWith("(") && child.getLabel().endsWith(")")) {
             child = new DummyTerminal(child.getLabel());
+        }
               
         // If the terminal label was just an integer,
         // load it as a BareIndex object.
@@ -466,8 +470,34 @@ public class BracketedTreeParser {
             else if ("Nonterminal".equals(kid.getDisplayName()))
                 typeBareIndices((Nonterminal)kid);
         }
+    } 
+
+    public static Nonterminal scrubDummies(Nonterminal node) {
+        List children = node.getChildren();
+        if (children.size() == 1 && node.getChild(0) instanceof DummyTerminal) {
+            DummyNonterminal dnt = new DummyNonterminal(node);
+//            dnt.addChild(node.getChild(0));
+            System.out.println();
+            System.out.println("got dummyNT: " + dnt);
+            System.out.println();
+            return dnt;
+        } else {
+            for (int i=0; i < children.size(); i++) {
+                if (!(node.getChild(i) instanceof Terminal)) {
+                    node.setChild(i, scrubDummies((Nonterminal)node.getChild(i)));
+                }
+            }
+            return node;
+        }
     }
-    
+    // For debugging.
+    public static void main(String arg) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
+        Nonterminal root = parse(arg);
+        System.out.println(root.toString());
+        printInstances(root);
+        printTypes(root); 
+    }
+
     // for debugging
     private static void printTypes(LFNode node) {
         List kids = node.getChildren();
@@ -488,20 +518,16 @@ public class BracketedTreeParser {
         }
     }
 
-    // For debugging.
-    public static void main(String arg) throws SyntaxException, MeaningEvaluationException, lambdacalc.logic.TypeEvaluationException {
-        Nonterminal root = parse(arg);
-        System.out.println(root.toString());
-        printTypes(root);
-//        lambdacalc.logic.Expr expr = root.getMeaning();
-//        System.out.println(expr);
-//        
-//        while (true) {
-//            lambdacalc.logic.Expr.LambdaConversionResult r = expr.performLambdaConversion();
-//            if (r == null)
-//                break;
-//            expr = r.result;
-//            System.out.println(expr);
-//        }
-    }
+    // for debugging
+    private static void printInstances(LFNode node) {
+        List kids = node.getChildren();
+        for (int i = 0; i < kids.size(); i++) {
+            LFNode kid = (LFNode)kids.get(i);
+            System.out.print(kid.toString());
+            if (kid instanceof Nonterminal) {
+                System.out.println();
+                printInstances(kid);
+            }
+        }
+    }  
 }

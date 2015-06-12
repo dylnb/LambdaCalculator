@@ -639,7 +639,7 @@ public class TrainingWindow extends JFrame {
                 text += "You have started this exercise but have not completed it yet.";
             }
         } else {
-            txtFeedback.setText(ex.getExerciseText());
+            txtQuestion.setText(ex.getExerciseText());
             txtUserAnswer.setText(ex.getLastAnswer());
             text += "You have already solved this exercise.";
         }

@@ -53,4 +53,4 @@ instructions This example is reproduced from Section 5.5, example (5). Please pr
 
 instructions This is the grammatical indexing of example (13) in Section 5.5. Please proceed as before and compute the denotation of the tree.
 
-[.DP the [.NP [.NP man ] [.CP who_1 [.S [.DP t_1] [.VP talked [.PP [.P (to) ] [.DP the [.NP [.NP boy] [.CP who_2 [.S [.DP t_2] [.VP visited [.DP him_1]]]]]]]]]]]]
+[.DP the [.NP [.NP man ] [.CP who_1 [.S [.DP t_1] [.VP talked [.PP [.P (to)] [.DP the [.NP [.NP boy] [.CP who_2 [.S [.DP t_2] [.VP visited [.DP him_1]]]]]]]]]]]]

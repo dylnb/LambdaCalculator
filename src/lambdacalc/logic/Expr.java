@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lambdacalc.lf.MeaningEvaluationException;
 
 /**
@@ -51,6 +53,15 @@ public abstract class Expr {
     public static final int LATEX = 2;
     
     private boolean starred;
+        
+    public static final Expr createIdFn() {
+        try {
+            return ExpressionParser.parse("Lx_<'a>.x", new ExpressionParser.ParseOptions());
+        } catch (SyntaxException ex) {
+            return null;
+        }
+    }
+            
     
     /**
      * Gets an integer representing the (outermost) expression's operator precedence:

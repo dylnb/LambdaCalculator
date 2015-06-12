@@ -92,8 +92,8 @@ public class FunApp extends Binary {
             arg = "(" + arg + ")";
         }
         if (!(getFunc() instanceof Identifier || getFunc() instanceof FunApp)) {
-            arg = " " + arg;
-            if (!(getFunc() instanceof Parens || getFunc() instanceof FunApp)) {
+//            arg = " " + arg;
+            if (!(getFunc() instanceof Parens)) {
               func = "[" + func + "]";
             } else {
               if (getFunc() instanceof Parens) {

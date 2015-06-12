@@ -50,8 +50,8 @@ public class DummyTerminal extends Terminal {
         return false;
     }
     
-    public Expr getMeaning(AssignmentFunction g) 
-    throws MeaningEvaluationException {
+    public Expr getMeaning(AssignmentFunction g)
+        throws MeaningEvaluationException {
         throw new MeaningEvaluationException("\"" + toShortString() +"\" does not have a denotation.");
     }
     
