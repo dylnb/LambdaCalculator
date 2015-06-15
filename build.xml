@@ -74,6 +74,21 @@
     		<zipfileset src="dist/lib/AbsoluteLayout.jar"/>
     		<zipfileset src="dist/lib/swing-layout-1.0.4.jar"/>
     	</jar>
+
+      <!-- Create OS X app bundle -->
+      <taskdef name="jarbundler"
+        classpath="dist/lib/jarbundler-2.4.0.jar"
+        classname="net.sourceforge.jarbundler.JarBundler"/>
+
+      <jarbundler dir="${basedir}" verbose="true" showPlist="true"
+                  name="${ant.project.name}"
+                  mainclass="${main.class}"
+                  jar="${dist.jar}$"
+                  icon="images/hat-logo-teacher.ico"
+                  stubfile="dist/lib/universalJavaApplicationStub"
+                  useJavaXKey="true"
+                  version="${version}"
+                  copyright="${copyright}"/>
     	
     	<!-- Create the Windows executable file. -->
     	<java fork="true" dir="launch4j" jar="launch4j/launch4j.jar">

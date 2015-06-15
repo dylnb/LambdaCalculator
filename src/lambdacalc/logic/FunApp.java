@@ -96,7 +96,7 @@ public class FunApp extends Binary {
             if (!(getFunc() instanceof Parens)) {
               func = "[" + func + "]";
             } else {
-              if (getFunc() instanceof Parens) {
+              if (getFunc() instanceof Parens) {    
                 ((Parens)getFunc()).setSquare();
               }
             }
