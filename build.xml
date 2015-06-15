@@ -85,7 +85,7 @@
                   mainclass="${main.class}"
                   jar="${dist.jar}$"
                   icon="images/hat-logo-teacher.ico"
-                  stubfile="dist/lib/universalJavaApplicationStub"
+                  stubfile="resources/universalJavaApplicationStub"
                   useJavaXKey="true"
                   version="${version}"
                   copyright="${copyright}"/>
