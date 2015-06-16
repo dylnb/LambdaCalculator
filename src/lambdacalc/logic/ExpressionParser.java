@@ -1174,8 +1174,29 @@ public class ExpressionParser {
     boolean isvar;
     Type type;
     boolean starred = raw_id.startsWith("*");
-    String id = starred ? raw_id.substring(1) : raw_id;
+//    String id = starred ? raw_id.substring(1) : raw_id;
+    String id = raw_id;
 
+    // vN variables are really traces, and should be recognized regardless
+    // of the context
+    if (id.startsWith("v")) {
+        try {
+            int index = Integer.parseInt(id.substring(1));
+            if (specifiedType != null) {
+                type = specifiedType;
+            } else if (inferredType != null) {
+                type = inferredType;
+            } else {
+                type = Type.WILD;
+            }
+            Identifier ident =
+                new Var(id, type,
+                        specifiedType != null && specifiedTypeIsReallySpecified,
+                        starred);
+            return ident;
+        } catch (NumberFormatException e) {
+        }
+    }
 
     if (specifiedType == null) {
       try {

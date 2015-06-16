@@ -233,7 +233,7 @@ public class LambdaEnabledTextField extends JTextField {
                  case '^': c = And.SYMBOL; break; //alternative way of entering And
                  case Not.INPUT_SYMBOL: c = Not.SYMBOL; break;
                  case Identifier.PRIME_INPUT_SYMBOL: c = Identifier.PRIME; break;
-                 case Multiplication.INPUT_SYMBOL: c = Multiplication.SYMBOL; break;
+//                 case Multiplication.INPUT_SYMBOL: c = Multiplication.SYMBOL; break;
                  case Fusion.INPUT_SYMBOL: c = Fusion.SYMBOL; break;
                  default:
                      super.processKeyEvent(e);

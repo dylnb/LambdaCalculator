@@ -62,7 +62,7 @@ public class Main {
     
     public static final boolean GOD_MODE = true;
     
-    public static final boolean NOT_SO_FAST = !GOD_MODE; 
+    public static final boolean NOT_SO_FAST = false; 
     // true means we force the user to do one step at a time in lambda conversions
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
@@ -71,7 +71,7 @@ public class Main {
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
-            "and Dylan Bumford (2013-2014)";
+            "and Dylan Bumford (2013-2015)";
 
     public static final String AFFILIATION =
             "The University of Pennsylvania, New York University";

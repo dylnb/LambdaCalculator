@@ -110,6 +110,11 @@ public class LambdaAbstractionRule extends CompositionRule {
 //            var = new Var("x", Type.E, false);
 //        }
         
+//        System.out.println("creating LA var of type " + type + ": " + index.getIndex());
+        
+        if (type == null) {
+            type = Type.E;
+        }
         Var var = new Var("v" + index.getIndex(), type, false);
         
         if (g == null) {

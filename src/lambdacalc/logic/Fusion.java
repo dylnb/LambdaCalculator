@@ -20,7 +20,7 @@
  */
 
 /*
- * Multiplication.java
+ * Fusion.java
  *
  * Created on March 20, 2008, 7:22 AM
  *

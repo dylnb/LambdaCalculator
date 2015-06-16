@@ -68,7 +68,7 @@ public class Multiplication extends Binary {
         if (!getLeft().getType().equals(Type.N) ||
             !getRight().getType().equals(Type.N)) {
             String msg = "The types of the expressions on the left and right " +
-                         "of the mulitiplication operator must be type <e>, " +
+                         "of the mulitiplication operator must be type <n>, " +
                          "but " + getLeft() + " is of type " + getLeft().getType() +
                          " and " + getRight() + " is of type " + getRight().getType() + ".";
             throw new TypeMismatchException(msg);

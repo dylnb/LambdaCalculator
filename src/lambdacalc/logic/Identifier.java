@@ -100,11 +100,14 @@ public abstract class Identifier extends Expr {
     protected String toString(int mode) {
         if (!isTypeExplicit()) {
             if (mode == HTML) {
-                return escapeHTML((this.starred ? "*" : "") + this.symbol);
+//                return escapeHTML((this.starred ? "*" : "") + this.symbol);
+                return escapeHTML(this.symbol);
             } else if (mode == TXT ) {
-                return (this.starred ? "*" : "") + this.symbol;
+//                return (this.starred ? "*" : "") + this.symbol;
+                return this.symbol;
             } else  { // mode == LATEX
-                String res = (this.starred ? "*" : "") + this.symbol
+//                String res = (this.starred ? "*" : "") + this.symbol
+                String res = this.symbol
                         .replace(String.valueOf(PRIME), LATEX_PRIME_REPR)
                         .replace(String.valueOf(PRIME_INPUT_SYMBOL), LATEX_PRIME_REPR)
                         .replace("\\prime}^{","\\prime ");// hack to merge multiple primes
@@ -115,11 +118,15 @@ public abstract class Identifier extends Expr {
                 return res;
             }
         } else if (mode == HTML) {
-            return escapeHTML((this.starred ? "*" : "") + symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
+//            return escapeHTML((this.starred ? "*" : "") + symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
+            return escapeHTML(this.symbol) + "<sub>" + escapeHTML(type.toString()) + "</sub>";
         } else if (mode == LATEX) {
-            return (this.starred ? "{}^*" : "") + this.symbol + "_{" + type.toLatexString() + "}";
+//            return (this.starred ? "{}^*" : "") + this.symbol + "_{" + type.toLatexString() + "}";
+            return this.symbol + "_{" + type.toLatexString() + "}";
+
         } else { // mode == TXT
-            return (this.starred ? "*" : "") + this.symbol + "_" + type.toShortString();
+//            return (this.starred ? "*" : "") + this.symbol + "_" + type.toShortString();
+            return this.symbol + "_" + type.toShortString();
         }
     }
     

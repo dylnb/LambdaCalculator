@@ -71,6 +71,8 @@ public abstract class Type implements Comparable {
      * The type of an integer.
      */
     public static final Type N = new ConstType('n');
+    
+    public static final Type WILD = new VarType('_');
 
     /**
      * Tests two types for equality (as you would expect).

@@ -477,9 +477,6 @@ public class BracketedTreeParser {
         if (children.size() == 1 && node.getChild(0) instanceof DummyTerminal) {
             DummyNonterminal dnt = new DummyNonterminal(node);
 //            dnt.addChild(node.getChild(0));
-            System.out.println();
-            System.out.println("got dummyNT: " + dnt);
-            System.out.println();
             return dnt;
         } else {
             for (int i=0; i < children.size(); i++) {

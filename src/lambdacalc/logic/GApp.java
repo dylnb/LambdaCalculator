@@ -103,13 +103,25 @@ public class GApp extends Expr {
      *
      *
      * @return true iff both expressions are GApps and have the same index and type
+     * or the comparator is an indexed variable with the same index as this GApp
      */
     protected boolean equals
             (Expr e, boolean collapseBoundVars, Map thisMap, 
             Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
         e = e.stripOutermostParens();
-        return e instanceof GApp && this.getIndex() == ((GApp) e).getIndex()
-                    && this.type.equals(((GApp) e).type);
+        boolean sameGApp =
+            e instanceof GApp &&
+            this.getIndex() == ((GApp) e).getIndex() &&
+            this.type.equals(((GApp) e).type);
+        boolean sameVar = false;
+        try {
+            sameVar =
+                e instanceof Var &&
+                this.getIndex() == Integer.parseInt(((Var)e).getSymbol().substring(1)) &&
+                this.type.equals(((Var)e).getType());
+        } catch (NumberFormatException exp) {
+        }
+        return sameGApp || sameVar;
     }
     
     /**
