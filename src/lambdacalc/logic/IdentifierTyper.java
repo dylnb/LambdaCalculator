@@ -184,15 +184,22 @@ public class IdentifierTyper {
      * contains it as a type of constants.
      */
     public Var getVarForType(Type type, boolean markAsExplicitlyTyped) {
-        for (int j = 0; j < entries.size(); j++) {
-            Entry e = (Entry)entries.get(j);
-            if (e.type.equals(type) && e.var == true) {
-                String varSymbol = e.start;
-                return new Var(varSymbol, type, markAsExplicitlyTyped);
+        return getVarForType(type, markAsExplicitlyTyped, "z");
+    }
+    public Var getVarForType(Type type, boolean markAsExplicitlyTyped, String defaultVar) {
+        String varSymbol = defaultVar;
+        if (!markAsExplicitlyTyped) {
+            for (int j = 0; j < entries.size(); j++) {
+                Entry e = (Entry)entries.get(j);
+                if (e.type.equals(type) && e.var == true) {
+                    varSymbol = e.start;
+                    return new Var(varSymbol, type, false);
+                }
             }
         }
+        return new Var(varSymbol, type, true);
         // didn't find anything
-        return null;
+//        return null;
     }
     
     /**

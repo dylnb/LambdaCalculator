@@ -80,19 +80,17 @@
         classpath="dist/lib/jarbundler-2.4.0.jar"
         classname="net.sourceforge.jarbundler.JarBundler"/>
 
-      <jarbundler dir="${basedir}" verbose="true" showPlist="true"
+      <jarbundler dir="${dist.dir}" verbose="true"
                   name="${ant.project.name}"
                   mainclass="${main.class}"
                   jar="${dist.jar}$"
                   icon="images/hat-logo-teacher.ico"
                   stubfile="resources/universalJavaApplicationStub"
-                  useJavaXKey="true"
-                  version="${version}"
-                  copyright="${copyright}"/>
+                  useJavaXKey="true" />
     	
     	<!-- Create the Windows executable file. -->
-    	<java fork="true" dir="launch4j" jar="launch4j/launch4j.jar">
-    		<arg line="../launch4j.xml"/>
-    	</java>
+    	<!-- <java fork="true" dir="launch4j" jar="launch4j/launch4j.jar"> -->
+    	<!-- 	<arg line="../launch4j.xml"/> -->
+    	<!-- </java> -->
     </target>
 </project>

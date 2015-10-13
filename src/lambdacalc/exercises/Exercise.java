@@ -38,7 +38,7 @@ public abstract class Exercise {
     private boolean done;
     private java.math.BigDecimal points = java.math.BigDecimal.valueOf(1); // because floats might do weird rounding
     private String instructions;
-    private boolean notSoFast = true;
+    private boolean notSoFast;
     
     /**
      * Creates an Exercise with the given index in its ExerciseGroup.

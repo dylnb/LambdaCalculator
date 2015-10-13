@@ -30,6 +30,7 @@ package lambdacalc.lf;
 
 import java.util.HashMap;
 import java.util.Map;
+import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.And;
 import lambdacalc.logic.CompositeType;
 import lambdacalc.logic.ConstType;
@@ -37,6 +38,7 @@ import lambdacalc.logic.Type;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.ExpressionParser;
 import lambdacalc.logic.FunApp;
+import lambdacalc.logic.IdentifierTyper;
 import lambdacalc.logic.Lambda;
 import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
@@ -104,7 +106,7 @@ public class PredicateModificationRule extends CompositionRule {
             throw new MeaningEvaluationException
                     ("The predicate modification rule is only " +
                     "applicable on a nonterminal that has exactly " +
-                    "two children of type <a,t>, for some type a");
+                    "two children of type <'a,t>, for some type 'a");
         }
 
 //        return new FunApp(new FunApp(engine, new MeaningBracketExpr(node.getLeftChild(), g)),
@@ -129,7 +131,11 @@ public class PredicateModificationRule extends CompositionRule {
         MeaningBracketExpr leftM = new MeaningBracketExpr(left, g);
         MeaningBracketExpr rightM = new MeaningBracketExpr(right, g);
 
-        VARIABLE = new Var("z", commonArgType, false);
+//        System.out.println("commonArgType: " + commonArgType);
+//        VARIABLE = new Var("z", commonArgType, true);
+        IdentifierTyper typingConventions = TrainingWindow.getCurrentTypingConventions();
+
+        Var VARIABLE = typingConventions.getVarForType(commonArgType, false);
         
         FunApp leftFA = new FunApp(leftM, VARIABLE, typeMatches);
         FunApp rightFA = new FunApp(rightM, VARIABLE, typeMatches);

@@ -91,11 +91,11 @@ public class MeaningBracketExpr extends Expr {
         }
 
         if (mode == HTML) {
-            label = escapeHTML(" |~ " + label + " ~| ");
+            label = escapeHTML("&#10218;" + label + "&#10219;");
         } else if (mode == TXT) {
-            label = " |~ " + label + " ~| ";
+            label = "⟪" + label + "⟫";
         } else { // mode == LATEX
-            label = "|\\!\\!\\sim\\," + label + "\\,\\backsim\\!\\!|";
+            label = "\\langle\\!\\!\\langle" + label + "\\rangle\\!\\!\\rangle";
         }
 //        if (g != null) {
 //            if (mode == TXT) {

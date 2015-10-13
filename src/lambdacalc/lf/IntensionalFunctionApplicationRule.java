@@ -186,10 +186,8 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         // first using the current typing conventions, and failing that, just
         // creates one using the letter w
 
-        Var var = typingConventions.getVarForType(Type.S, false);
-        if (var == null) {
-            var = new Var("w", Type.S, false);
-        }
+        Var var = typingConventions.getVarForType(Type.S, false, "w");
+
 
 //        if (g == null) {
 //            // We are evaluating bottom-up.

@@ -87,7 +87,7 @@ public class ExerciseFileParser {
         String title = null;
         String directions = ""; // group level
         String instructions = ""; // exercise level
-        boolean notSoFast = true;
+        boolean notSoFast = lambdacalc.Main.NOT_SO_FAST;
         ExerciseGroup group = null;
         java.math.BigDecimal pointage = java.math.BigDecimal.valueOf(1);
         
