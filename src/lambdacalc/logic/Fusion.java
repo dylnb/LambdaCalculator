@@ -29,6 +29,10 @@
  */
 package lambdacalc.logic;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Stream;
+
 /**
  * Represents plural sum formation, as in the collective interpretation of
  * 'John and Mary'
@@ -75,6 +79,59 @@ public class Fusion extends Binary {
         }
         return Type.E;
     }
+    
+    
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+
+        // ignore parentheses for equality test
+        e = e.stripOutermostParens();
+
+        if (e instanceof Fusion) {
+            return this.equals((Fusion) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean equals(Fusion b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+        // If the immediate daughters are equal, then this node is equal
+        if (this.getClass() != b.getClass()) {
+            return false;
+        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+                  ) {
+            return true;
+        } else {
+            // If they're not equal, it might be due to some difference in bracketing,
+            // which doesn't ultimately matter, since this operation is associative
+            // So we flatten the expression as much as we can (until we hit a
+            // descendent with a different class), and then compare the flat arrays of juncts
+            Expr[] junctsA = equalsRec(this);
+            Expr[] junctsB = equalsRec(b);
+            if (junctsA.length != junctsB.length) {
+                return false;
+            } else {
+                for (int i = 0; i < junctsA.length; i++) {
+                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    
+    protected Expr[] equalsRec(Expr b) {
+        if (b.getClass() != this.getClass()) {
+            Expr[] junct = {b};
+            return junct;
+        } else {
+            return Stream.concat(
+                     Arrays.stream(equalsRec(((Fusion)b).getLeft())),
+                     Arrays.stream(equalsRec(((Fusion)b).getRight()))
+                   ).toArray(Expr[]::new);
+        }
+    }     
     
     Fusion(java.io.DataInputStream input) throws java.io.IOException {
         super(input);

@@ -114,6 +114,14 @@ public class Main {
             return;
         }
         
+        // for debugging ExpressionParser
+        if (args.length == 2 && args[0].equals("--EParser")) {
+                System.out.println("expparsing\n");
+                System.out.println("input: " + args[1] + "\n");
+                lambdacalc.logic.ExpressionParser.main(new String[] {args[1]});
+            return;
+        }
+        
         // for debugging Polymorphism
         if (args.length == 2 && args[0].equals("--TypeChecker")) {
             try {

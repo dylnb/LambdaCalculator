@@ -269,6 +269,9 @@ public class LambdaConversionExercise extends Exercise implements HasIdentifierT
         // notSoFast is true, then it's deemed an incorrect answer.
         for (int matched_step = currentStep; matched_step < steps.size(); matched_step++) {
             Expr correct_answer = (Expr)steps.get(matched_step);
+            System.out.println("correct: " + correct_answer);
+            System.out.println("user: " + userAnswer);
+            System.out.println("alphaEq? " + correct_answer.alphaEquivalent(userAnswer));
             if (correct_answer.alphaEquivalent(userAnswer)) {
                 if (matched_step > currentStep && isNotSoFast())
                     return AnswerStatus.Incorrect("Not so fast!  Do one " 

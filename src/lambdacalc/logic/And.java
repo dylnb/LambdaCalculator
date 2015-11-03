@@ -28,6 +28,9 @@
 package lambdacalc.logic;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Represents the conjunction binary connective.
@@ -70,6 +73,57 @@ public class And extends LogicalBinary {
     
     protected Binary create(Expr left, Expr right) {
         return new And(left, right);
+    }
+    
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+
+        // ignore parentheses for equality test
+        e = e.stripOutermostParens();
+
+        if (e instanceof And) {
+            return this.equals((And) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean equals(And b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+        if (this.getClass() != b.getClass()) {
+            return false;
+        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+                  ) {
+            return true;
+        } else {
+            Expr[] junctsA = equalsRec(this);
+            Expr[] junctsB = equalsRec(b);
+            if (junctsA.length != junctsB.length) {
+                return false;
+            } else {
+            // If they're not equal, it might be due to some difference in bracketing,
+            // which doesn't ultimately matter, since this operation is associative
+            // So we flatten the expression as much as we can (until we hit a
+            // descendent with a different class), and then compare the flat arrays of juncts
+                for (int i = 0; i < junctsA.length; i++) {
+                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    
+    protected Expr[] equalsRec(Expr b) {
+        if (b.getClass() != this.getClass()) {
+            Expr[] junct = {b};
+            return junct;
+        } else {
+            return Stream.concat(
+                     Arrays.stream(equalsRec(((And)b).getLeft())),
+                     Arrays.stream(equalsRec(((And)b).getRight()))
+                   ).toArray(Expr[]::new);
+        }
     }
 
     

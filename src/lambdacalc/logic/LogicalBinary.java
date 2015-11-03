@@ -27,9 +27,12 @@
 
 package lambdacalc.logic;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 /**
  * Abstract base class of the logical binary connectives
@@ -97,7 +100,7 @@ public abstract class LogicalBinary extends Binary {
         if (!getRight().getType().equals(getOperandType()))
             throw new TypeMismatchException("The parts of the logical connective " + getSymbol() + " must be of type " + getOperandType() + ", but " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
-    }
+    }    
     
     LogicalBinary(java.io.DataInputStream input) throws java.io.IOException {
         super(input);
