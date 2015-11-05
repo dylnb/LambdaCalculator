@@ -23,3 +23,27 @@ else
     exit 1
   fi
 fi
+
+# Then, to build the mac dmgs:
+#
+# $JAVA_HOME/bin/javapackager -deploy \
+#   -title "Lambda Calculator TE" \
+#   -name "Lambda Calculator TE" \
+#   -appclass lambdacalc.Main \
+#   -native dmg \
+#   -outdir apps/osx-teacher \
+#   -outfile LCTE \
+#   -srcdir dist \
+#   -srcfiles LambdaCalculator.jar \
+#   -Bicon=images/hat-logo-teacher.icns
+#
+# $JAVA_HOME/bin/javapackager -deploy \
+#   -title "Lambda Calculator SE" \
+#   -name "Lambda Calculator SE" \
+#   -appclass lambdacalc.Main \
+#   -native dmg \
+#   -outdir apps/osx-student \
+#   -outfile LCSE \
+#   -srcdir dist \
+#   -srcfiles LambdaCalculator.jar \
+#   -Bicon=images/hat-logo-student.icns
