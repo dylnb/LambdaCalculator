@@ -60,7 +60,7 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = true;
+    public static final boolean GOD_MODE = false;
     
     public static final boolean NOT_SO_FAST = false; 
     // true means we force the user to do one step at a time in lambda conversions
@@ -203,7 +203,7 @@ public class Main {
             }
             JOptionPane.showMessageDialog(null,
             "<html><b>Lambda Calculator</b></html>\n" +
-            edition + "Edition, Version 2.0 Beta\n" +
+            edition + "Edition, Version 2.0\n" +
             "Developed at The University of Pennsylvania and New York University\n"
             + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, and Dylan Bumford",
             "About",

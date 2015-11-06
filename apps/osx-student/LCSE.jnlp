@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="LambdaCalculator.jar" size="413810" download="eager" />
+    <jar href="LambdaCalculator.jar" size="417872" download="eager" />
   </resources>
   <jfx:javafx-desc  width="0" height="0" main-class="lambdacalc.Main"  name="Lambda Calculator SE" />
   <update check="background"/>
