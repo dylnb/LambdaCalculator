@@ -36,6 +36,7 @@ fi
 #   -srcdir dist \
 #   -srcfiles LambdaCalculator.jar \
 #   -Bicon=images/hat-logo-teacher.icns
+#   -BappVersion=2.0.1
 #
 # $JAVA_HOME/bin/javapackager -deploy \
 #   -title "Lambda Calculator SE" \
@@ -47,3 +48,4 @@ fi
 #   -srcdir dist \
 #   -srcfiles LambdaCalculator.jar \
 #   -Bicon=images/hat-logo-student.icns
+#   -BappVersion=2.0.1

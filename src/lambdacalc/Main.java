@@ -60,14 +60,14 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = false;
+    public static final boolean GOD_MODE = true;
     
     public static final boolean NOT_SO_FAST = false; 
     // true means we force the user to do one step at a time in lambda conversions
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
     
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "2.1.0";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
@@ -203,7 +203,7 @@ public class Main {
             }
             JOptionPane.showMessageDialog(null,
             "<html><b>Lambda Calculator</b></html>\n" +
-            edition + "Edition, Version 2.0\n" +
+            edition + " Edition, Version " + VERSION + "\n" +
             "Developed at The University of Pennsylvania and New York University\n"
             + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, and Dylan Bumford",
             "About",
