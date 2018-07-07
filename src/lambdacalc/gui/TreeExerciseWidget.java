@@ -394,17 +394,22 @@ public class TreeExerciseWidget extends JPanel {
         }
 
         updateNode(node);
-    
-        // Clear the meaning states of the parent nodes.
-        Nonterminal ancestor = (Nonterminal)lfToParent.get(node);
-        while (ancestor != null) {
-            lfToMeaningState.remove(ancestor);
-            ancestor.setUserMeaningSimplification(null);
-            ancestor.setCompositionRule(null);
-            ancestor.setMeaning(null);
-            updateNode(ancestor);
-            ancestor = (Nonterminal)lfToParent.get(ancestor);
+
+        //If the terminal was a trace, we SHOULD keep the parent nodes -- AW
+        if (!(node instanceof Trace)) {
+
+            // Clear the meaning states of the parent nodes.
+            Nonterminal ancestor = (Nonterminal) lfToParent.get(node);
+            while (ancestor != null) {
+                lfToMeaningState.remove(ancestor);
+                ancestor.setUserMeaningSimplification(null);
+                ancestor.setCompositionRule(null);
+                ancestor.setMeaning(null);
+                updateNode(ancestor);
+                ancestor = (Nonterminal) lfToParent.get(ancestor);
+            }
         }
+
 
         propogateMeaningUpNonBranchingNodes(node);
         
