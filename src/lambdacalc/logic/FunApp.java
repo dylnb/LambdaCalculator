@@ -124,13 +124,8 @@ public class FunApp extends Binary {
         
         Expr func = getFunc().stripOutermostParens();
         String functype = (func instanceof Identifier ? "predicate" : "function");
-        
-        if (!(getArg() instanceof ArgList) && domain instanceof ProductType) {
-            int arity = ((ProductType)domain).getArity();
-            throw new TypeMismatchException
-                    (getFunc() + " is a " + functype + " that takes " + arity + 
-                    " arguments but you provided only one argument.");
-        } else if (getArg() instanceof ArgList && !(domain instanceof ProductType)) {
+
+        if (getArg() instanceof ArgList && !(domain instanceof ProductType)) {
             String str;
             if (functype.equals("predicate")) {
                 str = "predicate";
@@ -141,37 +136,37 @@ public class FunApp extends Binary {
 
             if (range instanceof AtomicType) {
                 throw new TypeMismatchException
-                        (getFunc() + " is a " + str + " that takes a single " 
-                        + domain + "-type argument, but you provided " +
-                        "more than one argument.");
+                        (getFunc() + " is a " + str + " that takes a single "
+                                + domain + "-type argument, but you provided " +
+                                "more than one argument.");
             } else {
                 throw new TypeMismatchException
-                        (getFunc() + " is a " + str + " that takes (first) a single " 
-                        + domain + "-type argument alone, but you provided " +
-                        "more than one argument. Rewrite your expression " +
-                        "so that " + getFunc() + " is Sch\u00F6nfinkelized " +
-                        "(i.e. each argument to " + getFunc() + " is " +
-                        "surrounded by a separate " +
-                        "pair of brackets).");
+                        (getFunc() + " is a " + str + " that takes (first) a single "
+                                + domain + "-type argument alone, but you provided " +
+                                "more than one argument. Rewrite your expression " +
+                                "so that " + getFunc() + " is Sch\u00F6nfinkelized " +
+                                "(i.e. each argument to " + getFunc() + " is " +
+                                "surrounded by a separate " +
+                                "pair of brackets).");
             }
         } else if (getArg() instanceof ArgList && domain instanceof ProductType) {
             int actualarity = ((ArgList)getArg()).getArity();
             int formalarity = ((ProductType)domain).getArity();
             if (actualarity != formalarity)
                 throw new TypeMismatchException
-                        (getFunc() + " is a " + functype + " that takes " 
-                        + formalarity + " arguments but you provided " 
-                        + actualarity + " arguments.");
+                        (getFunc() + " is a " + functype + " that takes "
+                                + formalarity + " arguments but you provided "
+                                + actualarity + " arguments.");
             for (int i = 0; i < actualarity; i++) {
                 Expr arg = ((ArgList)getArg()).getElements()[i];
                 Type actualtype = arg.getType();
                 Type formaltype = ((ProductType)domain).getSubTypes()[i];
                 if (!actualtype.equals(formaltype))
                     throw new TypeMismatchException
-                            (getFunc() + " is a " + functype + " whose " 
-                            + getOrdinal(i) + " argument must be of type "
-                            + formaltype + " but " + arg + " is of type " 
-                            + actualtype + ".");
+                            (getFunc() + " is a " + functype + " whose "
+                                    + getOrdinal(i) + " argument must be of type "
+                                    + formaltype + " but " + arg + " is of type "
+                                    + actualtype + ".");
             }
         } else { // !ArgList and !ProductType
             Type actualtype = getArg().getType();
@@ -179,9 +174,9 @@ public class FunApp extends Binary {
             if (functype.equals("predicate"))
                 functype = "one-place " + functype;
             if (!actualtype.equals(formaltype))
-                throw new TypeMismatchException(getFunc() + " is a " + functype 
+                throw new TypeMismatchException(getFunc() + " is a " + functype
                         + " whose argument must be of type "
-                        + formaltype + " but " + getArg() + " is of type " 
+                        + formaltype + " but " + getArg() + " is of type "
                         + actualtype + ".");
         }
         
