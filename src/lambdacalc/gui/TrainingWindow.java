@@ -80,10 +80,14 @@ public class TrainingWindow extends JFrame {
     boolean updatingTree = false;
     
     int wrongInARowCount = 0;
-    
+
     boolean hasUserSaved; // true iff the user has saved this exercise into a .lbd file (i.e. the Save menu is enabled if there are unsaved changes)
     boolean hasUnsavedWork; // true iff the user has entered any unsaved work
     File usersWorkFile = null;
+
+    String lastOpenDir = null;
+
+
 
     
     
@@ -1744,7 +1748,11 @@ public class TrainingWindow extends JFrame {
                    return (name.endsWith(".txt") || name.endsWith(SERIALIZED_FILE_SUFFIX));
                }
             });
-            dialog.setDirectory(System.getProperty("user.dir"));
+            if (lastOpenDir != null) {
+                dialog.setDirectory(System.getProperty(lastOpenDir));
+            } else {
+                dialog.setDirectory(System.getProperty("user.dir"));
+            }
             dialog.setVisible(true);
             String file = dialog.getFile();
 
@@ -1752,6 +1760,8 @@ public class TrainingWindow extends JFrame {
                 String path = dialog.getDirectory() + file;
                 loadExerciseFile(new File(path));
                 setTitle(file);
+                lastOpenDir = dialog.getDirectory();
+
             }
         } else {
             jFileChooser1.setFileFilter(this.allRecognizedFiles);

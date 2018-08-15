@@ -67,11 +67,11 @@ public class Main {
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
     
-    public static final String VERSION = "2.1.0";
+    public static final String VERSION = "2.1.1";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
-            "and Dylan Bumford (2013-2015)";
+            " Dylan Bumford (2013-2015), and Alex Warstadt (2018)";
 
     public static final String AFFILIATION =
             "The University of Pennsylvania, New York University";
