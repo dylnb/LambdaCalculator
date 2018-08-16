@@ -119,9 +119,17 @@ public class ProductType extends Type {
             if (i > 0)
                 ret += " " + separator + " ";
             if (latex) {
-                ret += getSubTypes()[i].toLatexString();
+                String subString = getSubTypes()[i].toLatexString();
+                if (subString.length() > 1 && !subString.contains("<")) {
+                    subString = "(" + subString + ")";
+                }
+                ret += subString;
             } else {
-                ret += getSubTypes()[i].toString();
+                String subString = getSubTypes()[i].toString();
+                if (subString.length() > 1 && !subString.contains("<")) {
+                    subString = "(" + subString + ")";
+                }
+                ret += subString;
             }
         }
         return ret;
