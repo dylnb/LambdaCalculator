@@ -21,6 +21,7 @@
 
 package lambdacalc.lf;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -154,6 +155,12 @@ public class FunctionApplicationRule extends CompositionRule {
                 CompositeType t = (CompositeType)l;
                 if (t.getLeft().equals(r))
                     return true;
+                else if (t.getLeft() instanceof ProductType){
+                    ProductType pt = (ProductType)t.getLeft();
+                    if (Arrays.asList(pt.getSubTypes()).contains(r)) {
+                        return true;
+                    }
+                }
             }
         } catch (TypeEvaluationException ex) {
         }
