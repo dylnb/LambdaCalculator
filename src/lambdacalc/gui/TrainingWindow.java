@@ -33,10 +33,13 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import lambdacalc.logic.*;
 import lambdacalc.exercises.*;
+import java.nio.file.Files;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.io.*;
+import java.nio.file.Path;
+
 import lambdacalc.lf.BareIndex;
 import lambdacalc.lf.DummyTerminal;
 import lambdacalc.lf.LFNode;
@@ -1751,7 +1754,11 @@ public class TrainingWindow extends JFrame {
             if (lastOpenDir != null) {
                 dialog.setDirectory(System.getProperty(lastOpenDir));
             } else {
-                dialog.setDirectory(System.getProperty("user.dir"));
+                if (new File(System.getProperty("user.home") + "/Downloads/").exists()){
+                    dialog.setDirectory(System.getProperty("user.home") + "/Downloads/");
+                } else {
+                    dialog.setDirectory(System.getProperty("user.home"));
+                }
             }
             dialog.setVisible(true);
             String file = dialog.getFile();
