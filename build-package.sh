@@ -10,6 +10,8 @@ jar xf lib/AbsoluteLayout.jar
 jar uf LambdaCalculator.jar org
 
 
+# To build Windows .exes
+
 cd ..
 if [ -z "$1" -o "$1" == "teacher" ]
 then
@@ -24,28 +26,38 @@ else
   fi
 fi
 
+
 # Then, to build the mac dmgs:
-#
-# $JAVA_HOME/bin/javapackager -deploy \
-#   -title "Lambda Calculator TE" \
-#   -name "Lambda Calculator TE" \
-#   -appclass lambdacalc.Main \
-#   -native dmg \
-#   -outdir apps/osx-teacher \
-#   -outfile LCTE \
-#   -srcdir dist \
-#   -srcfiles LambdaCalculator.jar \
-#   -Bicon=images/hat-logo-teacher.icns
-#   -BappVersion=2.0.1
-#
-# $JAVA_HOME/bin/javapackager -deploy \
-#   -title "Lambda Calculator SE" \
-#   -name "Lambda Calculator SE" \
-#   -appclass lambdacalc.Main \
-#   -native dmg \
-#   -outdir apps/osx-student \
-#   -outfile LCSE \
-#   -srcdir dist \
-#   -srcfiles LambdaCalculator.jar \
-#   -Bicon=images/hat-logo-student.icns
-#   -BappVersion=2.0.1
+
+if [ -z "$1" -o "$1" == "teacher" ]
+then
+ $JAVA_HOME/bin/javapackager -deploy \
+   -title "Lambda Calculator TE" \
+   -name "Lambda Calculator TE" \
+   -appclass lambdacalc.Main \
+   -native dmg \
+   -outdir apps/osx-teacher \
+   -outfile LCTE \
+   -srcdir dist \
+   -srcfiles LambdaCalculator.jar \
+   -Bicon=images/hat-logo-teacher.icns
+   -BappVersion=2.1.1
+else
+  if [ "$1" == "student" ]
+  then
+  $JAVA_HOME/bin/javapackager -deploy \
+   -title "Lambda Calculator SE" \
+   -name "Lambda Calculator SE" \
+   -appclass lambdacalc.Main \
+   -native dmg \
+   -outdir apps/osx-student \
+   -outfile LCSE \
+   -srcdir dist \
+   -srcfiles LambdaCalculator.jar \
+   -Bicon=images/hat-logo-student.icns
+   -BappVersion=2.1.1
+  else
+    echo "Argument should be student or teacher"
+    exit 1
+  fi
+fi
