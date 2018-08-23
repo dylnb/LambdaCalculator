@@ -393,7 +393,7 @@ public class TypeParser {
             current.Left = ct;
             return current;
         } else {
-            current = (ParseState)domains.pop();
+            current = (ParseState) domains.pop();
             if (current.ParsingProduct) {
                 if (current.JustClosedProduct) {
                     current.Left = new ProductType(new Type[]{current.Left, ct});
@@ -401,9 +401,16 @@ public class TypeParser {
                     current.Left = addProduct(current.Left, ct);
                 }
                 current.ParsingProduct = false;
+            } else if (current.Left == null) {
+                current.Left = ct;
+                return current;
+            } else {
+                current.Right = ct;
+                if (current.ReadBracket) return current;
             }
             return current;
         }
+    }
 //
 //        while (true) {
 //            if (current.ParsingProduct) {
@@ -430,7 +437,7 @@ public class TypeParser {
 //                if (current.ReadBracket) return current;
 //            }
 //        }
-    }
+//    }
 
     private static ParseState closeProductType(Stack domains, ParseState current) {
         Type pt = current.Left;
