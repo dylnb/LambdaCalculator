@@ -41,11 +41,11 @@ then
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-teacher.icns
-   -BappVersion=2.1.1
+   -BappVersion=2.2.0
 else
   if [ "$1" == "student" ]
   then
-  $JAVA_HOME/bin/javapackager -deploy \
+  /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/bin/javapackager -deploy -v \
    -title "Lambda Calculator SE" \
    -name "Lambda Calculator SE" \
    -appclass lambdacalc.Main \
@@ -55,7 +55,7 @@ else
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-student.icns
-   -BappVersion=2.1.1
+   -BappVersion=2.2.0
   else
     echo "Argument should be student or teacher"
     exit 1

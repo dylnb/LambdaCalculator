@@ -60,14 +60,14 @@ public class Main {
     // at compile time rather than getting them at run time. (An overzealous
     // optimization probably.)
     
-    public static final boolean GOD_MODE = false;
+    public static final boolean GOD_MODE = true;
     
     public static final boolean NOT_SO_FAST = false; 
     // true means we force the user to do one step at a time in lambda conversions
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
     
-    public static final String VERSION = "2.1.1";
+    public static final String VERSION = "2.2.0";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
@@ -169,11 +169,11 @@ public class Main {
                 Object app = Class.forName("com.apple.eawt.Application").getMethod("getApplication",
                  (Class[]) null).invoke(null, (Object[]) null);
 
-                Object al = Proxy.newProxyInstance(Class.forName("com.apple.eawt.AboutHandler")
-                        .getClassLoader(), new Class[] { Class.forName("com.apple.eawt.AboutHandler") },
+                Object al = Proxy.newProxyInstance(Class.forName("java.awt.desktop.AboutHandler")
+                        .getClassLoader(), new Class[] { Class.forName("java.awt.desktop.AboutHandler") },
                             new AboutListener());
                 app.getClass().getMethod("setAboutHandler", new Class[] {
-                    Class.forName("com.apple.eawt.AboutHandler") }).invoke(app, new Object[] { al });
+                    Class.forName("java.awt.desktop.AboutHandler") }).invoke(app, new Object[] { al });
             }
             catch (Exception e) {
                 //fail quietly
