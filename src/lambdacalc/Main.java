@@ -169,11 +169,11 @@ public class Main {
                 Object app = Class.forName("com.apple.eawt.Application").getMethod("getApplication",
                  (Class[]) null).invoke(null, (Object[]) null);
 
-                Object al = Proxy.newProxyInstance(Class.forName("com.apple.eawt.AboutHandler")
-                        .getClassLoader(), new Class[] { Class.forName("com.apple.eawt.AboutHandler") },
+                Object al = Proxy.newProxyInstance(Class.forName("java.awt.desktop.AboutHandler")
+                        .getClassLoader(), new Class[] { Class.forName("java.awt.desktop.AboutHandler") },
                             new AboutListener());
                 app.getClass().getMethod("setAboutHandler", new Class[] {
-                    Class.forName("com.apple.eawt.AboutHandler") }).invoke(app, new Object[] { al });
+                    Class.forName("java.awt.desktop.AboutHandler") }).invoke(app, new Object[] { al });
             }
             catch (Exception e) {
                 //fail quietly
