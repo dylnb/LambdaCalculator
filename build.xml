@@ -92,5 +92,8 @@
     	<!-- <java fork="true" dir="launch4j" jar="launch4j/launch4j.jar"> -->
     	<!-- 	<arg line="../launch4j.xml"/> -->
     	<!-- </java> -->
+        <!-- 
+            Test
+        -->
     </target>
 </project>
