@@ -207,7 +207,7 @@ public class Main {
             edition + " Edition, Version " + VERSION + "\n" +
             "Developed at The University of Pennsylvania and New York University\n"
             + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, Dylan Bumford," + 
-                    " Alex Warstadt, Anna Alsop, and Raef Khan (2019)",
+                    " Alex Warstadt, Anna Alsop, and Raef Khan",
             "About",
             JOptionPane.INFORMATION_MESSAGE);
             return null;
