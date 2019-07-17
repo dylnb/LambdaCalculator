@@ -1,7 +1,7 @@
 # The Lambda Calculator
 
 Joint work by Lucas Champollion, Josh Tauberer, Maribel Romero, Dylan
-Bumford, and Alex Warstadt.
+Bumford, Alex Warstadt, Anna Alsop, and Raef Khan.
 
 The Lambda Calculator is an interactive graphical pedagogical tool that helps
 students of formal semantics practice the typed lambda calculus and derivations
