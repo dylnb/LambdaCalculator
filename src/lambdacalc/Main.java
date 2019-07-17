@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007-2014 Dylan Bumford, Lucas Champollion, Maribel Romero
- * and Joshua Tauberer
+ * Copyright (C) 2007-2019 Anna Alsop, Dylan Bumford, Lucas Champollion, 
+ * Raef Khan, Maribel Romero, Joshua Tauberer, and Alex Warstadt
  * 
  * This file is part of The Lambda Calculator.
  * 
