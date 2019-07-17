@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007-2014 Dylan Bumford, Lucas Champollion, Maribel Romero
- * and Joshua Tauberer
+ * Copyright (C) 2007-2019 Anna Alsop, Dylan Bumford, Lucas Champollion, 
+ * Raef Khan, Maribel Romero, Joshua Tauberer, and Alex Warstadt
  * 
  * This file is part of The Lambda Calculator.
  * 
@@ -67,11 +67,12 @@ public class Main {
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
     
-    public static final String VERSION = "2.2.0";
+    public static final String VERSION = "2.2.1";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
-            " Dylan Bumford (2013-2015), and Alex Warstadt (2018)";
+            " Dylan Bumford (2013-2015), Alex Warstadt (2018), Anna Alsop (2019)," + 
+            " and Raef Khan (2019)";
 
     public static final String AFFILIATION =
             "The University of Pennsylvania, New York University";
@@ -205,7 +206,8 @@ public class Main {
             "<html><b>Lambda Calculator</b></html>\n" +
             edition + " Edition, Version " + VERSION + "\n" +
             "Developed at The University of Pennsylvania and New York University\n"
-            + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, Dylan Bumford, and Alex Warstadt",
+            + "by Lucas Champollion, Joshua Tauberer,  Maribel Romero, Dylan Bumford," + 
+                    " Alex Warstadt, Anna Alsop, and Raef Khan",
             "About",
             JOptionPane.INFORMATION_MESSAGE);
             return null;
