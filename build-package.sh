@@ -45,7 +45,7 @@ then
 else
   if [ "$1" == "student" ]
   then
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/bin/javapackager -deploy -v \
+  $JAVA_HOME/bin/javapackager -deploy -v \
    -title "Lambda Calculator SE" \
    -name "Lambda Calculator SE" \
    -appclass lambdacalc.Main \
