@@ -1,0 +1,169 @@
+Composition with polymorphic types
+
+multiple letter identifiers
+
+multiple reductions on
+
+
+### Combinatorial Rules ###
+
+use rule function application
+use rule non-branching nodes
+use rule predicate modification
+use rule lambda abstraction
+
+
+### Type Conventions ###
+
+variables of type e: x y z
+constants of type e: j m b
+#
+variables of type v: e
+variables of type i: t
+constants of type v: meeting1 game1
+constants of type i: now today
+#
+variables of type <e,t>: P
+constants of type <e,t>: boy man woman american win
+#
+variables of type <v,t>: V
+#
+variables of type <e,e>: f g
+constants of type <e,e>: the-mother-of the-dog-of the-paycheck-of the-mistress-of the-wife-of
+#
+variables of type <e,<e,t>>: R
+constants of type <e,<e,t>>: love hate meet lose
+#
+variables of type <<e,t>,t>: Q
+#
+constants of type <e,<e,<e,t>>>: give
+constants of type <e,<e,<v,t>>>: love2 meet2
+#
+variables of type <t,<e,t>>: T
+constants of type <t,<e,t>>: think said
+variables of type <t,<e,<v,t>>>: T2
+constants of type <t,<e,<v,t>>>: think2
+#
+variables of type t: p
+
+## Polymorphic Variable Abbreviations ##
+
+variables of type 'a: a
+variables of type <'a,'b>: B
+variables of type <'b,'c>: C
+variables of type <'b,<'a,'c>>: D
+variables of type <'a'r,'r>: M
+variables of type <<'a'b,'r>,'r>: N
+
+
+### Lexical Entries ###
+
+## Polymorphic Combinators ##
+
+define g: LC.LB.La.C(B(a))
+define z: LD.LB.La.D(B(a))(a)
+define id: La.a
+define id2,ap: LB.La.B(a)
+define flip: La.LB.B(a)
+define w: LR_<'b,<'b'c>>Lb_'b.R(b)(b)
+define true,const: La.Lb.a
+define false,zero: La.Lb.b
+define slash: LM.LN.Lk_<'b,'r>.M(La.N(LB.k(B(a))))
+define bslash: LN.LM.Lk_<'b,'r>.N(LB.M(La.k(B(a))))
+
+## Content Words ##
+
+define John,john: j
+define Mary,mary: m
+define Bill,bill: b
+#
+define the-meeting: meeting1
+define the-game: game1
+define now: now
+define today: today
+#
+define boy: Lx.boy(x)
+define win,wins,won: Lx.win(x)
+define american,American: Lx.american(x)
+#
+define dancer2: La.dancer2(a)
+#
+define love,loves,loved: Ly.Lx.love(x)(y)
+define hate,hates,hated: Ly.Lx.hate(x)(y)
+define meet,meets,met: Ly.Lx.meet(x)(y)
+define lose,loses,lost: Ly.Lx.lose(x)(y)
+#
+define give,gives,gave: Lz.Ly.Lx.give(x)(z)(y)
+#
+define him,her,he,she,it,He,She,It,himself,herself: Lx.x
+#
+define his-mother: Lx.the-mother-of(x)
+define his-paycheck: Lx.the-paycheck-of(x)
+define his-wife: Lx.the-wife-of(x)
+define his-mistress: Lx.the-mistress-of(x)
+define his-dog: Lx.the-dog-of(x)
+#
+define say,says,said: Lp.Lx.said(p)(x)
+define think,thinks,thought: Lp.Lx.think(p)(x)
+#
+define every,Every: LP'.LP.Ay.[P'(y)->P(y)]
+define some,Some: LP'.LP.Ey.[P'(y) & P(y)]
+define everybody,Everybody,everyone,Everyone: LP.Ax.P(x)
+define Everyyear,everyyear: LP_<it>.At[year(t) -> P(t)]
+
+## Polymorphic Content Words ##
+
+define is1: La.a
+define is2: LB.La.B(a)
+#
+define beautiful: La.beautiful(a)
+define dancer: La.dancer(a)
+#
+define k-john: Lk_<et>.k(j)
+define k-mary: Lk_<et>.k(m)
+define k-boy: Lk_<et,t>.k(boy)
+#
+# For some reason, the type-parser is complaining about lambda variables typed
+# with multiple opening < symbols, e.g. Lk_<<et,'r>,'r>.k(...). As a
+# workaround, we can designate particular variables to carry that type.
+#
+variables of type <<e,et>,t>: K
+define k-hates: LK.K(Ly.Lx.hate(x)(y))
+
+###################################################################################################
+
+exercise tree
+title polymorphic sandbox
+
+instructions John is a boy
+[ John boy ]
+
+instructions John is a boy
+[ John [ id boy ] ]
+
+instructions John loves himself
+[ John [ loves w ] ]
+
+instructions John thinks he won
+[ John [w [ [g thinks] [ he [g won] ] ] ] ]
+
+instructions John thinks he won
+[ John [ [z thinks] [ he [g won] ] ] ]
+
+instructions John is an American boy
+[ John [ boy american ] ]
+
+instructions John is a beautiful dancer
+[ John [ beautiful dancer ] ]
+# The types of the predicates are compatible with either PM or FA. The
+# calculator will ask how the teacher wants to combine them. Via PM, they
+# result in a coherent, polymorphic VP. FA, on the other hand, predicates
+# beauty of the polymorphic function 'dancer', and then throws an error when
+# the user attempts to compose in the subject (since there are no argument
+# slots left to saturate).
+
+instructions John is a boy (CPS)
+[ [ [ slash k-john ] k-boy ] id ]
+
+instructions John hates Mary (CPS)
+[ [ [ slash k-john ] [ [ bslash k-hates ] k-mary ] ] id ]
