@@ -38,13 +38,13 @@ import java.util.Vector;
 public abstract class Identifier extends Expr {
     
     /**
-     * The prime symbol.
+     * The prime symbol. Changed to apostrophe on 8/12/2019.
      */
-    public static final char PRIME = '\u02B9'; // 0x2032 is another one
+    public static final char PRIME = '\''; // previously '\u02B9' (0x2032 is another one)
     
     public static final char PRIME_INPUT_SYMBOL = '\'';
 
-    public static final String LATEX_PRIME_REPR = "^{\\prime}";
+    public static final String LATEX_PRIME_REPR = "'"; // previously "^{\\prime}"
     
     private String symbol;
     private Type type;
