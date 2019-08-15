@@ -2,7 +2,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>../dist/LambdaCalculator.jar</jar>
-  <outfile>../apps/windows-student/Lambda Calculator SE.exe</outfile>
+  <outfile>Lambda Calculator SE.exe</outfile>
   <errTitle>Lambda</errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
