@@ -40,7 +40,7 @@ then
    -outfile LCTE \
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
-   -Bicon=images/hat-logo-teacher.icns
+   -Bicon=images/hat-logo-teacher.icns \
    -BappVersion=2.2.0
 else
   if [ "$1" == "student" ]
@@ -54,7 +54,7 @@ else
    -outfile LCSE \
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
-   -Bicon=images/hat-logo-student.icns
+   -Bicon=images/hat-logo-student.icns \
    -BappVersion=2.2.0
   else
     echo "Argument should be student or teacher"
