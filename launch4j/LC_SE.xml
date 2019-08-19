@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
@@ -9,15 +10,18 @@
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
-  <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>../images/hat-logo-student.ico</icon>
   <jre>
-    <path></path>
+    <path>../jre1.8.0_221.jre</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <jdkPreference>preferJdk</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
   </jre>
   <versionInfo>
     <fileVersion>2.2.1.0</fileVersion>
@@ -30,5 +34,7 @@
     <companyName>The University of Pennsylvania, New York University</companyName>
     <internalName>Lambda</internalName>
     <originalFilename>Lambda.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
   </versionInfo>
 </launch4jConfig>
