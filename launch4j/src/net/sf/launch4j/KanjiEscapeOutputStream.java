@@ -2,7 +2,7 @@
 	Launch4j (http://launch4j.sourceforge.net/)
 	Cross-platform Java application wrapper for creating Windows native executables.
 
-	Copyright (c) 2004, 2015 Grzegorz Kowal
+	Copyright (c) 2013 toshimm
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without modification,
@@ -29,38 +29,58 @@
 	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
- * Created on May 14, 2005
  */
 package net.sf.launch4j;
 
+import java.io.OutputStream;
+import java.io.IOException;
+
 /**
- * @author Copyright (C) 2005 Grzegorz Kowal
+ * @author toshimm (2013)
+ * 
+ *         This class makes Japanese Kanji characters in MS932 charcode escaped
+ *         in octal form.
  */
-public class ExecException extends Exception {
-	private final int _errLine;
+public class KanjiEscapeOutputStream extends OutputStream {
 
-	public ExecException(Throwable t, int errLine) {
-		super(t);
-		_errLine = errLine;
+	protected OutputStream parent;
+
+	public KanjiEscapeOutputStream(OutputStream out) {
+		this.parent = out;
 	}
 
-	public ExecException(Throwable t) {
-		this(t, -1);
+	private final int MASK = 0x000000FF;
+	private boolean state = true;
+
+	public void write(int b) throws IOException {
+		b = b & MASK;
+
+		if (state) {
+			if (0x00 <= b && b <= 0x7f) {
+				this.parent.write(b);
+			} else {
+				this.octprint(b);
+				if ((0x81 <= b && b <= 0x9f) || (0xe0 <= b && b <= 0xfc)) {
+					this.state = false;
+				}
+			}
+		} else {
+			if ((0x40 <= b && b <= 0x7e) || (0x80 <= b && b <= 0xfc)) {
+				this.octprint(b);
+			} else if (0x00 <= b && b <= 0x7f) {
+				this.parent.write(b);
+			} else {
+				this.octprint(b);
+			}
+			this.state = true;
+		}
 	}
 
-	public ExecException(String msg, int errLine) {
-		super(msg);
-		_errLine = errLine;
-	}
-
-	public ExecException(String msg) {
-		this(msg, -1);
-	}
-
-	public int getErrLine() {
-		return _errLine;
+	private void octprint(int b) throws IOException {
+		String oct = "\\" + String.format("%o", b & MASK);
+		for (int i = 0; i < oct.length(); ++i) {
+			int bb = oct.charAt(i);
+			this.parent.write(bb);
+		}
 	}
 }
