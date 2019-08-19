@@ -27,71 +27,17 @@
 	THE SOFTWARE.
 */
 
-#include "../resource.h"
-#include "../head.h"
+#define ID_TIMER 1
+#define DEFAULT_SPLASH_TIMEOUT	60			/* 60 seconds */
+#define MAX_SPLASH_TIMEOUT		60 * 15		/* 15 minutes */
 
-extern FILE* hLog;
+HWND getInstanceWindow();
 
-BOOL restartOnCrash = FALSE;
+BOOL CALLBACK enumwndfn(HWND hwnd, LPARAM lParam);
 
-int main(int argc, char* argv[])
-{
-    setConsoleFlag();
-	LPTSTR cmdLine = GetCommandLine();
-
-	if (*cmdLine == '"')
-	{
-		if (*(cmdLine = strchr(cmdLine + 1, '"') + 1))
-		{
-			cmdLine++;
-		}
-	}
-	else if ((cmdLine = strchr(cmdLine, ' ')) != NULL)
-	{
-		cmdLine++;
-	}
-	else
-	{
-		cmdLine = "";
-	}
-
-	int result = prepare(cmdLine);
-
-	if (result == ERROR_ALREADY_EXISTS)
-	{
-		char errMsg[BIG_STR] = {0};
-		loadString(INSTANCE_ALREADY_EXISTS_MSG, errMsg);
-		msgBox(errMsg);
-		closeLogFile();
-		return 2;
-	}
-
-	if (result != TRUE)
-	{
-		signalError();
-		return 1;
-	}
-
-	restartOnCrash = loadBool(RESTART_ON_CRASH);
-	DWORD dwExitCode;
-
-	do
-	{
-		dwExitCode = 0;
-	
-		if (!execute(TRUE, &dwExitCode))
-		{
-			signalError();
-			break;
-		}
-
-		if (restartOnCrash && dwExitCode != 0)
-		{
-	  		debug("Exit code:\t%d, restarting the application!\n", dwExitCode);
-  		}
-	} while (restartOnCrash && dwExitCode != 0);
-
-	debug("Exit code:\t%d\n", dwExitCode);
-	closeLogFile();
-	return (int) dwExitCode;
-}
+VOID CALLBACK TimerProc(
+  HWND hwnd,     // handle of window for timer messages
+  UINT uMsg,     // WM_TIMER message
+  UINT idEvent,  // timer identifier
+  DWORD dwTime   // current system time
+);
