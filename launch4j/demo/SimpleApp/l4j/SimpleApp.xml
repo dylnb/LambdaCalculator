@@ -1,11 +1,12 @@
 <launch4jConfig>
   <headerType>gui</headerType>
-  <jar>../SimpleApp.jar</jar>
+  <jar>SimpleApp.jar</jar>
+  <dontWrapJar>true</dontWrapJar>
   <outfile>../SimpleApp.exe</outfile>
   <errTitle>SimpleApp</errTitle>
   <chdir>.</chdir>
-  <customProcName>true</customProcName>
   <icon>SimpleApp.ico</icon>
+  <restartOnCrash>true</restartOnCrash>
   <jre>
     <minVersion>1.6.0</minVersion>
   </jre>
