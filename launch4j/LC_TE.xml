@@ -15,7 +15,7 @@
   <manifest></manifest>
   <icon>../images/hat-logo-teacher.ico</icon>
   <jre>
-    <path>../jre1.8.0_221.jre</path>
+    <path>jre1.8.0_221.jre</path>
     <bundledJre64Bit>false</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>1.8.0</minVersion>
