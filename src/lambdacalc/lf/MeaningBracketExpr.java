@@ -91,11 +91,14 @@ public class MeaningBracketExpr extends Expr {
         }
 
         if (mode == HTML) {
-            label = escapeHTML("&#10218;" + label + "&#10219;");
+//            label = escapeHTML("&#10218;" + label + "&#10219;");
+            label = escapeHTML(label + "&#8242;"); // prime (can also use &prime; )
         } else if (mode == TXT) {
-            label = "⟪" + label + "⟫";
+//            label = "⟪" + label + "⟫";
+            label = label + "'";
         } else { // mode == LATEX
-            label = "\\langle\\!\\!\\langle" + label + "\\rangle\\!\\!\\rangle";
+//            label = "\\langle\\!\\!\\langle" + label + "\\rangle\\!\\!\\rangle";
+            label = label + "'";
         }
 //        if (g != null) {
 //            if (mode == TXT) {
