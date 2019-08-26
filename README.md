@@ -8,7 +8,7 @@ students of formal semantics practice the typed lambda calculus and derivations
 of meaning according to Heim & Kratzer (1998)-style semantics.
 
 Up-to-date information about this project is on [the project
-website](http://lambdacalculator.com)
+website](http://lambdacalculator.com).
 
 ## Copying
 
