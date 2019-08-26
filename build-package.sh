@@ -15,11 +15,11 @@ jar uf LambdaCalculator.jar org
 cd ..
 if [ -z "$1" -o "$1" == "teacher" ]
 then
-  launch4j/launch4j LC_TE.xml
+  launch4j/launch4j launch4j/LC_TE.xml
 else
   if [ "$1" == "student" ]
   then
-    launch4j/launch4j LC_SE.xml
+    launch4j/launch4j launch4j/LC_SE.xml
   else
     echo "Argument should be student or teacher"
     exit 1
@@ -40,12 +40,12 @@ then
    -outfile LCTE \
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
-   -Bicon=images/hat-logo-teacher.icns
+   -Bicon=images/hat-logo-teacher.icns \
    -BappVersion=2.3.0
 else
   if [ "$1" == "student" ]
   then
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/bin/javapackager -deploy -v \
+  $JAVA_HOME/bin/javapackager -deploy -v \
    -title "Lambda Calculator SE" \
    -name "Lambda Calculator SE" \
    -appclass lambdacalc.Main \
@@ -54,7 +54,9 @@ else
    -outfile LCSE \
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
-   -Bicon=images/hat-logo-student.icns
+   -Bicon=images/hat-logo-student.icns \
+   -BappVersion=2.2.0
+   -Bicon=images/hat-logo-student.icns \
    -BappVersion=2.3.0
   else
     echo "Argument should be student or teacher"
