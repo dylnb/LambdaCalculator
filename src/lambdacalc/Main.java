@@ -67,7 +67,7 @@ public class Main {
     // Note that this can be set on an exercise-by-exercise basis with
     // the line "multiple reductions on/off" in the exercise preamble
     
-    public static final String VERSION = "2.2.1";
+    public static final String VERSION = "2.3.0";
 
     public static final String AUTHORS_AND_YEAR =
             "by Lucas Champollion, Joshua Tauberer,  Maribel Romero (2007-2009)," +
