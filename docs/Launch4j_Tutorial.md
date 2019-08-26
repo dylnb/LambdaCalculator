@@ -20,4 +20,6 @@ This update provides a new windows runnable application using the launch4j exe w
 The sh command will not run if the file is being imported from a zip to netbeans and possibly other IDEs as they remove the executable permissions from all files necessary to run the launch4j module. 
 
 
-### **NOTE 2**: The jdkpackager does not work if you have $JAVA_HOME set to JDK 11+. It is best to set $JAVA_HOME to a lower JDK. For future reference, Java is planning on providing a new JDKpackager in Java 13 using JLinks.
+### **NOTE 2**: 
+
+The jdkpackager does not work if you have $JAVA_HOME set to JDK 11+. It is best to set $JAVA_HOME to a lower JDK. For future reference, Java is planning on providing a new JDKpackager in Java 13 using JLinks.
