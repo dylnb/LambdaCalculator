@@ -56,8 +56,6 @@ else
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-student.icns \
    -BappVersion=2.3.0
-   -Bicon=images/hat-logo-student.icns \
-   -BappVersion=2.3.0
   else
     echo "Argument should be student or teacher"
     exit 1
