@@ -55,7 +55,7 @@ else
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-student.icns \
-   -BappVersion=2.2.0
+   -BappVersion=2.3.0
    -Bicon=images/hat-logo-student.icns \
    -BappVersion=2.3.0
   else
