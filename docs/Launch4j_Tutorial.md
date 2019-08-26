@@ -1,4 +1,4 @@
-#**Launch4j Instructions**
+# **Launch4j Instructions**
 
 
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
@@ -15,9 +15,9 @@ This update provides a new windows runnable application using the launch4j exe w
 9. To update the windows version, zip the .exe file and the JRE folder into a single zip, and it is ready for distribution. 
 
 
-###**NOTE 1**: 
+### **NOTE 1**: 
 
 The sh command will not run if the file is being imported from a zip to netbeans and possibly other IDEs as they remove the executable permissions from all files necessary to run the launch4j module. 
 
 
-###**NOTE 2**: The jdkpackager does not work if you have $JAVA_HOME set to JDK 11+. It is best to set $JAVA_HOME to a lower JDK. For future reference, Java is planning on providing a new JDKpackager in Java 13 using JLinks.
+### **NOTE 2**: The jdkpackager does not work if you have $JAVA_HOME set to JDK 11+. It is best to set $JAVA_HOME to a lower JDK. For future reference, Java is planning on providing a new JDKpackager in Java 13 using JLinks.
