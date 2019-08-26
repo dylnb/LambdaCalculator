@@ -122,13 +122,7 @@ define dancer: La.dancer(a)
 define k-john: Lk_<et>.k(j)
 define k-mary: Lk_<et>.k(m)
 define k-boy: Lk_<et,t>.k(boy)
-#
-# For some reason, the type-parser is complaining about lambda variables typed
-# with multiple opening < symbols, e.g. Lk_<<et,'r>,'r>.k(...). As a
-# workaround, we can designate particular variables to carry that type.
-#
-variables of type <<e,et>,t>: K
-define k-hates: LK.K(Ly.Lx.hate(x)(y))
+define k-hates: LK_<<e,et>,t>.K(Ly.Lx.hate(x)(y))
 
 ###################################################################################################
 
