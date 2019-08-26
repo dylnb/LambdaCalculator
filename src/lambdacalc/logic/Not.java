@@ -79,7 +79,7 @@ public class Not extends Unary {
     public Boolean dominatesBinder() {
       Expr ie = getInnerExpr();
       if (ie instanceof Binder) {
-        System.out.println("dominates binder: " + ie.toString());
+        //System.out.println("dominates binder: " + ie.toString());
         return true;
       } else if (ie instanceof Not && ((Not)ie).dominatesBinder()) {
         return true;

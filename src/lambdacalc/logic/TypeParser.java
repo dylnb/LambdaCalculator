@@ -40,13 +40,14 @@ public class TypeParser {
     
     private static class ParseState {
         public boolean ReadBracket; // open bracket
-        public boolean ReadComma;
-        public boolean ReadParen;
-        public boolean ReadStar;
+        public boolean ReadComma; // parsed comma
+        public boolean ReadParen; // parsed paren
+        public boolean ReadStar; 
         public boolean ParsingProduct;
         public boolean JustClosedProduct;
-        public Type Left;
-        public Type Right; // this is non-null only when we're waiting for a close-bracket
+        public Type Left; // type on left side
+        public Type Right; // type on right side 
+        public boolean FinalBracket; // this is false while waiting for final close-bracket
     }
     
     // This implements something like a pushdown automata to parse types.
@@ -86,7 +87,7 @@ public class TypeParser {
             char c = type.charAt(i);
 
             if (current.ParsingProduct) {
-                if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
+                if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
                     Type newType;
                     if (isParsingVarType) {
                         newType = new VarType(c);
@@ -178,12 +179,21 @@ public class TypeParser {
                         throw new SyntaxException("You cannot have brackets at " +
                                 "the indicated location. Brackets only surround" +
                                 " function types, like <e,t>.  Remove these brackets.", i);
+                } else if (current.FinalBracket) { // expression already complete
+                        throw new SyntaxException("You have an extra bracket " +
+                                "after <" + current.Left + "," + current.Right + "> at the " +
+                                "indicated location.  Remove these brackets.", i);
                 } else {
                     if (!current.ReadBracket)
                         throw new SyntaxException("You can't have a close bracket here.", i);
                     current = closeType(stack, current);
-                    if (stopSoon && stack.size() == 0 && current.Right == null)
-                        return new ParseResult(current.Left, i);
+                    if (stopSoon && stack.size() == 0 && current.Right != null && current.FinalBracket) {
+//                    if (stopSoon && stack.size() == 0 && current.Right == null) {
+                        Type ct = new CompositeType(current.Left, current.Right);
+                        return new ParseResult(ct, i);
+//                        return new ParseResult(current.Left, i);
+                    }  
+                        
                 }
 
             } else if (c == ',') {
@@ -217,7 +227,7 @@ public class TypeParser {
             } else if (c == Type.VarTypeSignifier) {
                 isParsingVarType = true;
 
-            } else if ('a' < c && c < 'z' || 'A' < c && 'Z' < c) {
+            } else if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
                 AtomicType at;
                 if (isParsingVarType) {
                     at = new VarType(c);
@@ -375,9 +385,9 @@ public class TypeParser {
             else
                 return new ParseResult(current.Left, type.length()-1);
         } else {
-            if (current.ReadBracket)
+            if (current.ReadBracket && !current.FinalBracket) // still waiting on a final bracket
                 throw new SyntaxException("You're missing a closing bracket.", type.length());
-            if (current.ReadComma) // comma but no brackets
+            if (!current.ReadBracket && current.ReadComma) // comma but no brackets
                     throw new SyntaxException("I can only understand a complex " +
                             "type with a comma when the type is surrounded by " +
                             "angle brackets < >. Add brackets around the whole type, or " +
@@ -389,8 +399,7 @@ public class TypeParser {
     private static ParseState closeType(Stack domains, ParseState current) {
         Type ct = new CompositeType(current.Left, current.Right);
         if (domains.size() == 0) {
-            current = new ParseState();
-            current.Left = ct;
+            current.FinalBracket = true;
             return current;
         } else {
             current = (ParseState) domains.pop();
@@ -406,7 +415,8 @@ public class TypeParser {
                 return current;
             } else {
                 current.Right = ct;
-                if (current.ReadBracket) return current;
+                if (current.ReadBracket) 
+                    return current;
             }
             return current;
         }

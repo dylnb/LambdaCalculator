@@ -41,7 +41,7 @@ then
    -srcdir dist \
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-teacher.icns \
-   -BappVersion=2.2.0
+   -BappVersion=2.3.0
 else
   if [ "$1" == "student" ]
   then
@@ -56,6 +56,8 @@ else
    -srcfiles LambdaCalculator.jar \
    -Bicon=images/hat-logo-student.icns \
    -BappVersion=2.2.0
+   -Bicon=images/hat-logo-student.icns \
+   -BappVersion=2.3.0
   else
     echo "Argument should be student or teacher"
     exit 1

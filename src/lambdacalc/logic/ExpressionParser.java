@@ -1583,7 +1583,7 @@ public class ExpressionParser {
     if (operands.size() > 1) {
       return null;
     }
-    System.out.println((Expr)operands.get(0));
+    //System.out.println((Expr)operands.get(0));
     results.add(new ParseResult((Expr) operands.get(0), next, continuationException));
 
     return null;
@@ -1607,8 +1607,8 @@ public class ExpressionParser {
    * are used next to each other.
    */
   private static SyntaxException groupOperands(ArrayList operands, ArrayList operators, char[] ops) {
-    System.out.println("grouping operands");
-    System.out.println("operands: " + operands + ",   operators: " + operators + ",   ops: " + new String(ops));
+    //System.out.println("grouping operands");
+    //System.out.println("operands: " + operands + ",   operators: " + operators + ",   ops: " + new String(ops));
     // Make sure that only one of the operators in ops is used, since they
     // are at the same precedence level and would have ambiguous bracketing.
     int op_idx = -1;
