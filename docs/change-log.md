@@ -24,4 +24,5 @@
 
 ## Previous updates
 gh-pages branch: https://github.com/nyusemantics/LambdaCalculator/releases
+
 Change log: https://github.com/nyusemantics/LambdaCalculator/blob/gh-pages/ChangeLog.txt
