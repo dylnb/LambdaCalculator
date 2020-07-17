@@ -214,34 +214,47 @@ public class Nonterminal extends LFNode {
     }
     
     
-    
+    // Changed 7/16/2020 by AA: Now compatible with > 2 possible rules
     private void guessCompositionRule(RuleList rules) {
-      int compositorHits = 0;
-
+      RuleList applicable_rules = new RuleList();
+      
       for (Object rule1 : rules) {
         CompositionRule rule = (CompositionRule) rule1;
         if (rule.isApplicableTo(this)) {
-          if (compositorHits == 0) {
-            // The first time we hit a compatible composition rule,
-            // assign it to ourself.
-            compositor = rule;
-          } else {
-            if (!lambdacalc.Main.GOD_MODE) {
-              // But on the next time we hit a compatible rule, clear
-              // out what we set and return. We thus don't actually set
-              // compositor unless there is a uniquely applicable rule.
-              compositor = null;
-              return;
-            } else {
-              // With polymorphic types, it's possible for there to be
-              // two legitimate applicable composition rules. We have
-              // to ask God which one to use.
-              // TODO: make this less horrible.
-              TrainingWindow singleton = TrainingWindow.getSingleton();
-              Object[] options = {compositor.toString(), rule.toString()};
-              String optionMessage = this + " can be combined in multiple ways."
+            applicable_rules.addElement(rule1);
+        }
+      }
+      int num_rules = applicable_rules.size();
+      // Given no compatible rule, set the compositor to null.
+      if (num_rules == 0) {
+          compositor = null;
+        // Given a single compatible rule, set the compositor as that rule.
+      } else if (num_rules == 1) {
+          compositor = (CompositionRule) applicable_rules.firstElement();
+      } else {
+        if (!lambdacalc.Main.GOD_MODE) {
+            // Given multiple compatible rule, return null. We don't actually
+            // set compositor unless there is a uniquely applicable rule.
+            compositor = null;
+            return;
+        } else {
+          // With polymorphic types, it's possible for there to be
+          // multiple legitimate applicable composition rules. We have
+          // to ask God which one to use.
+          TrainingWindow singleton = TrainingWindow.getSingleton();
+          int index = 0;
+          String[] options = new String[num_rules];
+          
+          for (Object rule : applicable_rules) {
+            CompositionRule current_rule = (CompositionRule) rule;
+            String toString = current_rule.toString();
+            options[index] = toString;
+            index += 1;
+          }    
+          
+          String optionMessage = this + " can be combined in multiple ways."
                  + "\n Which composition rule would you like?";
-              int n = JOptionPane.showOptionDialog(singleton,
+          int n = JOptionPane.showOptionDialog(singleton,
                                                    optionMessage,
                                                    "Compositor Choice",
                                                    JOptionPane.YES_NO_OPTION,
@@ -249,19 +262,13 @@ public class Nonterminal extends LFNode {
                                                    null, //no custom Icon
                                                    options, //button titles
                                                    options[0]); //default title
-              switch(n) {
-                case 1:
-                  compositor = rule;
-                  break;
-                default:
-                  break;
-              }
-            }
+          if (0 <= n && num_rules >= n) {
+            compositor = (CompositionRule) applicable_rules.get(n);
           }
-          compositorHits += 1;
         }
       }
-    }
+    }    
+    
     
     @Override
     public String toString() {

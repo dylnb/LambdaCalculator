@@ -91,6 +91,8 @@ public abstract class CompositionRule {
             return NonBranchingRule.INSTANCE;
         else if (name.equals("lambdacalc.lf.LambdaAbstractionRule"))
             return LambdaAbstractionRule.INSTANCE;
+        else if (name.equals("lambdacalc.lf.FunctionCompositionRule"))
+            return FunctionCompositionRule.INSTANCE;
         throw new java.io.IOException("Unrecognized composition rule name in file.");
     }
 }
