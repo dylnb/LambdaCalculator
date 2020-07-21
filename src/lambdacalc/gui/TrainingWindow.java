@@ -1728,8 +1728,8 @@ public class TrainingWindow extends JFrame {
         this.dispose();
     }
 
-    private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
-        if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
+    private boolean saveWork(){
+	if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
             int n = JOptionPane.showOptionDialog(this,
                 "Some of your answers are not yet saved.  Should I save your work before opening another file?",
                 "Lambda Calculator",
@@ -1748,9 +1748,14 @@ public class TrainingWindow extends JFrame {
                  break;
              case JOptionPane.CANCEL_OPTION:
              case JOptionPane.CLOSED_OPTION:
-                 return;
+                 return false;
             }
         }
+	return true;
+    }
+    private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
+        if(!saveWork())
+	    return;
         
         if (lambdacalc.gui.Util.isMac()) {
             // If Mac, opens a native dialog window named "Open"
@@ -1811,7 +1816,8 @@ public class TrainingWindow extends JFrame {
 
 //        int formerGroup = this.currentGroup;
 //        int formerEx = this.currentEx;
-
+	if(!saveWork())
+	    return;
         loadExerciseFile(this.currentFile);
 	showExercise();
 //        this.currentGroup = formerGroup;
