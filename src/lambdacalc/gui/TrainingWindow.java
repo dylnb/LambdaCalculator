@@ -510,13 +510,17 @@ public class TrainingWindow extends JFrame {
         
         jPanelRuleSelection.setVisibleRules(this.getCurrentExFile().getRules());
         
-        showFirstExercise();
         
     }
     
     private ExerciseGroup getCurrentGroup() {
         if (this.getCurrentExFile() == null) return null;
-        return this.getCurrentExFile().getGroup(this.currentGroup);
+	else if(this.getCurrentExFile().size() <= this.currentGroup){
+	    this.currentGroup = 0;
+	    return this.getCurrentExFile().getGroup(0);
+	}
+	else
+            return this.getCurrentExFile().getGroup(this.currentGroup);
     }
     
     private String chopFileSuffix(String s) {
@@ -537,7 +541,12 @@ public class TrainingWindow extends JFrame {
     
     Exercise getCurrentExercise() {
         if (getCurrentExFile() == null) return null;
-        return getCurrentGroup().getItem(currentEx);
+	else if(getCurrentGroup().size() <= currentEx){
+	    currentEx = 0;
+	    return getCurrentGroup().getItem(0);
+	}
+	else
+            return getCurrentGroup().getItem(currentEx);
     }
     
     // called in:
@@ -1719,8 +1728,8 @@ public class TrainingWindow extends JFrame {
         this.dispose();
     }
 
-    private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
-        if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
+    private boolean saveWork(){
+	if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
             int n = JOptionPane.showOptionDialog(this,
                 "Some of your answers are not yet saved.  Should I save your work before opening another file?",
                 "Lambda Calculator",
@@ -1739,9 +1748,14 @@ public class TrainingWindow extends JFrame {
                  break;
              case JOptionPane.CANCEL_OPTION:
              case JOptionPane.CLOSED_OPTION:
-                 return;
+                 return false;
             }
         }
+	return true;
+    }
+    private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
+        if(!saveWork())
+	    return;
         
         if (lambdacalc.gui.Util.isMac()) {
             // If Mac, opens a native dialog window named "Open"
@@ -1766,6 +1780,7 @@ public class TrainingWindow extends JFrame {
             if (file != null) {
                 String path = dialog.getDirectory() + file;
                 loadExerciseFile(new File(path));
+		showFirstExercise();
                 setTitle(file);
                 lastOpenDir = dialog.getDirectory();
 
@@ -1775,6 +1790,7 @@ public class TrainingWindow extends JFrame {
             int returnVal = jFileChooser1.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 loadExerciseFile(jFileChooser1.getSelectedFile()); 
+		showFirstExercise();
                 setTitle(jFileChooser1.getSelectedFile().getName());
             }
         }
@@ -1800,9 +1816,10 @@ public class TrainingWindow extends JFrame {
 
 //        int formerGroup = this.currentGroup;
 //        int formerEx = this.currentEx;
-
+	if(!saveWork())
+	    return;
         loadExerciseFile(this.currentFile);
-
+	showExercise();
 //        this.currentGroup = formerGroup;
 //        this.currentEx = formerEx;
 //
