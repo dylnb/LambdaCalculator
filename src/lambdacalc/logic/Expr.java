@@ -638,28 +638,34 @@ public abstract class Expr {
         // Need to walk down the type trees in parallel
         if (funcT instanceof CompositeType) {
             if (!(argT instanceof CompositeType)) {
-                throw new MeaningEvaluationException("I'm seeing a function of type " + funcT +
+                if (argT instanceof VarType) {
+                    matches.put(argT,funcT);
+                } else {
+                    throw new MeaningEvaluationException("I'm seeing a function of type " + funcT +
                         ", but an argument of type " + argT + ", which I can't match up"); // debug
-            }
-            Type funcLT = ((CompositeType)funcT).getLeft(); // b
-            Type funcRT = ((CompositeType)funcT).getRight(); // t
-            Type argLT = ((CompositeType)argT).getLeft(); // et
-            Type argRT = ((CompositeType)argT).getRight(); // t
-            HashMap<Type,Type> leftAlignments = alignTypes(funcLT, argLT);
-            HashMap<Type,Type> rightAlignments = alignTypes(funcRT, argRT);
-            matches.putAll(leftAlignments);
-            // make sure that a polymorphic type is not assigned to two different
-            // concrete types
-            for (Map.Entry<Type,Type> entry : matches.entrySet()) {
-                Type key = entry.getKey();
-                if (rightAlignments.containsKey(key)) {
-                    if (!rightAlignments.get(key).equals(entry.getValue())) {
-                        throw new MeaningEvaluationException("type variable " +
+                }
+            } else {
+                Type funcLT = ((CompositeType)funcT).getLeft(); // b
+                Type funcRT = ((CompositeType)funcT).getRight(); // t
+                Type argLT = ((CompositeType)argT).getLeft(); // et
+                Type argRT = ((CompositeType)argT).getRight(); // t
+                
+                HashMap<Type,Type> leftAlignments = alignTypes(funcLT, argLT);
+                HashMap<Type,Type> rightAlignments = alignTypes(funcRT, argRT);
+                matches.putAll(leftAlignments);
+                // make sure that a polymorphic type is not assigned to two different
+                // concrete types
+                for (Map.Entry<Type,Type> entry : matches.entrySet()) {
+                    Type key = entry.getKey();
+                    if (rightAlignments.containsKey(key)) {
+                        if (!rightAlignments.get(key).equals(entry.getValue())) {
+                            throw new MeaningEvaluationException("type variable " +
                                 entry.getKey() + " matches " + entry.getValue() + " and " + rightAlignments.get(key));
+                        }
                     }
                 }
+                matches.putAll(rightAlignments);
             }
-            matches.putAll(rightAlignments);
         } else if (funcT instanceof ProductType) {
             if (!(argT instanceof ProductType)) {
                 throw new MeaningEvaluationException("product problem"); // debug
@@ -668,7 +674,7 @@ public abstract class Expr {
         } else {
             if ((argT instanceof ConstType || argT instanceof CompositeType) && funcT instanceof VarType) {
                 matches.put(funcT, argT);
-            } else if (argT instanceof VarType && (funcT instanceof ConstType || funcT instanceof CompositeType)) {
+            } else if (argT instanceof VarType && (funcT instanceof ConstType)) {
                 matches.put(argT,funcT);
             }
         }
