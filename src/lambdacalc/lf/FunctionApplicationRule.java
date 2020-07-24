@@ -153,8 +153,12 @@ public class FunctionApplicationRule extends CompositionRule {
             Type r = right.getType();
             if (l instanceof CompositeType) {
                 CompositeType t = (CompositeType)l;
-                if (t.getLeft().equals(r))
+                if (t.getLeft().equals(r)) {
+                    // Call to alignTypes ensures that an error is thrown if the same VarType
+                    // is matched to multiple constant types
+                    HashMap<Type,Type> typeMatches = Expr.alignTypes(t.getLeft(),r);
                     return true;
+                }
                 else if (t.getLeft() instanceof ProductType){
                     ProductType pt = (ProductType)t.getLeft();
                     if (Arrays.asList(pt.getSubTypes()).contains(r)) {
@@ -163,6 +167,7 @@ public class FunctionApplicationRule extends CompositionRule {
                 }
             }
         } catch (TypeEvaluationException ex) {
+        } catch (MeaningEvaluationException me) {
         }
         return false;
     }

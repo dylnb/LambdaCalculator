@@ -145,10 +145,15 @@ public class FunctionCompositionRule extends CompositionRule {
             CompositeType lt = (CompositeType)left.getType();
             CompositeType rt = (CompositeType)right.getType();
             
-            if (lt.getLeft().equals(rt.getRight()))
-                    return true;
+            if (lt.getLeft().equals(rt.getRight())) {
+                // Call to alignTypes ensures that an error is thrown if the same VarType
+                // is matched to multiple constant types
+                HashMap<Type,Type> typeMatches = Expr.alignTypes(lt.getLeft(),rt.getRight());
+                return true;
+            }
             
         } catch (TypeEvaluationException ex) {
+        } catch (MeaningEvaluationException me) {
         }
         return false;
     }    
