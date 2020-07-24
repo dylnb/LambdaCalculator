@@ -451,12 +451,13 @@ public class TrainingWindow extends JFrame {
 
         try {
             if (isSerialized(f)) {
-                this.currentExFile = new ExerciseFile(f);
-                isWorkFile = true;
-                this.currentFile = f;
+		this.currentFile = f;
+		this.currentExFile = new ExerciseFile(f);
+		isWorkFile = true;
             } else {
-                this.currentExFile = parse(f);
-                this.currentFile = f;
+		this.currentFile = f;
+		this.currentExFile = parse(f);
+                
             }
             menuItemSaveAs.setEnabled(true);
             menuItemSave.setEnabled(false);
