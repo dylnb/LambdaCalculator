@@ -25,6 +25,8 @@
  */
 package lambdacalc.logic;
 
+import java.util.*;
+
 /**
  *
  * @author dylnb
@@ -68,6 +70,19 @@ public class ConstType extends AtomicType {
             return false;
         }
     }
+    
+    public HashMap<Type, HashMap<Type, Type>> matches(Type t) {
+	if(t instanceof ConstType){
+	    if(this.equals(t))
+		return new HashMap<Type, HashMap<Type, Type>>();
+	    return null;
+	}
+	else if(t instanceof VarType){
+	    return t.matches(this);
+	}
+	return null;
+    }
+    
     
     public boolean containsVar() {
         return false;
