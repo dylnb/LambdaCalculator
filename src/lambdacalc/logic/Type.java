@@ -88,6 +88,11 @@ public abstract class Type implements Comparable {
      * Implemented by subclasses to test for equality between types.
      */
     protected abstract boolean equals(Type t);
+    
+    /**
+    * Matches two types together, different from equality
+    */
+    public abstract HashMap<Type, HashMap<Type, Type>> matches(Type t);
 
     /**
      * Compares two types.  The natural ordering of types is as follows:
