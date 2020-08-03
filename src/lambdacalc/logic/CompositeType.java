@@ -28,6 +28,7 @@
 package lambdacalc.logic;
 
 import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Represents a composite (function) type, like &lt;et&gt;.
@@ -91,6 +92,90 @@ public class CompositeType extends Type {
         } else { 
             return false;
         }
+    }
+    
+    public HashMap<Type, HashMap<Type, Type>> matches(Type t){
+	return matches2(t, false);
+    }
+    
+    public HashMap<Type, HashMap<Type, Type>> matches2(Type t, boolean RtoL){
+	HashMap<Type, HashMap<Type, Type>> matchList = new HashMap<Type, HashMap<Type, Type>>();
+	if(t instanceof VarType)
+	    return ((VarType) t).matches(this);
+	else if(t instanceof CompositeType){
+	    Type thisLeft = this.left;
+	    Type thisRight = this.right;
+	    Type expLeft = ((CompositeType) t).left;
+	    Type expRight = ((CompositeType) t).right;
+	    
+	    HashMap<Type, HashMap<Type, Type>> leftMatches = thisLeft.matches(expLeft);
+	    HashMap<Type, HashMap<Type, Type>> rightMatches = thisRight.matches(expRight);
+	    if(leftMatches != null && rightMatches != null){
+		for(Type subType : leftMatches.keySet()){
+		    if(subType == thisLeft){
+			if(!matchList.containsKey(this))
+			    matchList.put(this, new HashMap<Type, Type>());
+			for(Type subMatch : leftMatches.get(subType).keySet()){
+			    if(matchList.get(this).containsKey(subMatch)){
+				if(!matchList.get(this).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				    if(RtoL == true)
+					return null;
+				    return ((CompositeType) t).matches2(this, true);
+				}
+			    }
+			    matchList.get(this).put(subMatch, leftMatches.get(subType).get(subMatch));
+			}
+		    }
+		    else{
+			if(!matchList.containsKey(t))
+			    matchList.put(t, new HashMap<Type, Type>());
+			for(Type subMatch : leftMatches.get(subType).keySet()){
+			    if(matchList.get(t).containsKey(subMatch)){
+				if(!matchList.get(t).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				    if(RtoL == true)
+					return null;
+				    return ((CompositeType) t).matches2(t, true);
+				}
+			    }
+			}
+		    }
+		}
+		
+		
+		for(Type subType : rightMatches.keySet()){
+		    if(subType == thisLeft){
+			if(!matchList.containsKey(this))
+			    matchList.put(this, new HashMap<Type, Type>());
+			for(Type subMatch : leftMatches.get(subType).keySet()){
+			    if(matchList.get(this).containsKey(subMatch)){
+				if(!matchList.get(this).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				    if(RtoL == true)
+					return null;
+				    return ((CompositeType) t).matches2(this, true);
+				}
+			    }
+			    matchList.get(this).put(subMatch, leftMatches.get(subType).get(subMatch));
+			}
+		    }
+		    else{
+			if(!matchList.containsKey(t))
+			    matchList.put(t, new HashMap<Type, Type>());
+			for(Type subMatch : leftMatches.get(subType).keySet()){
+			    if(matchList.get(t).containsKey(subMatch)){
+				if(!matchList.get(t).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				    if(RtoL == true)
+					return null;
+				    return ((CompositeType) t).matches2(t, true);
+				}
+			    }
+			}
+		    }
+		}
+		return matchList;
+	    }
+	}
+	return null;
+	
     }
     
     public boolean containsVar() {
