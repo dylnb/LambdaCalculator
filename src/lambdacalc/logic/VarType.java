@@ -25,6 +25,8 @@
  */
 package lambdacalc.logic;
 
+import java.util.*;
+
 /**
  *
  * @author dylnb
@@ -226,6 +228,21 @@ public class VarType extends AtomicType {
 //        }
         return true;
     }  
+    
+    /**
+     *
+     * @param t The Type to be matched to
+     * @return HashMap of expression to HashMap of variable to mapping
+     */
+    @Override
+    public HashMap<Type, HashMap<Type, Type>> matches(Type t){
+	if(t instanceof ProductType)
+	    return null;
+	HashMap<Type, HashMap<Type, Type>> matchlist = new HashMap<Type, HashMap<Type, Type>>();
+	matchlist.put(this, new HashMap<Type, Type>());
+	matchlist.get(this).put(this, t);
+	return matchlist;
+    }
     
     public boolean containsVar() {
         return true;
