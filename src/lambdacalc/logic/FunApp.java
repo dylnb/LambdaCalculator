@@ -161,7 +161,7 @@ public class FunApp extends Binary {
                 Expr arg = ((ArgList)getArg()).getElements()[i];
                 Type actualtype = arg.getType();
                 Type formaltype = ((ProductType)domain).getSubTypes()[i];
-                if (!actualtype.equals(formaltype))
+                if (actualtype.matches(formaltype) == null)
                     throw new TypeMismatchException
                             (getFunc() + " is a " + functype + " whose "
                                     + getOrdinal(i) + " argument must be of type "
@@ -173,7 +173,7 @@ public class FunApp extends Binary {
             Type formaltype = domain;
             if (functype.equals("predicate"))
                 functype = "one-place " + functype;
-            if (!actualtype.equals(formaltype))
+            if (actualtype.matches(formaltype) == null)
                 throw new TypeMismatchException(getFunc() + " is a " + functype
                         + " whose argument must be of type "
                         + formaltype + " but " + getArg() + " is of type "
