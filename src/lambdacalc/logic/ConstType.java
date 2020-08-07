@@ -61,6 +61,12 @@ public class ConstType extends AtomicType {
     }
     
     protected boolean equals(Type t) {
+	
+	if(t instanceof ConstType){
+	    return (this.getSymbol() == ((ConstType) t).getSymbol());
+	}
+	return false;
+	/*
         if (t instanceof VarType) {
             return true;
         } else if (t instanceof ConstType) {
@@ -69,6 +75,7 @@ public class ConstType extends AtomicType {
         } else { 
             return false;
         }
+	*/
     }
     
     public HashMap<Type, HashMap<Type, Type>> matches(Type t) {

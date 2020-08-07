@@ -83,6 +83,16 @@ public class CompositeType extends Type {
     }
     
     protected boolean equals(Type t) {
+	
+	if(t instanceof CompositeType){
+	    boolean leftTrue = this.getLeft().equals(((CompositeType) t).getLeft());
+	    boolean rightTrue = this.getRight().equals(((CompositeType) t).getRight());
+	    if(leftTrue != rightTrue)
+		return false;
+	    return leftTrue;
+	}
+	return false;
+	/*
         if (t instanceof VarType) {
             return true;
         } else if (t instanceof CompositeType) {
@@ -92,6 +102,8 @@ public class CompositeType extends Type {
         } else { 
             return false;
         }
+	
+	*/
     }
     
     public HashMap<Type, HashMap<Type, Type>> matches(Type t){
@@ -117,7 +129,7 @@ public class CompositeType extends Type {
 			    matchList.put(this, new HashMap<Type, Type>());
 			for(Type subMatch : leftMatches.get(subType).keySet()){
 			    if(matchList.get(this).containsKey(subMatch)){
-				if(!matchList.get(this).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				if(matchList.get(this).get(subMatch) != leftMatches.get(subType).get(subMatch)){
 				    if(RtoL == true)
 					return null;
 				    return ((CompositeType) t).matches2(this, true);
@@ -131,43 +143,47 @@ public class CompositeType extends Type {
 			    matchList.put(t, new HashMap<Type, Type>());
 			for(Type subMatch : leftMatches.get(subType).keySet()){
 			    if(matchList.get(t).containsKey(subMatch)){
-				if(!matchList.get(t).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				if(matchList.get(t).get(subMatch) != leftMatches.get(subType).get(subMatch)){
 				    if(RtoL == true)
 					return null;
 				    return ((CompositeType) t).matches2(t, true);
 				}
 			    }
+			    else
+				matchList.get(t).put(subMatch, leftMatches.get(subType).get(subMatch));
 			}
 		    }
 		}
 		
 		
 		for(Type subType : rightMatches.keySet()){
-		    if(subType == thisLeft){
+		    if(subType == thisRight){
 			if(!matchList.containsKey(this))
 			    matchList.put(this, new HashMap<Type, Type>());
-			for(Type subMatch : leftMatches.get(subType).keySet()){
+			for(Type subMatch : rightMatches.get(subType).keySet()){
 			    if(matchList.get(this).containsKey(subMatch)){
-				if(!matchList.get(this).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				if(matchList.get(this).get(subMatch) != rightMatches.get(subType).get(subMatch)){
 				    if(RtoL == true)
 					return null;
 				    return ((CompositeType) t).matches2(this, true);
 				}
 			    }
-			    matchList.get(this).put(subMatch, leftMatches.get(subType).get(subMatch));
+			    matchList.get(this).put(subMatch, rightMatches.get(subType).get(subMatch));
 			}
 		    }
 		    else{
 			if(!matchList.containsKey(t))
 			    matchList.put(t, new HashMap<Type, Type>());
-			for(Type subMatch : leftMatches.get(subType).keySet()){
+			for(Type subMatch : rightMatches.get(subType).keySet()){
 			    if(matchList.get(t).containsKey(subMatch)){
-				if(!matchList.get(t).get(subMatch).equals(leftMatches.get(subType).get(subMatch))){
+				if(matchList.get(t).get(subMatch) != rightMatches.get(subType).get(subMatch)){
 				    if(RtoL == true)
 					return null;
 				    return ((CompositeType) t).matches2(t, true);
 				}
 			    }
+			    else
+				matchList.get(t).put(subMatch, rightMatches.get(subType).get(subMatch));
 			}
 		    }
 		}

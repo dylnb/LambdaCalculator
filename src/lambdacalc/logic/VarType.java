@@ -220,13 +220,17 @@ public class VarType extends AtomicType {
     }
     
     protected boolean equals(Type t) {
+	if(t instanceof VarType){
+	    return (this.getSymbol() == ((VarType) t).getSymbol());
+	}
+	return false;
 //        if (t instanceof AtomicType) {
 //            AtomicType at = (AtomicType) t;
 //            return (this.getSymbol() == at.getSymbol());
 //        } else { 
 //            return false;
 //        }
-        return true;
+//        return true;
     }  
     
     /**

@@ -73,7 +73,8 @@ public class ProductType extends Type {
         } else if (t instanceof ProductType) {
             Type[] a1 = getSubTypes();
             Type[] a2 = ((ProductType)t).getSubTypes();
-            if (a1.length != a2.length) return false;
+            if (a1.length != a2.length) 
+		return false;
             for (int i = 0; i < a1.length; i++) {
                 Type l = a1[i];
                 Type r = a2[i];
@@ -96,7 +97,8 @@ public class ProductType extends Type {
 	    HashMap<Type, HashMap<Type, Type>> subMatches = new HashMap<Type, HashMap<Type, Type> >();
 	    if(t instanceof ProductType){
 		//Make sure both product types are the same length
-		assert (this.subtypes.length == ((ProductType) t).subtypes.length);
+		if (this.subtypes.length != ((ProductType) t).subtypes.length)
+		    return null;
 		//For each part of the product type
 		for(int i = 0; i < this.subtypes.length; i++){
 		    /*Do matches on each subtype of the productType.
@@ -140,7 +142,8 @@ public class ProductType extends Type {
 					    return ((ProductType) t).matches2(this, true);
 					}
 				    }
-				    matchList.get(t).put(subMatch, subMatches.get(subType).get(subMatch));
+				    else
+					matchList.get(t).put(subMatch, subMatches.get(subType).get(subMatch));
 				}
 			    }
 			}
