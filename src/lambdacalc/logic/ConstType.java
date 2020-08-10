@@ -78,7 +78,19 @@ public class ConstType extends AtomicType {
 	*/
     }
     
-    public HashMap<Type, HashMap<Type, Type>> matches(Type t) {
+    public MatchPair matches(Type t) {
+	
+	if(t instanceof ConstType){
+	    if(this.equals(t))
+		return new MatchPair(this, t);
+	}
+	
+	else if(t instanceof VarType)
+	    return t.matches(this);
+	
+	return null;
+	
+	/*
 	if(t instanceof ConstType){
 	    if(this.equals(t))
 		return new HashMap<Type, HashMap<Type, Type>>();
@@ -88,6 +100,7 @@ public class ConstType extends AtomicType {
 	    return t.matches(this);
 	}
 	return null;
+	*/
     }
     
     
