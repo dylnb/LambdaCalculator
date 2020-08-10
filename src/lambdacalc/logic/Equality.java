@@ -70,7 +70,7 @@ public class Equality extends LogicalBinary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(getRight().getType()))
+        if (getLeft().getType().matches(getRight().getType()) == null) 
             throw new TypeMismatchException("The types of the expressions on the left and right of an equality operator must be the same, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }
