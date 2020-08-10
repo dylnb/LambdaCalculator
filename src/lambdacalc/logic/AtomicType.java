@@ -70,7 +70,7 @@ public abstract class AtomicType extends Type {
         }
     }
     
-    public abstract HashMap<Type, HashMap<Type, Type>> matches(Type t);
+    public abstract MatchPair matches(Type t);
 	    
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
