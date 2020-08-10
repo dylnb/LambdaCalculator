@@ -60,6 +60,7 @@ public class Var extends Identifier {
         return ret;
     }
 
+    //never called, just in case
     protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap) {
         // we use the map here...
         if (i instanceof Var) {
