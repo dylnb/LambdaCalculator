@@ -230,7 +230,10 @@ public class VarType extends AtomicType {
 //        } else { 
 //            return false;
 //        }
-//        return true;
+
+	/*
+        return true;
+	*/
     }  
     
     /**
@@ -238,14 +241,21 @@ public class VarType extends AtomicType {
      * @param t The Type to be matched to
      * @return HashMap of expression to HashMap of variable to mapping
      */
-    @Override
-    public HashMap<Type, HashMap<Type, Type>> matches(Type t){
+    public MatchPair matches(Type t){
+	if(t instanceof ProductType)
+	    return null;
+
+	MatchPair pair = new MatchPair(this, t);
+	pair.setMatches(this, this, t);
+	return pair;
+	/*
 	if(t instanceof ProductType)
 	    return null;
 	HashMap<Type, HashMap<Type, Type>> matchlist = new HashMap<Type, HashMap<Type, Type>>();
 	matchlist.put(this, new HashMap<Type, Type>());
 	matchlist.get(this).put(this, t);
 	return matchlist;
+	*/
     }
     
     public boolean containsVar() {
