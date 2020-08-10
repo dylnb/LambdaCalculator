@@ -73,7 +73,7 @@ public abstract class Type implements Comparable {
     public static final Type N = new ConstType('n');
     
     public static final Type WILD = new VarType('_');
-
+        
     /**
      * Tests two types for equality (as you would expect).
      */
@@ -92,8 +92,8 @@ public abstract class Type implements Comparable {
     /**
     * Matches two types together, different from equality
     */
-    public abstract HashMap<Type, HashMap<Type, Type>> matches(Type t);
-
+    public abstract MatchPair matches(Type t);
+    
     /**
      * Compares two types.  The natural ordering of types is as follows:
      *   First, atomic types, ordered by their character names.
