@@ -634,7 +634,9 @@ public abstract class Expr {
         // funcT is the domain type of some function, (eg the <b,t> in <<b,t>,t>)
         // which has "matched" the type of argT (eg <et,t>)
         HashMap<Type,Type> matches = new HashMap<Type,Type>();
-                
+	
+	//To delete after testing
+        MatchPair test = funcT.matches(argT); 
         // Need to walk down the type trees in parallel
         if (funcT instanceof CompositeType) {
             if (!(argT instanceof CompositeType)) {
