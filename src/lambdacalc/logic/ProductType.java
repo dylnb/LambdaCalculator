@@ -68,9 +68,7 @@ public class ProductType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof ProductType) {
+	if (t instanceof ProductType) {
             Type[] a1 = getSubTypes();
             Type[] a2 = ((ProductType)t).getSubTypes();
             if (a1.length != a2.length) 
@@ -83,16 +81,45 @@ public class ProductType extends Type {
                     return false;
             }
             return true;
-        } else { 
-            return false;
-        }
+        } 
+	
+	return false;
     }
-	public HashMap<Type, HashMap<Type, Type>> matches(Type t){
+	public MatchPair matches(Type t){
 	    return matches2(t, false);
 	}
 	
-        private HashMap<Type, HashMap<Type, Type> > matches2(Type t, boolean RtoL){
+        private MatchPair matches2(Type t, boolean RtoL){
 	    
+	    if(t instanceof ProductType){
+		if (this.getSubTypes().length == ((ProductType) t).getSubTypes().length){
+		    MatchPair pair;
+		    if(RtoL)
+			pair = new MatchPair(t, this);
+		    else
+			pair = new MatchPair(this, t);
+		    for(int i = 0; i < this.getSubTypes().length; i++){
+			MatchPair parts = this.getSubTypes()[i].matches(((ProductType) t).getSubTypes()[i]);
+			if(parts != null){
+			    
+			    boolean pass;
+			    pass = pair.insertMatch(parts.getMatches(parts.getLeft()), parts.getMatches(parts.getRight()));
+			  
+			    if(!(pass)){
+				if(RtoL)
+				    return null;
+			    }
+			    else
+				return ((ProductType) t).matches2(this, true);
+			}
+		    }
+		    if(RtoL)
+			return pair.flip();
+		    return pair;
+		}
+	    }
+	    return null;
+	    /*
 	    HashMap<Type, HashMap<Type, Type>> matchList = new HashMap<Type, HashMap<Type, Type> >();
 	    HashMap<Type, HashMap<Type, Type>> subMatches = new HashMap<Type, HashMap<Type, Type> >();
 	    if(t instanceof ProductType){
@@ -102,9 +129,9 @@ public class ProductType extends Type {
 		//For each part of the product type
 		for(int i = 0; i < this.subtypes.length; i++){
 		    /*Do matches on each subtype of the productType.
-		    *returns hashmap mapping subType -> var -> const if available, e.g. subtype <'a, 'b>.matches(<'a, 'a>) 
-		    *	returns hashmap of <'a, 'b> : 'a -> 'a, 'b -> 'a, <'a, 'a> : 'a -> null
-		    */
+			returns hashmap mapping subType -> var -> const if available, e.g. subtype <'a, 'b>.matches(<'a, 'a>) 
+		    	returns hashmap of <'a, 'b> : 'a -> 'a, 'b -> 'a, <'a, 'a> : 'a -> null
+		    *
 		    subMatches = this.subtypes[i].matches(((ProductType) t).subtypes[i]);
 		    //if the subtypes are matched (or equal)
 		    if(subMatches != null){
@@ -153,6 +180,7 @@ public class ProductType extends Type {
 		return matchList;
 	    }
 	    return null;
+	*/
 	}
     
     public boolean containsVar() {
