@@ -106,19 +106,55 @@ public class CompositeType extends Type {
 	*/
     }
     
-    public HashMap<Type, HashMap<Type, Type>> matches(Type t){
+    public MatchPair matches(Type t){
 	return matches2(t, false);
     }
     
-    public HashMap<Type, HashMap<Type, Type>> matches2(Type t, boolean RtoL){
+    public MatchPair matches2(Type t, boolean RtoL){
+	//set to void if using
+	if(t instanceof VarType)
+	    ((VarType) t).matches(this);
+	else if(t instanceof CompositeType){
+	    Type thisLeft = this.getLeft();
+	    Type thisRight = this.getRight();
+	    Type expLeft = ((CompositeType) t).getLeft();
+	    Type expRight = ((CompositeType) t).getRight();
+	    
+	    MatchPair leftHalf = thisLeft.matches(expLeft);
+	    MatchPair rightHalf = thisRight.matches(expRight);
+	   
+	    if(leftHalf != null && rightHalf != null){
+		MatchPair pair = new MatchPair(this, t);
+		
+		boolean leftHalfPass;
+		boolean rightHalfPass;
+		
+
+		    leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft));
+
+		    rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight));
+		
+		if(!(leftHalfPass && rightHalfPass)){
+		    if(RtoL)
+			return null;
+		    else
+			return ((CompositeType) t).matches2(this, true);
+		}
+		if(RtoL)
+		    return pair.flip();
+		return pair;
+	    }
+	}
+	return null;
+	/*
 	HashMap<Type, HashMap<Type, Type>> matchList = new HashMap<Type, HashMap<Type, Type>>();
 	if(t instanceof VarType)
 	    return ((VarType) t).matches(this);
 	else if(t instanceof CompositeType){
-	    Type thisLeft = this.left;
-	    Type thisRight = this.right;
-	    Type expLeft = ((CompositeType) t).left;
-	    Type expRight = ((CompositeType) t).right;
+	    Type thisLeft = this.getLeft();
+	    Type thisRight = this.getRight();
+	    Type expLeft = ((CompositeType) t).getLeft();
+	    Type expRight = ((CompositeType) t).getRight();
 	    
 	    HashMap<Type, HashMap<Type, Type>> leftMatches = thisLeft.matches(expLeft);
 	    HashMap<Type, HashMap<Type, Type>> rightMatches = thisRight.matches(expRight);
@@ -191,7 +227,7 @@ public class CompositeType extends Type {
 	    }
 	}
 	return null;
-	
+	*/
     }
     
     public boolean containsVar() {
