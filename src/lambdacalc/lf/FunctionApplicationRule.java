@@ -33,6 +33,7 @@ import lambdacalc.logic.CompositeType;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.FunApp;
 import lambdacalc.logic.Lambda;
+import lambdacalc.logic.MatchPair;
 import lambdacalc.logic.ProductType;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
@@ -118,6 +119,9 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(leftMeaning, rightMeaning)) {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
+		//To delete after testing
+		MatchPair test = lt.getLeft().matches(rightMeaning.getType());
+		
                 typeMatches = Expr.alignTypes(lt.getLeft(),rightMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
@@ -126,6 +130,8 @@ public class FunctionApplicationRule extends CompositionRule {
         } else if (isFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
+		//To delete after testing
+		MatchPair test = rt.getLeft().matches(leftMeaning.getType());
                 typeMatches = Expr.alignTypes(rt.getLeft(),leftMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
@@ -153,6 +159,8 @@ public class FunctionApplicationRule extends CompositionRule {
             Type r = right.getType();
             if (l instanceof CompositeType) {
                 CompositeType t = (CompositeType)l;
+		//To delete after testing
+		MatchPair test = ((CompositeType) l).getLeft().matches(r);
                 if (t.getLeft().equals(r)) {
                     // Call to alignTypes ensures that an error is thrown if the same VarType
                     // is matched to multiple constant types
