@@ -78,6 +78,11 @@ public class ConstType extends AtomicType {
 	*/
     }
     
+    /**
+     * Matches the constantType. If the other Type is not a VarType this will return null.
+     * @param t The type to be matched to.
+     * @return A MatchPair class containing the mappings for each Type. 
+     */
     public MatchPair matches(Type t) {
 	
 	if(t instanceof ConstType){
@@ -85,8 +90,10 @@ public class ConstType extends AtomicType {
 		return new MatchPair(this, t);
 	}
 	
-	else if(t instanceof VarType)
-	    return t.matches(this);
+	else if(t instanceof VarType){
+	    MatchPair flipped = t.matches(this);
+	    return flipped.flip();
+	}
 	
 	return null;
 	
