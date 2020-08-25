@@ -106,10 +106,22 @@ public class CompositeType extends Type {
 	*/
     }
     
+    /**
+     * Matches two Types
+     * @param t The Type to be matched to
+     * @return A matchPair class containing the mappings for each Type
+     */
     public MatchPair matches(Type t){
 	return matches2(t, false);
     }
-    
+    /**
+     * Helper method for matches. For each half of the CompositeType, match them. 
+     * If successful insert the pairing into the parent CompositeType
+     * If not successful, try matching from right to left.
+     * @param t the Type to be matched to
+     * @param RtoL Whether the pass is right to left. 
+     * @return A MatchPair class containing the mappings for each productType, or null if cannot be matched. 
+     */
     public MatchPair matches2(Type t, boolean RtoL){
 	//set to void if using
 	if(t instanceof VarType)
