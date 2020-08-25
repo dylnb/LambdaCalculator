@@ -112,7 +112,7 @@ public class ExerciseGroup {
      * Gets the exercise at the given index in this group.
      */
     public Exercise getItem(int index) {
-        return (Exercise)items.get(index);
+      return (Exercise)items.get(index);
     }
     
     /**

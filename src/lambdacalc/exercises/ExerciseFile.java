@@ -90,7 +90,7 @@ public class ExerciseFile {
      * Gets the ExerciseGroup at the given index.
      */
     public ExerciseGroup getGroup(int index) {
-        return (ExerciseGroup)groups.get(index);
+	return (ExerciseGroup)groups.get(index);
     }
     
     /**
