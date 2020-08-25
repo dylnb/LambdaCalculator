@@ -237,9 +237,9 @@ public class VarType extends AtomicType {
     }  
     
     /**
-     *
-     * @param t The Type to be matched to
-     * @return HashMap of expression to HashMap of variable to mapping
+     * Matches the variable to another Type.
+     * @param t The Type to be mapped to.
+     * @return MatchPair of varType to other Type, so long as the other Type is not productType.
      */
     public MatchPair matches(Type t){
 	if(t instanceof ProductType)
