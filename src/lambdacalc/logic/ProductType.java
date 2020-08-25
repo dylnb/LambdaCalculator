@@ -85,21 +85,25 @@ public class ProductType extends Type {
 	
 	return false;
     }
+    
 	/**
-	 * Matches two Types
-	 * @param t the Type to be matched with
-	 * @return a MatchPair class containing mappings for each Type. 
+	 * Tests whether two types can be unified. 
+	 * @param t the Type to be unified with.
+	 * @return a MatchPair class containing the variable mappings (unifier) for each Type,
+         * or null if cannot be unified.
 	 */
 	public MatchPair matches(Type t){
 	    return matches2(t, false);
 	}
+        
 	/**
-	 * Helper method for matches. Only two productTypes can be matched together.
-	 * For each component of the ProductType, match them. If successful insert the pairing into the parent ProductType
-	 * If not successful, try matching from right to left.
-	 * @param t the ProductType to be matched to
-	 * @param RtoL whether the pass is right to Left
-	 * @return A MatchPair class containing the mappings for each productType, or null if cannot be matched. 
+	 * Helper method for matches. Only two ProductTypes can be unified.
+	 * For each sub-type of the ProductType, unify them. If successful, insert the pairing 
+         * into the parent ProductType. If not successful, try the unification procedure from right to left.
+	 * @param t the ProductType to be unified with
+	 * @param RtoL whether the pass is right to left
+	 * @return A MatchPair class containing the mappings for each productType, 
+         * or null if cannot be matched. 
 	 */
         private MatchPair matches2(Type t, boolean RtoL){
 	    

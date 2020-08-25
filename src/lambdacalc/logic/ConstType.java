@@ -79,9 +79,9 @@ public class ConstType extends AtomicType {
     }
     
     /**
-     * Matches the constantType. If the other Type is not a VarType this will return null.
-     * @param t The type to be matched to.
-     * @return A MatchPair class containing the mappings for each Type. 
+     * Matches the ConstType. If the other Type is not a VarType this will return null.
+     * @param t The type to be unified with.
+     * @return A MatchPair object containing the variable mappings for each Type, or null. 
      */
     public MatchPair matches(Type t) {
 	
