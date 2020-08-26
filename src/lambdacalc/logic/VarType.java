@@ -237,9 +237,10 @@ public class VarType extends AtomicType {
     }  
     
     /**
-     * Matches the variable to another Type.
-     * @param t The Type to be mapped to.
-     * @return MatchPair of varType to other Type, so long as the other Type is not productType.
+     * Tests whether a VarType can be unified with another type.
+     * @param t The Type to be unified with.
+     * @return A MatchPair containing the variable mappings (unifier) of the two types, 
+     * so long as the other Type is not productType, in which case it returns null. 
      */
     public MatchPair matches(Type t){
 	if(t instanceof ProductType)

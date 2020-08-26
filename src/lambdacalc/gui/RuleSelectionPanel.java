@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2007-2014 Dylan Bumford, Lucas Champollion, Maribel Romero
  * and Joshua Tauberer
- * 
+ *
  * This file is part of The Lambda Calculator.
- * 
+ *
  * The Lambda Calculator is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * The Lambda Calculator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with The Lambda Calculator.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -40,6 +40,7 @@ import lambdacalc.gui.TreeExerciseWidget.SelectionEvent;
 import lambdacalc.gui.TreeExerciseWidget.SelectionListener;
 import lambdacalc.lf.CompositionRule;
 import lambdacalc.lf.FunctionApplicationRule;
+import lambdacalc.lf.FunctionCompositionRule;
 import lambdacalc.lf.IntensionalFunctionApplicationRule;
 import lambdacalc.lf.LFNode;
 import lambdacalc.lf.LambdaAbstractionRule;
@@ -47,60 +48,70 @@ import lambdacalc.lf.MeaningEvaluationException;
 import lambdacalc.lf.Nonterminal;
 import lambdacalc.lf.PredicateModificationRule;
 import lambdacalc.lf.RuleList;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.GridBagLayout;
+import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 
 /**
  *
  * @author  champoll
  */
-public class RuleSelectionPanel extends javax.swing.JPanel 
+public class RuleSelectionPanel extends javax.swing.JPanel
 implements PropertyChangeListener, SelectionListener {
-    
+
     private int value = -1;
-    
+
     //private JDialog dialog;
-    
+
     private TreeExerciseWidget teWidget = null;
-    
+
     public static final FunctionApplicationRule FA_RULE = FunctionApplicationRule.INSTANCE;
     public static final PredicateModificationRule PM_RULE = PredicateModificationRule.INSTANCE;
     public static final LambdaAbstractionRule LA_RULE = LambdaAbstractionRule.INSTANCE;
     public static final IntensionalFunctionApplicationRule IFA_RULE = IntensionalFunctionApplicationRule.INSTANCE;
-    
+    public static final FunctionCompositionRule FC_RULE = FunctionCompositionRule.INSTANCE;
+
     public static final int FUNCTION_APPLICATION = 1;
     public static final int PREDICATE_MODIFICATION = 2;
     public static final int LAMBDA_ABSTRACTION = 3;
     public static final int INTENSIONAL_FUNCTION_APPLICATION = 4;
-    
+    public static final int FUNCTION_COMPOSITION = 5;
+
     /** Creates new form RuleSelectionPanel */
     public RuleSelectionPanel() {
         initComponents();
     }
-    
+
     public void initialize(TreeExerciseWidget teWidget) {
         if (this.teWidget != null)
             this.teWidget.removeSelectionListener(this);
         this.teWidget = teWidget;
         teWidget.addSelectionListener(this);
     }
-    
+
     public static CompositionRule forValue(int i) {
         if (i == FUNCTION_APPLICATION) return FA_RULE;
         if (i == PREDICATE_MODIFICATION) return PM_RULE;
         if (i == LAMBDA_ABSTRACTION) return LA_RULE;
         if (i == INTENSIONAL_FUNCTION_APPLICATION) return IFA_RULE;
-        
+        if (i == FUNCTION_COMPOSITION) return FC_RULE;
         throw new IllegalArgumentException();
     }
 
 //    public void setParentDialog(JDialog dialog) {
 //        this.dialog = dialog;
 //    }
-    
+
     public void setVisibleRules(RuleList r) {
         setVisibleFA(r.contains(FA_RULE));
         setVisiblePM(r.contains(PM_RULE));
         setVisibleLA(r.contains(LA_RULE));
         setVisibleIFA(r.contains(IFA_RULE));
+        setVisibleFC(r.contains(FC_RULE));
         if (r.contains(FA_RULE)) {
             this.getRootPane().setDefaultButton(this.jButtonFA);
             this.jButtonFA.requestFocus();
@@ -113,22 +124,25 @@ implements PropertyChangeListener, SelectionListener {
         } else if (r.contains(IFA_RULE)) {
             this.getRootPane().setDefaultButton(this.jButtonIFA);
             this.jButtonIFA.requestFocus();
+        } else if (r.contains(FC_RULE)) {
+            this.getRootPane().setDefaultButton(this.jButtonFC);
+            this.jButtonFC.requestFocus();
         }
     }
-    
-    
+
+
     public void propertyChange(java.beans.PropertyChangeEvent e) {
         // Fired when the node we're viewing changes
 //        if (e.getPropertyName().equals("compositionRule")) {
 //            TrainingWindow.getSingleton().
 //                    updateNodePropertyPanel((Nonterminal)e.getSource());
 //        }
-    }    
-   
+    }
+
     public void selectionChanged(SelectionEvent e) {
         LFNode source = (LFNode) e.getSource();
         source.addPropertyChangeListener(this);
-        
+
 
         Nonterminal node = getSelectedBranchingNodeIfAny();
         if (node == null) return;
@@ -136,14 +150,14 @@ implements PropertyChangeListener, SelectionListener {
             if (FA_RULE.isApplicableTo(node)) {
                 txtFA.setText(FA_RULE.applyTo(node, true, true).toString());
             } else {
-                
+
                 txtFA.setText
                     ("\""+FA_RULE.applyTo(node, false, true).toString()
                     + "\" or \"" +
                     FA_RULE.applyTo(node, false, false).toString()
                     +"\"");
             }
-            
+
         } catch (MeaningEvaluationException ex) {
             txtFA.setText(ex.getMessage());
             //txtFA.setText("Not applicable here");
@@ -176,21 +190,27 @@ implements PropertyChangeListener, SelectionListener {
             //txtLA.setText(ex.getMessage());
             txtLA.setText("Not applicable here");
         }
-        
+        try {
+            txtFC.setText(FC_RULE.applyTo(node, false).toString());
+        } catch (MeaningEvaluationException ex) {
+            //txtFC.setText(ex.getMessage());
+            txtFC.setText("Not applicable here");
+        }
+
     }
-    
+
     private void setVisibleFA(boolean b) {
         this.jButtonFA.setVisible(b);
         this.txtFA.setVisible(b);
         this.jLabelFA.setVisible(b);
     }
-    
+
     private void setVisiblePM(boolean b) {
         this.jButtonPM.setVisible(b);
         this.txtPM.setVisible(b);
         this.jLabelPM.setVisible(b);
     }
-    
+
     private void setVisibleLA(boolean b) {
         this.jButtonLA.setVisible(b);
         this.txtLA.setVisible(b);
@@ -203,14 +223,20 @@ implements PropertyChangeListener, SelectionListener {
         this.jLabelIFA.setVisible(b);
     }
 
+    private void setVisibleFC(boolean b) {
+        this.jButtonFC.setVisible(b);
+        this.txtFC.setVisible(b);
+        this.jLabelFC.setVisible(b);
+    }
+
     public JButton getFAButton() {
         return this.jButtonFA;
     }
-    
+
     public JButton getPMButton() {
         return this.jButtonPM;
     }
-    
+
     public JButton getLAButton() {
         return this.jButtonLA;
     }
@@ -219,10 +245,14 @@ implements PropertyChangeListener, SelectionListener {
         return this.jButtonIFA;
     }
 
+    public JButton getFCButton() {
+        return this.jButtonFC;
+    }
+
     public int getValue() {
         return value;
     }
-    
+
     private Nonterminal getSelectedBranchingNodeIfAny() {
         //sanity check: we expect the selected node to be a branching nonterminal
         if (teWidget == null) return null;
@@ -232,15 +262,15 @@ implements PropertyChangeListener, SelectionListener {
         // else
         return node;
     }
-    
+
     private void updateTree(int value) {
 
         Nonterminal node = getSelectedBranchingNodeIfAny();
-        
-        
-        
+
+
+
         if (node == null) return;
-        
+
         // We want to make sure that any children of the selected node
         // that ought to have a meaning have been fully simplified by the
         // user.
@@ -254,7 +284,7 @@ implements PropertyChangeListener, SelectionListener {
                 }
             }
         }
-       
+
         node.setCompositionRule(forValue(value));
 //<<<<<<< .mine
 //        try {
@@ -276,7 +306,8 @@ implements PropertyChangeListener, SelectionListener {
      * always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
@@ -294,16 +325,22 @@ implements PropertyChangeListener, SelectionListener {
         jButtonIFA = new javax.swing.JButton();
         txtIFA = new lambdacalc.gui.LambdaEnabledTextField();
         jLabelIFA = new javax.swing.JLabel();
+        txtFC = new lambdacalc.gui.LambdaEnabledTextField();
+        jLabelFC = new javax.swing.JLabel();
+        jButtonFC = new javax.swing.JButton();
 
-        setPreferredSize(new java.awt.Dimension(499, 290));
+        setPreferredSize(new java.awt.Dimension(499, 350));
 
         jPanel1.setMinimumSize(new java.awt.Dimension(310, 160));
+        jPanel1.setMixingCutoutShape(null);
         jPanel1.setPreferredSize(new java.awt.Dimension(310, 160));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jButtonFA.setText("Select");
-        jButtonFA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonFA.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonFAActionPerformed(evt);
             }
         });
@@ -314,8 +351,10 @@ implements PropertyChangeListener, SelectionListener {
         jPanel1.add(jButtonFA, gridBagConstraints);
 
         jButtonPM.setText("Select");
-        jButtonPM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonPM.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonPMActionPerformed(evt);
             }
         });
@@ -326,8 +365,10 @@ implements PropertyChangeListener, SelectionListener {
         jPanel1.add(jButtonPM, gridBagConstraints);
 
         jButtonLA.setText("Select");
-        jButtonLA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonLA.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonLAActionPerformed(evt);
             }
         });
@@ -361,7 +402,7 @@ implements PropertyChangeListener, SelectionListener {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         jPanel1.add(jLabelLA, gridBagConstraints);
 
-        jLabelSelect.setFont(new java.awt.Font("Lucida Grande", 1, 16));
+        jLabelSelect.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabelSelect.setText("Select a composition rule");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -394,8 +435,10 @@ implements PropertyChangeListener, SelectionListener {
         jPanel1.add(txtLA, gridBagConstraints);
 
         jButtonIFA.setText("Select");
-        jButtonIFA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButtonIFA.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jButtonIFAActionPerformed(evt);
             }
         });
@@ -421,32 +464,60 @@ implements PropertyChangeListener, SelectionListener {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         jPanel1.add(jLabelIFA, gridBagConstraints);
 
+        txtFC.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(txtFC, gridBagConstraints);
+
+        jLabelFC.setText("Function Composition");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        jPanel1.add(jLabelFC, gridBagConstraints);
+
+        jButtonFC.setText("Select");
+        jButtonFC.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButtonFCActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(jButtonFC, gridBagConstraints);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                .addContainerGap())
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonLAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLAActionPerformed
-        
+
         value = LAMBDA_ABSTRACTION;
         updateTree(value);
     //    this.dialog.setVisible(false);
     }//GEN-LAST:event_jButtonLAActionPerformed
 
     private void jButtonPMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPMActionPerformed
-         
+
         value = PREDICATE_MODIFICATION;
         updateTree(value);
     //    this.dialog.setVisible(false);
@@ -464,24 +535,34 @@ implements PropertyChangeListener, SelectionListener {
         updateTree(value);
     //    this.dialog.setVisible(false);
 }//GEN-LAST:event_jButtonIFAActionPerformed
-    
-    
+
+    private void jButtonFCActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonIFA1ActionPerformed
+    {//GEN-HEADEREND:event_jButtonIFA1ActionPerformed
+        value = FUNCTION_COMPOSITION;
+        updateTree(value);
+    //    this.dialog.setVisible(false);
+    }//GEN-LAST:event_jButtonIFA1ActionPerformed
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButtonFA;
+    private javax.swing.JButton jButtonFC;
     private javax.swing.JButton jButtonIFA;
     private javax.swing.JButton jButtonLA;
     private javax.swing.JButton jButtonPM;
     private javax.swing.JLabel jLabelFA;
+    private javax.swing.JLabel jLabelFC;
     private javax.swing.JLabel jLabelIFA;
     private javax.swing.JLabel jLabelLA;
     private javax.swing.JLabel jLabelPM;
     private javax.swing.JLabel jLabelSelect;
     private javax.swing.JPanel jPanel1;
     private lambdacalc.gui.LambdaEnabledTextField txtFA;
+    private lambdacalc.gui.LambdaEnabledTextField txtFC;
     private lambdacalc.gui.LambdaEnabledTextField txtIFA;
     private lambdacalc.gui.LambdaEnabledTextField txtLA;
     private lambdacalc.gui.LambdaEnabledTextField txtPM;
     // End of variables declaration//GEN-END:variables
-    
+
 }

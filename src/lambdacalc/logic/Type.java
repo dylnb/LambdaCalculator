@@ -90,7 +90,12 @@ public abstract class Type implements Comparable {
     protected abstract boolean equals(Type t);
     
     /**
-    * Matches two types together, different from equality
+    * Implemented by subclasses to test whether two types can be unified. 
+    * This method supports composition of polymorphic functions (combinators) by 
+    * checking whether two types that possibly contain variables can be matched.
+    * For example, 'a,t and e,t can be unified, with 'a mapping to e, while 
+    * 'a,'a and e,t cannot be unified because 'a cannot be mapped to two concrete types.
+    * Outputs a MatchPair, which contains the unifier of the two types if there is one.
     */
     public abstract MatchPair matches(Type t);
     

@@ -185,6 +185,9 @@ public class FunctionApplicationRule extends CompositionRule {
 		Type[] prod2 = new Type[]{new VarType('e'), new VarType('f'), new VarType('g'), new VarType('g')};
 		ProductType prodtest1 = new ProductType(prod1);
 		ProductType prodtest2 = new ProductType(prod2);
+		CompositeType alpha = new CompositeType(new VarType('a'), new ConstType('t'));
+		CompositeType beta = new CompositeType(new ConstType('e'), new VarType('a'));
+		MatchPair ab = alpha.matches(beta);
 		MatchPair composites = c.matches(d);
 		MatchPair products = prodtest1.matches(prodtest2);
 		MatchPair backwards = b.matches(a);
