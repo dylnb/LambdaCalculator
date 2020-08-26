@@ -84,7 +84,7 @@ public class PredicateModificationRule extends CompositionRule {
                         CompositeType rt = (CompositeType)rtype;
                         Type rtR = rt.getRight();
                         if (rtR instanceof ConstType && rtR.equals(Type.T)) {
-                            if (ltype.equals(rtype)) {
+                            if (ltype.matches(rtype) != null) {
                                 correctTypes = true;
                             }
                         }

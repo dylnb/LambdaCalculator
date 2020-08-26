@@ -190,11 +190,12 @@ implements PropertyChangeListener, SelectionListener {
             txtLA.setText("Not applicable here");
         }
         try {
-            txtFC.setText(FC_RULE.applyTo(node, false).toString());
+             txtFC.setText(FC_RULE.applyTo(node, true, true).toString());
+             
         } catch (MeaningEvaluationException ex) {
-            //txtLA.setText(ex.getMessage());
+//            txtFC.setText(ex.getMessage());
             txtFC.setText("Not applicable here");
-        }
+        }        
         
     }
     
