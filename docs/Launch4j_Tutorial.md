@@ -14,7 +14,7 @@ This update provides a new windows runnable application using the launch4j exe w
 10. On a Mac, open terminal and cd into the unzipped folder from Step 2.
 11. Run `sh build-package.sh student` OR `sh build-package.sh teacher` on terminal.
 12. This will create an exe file in the launch4j folder of the project, as well as a dmg file for Mac in apps/osx-student. Note: As of 2020 in Mac OSX Catalina, the dmg file is created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
-13. Create a new folder and name it `LCSE` OR `LCTE`.
+13. Create a new folder in `launch4j` and name it `LCSE` OR `LCTE`.
 14. Copy `jre180` and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
 15. Cd into `launch4j/LCSE` or `launch4j/LCTE` from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
 16. Delete these extra files using `rm -r filename`.
