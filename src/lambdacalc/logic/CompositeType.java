@@ -34,8 +34,8 @@ import java.util.*;
  * Represents a composite (function) type, like &lt;et&gt;.
  */
 public class CompositeType extends Type {
-    public final static char LEFT_BRACKET = '\u3008'; // '\u27E8'; // '\u2329'; '\u3008';
-    public final static char RIGHT_BRACKET = '\u3009'; // '\u232A';
+    public final static char LEFT_BRACKET = '<'; // '\u27E8'; // '\u2329'; '\u3008';
+    public final static char RIGHT_BRACKET = '>'; // '\u232A';
     public final static char SEPARATOR = ',';
     
     private Type left;
