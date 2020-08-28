@@ -85,6 +85,26 @@ public class ProductType extends Type {
 	
 	return false;
     }
+    public ProductType renameVariables(ArrayList<Type> varList){
+	Type[] newParts = this.getSubTypes();
+	for(Type part : newParts){
+	    if (part instanceof ProductType) {
+		part = ((ProductType) part).renameVariables(varList);
+	    } 
+	    else if(part instanceof CompositeType){
+		part = ((CompositeType) part).renameVariables(varList);
+	    }
+	    else if(part instanceof VarType){
+		    if(varList.contains(part))
+			part = varList.get(varList.indexOf(part));
+		    
+		    else{
+			varList.add(part);
+		    }
+	    }
+	}
+	return new ProductType(newParts);
+    }
     
 	/**
 	 * Tests whether two types can be unified. 
@@ -119,7 +139,7 @@ public class ProductType extends Type {
 			if(parts != null){
 			    
 			    boolean pass;
-			    pass = pair.insertMatch(parts.getMatches(parts.getLeft()), parts.getMatches(parts.getRight()));
+			    pass = pair.insertMatch(parts.getMatches(parts.getLeft()), parts.getMatches(parts.getRight()), parts.getGraph());
 			  
 			    if(!(pass)){
 				if(RtoL)

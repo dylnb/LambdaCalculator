@@ -106,6 +106,47 @@ public class CompositeType extends Type {
 	*/
     }
     
+    public CompositeType renameVariables(ArrayList<Type> varList){
+	Type oldLeft = this.getLeft();
+	    Type oldRight = this.getRight();
+	    Type newLeft;
+	    Type newRight;
+	    if (oldLeft instanceof CompositeType) {
+		this.left = ((CompositeType) oldLeft).renameVariables(varList);
+	    }
+	    else if(oldLeft instanceof ProductType){
+		this.left = ((ProductType) oldLeft).renameVariables(varList);
+	    }
+	    else if(oldLeft instanceof VarType){
+		    if(varList.contains(oldLeft))
+			this.left = varList.get(varList.indexOf(oldLeft));
+		    
+		    else{
+			varList.add(oldLeft);
+			this.left = oldLeft;
+		    }
+	    }
+	    else
+		this.left = oldLeft;
+	    
+	    if (oldRight instanceof CompositeType) {
+		this.right = ((CompositeType) oldRight).renameVariables(varList);
+	    } 
+	     else if(oldRight instanceof VarType){
+		    if(varList.contains(oldRight)){
+			this.right = varList.get(varList.indexOf(oldRight));
+		    }
+		    else{
+			varList.add(oldRight);
+			this.right = oldRight;
+		    }
+		}
+	    else
+		this.right = oldRight;
+	    
+	    return new CompositeType(this.left, this.right);
+    }
+    
     /**
      * Tests whether two types can be unified. 
      * @param t The Type to be unified with.
@@ -130,10 +171,12 @@ public class CompositeType extends Type {
 	if(t instanceof VarType)
 	    ((VarType) t).matches(this);
 	else if(t instanceof CompositeType){
-	    Type thisLeft = this.getLeft();
-	    Type thisRight = this.getRight();
-	    Type expLeft = ((CompositeType) t).getLeft();
-	    Type expRight = ((CompositeType) t).getRight();
+	    CompositeType curr = this.renameVariables(new ArrayList<Type>());
+	    CompositeType newT = ((CompositeType) t).renameVariables(new ArrayList<Type>());
+	    Type thisLeft = curr.getLeft();
+	    Type thisRight = curr.getRight();
+	    Type expLeft = newT.getLeft();
+	    Type expRight = newT.getRight();
 	    
 	    MatchPair leftHalf = thisLeft.matches(expLeft);
 	    MatchPair rightHalf = thisRight.matches(expRight);
@@ -145,9 +188,9 @@ public class CompositeType extends Type {
 		boolean rightHalfPass;
 		
 
-		    leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft));
+		    leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft), leftHalf.getGraph());
 
-		    rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight));
+		    rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight), rightHalf.getGraph());
 		
 		if(!(leftHalfPass && rightHalfPass)){
 		    if(RtoL)
