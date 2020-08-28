@@ -85,6 +85,8 @@ public class ProductType extends Type {
 	
 	return false;
     }
+    
+    //sets all instances of a variable for a given ProductType to the same reference. Uses getAlignedType in Matchpair logic
     public ProductType renameVariables(ArrayList<Type> varList){
 	Type[] newParts = this.getSubTypes();
 	for(Type part : newParts){

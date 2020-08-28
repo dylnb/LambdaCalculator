@@ -92,20 +92,9 @@ public class CompositeType extends Type {
 	    return leftTrue;
 	}
 	return false;
-	/*
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof CompositeType) {
-//            CompositeType ct = (CompositeType) t;
-            return (this.getLeft().equals(((CompositeType) t).getLeft())
-                    && (this.getRight().equals(((CompositeType) t).getRight())));
-        } else { 
-            return false;
-        }
-	
-	*/
     }
     
+    //sets all instances of a variable for a given CompositeType to the same reference. Uses getAlignedType in Matchpair logic
     public CompositeType renameVariables(ArrayList<Type> varList){
 	Type oldLeft = this.getLeft();
 	    Type oldRight = this.getRight();

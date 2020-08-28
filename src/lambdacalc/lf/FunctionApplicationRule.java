@@ -120,10 +120,6 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(leftMeaning, rightMeaning)) {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
-		//To delete after testing
-		MatchPair test = lt.getLeft().matches(rightMeaning.getType());
-		Type test2 = test.getAlignedType(lt.getLeft());
-		Type test3 = test.getAlignedType(rightMeaning.getType());
                 typeMatches = Expr.alignTypes(lt.getLeft(),rightMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
@@ -132,10 +128,6 @@ public class FunctionApplicationRule extends CompositionRule {
         } else if (isFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
-		//To delete after testing
-		MatchPair test = rt.getLeft().matches(leftMeaning.getType());
-		Type test2 = test.getAlignedType(rt.getLeft());
-		Type test3 = test.getAlignedType(leftMeaning.getType());
                 typeMatches = Expr.alignTypes(rt.getLeft(),leftMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
@@ -163,47 +155,6 @@ public class FunctionApplicationRule extends CompositionRule {
             Type r = right.getType();
             if (l instanceof CompositeType) {
                 CompositeType t = (CompositeType)l;
-		//To delete after testing
-		//<<<a,t>,t>,<a,t>> to <<<e,t>,t>,<b,t>>
-//		VarType av = new VarType('a');
-//		VarType f = new VarType('f');
-//		CompositeType a = new CompositeType(
-//			new CompositeType(
-//				new CompositeType(
-//					av, new ConstType('t')), new ConstType('t')), 
-//				new CompositeType(av, new ConstType('t')));
-//		CompositeType b = new CompositeType(
-//			new CompositeType(
-//				new CompositeType(
-//					new VarType('b'), new ConstType('t')), new ConstType('t')), 
-//				new CompositeType(new ConstType('e'), new ConstType('t')));
-//		CompositeType c = new CompositeType(
-//				    new CompositeType(av, av), 
-//				    new CompositeType(new VarType('b'), new VarType('c')));
-//		CompositeType d = new CompositeType(
-//				    new CompositeType(new VarType('d'), new VarType('e')), 
-//				    new CompositeType(f, f));
-//		Type[] prod1 = new Type[]{av, av, new VarType('b'), new VarType('c')};
-//		Type[] prod2 = new Type[]{new VarType('d'), new VarType('e'), f, f};
-//		ProductType prodtest1 = new ProductType(prod1);
-//		ProductType prodtest2 = new ProductType(prod2);
-//		CompositeType alpha = new CompositeType(new VarType('a'), new ConstType('t'));
-//		CompositeType beta = new CompositeType(new ConstType('e'), new VarType('a'));
-//		MatchPair ab = alpha.matches(beta);
-//		MatchPair composites = c.matches(d);
-//		MatchPair products = prodtest1.matches(prodtest2);
-//		MatchPair backwards = b.matches(a);
-//		Type test2 = backwards.getAlignedType(b);
-//		Type test3 = composites.getAlignedType(c);
-//		CompositeType al = new CompositeType(new VarType('a'), new VarType('a'));
-//		CompositeType ap = new CompositeType(new VarType('a'), new VarType('a'));
-//
-//		
-//		MatchPair alp = al.matches(ap);
-//		MatchPair test = t.getLeft().matches(r);
-//		Type test5 = test.getAlignedType(t.getLeft());
-//		Type test6 = test.getAlignedType(r);
-//		MatchPair test4 = test5.matches(test6);
                 if (t.getLeft().matches(r) != null) {
                     return true;
                 }

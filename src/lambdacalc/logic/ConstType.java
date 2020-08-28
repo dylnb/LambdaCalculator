@@ -66,16 +66,6 @@ public class ConstType extends AtomicType {
 	    return (this.getSymbol() == ((ConstType) t).getSymbol());
 	}
 	return false;
-	/*
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof ConstType) {
-            ConstType at = (ConstType) t;
-            return (this.getSymbol() == at.getSymbol());
-        } else { 
-            return false;
-        }
-	*/
     }
     
     /**
@@ -96,18 +86,6 @@ public class ConstType extends AtomicType {
 	}
 	
 	return null;
-	
-	/*
-	if(t instanceof ConstType){
-	    if(this.equals(t))
-		return new HashMap<Type, HashMap<Type, Type>>();
-	    return null;
-	}
-	else if(t instanceof VarType){
-	    return t.matches(this);
-	}
-	return null;
-	*/
     }
     
     

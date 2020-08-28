@@ -224,16 +224,6 @@ public class VarType extends AtomicType {
 	    return (this.getSymbol() == ((VarType) t).getSymbol());
 	}
 	return false;
-//        if (t instanceof AtomicType) {
-//            AtomicType at = (AtomicType) t;
-//            return (this.getSymbol() == at.getSymbol());
-//        } else { 
-//            return false;
-//        }
-
-	/*
-        return true;
-	*/
     }  
     
     /**
@@ -249,14 +239,6 @@ public class VarType extends AtomicType {
 	MatchPair pair = new MatchPair(this, t);
 	pair.setMatches(this, this, t);
 	return pair;
-	/*
-	if(t instanceof ProductType)
-	    return null;
-	HashMap<Type, HashMap<Type, Type>> matchlist = new HashMap<Type, HashMap<Type, Type>>();
-	matchlist.put(this, new HashMap<Type, Type>());
-	matchlist.get(this).put(this, t);
-	return matchlist;
-	*/
     }
     
     public boolean containsVar() {

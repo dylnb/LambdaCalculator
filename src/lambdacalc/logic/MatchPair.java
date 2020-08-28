@@ -17,12 +17,10 @@ class Node{
     private Type node;
     //true = left, false = right
     private boolean side;
-    private boolean visited;
     
     public Node(Type t, boolean side){
 	this.node = t;
 	this.side = side;
-	visited = false;
     }
     
     public Type getNode(){
@@ -31,13 +29,6 @@ class Node{
     
     public boolean getSide(){
 	return side;
-    }
-    public boolean isVisited(){
-	return visited;
-    }
-    
-    public void setVisited(){
-	visited = !visited;
     }
     
     @Override
@@ -97,7 +88,7 @@ class Graph{
 	}
     }
     
-    //adds an edge from a key to a value, and vice versa
+    //adds an edge from a key to a value, and vice versa via BiDirectional. 
     public void addEdge(Node key, Node value){
 	if(containsKey(key)){
 	    int index = keyIndex(key);
@@ -110,26 +101,7 @@ class Graph{
 	    t.get(keyIndex(key)).add(value);
 	}
 	addEdgeBiDirectional(value, key);
-	
     }
-    
-    
-    public void resetVisitedHelper(ArrayList<Node> list){
-	for(Node key: list){
-	    if(key.isVisited())
-		key.setVisited();
-	}
-    }
-    
-    //DFS traversal to reset all visited nodes to false 
-    public void resetVisited(){
-	for(Node key : t.get(0)){
-	    if(key.isVisited())
-		key.setVisited();
-	    resetVisitedHelper(t.get(keyIndex(key)));
-	}
-    }
-    
 }
 
 
@@ -206,9 +178,8 @@ public class MatchPair
     public Graph getGraph(){
 	return this.g;
     }
-    //Add a matchPair for a specific side 
-    //redundant and will delete later, can just do .getMatches(Type).put(key, value)
     
+    //merges subgraph into current parent graph
     public void mergeGraphs(Graph g){
 	for(Node key: g.getGraph().get(0)){
 	    for(Node value : g.getGraph().get(g.keyIndex(key))){
@@ -216,8 +187,9 @@ public class MatchPair
 	    }
 	}
     }
+    
     /**
-     * Sets a match pair for the given type
+     * Sets a match pair for the given type. Either adds to hashMap of mappings or to graph of variable mappings.
      * @param side The Type to add the match pair to
      * @param key The variable being mapped
      * @param value The value of the variable
@@ -309,7 +281,6 @@ public class MatchPair
 		i += 1;
 	    }
 	}
-	//g.resetVisited();
 	return passing;
     }
     
@@ -349,54 +320,15 @@ public class MatchPair
 		    concretes.add(c);
 	    }
 	}
-	//g.resetVisited();
 	return concretes;
     }
-    
-    
-    //TO make the final mapping, current issue is when alpha -> alpha it enters infinite recursion 
-    //even if the two VarTypes have different references
-    //I think this is because of VarType having a .equals now, and so the containsKey method looks for a compareTo method and not reference anymore
-    //Originally, hashMaps containsKey looks for reference, since hashing objects even if they are created the same have different hashCodes, 
-    //Somehow that is messing up here...
-    
+ 
     //Calls DFS on the graph to find the final concrete types and then maps it, assuming all mappings pass. 
     private boolean finalAlignments(){
 	ArrayList<Type> finalConcretes = DFSConcrete(this.getGraph());
 	boolean finalPass = DFSSetter(this.getGraph(), finalConcretes);
 	return finalPass;
 	
-	/*
-	for(Type key : this.getMatches(this.getLeft()).keySet()){
-	    Type isVarType = this.getMatches(this.getLeft()).get(key);
-		while(isVarType instanceof VarType){
-		    if(isKey(this.getMatches(this.getLeft()), isVarType))
-			isVarType = this.getMatches(this.getLeft()).get(isVarType);
-		    
-		    else if(isKey(this.getMatches(this.getRight()), isVarType))
-			    isVarType = this.getMatches(this.getRight()).get(isVarType);
-		    
-		    else
-			break;
-		}
-	    this.getMatches(this.getLeft()).replace(key, isVarType);
-	}
-	
-	for(Type key : this.getMatches(this.getRight()).keySet()){
-	    Type isVarType = this.getMatches(this.getRight()).get(key);
-		while(isVarType instanceof VarType){
-		    if(isKey(this.getMatches(this.getLeft()), isVarType)) 
-			    isVarType = this.getMatches(this.getLeft()).get(isVarType);
-		    
-		    else if(isKey(this.getMatches(this.getRight()), isVarType))
-			    isVarType = this.getMatches(this.getRight()).get(isVarType);
-		    
-		    else
-			break;
-		}
-	    this.getMatches(this.getRight()).replace(key, isVarType);
-	}
-	*/
     }
 
     //Taking the mapping of a subType and adding it to the parents.
@@ -413,49 +345,13 @@ public class MatchPair
      */
     public boolean insertMatch(HashMap<Type, Type> left, HashMap<Type, Type> right, Graph g){
 	
-	
-	CompositeType al = new CompositeType(new VarType('a'), new VarType('a'));
-	CompositeType ap = new CompositeType(new VarType('a'), new VarType('a'));
-	ArrayList<Type> gsfda = new ArrayList<Type>();
-	gsfda.add(al);
-	System.out.println(gsfda.contains(ap));
-	//cannot rewrite due to .getLeft, .getRight, unless changed. 
-	
-	/*
-	First see if key contains a mapping
-	    If so, see if the current mapping is a variable (that means variable hasn't been mapped yet)
-		Then, if current incoming value is also variable, 
-		    check if incoming variable has mapping
-		    if so, set key and current value to incoming value mapping
-		    if not, check that two variables are equal. 
-	    if not variable, set current key and set other side mapping of variable to incoming value
-	
-	    If current mapping is not variable
-		see if incoming value is variable
-		Check if variable currently has a mapping
-		if so, check if equal
-		if not return false
-	
-	If mapped and incoming not variable
-	check if equal
-	
-	
-	If key is not mapped
-	    Check if incoming is variable
-	    check if incoming has a mapping
-	    if so, map key to that
-	    else map key to variable
-	*/
-	
-	
 	for(Type key : left.keySet()){
 	    //get the key mapping 
 	    Type varValue = left.get(key);
 	    
-	    //if key mapped to variable, add to graph
+	    //if key mapped to variable, ignore
 	    if(varValue instanceof VarType)
 		continue;
-		//this.getGraph().addEdge(new Node(key, true), new Node(varValue, false));
 	    
 	    //otherwise check if contains this key, and check for equality or map it. 
 	    else if(this.getMatches(this.getLeft()).containsKey(key)){
@@ -468,62 +364,15 @@ public class MatchPair
 	    }
 	    else
 		this.getMatches(this.getLeft()).put(key, left.get(key));
-	}
-	
-	    /*	
-	    if(varValue instanceof VarType){
-		//if variable is mapped to something, get it
-		if(isKey(this.getMatches(this.getRight()), varValue))
-		    if(isKey(this.getMatches(this.getRight()), varValue))
-			varValue = this.getMatches(this.getRight()).get(varValue);   
-	    }
-	    
-	    
-	    //if current Type contains this key
-	    if(isKey(this.getMatches(this.getLeft()), key)){
-		//if the mapping of the key is a variable
-		    if(this.getMatches(this.getLeft()).get(key) instanceof VarType){
-			//if the incoming value is a variable, return false if mapping is not equal
-			if(varValue instanceof VarType){
-			    if(!(varValue.equals(this.getMatches(this.getLeft()).get(key))))
-				return false; 
-			}    
-			//otherwise incoming value is not variable, set variable mapping to incoming value
-			//set current mapping to this value 
-			else{
-			    this.getMatches(this.getRight()).put(this.getMatches(this.getLeft()).get(key), varValue);
-			    this.getMatches(this.getLeft()).replace(key, varValue);
-			}
-		    }
-		    //mapping of key is not a variable
-		    else{
-			//if incoming value is variable, set incoming variable to current mapping
-			if(varValue instanceof VarType)
-			    this.getMatches(this.getRight()).put(varValue, this.getMatches(this.getLeft()).get(key));
-		    
-			//incoming value is not variable, check equality
-			else{
-			    if(!(left.get(key).equals(this.getMatches(this.getLeft()).get(key))))
-				return false;
-			}
-		    }
-		}
-	    //key does not contain mapping, put in varValue (variable or not)
-	    else
-		this.getMatches(this.getLeft()).put(key, varValue);
-	}
-	
-	*/
-	    
+	} 
 	    
 	for(Type key : right.keySet()){
 	    //get the key mapping 
 	    Type varValue = right.get(key);
 	    
-	    //if key mapped to variable, add to graph
+	    //if key mapped to variable, ignore
 	    if(varValue instanceof VarType)
 		continue;
-		//this.getGraph().addEdge(new Node(key, false), new Node(varValue, true));
 	    
 	    //otherwise check if contains this key, and check for equality or map it. 
 	    else if(this.getMatches(this.getRight()).containsKey(key)){
@@ -537,99 +386,13 @@ public class MatchPair
 	    else
 		this.getMatches(this.getRight()).put(key, right.get(key));
 	}
-	/*
-	    if(varValue instanceof VarType){
-		//if variable is mapped to something, get it
-		if(isKey(this.getMatches(this.getLeft()), varValue))
-			varValue = this.getMatches(this.getLeft()).get(varValue);   
-	    }
-	    
-	    //if current Type contains this key
-	    if(isKey(this.getMatches(this.getRight()), key)){
-		    //if the mapping of the key is a variable
-		    if(this.getMatches(this.getRight()).get(key) instanceof VarType){
-			//if the incoming value is a variable, return false if mapping is not equal
-			if(varValue instanceof VarType){
-			    if(!(varValue.equals(this.getMatches(this.getRight()).get(key))))
-				return false; 
-			}    
-			//otherwise incoming value is not variable, set variable mapping to incoming value
-			//set current mapping to this value 
-			else{
-			    this.getMatches(this.getLeft()).put(this.getMatches(this.getRight()).get(key), varValue);
-			    this.getMatches(this.getRight()).replace(key, varValue);
-			}
-		    }
-		    //mapping of key is not a variable
-		    else{
-			//if incoming value is variable, set incoming variable to current mapping
-			if(varValue instanceof VarType)
-			    this.getMatches(this.getLeft()).put(varValue, this.getMatches(this.getRight()).get(key));
-		    
-			//incoming value is not variable, check equality
-			else{
-			    if(!(right.get(key).equals(this.getMatches(this.getRight()).get(key))))
-				return false;
-			}
-		    }
-		}
-	    //key does not contain mapping, put in varValue (variable or not)
-	    else
-		this.getMatches(this.getRight()).put(key, varValue);
-	}
 	
-	/*
-	//OLD MATCHING CODE
-	for(Type key : left.keySet()){
-	    if(this.getMatches(this.getLeft()).containsKey(key)){
-		if(!(left.get(key).equals(this.getMatches(this.getLeft()).get(key))))
-		    return false;
-	    }
-	    this.getMatches(this.getLeft()).put(key, left.get(key));
-	}
-
-	for(Type key : right.keySet()){
-	    if(this.getMatches(this.getRight()).containsKey(key)){
-		if(!(right.get(key).equals(this.getMatches(this.getRight()).get(key))))
-		    return false;
-	    }
-	    this.getMatches(this.getRight()).put(key, right.get(key));
-	}
-	*/
-	/*
-	VarType tester = new VarType('a');
-	CompositeType alpha = new CompositeType(new VarType('a'), new ConstType('t'));
-	CompositeType beta = new CompositeType(new ConstType('e'), new VarType('a'));
-	CompositeType alpha2 = new CompositeType(new VarType('a'), new ConstType('t'));
-	CompositeType beta2 = new CompositeType(new ConstType('e'), new VarType('a'));
-	System.out.println(alpha.hashCode());
-	System.out.println(alpha2.hashCode());
-	System.out.println(beta.hashCode());
-	System.out.println(beta2.hashCode());
-	System.out.println(tester.hashCode());
-	System.out.println(this.getMatches(this.getLeft()).keySet().toArray()[0].hashCode());
-	if(this.getMatches(this.getLeft()).containsKey(tester)){
-	    if(isKey(this.getMatches(this.getLeft()), tester)){
-	    //for key in keyset
-	    //if key == tester
-	    System.out.println("PROBLEM!");
-	    System.out.println(this.getMatches(this.getLeft()).get(tester));
-	    }
-	}
-	if(this.getMatches(this.getRight()).containsKey(tester)){
-	    if(isKey(this.getMatches(this.getLeft()), tester)){
-	    System.out.println("PROBLEM!");
-	    System.out.println(this.getMatches(this.getLeft()).get(tester));
-	    }
-	}
-	*/
-	    
+	//merge the old graph into current
 	this.mergeGraphs(g);
 	
+	//grab the final concrete type for all variables and map properly, or return false. 
 	boolean test = finalAlignments();
-	if(test)
-	    System.out.println("passed");
-	return true;
+	return test;
     }
         
     //Returns the new Type based upon the mapping for a given type T
@@ -712,6 +475,4 @@ public class MatchPair
     public MatchPair flip(){
 	return new MatchPair(this.getRight(), this.getLeft(), this.getMatches(this.getRight()), this.getMatches(this.getLeft()), this.getGraph());
     }
-
-
 }
