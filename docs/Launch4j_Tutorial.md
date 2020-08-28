@@ -8,20 +8,19 @@ This update provides a new windows runnable application using the launch4j exe w
 4. Check whether GOD_MODE is set to true or false on Main.java.
 5. If true, proceed using the `TE` version, otherwise use the `SE`. 
 6. Clean and build the project.
-7. Take the created LambdaCalculator.jar file in the dist directory from your IDE and replace the current JAR in the unzipped Lambda Calculator/dist.
-8. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
-9. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
-10. Press open on the top left, open the `LC_SE.xml` OR `LC_TE.xml` file to edit the configurations.
-11. On a Mac, open terminal and cd into the unzipped folder from Step 2.
-12. Run `sh build-package.sh student` OR `sh build-package.sh teacher` on terminal.
-13. This will create an exe file in the launch4j folder of the project, as well as a dmg file for Mac in apps/osx-student.
-14. Create a new folder and name it `LCSE` OR `LCTE`.
-15. Copy `launch4j/jre180` and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
-16. Cd into `launch4j/LCSE` or `launch4j/LCTE` from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
-17. Delete these extra files using `rm -r filename`.
-18. Create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. 
-19. The zip file is now ready to distribute.
-20. In Main.java, set GOD_MODE to the other boolean and repeats steps 6-19. 
+7. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
+8. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
+9. Press open on the top left, open the `LC_SE.xml` OR `LC_TE.xml` file to edit the configurations.
+10. On a Mac, open terminal and cd into the unzipped folder from Step 2.
+11. Run `sh build-package.sh student` OR `sh build-package.sh teacher` on terminal.
+12. This will create an exe file in the launch4j folder of the project, as well as a dmg file for Mac in apps/osx-student. Note: As of 2020 in Mac OSX Catalina, the dmg file is created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
+13. Create a new folder and name it `LCSE` OR `LCTE`.
+14. Copy `jre180` and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
+15. Cd into `launch4j/LCSE` or `launch4j/LCTE` from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
+16. Delete these extra files using `rm -r filename`.
+17. Create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. 
+18. The zip file is now ready to distribute.
+19. In Main.java, set GOD_MODE to the other boolean and repeats steps 6-19. 
 
 
 NOTE 1: The `sh` command will not run if the file is being imported from a zip to netbeans and possibly other IDEs as they remove the executable permissions from all files necessary to run the launch4j module. 
