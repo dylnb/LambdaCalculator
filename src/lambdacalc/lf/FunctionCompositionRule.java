@@ -42,6 +42,7 @@ import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
 import lambdacalc.logic.VarType;
+import lambdacalc.logic.MatchPair;
 
 public class FunctionCompositionRule extends CompositionRule {
     public static final FunctionCompositionRule INSTANCE 
@@ -107,28 +108,30 @@ public class FunctionCompositionRule extends CompositionRule {
         Expr leftMeaning = left.getMeaning();
         Expr rightMeaning = right.getMeaning();   
         
-        HashMap<Type,Type> typeMatches = new HashMap<>();
+//        HashMap<Type,Type> typeMatches = new HashMap<>();
 
         if (isFCFunctionOf(leftMeaning, rightMeaning)) {
             try {
                 // lt: <'a,'b>, rt: <'c,'a>
                 CompositeType lt = (CompositeType)leftMeaning.getType();
                 CompositeType rt = (CompositeType)rightMeaning.getType();
-                typeMatches = Expr.alignTypes(lt.getLeft(),rt.getRight());
+                MatchPair typeMatches = (lt.getLeft()).matches(rt.getRight());
+//                typeMatches = Expr.alignTypes(lt.getLeft(),rt.getRight());                
+                return apply(left, right, g, typeMatches);
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
-            return apply(left, right, g, typeMatches);
         } else if (isFCFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 // lt: <'c,'a>, rt: <'a,'b>
                 CompositeType lt = (CompositeType)leftMeaning.getType();
                 CompositeType rt = (CompositeType)rightMeaning.getType();
-                typeMatches = Expr.alignTypes(rt.getLeft(),lt.getRight());
+                MatchPair typeMatches = (rt.getLeft()).matches(lt.getRight());
+//                typeMatches = Expr.alignTypes(rt.getLeft(),lt.getRight());
+                return apply(right, left, g, typeMatches);
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
-            return apply(right, left, g, typeMatches);
         } else {
             throw new MeaningEvaluationException("The children of the nonterminal "
                     + "are not of compatible types for function composition.");
@@ -142,21 +145,22 @@ public class FunctionCompositionRule extends CompositionRule {
             CompositeType lt = (CompositeType)left.getType();
             CompositeType rt = (CompositeType)right.getType();
             
-            if (lt.getLeft().equals(rt.getRight())) {
+            if (lt.getLeft().matches(rt.getRight()) != null) {
                 // Call to alignTypes ensures that an error is thrown if the same VarType
-                // is matched to multiple constant types
-                HashMap<Type,Type> typeMatches = Expr.alignTypes(lt.getLeft(),rt.getRight());
+                // is matched to multiple constant types. uncomment when using equals instead of matches.
+//                HashMap<Type,Type> typeMatches = Expr.alignTypes(lt.getLeft(),rt.getRight());
                 return true;
             }
             
         } catch (TypeEvaluationException ex) {
-        } catch (MeaningEvaluationException me) {
-        }
+        } 
+//        catch (MeaningEvaluationException me) {
+//        }
         return false;
     }    
     
     
-    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, HashMap<Type,Type> typeMatches) throws MeaningEvaluationException {
+    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, MatchPair typeMatches) throws MeaningEvaluationException {
         Expr leftMeaning = fun.getMeaning();
         Expr rightMeaning = app.getMeaning();
 //        HashMap<Type,Type> typeMatches = new HashMap<Type,Type>();
@@ -170,8 +174,8 @@ public class FunctionCompositionRule extends CompositionRule {
             CompositeType rt = (CompositeType)rightMeaning.getType();
 
             // ArgType: 'c
-            ArgType = ((CompositeType)Expr.getAlignedType(rt, typeMatches)).getLeft();
-        } catch (TypeEvaluationException ex) {
+            ArgType = typeMatches.getAlignedType(rt.getLeft());   
+            } catch (TypeEvaluationException ex) {
             throw new MeaningEvaluationException(ex.getMessage());
         }
             
@@ -183,17 +187,17 @@ public class FunctionCompositionRule extends CompositionRule {
         Var VARIABLE = typingConventions.getVarForType(ArgType, false);
         
         // apply the right node to a variable
-        FunApp rightFA = new FunApp(rightM, VARIABLE, typeMatches);
+        FunApp rightFA = new FunApp(rightM, VARIABLE);
         
-        if (!typeMatches.isEmpty()) {
+//        if (!typeMatches.isEmpty()) {
 //            Map updates = new HashMap();
 //            leftFA = (FunApp) leftFA.createAlphatypicalVariant(typeMatches, leftFA.getAllVars(), updates);
-            Map updates2 = new HashMap();
-            rightFA = (FunApp) rightFA.createAlphatypicalVariant(typeMatches, rightFA.getAllVars(), updates2);
-        }
+//            Map updates2 = new HashMap();
+//            rightFA = (FunApp) rightFA.createAlphatypicalVariant(typeMatches, rightFA.getAllVars(), updates2);
+//        }
         
         // apply the left node to the resulting rightFA
-        FunApp leftFA = new FunApp(leftM, rightFA, typeMatches);
+        FunApp leftFA = new FunApp(leftM, rightFA);
         
         Lambda result = new Lambda(VARIABLE, leftFA, true); // has period
         
