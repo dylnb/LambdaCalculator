@@ -11,7 +11,7 @@ This update provides a new windows runnable application using the launch4j exe w
 7. Take the created LambdaCalculator.jar file in the dist directory from your IDE and replace the current JAR in the unzipped Lambda Calculator/dist.
 8. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
 9. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
-10. Press open on the top left, open the `LC_SE.xml` OR `LC_TE.xml` file to edit.
+10. Press open on the top left, open the `LC_SE.xml` OR `LC_TE.xml` file to edit the configurations.
 11. On a Mac, open terminal and cd into the unzipped folder from Step 2.
 12. Run `sh build-package.sh student` OR `sh build-package.sh teacher` on terminal.
 13. This will create an exe file in the launch4j folder of the project, as well as a dmg file for Mac in apps/osx-student.
