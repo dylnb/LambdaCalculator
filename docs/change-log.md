@@ -11,7 +11,6 @@
 
 3. Other bug fixes and new features
 * Variable types now display as Greek letters
-* Type angle brackets '<' and '>' symbols changed
 * Reload function made compatible with unsuccessful loads (issue #27)
 * Dialog window prompting user to save work before subsequent reload (issue #30)
 * After reloading, the same exercise is selected.
