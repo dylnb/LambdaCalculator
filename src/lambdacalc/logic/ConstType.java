@@ -25,6 +25,8 @@
  */
 package lambdacalc.logic;
 
+import java.util.*;
+
 /**
  *
  * @author dylnb
@@ -59,15 +61,33 @@ public class ConstType extends AtomicType {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof ConstType) {
-            ConstType at = (ConstType) t;
-            return (this.getSymbol() == at.getSymbol());
-        } else { 
-            return false;
-        }
+	
+	if(t instanceof ConstType){
+	    return (this.getSymbol() == ((ConstType) t).getSymbol());
+	}
+	return false;
     }
+    
+    /**
+     * Matches the ConstType. If the other Type is not a VarType this will return null.
+     * @param t The type to be unified with.
+     * @return A MatchPair object containing the variable mappings for each Type, or null. 
+     */
+    public MatchPair matches(Type t) {
+	
+	if(t instanceof ConstType){
+	    if(this.equals(t))
+		return new MatchPair(this, t);
+	}
+	
+	else if(t instanceof VarType){
+	    MatchPair flipped = t.matches(this);
+	    return flipped.flip();
+	}
+	
+	return null;
+    }
+    
     
     public boolean containsVar() {
         return false;

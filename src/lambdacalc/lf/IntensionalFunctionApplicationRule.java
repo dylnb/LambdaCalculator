@@ -34,6 +34,7 @@ import lambdacalc.logic.IdentifierTyper;
 import lambdacalc.logic.Lambda;
 import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
+import lambdacalc.logic.MatchPair;
 
 public class IntensionalFunctionApplicationRule extends CompositionRule {
     public static final IntensionalFunctionApplicationRule INSTANCE 
@@ -119,7 +120,8 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
                 CompositeType rt = new CompositeType(Type.S, rightMeaning.getType());
-                typeMatches = Expr.alignTypes(lt.getLeft(), rt);
+                typeMatches = ((lt.getLeft()).matches(rt)).getMatches(lt.getLeft());
+//                typeMatches = Expr.alignTypes(lt.getLeft(), rt);
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
@@ -128,7 +130,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
                 CompositeType lt = new CompositeType(Type.S, leftMeaning.getType());
-                typeMatches = Expr.alignTypes(rt.getLeft(),lt);
+                typeMatches = ((rt.getLeft()).matches(lt)).getMatches(rt.getLeft());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
@@ -163,7 +165,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
                     Type t2l = t2.getLeft(); // t2l = s
                     Type t2r = t2.getRight(); // t2r = X
                     if (t2l instanceof ConstType && t2l.equals(Type.S)
-                            && t2r.equals(r)) {
+                            && t2r.matches(r) != null) {
                         return true;
                     }
                 }
@@ -240,7 +242,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         
         Expr app2 = new Lambda(var, new MeaningBracketExpr(app, g), true);
 
-        FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), app2, alignments);
+        FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), app2);
         if (!alignments.isEmpty()) {
             Map updates = new HashMap();
             fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);

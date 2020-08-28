@@ -41,8 +41,10 @@ public class RuleList extends Vector {
             FunctionApplicationRule.INSTANCE,
             NonBranchingRule.INSTANCE,
             PredicateModificationRule.INSTANCE,
-            LambdaAbstractionRule.INSTANCE
-          // add other Heim & Kratzer rules here as we implement them
+            LambdaAbstractionRule.INSTANCE,
+          // Note: Function Composition is not a Heim & Kratzer rule.  
+            FunctionCompositionRule.INSTANCE
+          // add other rules here as we implement them
     });
   
     public RuleList() {

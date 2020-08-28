@@ -27,6 +27,8 @@
 
 package lambdacalc.logic;
 
+import java.util.*;
+
 /**
  * Represents a cartesian product type.  This is the type
  * of vectors, i.e. the list of arguments to a predicate of
@@ -66,12 +68,11 @@ public class ProductType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof ProductType) {
+	if (t instanceof ProductType) {
             Type[] a1 = getSubTypes();
             Type[] a2 = ((ProductType)t).getSubTypes();
-            if (a1.length != a2.length) return false;
+            if (a1.length != a2.length) 
+		return false;
             for (int i = 0; i < a1.length; i++) {
                 Type l = a1[i];
                 Type r = a2[i];
@@ -80,10 +81,84 @@ public class ProductType extends Type {
                     return false;
             }
             return true;
-        } else { 
-            return false;
-        }
+        } 
+	
+	return false;
     }
+    
+    //sets all instances of a variable for a given ProductType to the same reference. Uses getAlignedType in Matchpair logic
+    public ProductType renameVariables(ArrayList<Type> varList){
+	Type[] newParts = this.getSubTypes();
+	for(Type part : newParts){
+	    if (part instanceof ProductType) {
+		part = ((ProductType) part).renameVariables(varList);
+	    } 
+	    else if(part instanceof CompositeType){
+		part = ((CompositeType) part).renameVariables(varList);
+	    }
+	    else if(part instanceof VarType){
+		    if(varList.contains(part))
+			part = varList.get(varList.indexOf(part));
+		    
+		    else{
+			varList.add(part);
+		    }
+	    }
+	}
+	return new ProductType(newParts);
+    }
+    
+	/**
+	 * Tests whether two types can be unified. 
+	 * @param t the Type to be unified with.
+	 * @return a MatchPair class containing the variable mappings (unifier) for each Type,
+         * or null if cannot be unified.
+	 */
+	public MatchPair matches(Type t){
+	    return matches2(t, false);
+	}
+        
+	/**
+	 * Helper method for matches. Only two ProductTypes can be unified.
+	 * For each sub-type of the ProductType, unify them. If successful, insert the pairing 
+         * into the parent ProductType. If not successful, try the unification procedure from right to left.
+	 * @param t the ProductType to be unified with
+	 * @param RtoL whether the pass is right to left
+	 * @return A MatchPair class containing the mappings for each productType, 
+         * or null if cannot be matched. 
+	 */
+        private MatchPair matches2(Type t, boolean RtoL){
+	    
+	    if(t instanceof ProductType){
+		if (this.getSubTypes().length == ((ProductType) t).getSubTypes().length){
+		    MatchPair pair;
+		    if(RtoL)
+			pair = new MatchPair(t, this);
+		    else
+			pair = new MatchPair(this, t);
+		    for(int i = 0; i < this.getSubTypes().length; i++){
+			MatchPair parts = this.getSubTypes()[i].matches(((ProductType) t).getSubTypes()[i]);
+			if(parts != null){
+			    
+			    boolean pass;
+			    pass = pair.insertMatch(parts.getMatches(parts.getLeft()), parts.getMatches(parts.getRight()), parts.getGraph());
+			  
+			    if(!(pass)){
+				if(RtoL)
+				    return null;
+			    
+				else
+				    return ((ProductType) t).matches2(this, true);
+			    }
+			}
+		    }
+		    if(RtoL)
+			return pair.flip();
+		    return pair;
+		}
+	    }
+	    return null;
+	}
     
     public boolean containsVar() {
         for (Type subtype : subtypes) {

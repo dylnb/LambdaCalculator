@@ -30,9 +30,11 @@ import java.util.logging.Logger;
 import lambdacalc.logic.AtomicType;
 import lambdacalc.logic.Binder;
 import lambdacalc.logic.CompositeType;
+import lambdacalc.logic.ConstType;
 import lambdacalc.logic.Expr;
 import lambdacalc.logic.FunApp;
 import lambdacalc.logic.Lambda;
+import lambdacalc.logic.MatchPair;
 import lambdacalc.logic.ProductType;
 import lambdacalc.logic.Type;
 import lambdacalc.logic.TypeEvaluationException;
@@ -118,7 +120,8 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(leftMeaning, rightMeaning)) {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
-                typeMatches = Expr.alignTypes(lt.getLeft(),rightMeaning.getType());
+                typeMatches = ((lt.getLeft()).matches(rightMeaning.getType())).getMatches(lt.getLeft());
+//                typeMatches = Expr.alignTypes(lt.getLeft(),rightMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
@@ -126,11 +129,12 @@ public class FunctionApplicationRule extends CompositionRule {
         } else if (isFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
-                typeMatches = Expr.alignTypes(rt.getLeft(),leftMeaning.getType());
+                typeMatches = ((rt.getLeft()).matches(leftMeaning.getType())).getMatches(rt.getLeft());
+//                typeMatches = Expr.alignTypes(rt.getLeft(),rightMeaning.getType());                               
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
-            return apply(right, left, g, typeMatches);
+            return apply(right, left, g, typeMatches); 
         }
 
         if (onlyIfApplicable) {
@@ -153,8 +157,15 @@ public class FunctionApplicationRule extends CompositionRule {
             Type r = right.getType();
             if (l instanceof CompositeType) {
                 CompositeType t = (CompositeType)l;
-                if (t.getLeft().equals(r))
+                if (t.getLeft().matches(r) != null) {
                     return true;
+                }
+//                if (t.getLeft().equals(r)) {
+//                    // Call to alignTypes ensures that an error is thrown if the same VarType
+//                    // is matched to multiple constant types
+//                    HashMap<Type,Type> typeMatches = Expr.alignTypes(t.getLeft(),r);
+//                    return true;
+//                }
                 else if (t.getLeft() instanceof ProductType){
                     ProductType pt = (ProductType)t.getLeft();
                     if (Arrays.asList(pt.getSubTypes()).contains(r)) {
@@ -163,7 +174,7 @@ public class FunctionApplicationRule extends CompositionRule {
                 }
             }
         } catch (TypeEvaluationException ex) {
-        }
+        } 
         return false;
     }
     
@@ -172,7 +183,7 @@ public class FunctionApplicationRule extends CompositionRule {
     }
     
     private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, HashMap<Type,Type> alignments) {
-        FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g), alignments);
+        FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
         if (!alignments.isEmpty()) {
             Map updates = new HashMap();
             fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);

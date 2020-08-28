@@ -27,6 +27,8 @@
 
 package lambdacalc.logic;
 
+import java.util.*;
+
 /**
  * Represents an atomic type, such as e or t.
  */
@@ -68,6 +70,8 @@ public abstract class AtomicType extends Type {
         }
     }
     
+    public abstract MatchPair matches(Type t);
+	    
     public int hashCode() {
         return String.valueOf(symbol).hashCode(); // better way of doing this?
     }

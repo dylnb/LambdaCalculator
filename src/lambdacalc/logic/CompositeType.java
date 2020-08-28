@@ -28,13 +28,14 @@
 package lambdacalc.logic;
 
 import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Represents a composite (function) type, like &lt;et&gt;.
  */
 public class CompositeType extends Type {
-    public final static char LEFT_BRACKET = '<'; // '\u27E8'; // '\u2329'; '\u3008';
-    public final static char RIGHT_BRACKET = '>'; // '\u232A';
+    public final static char LEFT_BRACKET = '\u3008'; // '\u27E8'; // '\u2329'; '\u3008';
+    public final static char RIGHT_BRACKET = '\u3009'; // '\u232A';
     public final static char SEPARATOR = ',';
     
     private Type left;
@@ -82,15 +83,116 @@ public class CompositeType extends Type {
     }
     
     protected boolean equals(Type t) {
-        if (t instanceof VarType) {
-            return true;
-        } else if (t instanceof CompositeType) {
-//            CompositeType ct = (CompositeType) t;
-            return (this.getLeft().equals(((CompositeType) t).getLeft())
-                    && (this.getRight().equals(((CompositeType) t).getRight())));
-        } else { 
-            return false;
-        }
+	
+	if(t instanceof CompositeType){
+	    boolean leftTrue = this.getLeft().equals(((CompositeType) t).getLeft());
+	    boolean rightTrue = this.getRight().equals(((CompositeType) t).getRight());
+	    if(leftTrue != rightTrue)
+		return false;
+	    return leftTrue;
+	}
+	return false;
+    }
+    
+    //sets all instances of a variable for a given CompositeType to the same reference. Uses getAlignedType in Matchpair logic
+    public CompositeType renameVariables(ArrayList<Type> varList){
+	Type oldLeft = this.getLeft();
+	    Type oldRight = this.getRight();
+	    Type newLeft;
+	    Type newRight;
+	    if (oldLeft instanceof CompositeType) {
+		this.left = ((CompositeType) oldLeft).renameVariables(varList);
+	    }
+	    else if(oldLeft instanceof ProductType){
+		this.left = ((ProductType) oldLeft).renameVariables(varList);
+	    }
+	    else if(oldLeft instanceof VarType){
+		    if(varList.contains(oldLeft))
+			this.left = varList.get(varList.indexOf(oldLeft));
+		    
+		    else{
+			varList.add(oldLeft);
+			this.left = oldLeft;
+		    }
+	    }
+	    else
+		this.left = oldLeft;
+	    
+	    if (oldRight instanceof CompositeType) {
+		this.right = ((CompositeType) oldRight).renameVariables(varList);
+	    } 
+	     else if(oldRight instanceof VarType){
+		    if(varList.contains(oldRight)){
+			this.right = varList.get(varList.indexOf(oldRight));
+		    }
+		    else{
+			varList.add(oldRight);
+			this.right = oldRight;
+		    }
+		}
+	    else
+		this.right = oldRight;
+	    
+	    return new CompositeType(this.left, this.right);
+    }
+    
+    /**
+     * Tests whether two types can be unified. 
+     * @param t The Type to be unified with.
+     * @return A matchPair class containing the variable mappings (unifier) for each Type,
+     * or null if cannot be unified.
+     */
+    public MatchPair matches(Type t){
+	return matches2(t, false);
+    }
+    
+    /**
+     * Helper method for matches. For each half of the CompositeType, unify them. 
+     * If successful, insert the pairs into the parent CompositeType
+     * If not successful, try the unification procedure from right to left.
+     * @param t the Type to be unified with.
+     * @param RtoL Whether the pass is right to left. 
+     * @return A MatchPair class containing the variable mappings for each productType, 
+     * or null if cannot be unified. 
+     */
+    public MatchPair matches2(Type t, boolean RtoL){
+	//set to void if using
+	if(t instanceof VarType)
+	    ((VarType) t).matches(this);
+	else if(t instanceof CompositeType){
+	    CompositeType curr = this.renameVariables(new ArrayList<Type>());
+	    CompositeType newT = ((CompositeType) t).renameVariables(new ArrayList<Type>());
+	    Type thisLeft = curr.getLeft();
+	    Type thisRight = curr.getRight();
+	    Type expLeft = newT.getLeft();
+	    Type expRight = newT.getRight();
+	    
+	    MatchPair leftHalf = thisLeft.matches(expLeft);
+	    MatchPair rightHalf = thisRight.matches(expRight);
+	   
+	    if(leftHalf != null && rightHalf != null){
+		MatchPair pair = new MatchPair(this, t);
+		
+		boolean leftHalfPass;
+		boolean rightHalfPass;
+		
+
+		    leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft), leftHalf.getGraph());
+
+		    rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight), rightHalf.getGraph());
+		
+		if(!(leftHalfPass && rightHalfPass)){
+		    if(RtoL)
+			return null;
+		    else
+			return ((CompositeType) t).matches2(this, true);
+		}
+		if(RtoL)
+		    return pair.flip();
+		return pair;
+	    }
+	}
+	return null;
     }
     
     public boolean containsVar() {

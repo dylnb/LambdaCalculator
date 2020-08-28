@@ -1,5 +1,21 @@
 # Lambda Calculator Change Log
 
+## 7/2020 - 8/2020 (update to version 2.4.0)
+### Authors: Anna Alsop and Raef Khan
+
+1. Function composition
+* New function composition rule added (issue #31)
+
+2. Polymorphism revamp
+* Polymorphism functionality enhanced for complex variable types
+
+3. Other bug fixes and new features
+* Variable types now display as Greek letters
+* Type angle brackets '<' and '>' symbols changed
+* Reload function made compatible with unsuccessful loads (issue #27)
+* Dialog window prompting user to save work before subsequent reload (issue #30)
+* After reloading, the same exercise is selected.
+
 ## 5/2019 - 8/2019 (update to version 2.3.0)
 ### Authors: Anna Alsop and Raef Khan
 

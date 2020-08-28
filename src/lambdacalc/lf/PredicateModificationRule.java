@@ -42,6 +42,7 @@ import lambdacalc.logic.IdentifierTyper;
 import lambdacalc.logic.Lambda;
 import lambdacalc.logic.TypeEvaluationException;
 import lambdacalc.logic.Var;
+import lambdacalc.logic.MatchPair;
 
 /**
  *
@@ -84,7 +85,7 @@ public class PredicateModificationRule extends CompositionRule {
                         CompositeType rt = (CompositeType)rtype;
                         Type rtR = rt.getRight();
                         if (rtR instanceof ConstType && rtR.equals(Type.T)) {
-                            if (ltype.equals(rtype)) {
+                            if (ltype.matches(rtype) != null) {
                                 correctTypes = true;
                             }
                         }
@@ -116,14 +117,17 @@ public class PredicateModificationRule extends CompositionRule {
         LFNode right = node.getRightChild();
         Expr leftMeaning = left.getMeaning();
         Expr rightMeaning = right.getMeaning();
-        HashMap<Type,Type> typeMatches = new HashMap<Type,Type>();
+//        HashMap<Type,Type> typeMatches = new HashMap<Type,Type>();
         Type commonArgType = Type.E;
 
         try {
-            CompositeType lt = (CompositeType)leftMeaning.getType();
-            CompositeType rt = (CompositeType)rightMeaning.getType();
-            typeMatches = Expr.alignTypes(lt,rt);
-            commonArgType = ((CompositeType)Expr.getAlignedType(lt, typeMatches)).getLeft();
+            CompositeType lt = (CompositeType)leftMeaning.getType(); // <'a,t>
+            CompositeType rt = (CompositeType)rightMeaning.getType(); // <e,t>
+            
+            MatchPair typeMatches = lt.matches(rt);
+            commonArgType = ((CompositeType)typeMatches.getAlignedType(lt)).getLeft(); // e
+//            typeMatches = Expr.alignTypes(lt,rt);
+//            commonArgType = ((CompositeType)Expr.getAlignedType(lt, typeMatches)).getLeft();
         } catch (TypeEvaluationException ex) {
             throw new MeaningEvaluationException(ex.getMessage());
         }
@@ -137,15 +141,15 @@ public class PredicateModificationRule extends CompositionRule {
 
         Var VARIABLE = typingConventions.getVarForType(commonArgType, false);
         
-        FunApp leftFA = new FunApp(leftM, VARIABLE, typeMatches);
-        FunApp rightFA = new FunApp(rightM, VARIABLE, typeMatches);
+        FunApp leftFA = new FunApp(leftM, VARIABLE);
+        FunApp rightFA = new FunApp(rightM, VARIABLE);
         
-        if (!typeMatches.isEmpty()) {
-            Map updates = new HashMap();
-            leftFA = (FunApp) leftFA.createAlphatypicalVariant(typeMatches, leftFA.getAllVars(), updates);
-            Map updates2 = new HashMap();
-            rightFA = (FunApp) rightFA.createAlphatypicalVariant(typeMatches, leftFA.getAllVars(), updates2);
-        }
+//        if (!typeMatches.isEmpty()) {
+//            Map updates = new HashMap();
+//            leftFA = (FunApp) leftFA.createAlphatypicalVariant(typeMatchesleftFA.getAllVars(), updates);
+//            Map updates2 = new HashMap();
+//            rightFA = (FunApp) rightFA.createAlphatypicalVariant(typeMatches, leftFA.getAllVars(), updates2);
+//        }
         
         And and = new And(leftFA, rightFA);
         

@@ -73,7 +73,7 @@ public abstract class Type implements Comparable {
     public static final Type N = new ConstType('n');
     
     public static final Type WILD = new VarType('_');
-
+        
     /**
      * Tests two types for equality (as you would expect).
      */
@@ -88,7 +88,17 @@ public abstract class Type implements Comparable {
      * Implemented by subclasses to test for equality between types.
      */
     protected abstract boolean equals(Type t);
-
+    
+    /**
+    * Implemented by subclasses to test whether two types can be unified. 
+    * This method supports composition of polymorphic functions (combinators) by 
+    * checking whether two types that possibly contain variables can be matched.
+    * For example, 'a,t and e,t can be unified, with 'a mapping to e, while 
+    * 'a,'a and e,t cannot be unified because 'a cannot be mapped to two concrete types.
+    * Outputs a MatchPair, which contains the unifier of the two types if there is one.
+    */
+    public abstract MatchPair matches(Type t);
+    
     /**
      * Compares two types.  The natural ordering of types is as follows:
      *   First, atomic types, ordered by their character names.
