@@ -55,9 +55,6 @@ public class FunctionCompositionRule extends CompositionRule {
         if (node.size() != 2)
             return false;
         
-        LFNode left = node.getChild(0);
-        LFNode right = node.getChild(1);
-        
         try {
             Type ltype = node.getLeftChild().getMeaning().getType();
             Type rtype = node.getRightChild().getMeaning().getType();
@@ -70,7 +67,7 @@ public class FunctionCompositionRule extends CompositionRule {
             Type rtR = rt.getRight();
             Type rtL = rt.getLeft();
             
-            if (ltR.equals(rtL) || rtR.equals(ltL)) 
+            if (ltR.matches(rtL) != null || rtR.matches(ltL) != null) 
                 return true;
         
         // If either child could not be evaluated (or was not composite),

@@ -163,7 +163,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
                     Type t2l = t2.getLeft(); // t2l = s
                     Type t2r = t2.getRight(); // t2r = X
                     if (t2l instanceof ConstType && t2l.equals(Type.S)
-                            && t2r.equals(r)) {
+                            && t2r.matches(r) != null) {
                         return true;
                     }
                 }

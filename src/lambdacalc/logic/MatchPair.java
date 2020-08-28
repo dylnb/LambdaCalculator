@@ -168,7 +168,7 @@ public class MatchPair
 	this.rightMatches = rightMatches;
 	this.g = graph;
     }
-    
+
     //Returns the left half of the two matching functions
 
     /**
@@ -188,7 +188,7 @@ public class MatchPair
     public Type getRight(){
 	return this.right;
     }
-    
+
     //Returns the mapping of variables for a given Type side
 
     /**
@@ -197,7 +197,7 @@ public class MatchPair
      * @return the match pairings of the given type
      */
     public HashMap<Type, Type> getMatches(Type side){
-	if(side == this.left) 
+	if(side == this.left)
 	    return this.leftMatches;
 	return this.rightMatches;
     }
@@ -398,9 +398,9 @@ public class MatchPair
 	}
 	*/
     }
-   
+
     //Taking the mapping of a subType and adding it to the parents.
-    //This adds the mappings for both, e.g. <a1, t> -> <e, a2> 
+    //This adds the mappings for both, e.g. <a1, t> -> <e, a2>
     //calling this on the mapping of a1, e will place a1 -> e this in <a1, t> mapping
     //calling this on the mapping of t, a2 will place a2 -> t this in <e, a2> mapping
 
@@ -587,7 +587,7 @@ public class MatchPair
 	    }
 	    this.getMatches(this.getLeft()).put(key, left.get(key));
 	}
-	
+
 	for(Type key : right.keySet()){
 	    if(this.getMatches(this.getRight()).containsKey(key)){
 		if(!(right.get(key).equals(this.getMatches(this.getRight()).get(key))))
@@ -697,8 +697,8 @@ public class MatchPair
     public Type getAlignedType(Type oldtype) {
 	return getAlignedTypeHelper(oldtype, oldtype);
     }
-    
-    
+
+
     //Flips a matchPair to make the first function the second, and second first
     //This was needed for doing RtoL, as the matchPair will do the logic correctly but
     //reverse the ordering, so we have to fix the ordering to what we originally did
@@ -712,6 +712,6 @@ public class MatchPair
     public MatchPair flip(){
 	return new MatchPair(this.getRight(), this.getLeft(), this.getMatches(this.getRight()), this.getMatches(this.getLeft()), this.getGraph());
     }
-    
-    
+
+
 }
