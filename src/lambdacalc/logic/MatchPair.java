@@ -430,6 +430,7 @@ public class MatchPair
      */
     private Type getAlignedTypeHelper(Type oldtype, Type oldTypeParent){
 	if(oldtype instanceof CompositeType){
+            oldtype = ((CompositeType)oldtype).renameVariables(new ArrayList<Type>());
 	    Type oldLeft = ((CompositeType) oldtype).getLeft();
 	    Type oldRight = ((CompositeType) oldtype).getRight();
 	    Type newLeft;

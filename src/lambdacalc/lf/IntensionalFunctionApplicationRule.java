@@ -102,7 +102,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         }
         
         Expr leftMeaning, rightMeaning;
-//        HashMap<Type,Type> typeMatches = new HashMap<>();
+        HashMap<Type,Type> typeMatches = new HashMap<>();
         try {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();
@@ -120,21 +120,21 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
                 CompositeType rt = new CompositeType(Type.S, rightMeaning.getType());
-                MatchPair typeMatches = (lt.getLeft()).matches(rt);
-                return apply(left, right, g, typeMatches);
+                typeMatches = ((lt.getLeft()).matches(rt)).getMatches(lt.getLeft());
 //                typeMatches = Expr.alignTypes(lt.getLeft(), rt);
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
+            return apply(left, right, g, typeMatches);
         } else if (isIntensionalFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
                 CompositeType lt = new CompositeType(Type.S, leftMeaning.getType());
-                MatchPair typeMatches = (rt.getLeft()).matches(lt);
-                return apply(right, left, g, typeMatches);
+                typeMatches = ((rt.getLeft()).matches(lt)).getMatches(rt.getLeft());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
+            return apply(right, left, g, typeMatches);
         }
 
         if (onlyIfApplicable) {
@@ -180,7 +180,7 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         return new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
     }
     
-    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, MatchPair alignments) {
+    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, HashMap<Type,Type> alignments) {
 
         IdentifierTyper typingConventions = TrainingWindow.getCurrentTypingConventions();
 
@@ -243,10 +243,10 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         Expr app2 = new Lambda(var, new MeaningBracketExpr(app, g), true);
 
         FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), app2);
-//        if (!alignments.isEmpty()) {
-//            Map updates = new HashMap();
-//            fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);
-//        }
+        if (!alignments.isEmpty()) {
+            Map updates = new HashMap();
+            fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);
+        }
         return fa;
         
         // create Lambda w.[[app]]^g 1/w

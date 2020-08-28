@@ -630,13 +630,12 @@ public abstract class Expr {
     
     public abstract Expr createAlphatypicalVariant(HashMap<Type,Type> alignments, Set variablesInUse, Map updates);
     
+    // Deprecated method. Now use Type.matches() instead.
     public static HashMap<Type,Type> alignTypes(Type funcT, Type argT) throws MeaningEvaluationException {
         // funcT is the domain type of some function, (eg the <b,t> in <<b,t>,t>)
         // which has "matched" the type of argT (eg <et,t>)
         HashMap<Type,Type> matches = new HashMap<Type,Type>();
 	
-	//To delete after testing
-        MatchPair test = funcT.matches(argT); 
         // Need to walk down the type trees in parallel
         if (funcT instanceof CompositeType) {
             if (!(argT instanceof CompositeType)) {
@@ -702,6 +701,7 @@ public abstract class Expr {
         }
     }
     
+    // Deprecated method. Now use MatchPair.getAlignedType() instead.
     public static Type getAlignedType(CompositeType oldtype, HashMap<Type,Type> alignments) {
         Type oldLeft = oldtype.getLeft();
         Type oldRight = oldtype.getRight();

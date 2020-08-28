@@ -158,68 +158,6 @@ public class ProductType extends Type {
 		}
 	    }
 	    return null;
-	    /*
-	    HashMap<Type, HashMap<Type, Type>> matchList = new HashMap<Type, HashMap<Type, Type> >();
-	    HashMap<Type, HashMap<Type, Type>> subMatches = new HashMap<Type, HashMap<Type, Type> >();
-	    if(t instanceof ProductType){
-		//Make sure both product types are the same length
-		if (this.subtypes.length != ((ProductType) t).subtypes.length)
-		    return null;
-		//For each part of the product type
-		for(int i = 0; i < this.subtypes.length; i++){
-		    /*Do matches on each subtype of the productType.
-			returns hashmap mapping subType -> var -> const if available, e.g. subtype <'a, 'b>.matches(<'a, 'a>) 
-		    	returns hashmap of <'a, 'b> : 'a -> 'a, 'b -> 'a, <'a, 'a> : 'a -> null
-		    *
-		    subMatches = this.subtypes[i].matches(((ProductType) t).subtypes[i]);
-		    //if the subtypes are matched (or equal)
-		    if(subMatches != null){
-			//for each subtype 
-			for(Type subType : subMatches.keySet()){
-			    //if the subtype belongs to this, checking refernce, e.g. alpha can exist in both expressions. 
-			    if(this.subtypes[i] == (subType)){
-				//if ProductType isn't yet in our matchlist, add it. (potential change to add ProductType from beginning?)
-				if(!matchList.containsKey(this))
-				    matchList.put(this, new HashMap<Type, Type>());
-				//for each var mapping in our subtype
-				for(Type subMatch : subMatches.get(subType).keySet()){
-				    //if this var is already in our matches (1 to many mapping), try other way, if already trying return
-				    if(matchList.get(this).containsKey(subMatch)){
-					if(!matchList.get(this).get(subMatch).equals(subMatches.get(subType).get(subMatch))){
-					    if(RtoL == true)
-						return null;
-					    return ((ProductType) t).matches2(this, true);
-					}
-				    }
-				    matchList.get(this).put(subMatch, subMatches.get(subType).get(subMatch));
-				    //put all key-pair values of this.subtypes[i] into this hashmap   
-				}
-			    }
-			    //same code as above, but for when subtype is part of type T. 
-			    else{
-				if(!matchList.containsKey(t))
-				    matchList.put(t, new HashMap<Type, Type>());
-				for(Type subMatch: subMatches.get(subType).keySet()){
-				    if(matchList.get(t).containsKey(subMatch)){
-					if(!matchList.get(t).get(subMatch).equals(subMatches.get(subType).get(subMatch))){
-					    //potentially useless and should return null directly? 
-					    if(RtoL == true)
-						return null;
-					    return ((ProductType) t).matches2(this, true);
-					}
-				    }
-				    else
-					matchList.get(t).put(subMatch, subMatches.get(subType).get(subMatch));
-				}
-			    }
-			}
-		    }
-		}
-		//All is well, return matchlist. Else return null for all other cases. 
-		return matchList;
-	    }
-	    return null;
-	*/
 	}
     
     public boolean containsVar() {

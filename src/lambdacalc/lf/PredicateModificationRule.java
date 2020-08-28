@@ -121,11 +121,11 @@ public class PredicateModificationRule extends CompositionRule {
         Type commonArgType = Type.E;
 
         try {
-            CompositeType lt = (CompositeType)leftMeaning.getType();
-            CompositeType rt = (CompositeType)rightMeaning.getType();
+            CompositeType lt = (CompositeType)leftMeaning.getType(); // <'a,t>
+            CompositeType rt = (CompositeType)rightMeaning.getType(); // <e,t>
             
             MatchPair typeMatches = lt.matches(rt);
-            commonArgType = typeMatches.getAlignedType(lt.getLeft());     
+            commonArgType = ((CompositeType)typeMatches.getAlignedType(lt)).getLeft(); // e
 //            typeMatches = Expr.alignTypes(lt,rt);
 //            commonArgType = ((CompositeType)Expr.getAlignedType(lt, typeMatches)).getLeft();
         } catch (TypeEvaluationException ex) {

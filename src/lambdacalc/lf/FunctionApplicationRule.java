@@ -104,7 +104,7 @@ public class FunctionApplicationRule extends CompositionRule {
                     "undefined on such a node.");
         
         Expr leftMeaning, rightMeaning;
-//        HashMap<Type,Type> typeMatches = new HashMap<>();
+        HashMap<Type,Type> typeMatches = new HashMap<>();
         try {
             leftMeaning = left.getMeaning();
             rightMeaning = right.getMeaning();
@@ -120,20 +120,21 @@ public class FunctionApplicationRule extends CompositionRule {
         if (isFunctionOf(leftMeaning, rightMeaning)) {
             try {
                 CompositeType lt = (CompositeType)leftMeaning.getType();
-                MatchPair typeMatches = (lt.getLeft()).matches(rightMeaning.getType());
-                return apply(left, right, g, typeMatches);
+                typeMatches = ((lt.getLeft()).matches(rightMeaning.getType())).getMatches(lt.getLeft());
 //                typeMatches = Expr.alignTypes(lt.getLeft(),rightMeaning.getType());
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
+            return apply(left, right, g, typeMatches);
         } else if (isFunctionOf(rightMeaning, leftMeaning)) {
             try {
                 CompositeType rt = (CompositeType)rightMeaning.getType();
-                MatchPair typeMatches = (rt.getLeft()).matches(leftMeaning.getType());
-                return apply(right, left, g, typeMatches);                
+                typeMatches = ((rt.getLeft()).matches(leftMeaning.getType())).getMatches(rt.getLeft());
+//                typeMatches = Expr.alignTypes(rt.getLeft(),rightMeaning.getType());                               
             } catch (TypeEvaluationException ex) {
                 throw new MeaningEvaluationException(ex.getMessage());
             }
+            return apply(right, left, g, typeMatches); 
         }
 
         if (onlyIfApplicable) {
@@ -181,12 +182,12 @@ public class FunctionApplicationRule extends CompositionRule {
         return new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
     }
     
-    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, MatchPair alignments) {
+    private Expr apply(LFNode fun, LFNode app, AssignmentFunction g, HashMap<Type,Type> alignments) {
         FunApp fa = new FunApp(new MeaningBracketExpr(fun, g), new MeaningBracketExpr(app, g));
-//        if (!alignments.isEmpty()) {
-//            Map updates = new HashMap();
-//            fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);
-//        }
+        if (!alignments.isEmpty()) {
+            Map updates = new HashMap();
+            fa = (FunApp) fa.createAlphatypicalVariant(alignments, fa.getAllVars(), updates);
+        }
         return fa;
     }
     

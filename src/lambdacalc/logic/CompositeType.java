@@ -34,8 +34,8 @@ import java.util.*;
  * Represents a composite (function) type, like &lt;et&gt;.
  */
 public class CompositeType extends Type {
-    public final static char LEFT_BRACKET = '<'; // '\u27E8'; // '\u2329'; '\u3008';
-    public final static char RIGHT_BRACKET = '>'; // '\u232A';
+    public final static char LEFT_BRACKET = '\u3008'; // '\u27E8'; // '\u2329'; '\u3008';
+    public final static char RIGHT_BRACKET = '\u3009'; // '\u232A';
     public final static char SEPARATOR = ',';
     
     private Type left;
@@ -193,88 +193,6 @@ public class CompositeType extends Type {
 	    }
 	}
 	return null;
-	/*
-	HashMap<Type, HashMap<Type, Type>> matchList = new HashMap<Type, HashMap<Type, Type>>();
-	if(t instanceof VarType)
-	    return ((VarType) t).matches(this);
-	else if(t instanceof CompositeType){
-	    Type thisLeft = this.getLeft();
-	    Type thisRight = this.getRight();
-	    Type expLeft = ((CompositeType) t).getLeft();
-	    Type expRight = ((CompositeType) t).getRight();
-	    
-	    HashMap<Type, HashMap<Type, Type>> leftMatches = thisLeft.matches(expLeft);
-	    HashMap<Type, HashMap<Type, Type>> rightMatches = thisRight.matches(expRight);
-	    if(leftMatches != null && rightMatches != null){
-		for(Type subType : leftMatches.keySet()){
-		    if(subType == thisLeft){
-			if(!matchList.containsKey(this))
-			    matchList.put(this, new HashMap<Type, Type>());
-			for(Type subMatch : leftMatches.get(subType).keySet()){
-			    if(matchList.get(this).containsKey(subMatch)){
-				if(matchList.get(this).get(subMatch) != leftMatches.get(subType).get(subMatch)){
-				    if(RtoL == true)
-					return null;
-				    return ((CompositeType) t).matches2(this, true);
-				}
-			    }
-			    matchList.get(this).put(subMatch, leftMatches.get(subType).get(subMatch));
-			}
-		    }
-		    else{
-			if(!matchList.containsKey(t))
-			    matchList.put(t, new HashMap<Type, Type>());
-			for(Type subMatch : leftMatches.get(subType).keySet()){
-			    if(matchList.get(t).containsKey(subMatch)){
-				if(matchList.get(t).get(subMatch) != leftMatches.get(subType).get(subMatch)){
-				    if(RtoL == true)
-					return null;
-				    return ((CompositeType) t).matches2(t, true);
-				}
-			    }
-			    else
-				matchList.get(t).put(subMatch, leftMatches.get(subType).get(subMatch));
-			}
-		    }
-		}
-		
-		
-		for(Type subType : rightMatches.keySet()){
-		    if(subType == thisRight){
-			if(!matchList.containsKey(this))
-			    matchList.put(this, new HashMap<Type, Type>());
-			for(Type subMatch : rightMatches.get(subType).keySet()){
-			    if(matchList.get(this).containsKey(subMatch)){
-				if(matchList.get(this).get(subMatch) != rightMatches.get(subType).get(subMatch)){
-				    if(RtoL == true)
-					return null;
-				    return ((CompositeType) t).matches2(this, true);
-				}
-			    }
-			    matchList.get(this).put(subMatch, rightMatches.get(subType).get(subMatch));
-			}
-		    }
-		    else{
-			if(!matchList.containsKey(t))
-			    matchList.put(t, new HashMap<Type, Type>());
-			for(Type subMatch : rightMatches.get(subType).keySet()){
-			    if(matchList.get(t).containsKey(subMatch)){
-				if(matchList.get(t).get(subMatch) != rightMatches.get(subType).get(subMatch)){
-				    if(RtoL == true)
-					return null;
-				    return ((CompositeType) t).matches2(t, true);
-				}
-			    }
-			    else
-				matchList.get(t).put(subMatch, rightMatches.get(subType).get(subMatch));
-			}
-		    }
-		}
-		return matchList;
-	    }
-	}
-	return null;
-	*/
     }
     
     public boolean containsVar() {
