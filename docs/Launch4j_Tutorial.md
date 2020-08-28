@@ -1,4 +1,4 @@
-# **Launch4j Instructions**
+# **Packaging Instructions, Launch4j, etc.**
 
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
 
@@ -23,6 +23,8 @@ This update provides a new windows runnable application using the launch4j exe w
 19. The zip file is now ready to distribute.
 20. In Main.java, set GOD_MODE to the other boolean and repeats steps 6-19. 
 21. Test whether the version number was set correctly by installing the TE and SE versions and looking at the About window in Mac. 
+22. When you are ready to release the new version, click on `Releases`, located on the righthand side of the repository in github, then click on `Draft a new release`.
+23. Once you've published the new release, go to the `gh-pages` branch in github and open `index.html`. Under `<!-- Download -->`, replace the hyperlinks to link to the new versions of the Lambda Calculator.
 
 NOTE 1: The `sh` command will not run if the file is being imported from a zip to netbeans and possibly other IDEs as they remove the executable permissions from all files necessary to run the launch4j module. 
 
