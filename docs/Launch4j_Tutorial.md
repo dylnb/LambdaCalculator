@@ -4,11 +4,11 @@ This update provides a new windows runnable application using the launch4j exe w
 
 1. Download the zip file of the Lambda Calculator project from github.
 2. Unzip the file.
-3. Import the project via zip into your favorite IDE.
+3. Open the Java project from the unzipped folder with your favorite IDE.
 4. Check whether GOD_MODE is set to true or false on Main.java.
 5. If true, proceed using the `TE` version, otherwise use the `SE`. 
 6. Clean and build the project.
-7. Take the created JAR file in dist from your IDE project and replace the current JAR in the unzipped Lambda Calculator/dist.
+7. Take the created LambdaCalculator.jar file in the dist directory from your IDE and replace the current JAR in the unzipped Lambda Calculator/dist.
 8. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
 9. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
 10. Press open on the top left, open the `LC_SE.xml` OR `LC_TE.xml` file to edit.
