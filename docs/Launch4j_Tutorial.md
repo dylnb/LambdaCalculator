@@ -18,7 +18,7 @@ This update provides a new windows runnable application using the launch4j exe w
 14. Copy `jre180` and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
 15. Cd into `launch4j/LCSE` or `launch4j/LCTE` from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
 16. Delete these extra files using `rm -r filename`.
-17. Create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. 
+17. Cd back into `launch4j` and create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. 
 18. The zip file is now ready to distribute.
 19. In Main.java, set GOD_MODE to the other boolean and repeats steps 6-19. 
 
