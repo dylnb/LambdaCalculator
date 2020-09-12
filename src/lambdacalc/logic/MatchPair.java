@@ -9,28 +9,49 @@ import java.util.*;
 
 /**
  * Class containing pairings of matches of two types given
- * @author Raefno1
+ * @author Raef Khan
  */
 
-//Class that contains the Type and whether it was visited, and which side from the parent it comes from. 
+/**
+ * Class containing Type and whether it is from Function or Argument. This class is used as the nodes for the graph class.
+ * @author Raef Kham
+ */
 class Node{
     private Type node;
     //true = left, false = right
     private boolean side;
     
+    /**
+     * Constructor for Node Class. Takes in the type and whether it is from the function or argument.
+     * @param t The Type for this node.
+     * @param side set to TRUE if from function or left, FALSE if from argument or right.
+     */
     public Node(Type t, boolean side){
 	this.node = t;
 	this.side = side;
     }
     
+    /**
+     * Returns the Type in this node.
+     * @return The Type of the node.
+     */
     public Type getNode(){
 	return node;
     }
     
+    /**
+     * Returns whether Node is part of function or argument.
+     * @return TRUE if from function or left, FALSE if from argument or right.
+     */
     public boolean getSide(){
 	return side;
     }
     
+    /**
+     * Overrides Object Equals function. Returns equality if the two types within nodes are equal. 
+     * @param n
+     * @return 
+     */
     @Override
     public boolean equals(Object n){
 	if(n instanceof Node)
@@ -38,20 +59,37 @@ class Node{
 	return false;
     }
 }
-//Bidirectional Graph class to map all variables to other variables. Automatically maps from left side to right side
-//Later in DFS all variables will be mapped properly. 
+
+/**
+ * Graph Class. A bidirectional graph that maps all variables from each side of the unification to each other. 
+ * The graph is made of an arraylist of arraylists, where the outer arraylist[0] is the list of nodes or keys in the graph,
+ * and each subsequent arraylist[1-n] are arraylists containing the neighbors of node n, where n is the index from arraylist[0][n-1]. 
+ * Ex. matching <a, b, b> to <d, d, e> will return a graph mapping a <-> d <-> b <-> e.
+ * @author Raef Khan
+ */
 class Graph{
     private ArrayList<ArrayList <Node>> t;
-    
+
+    /**
+     * Constructor for the graph. Creates the arraylist of arraylists and adds the arraylist of keys to the 0th position. 
+     */
     public Graph(){
 	t = new ArrayList<ArrayList<Node>>();
 	t.add(new ArrayList<Node>());
     }
     
+    /**
+     * Returns the graph.
+     * @return the graph T. 
+     */
     public ArrayList<ArrayList <Node>> getGraph(){
 	return t;
     }
-    //checks if a node is in the graph as a key to point to values
+    /**
+     * Checks if graph currently contains a node as a key.
+     * @param key the Node to be contained as a key
+     * @return true if the key exist, false otherwise. 
+     */
     public boolean containsKey(Node key){
 	for(Node keys : t.get(0)){
 	    if(keys.getNode() == key.getNode())
@@ -59,7 +97,12 @@ class Graph{
 	}
 	return false;
     }
-    //checks if a key already maps to value
+    /**
+     * Checks if a key has a neighbor value. This checks if one variable has already been mapped to another.
+     * @param key The Node key, or the variable Type mapping towards. 
+     * @param value The value, or the variable Type to be mapped to.
+     * @return True if the Key maps to Value, false otherwise
+     */
     public boolean containsValue(Node key, Node value){
 	for(Node keys : t.get(keyIndex(key))){
 	    if(keys.getNode() == value.getNode())
@@ -68,6 +111,11 @@ class Graph{
 	return false;
     }
     
+    /**
+     * Returns the index of a Key. Returns the correct index for the list of neighbors for a given node, as there is an offset of 1. 
+     * @param key the Node for which we want the list of neighbors. 
+     * @return The index of the list of neighbors for a given key. 
+     */
     //returns the index of the value list for a given key
     public int keyIndex(Node key){
 	int k = t.get(0).indexOf(key);
@@ -75,6 +123,11 @@ class Graph{
 	return k;
     }
     
+    /**
+     * Helper Method for addEdge(). Adds the edge between two variables in the opposite direction. 
+     * @param key The variable to be given the edge.
+     * @param value The variable to be added to a key's edgeList. 
+     */
     private void addEdgeBiDirectional(Node key, Node value){
 	if(containsKey(key)){
 	    int index = keyIndex(key);
@@ -88,7 +141,11 @@ class Graph{
 	}
     }
     
-    //adds an edge from a key to a value, and vice versa via BiDirectional. 
+    /**
+     * Adds Edges for given variables. Takes two variables and adds edges to both of them, using addEdgeBiDirectional().
+     * @param key The first variable to be mapped to.
+     * @param value The second variable to be mapped to.
+     */
     public void addEdge(Node key, Node value){
 	if(containsKey(key)){
 	    int index = keyIndex(key);
@@ -104,7 +161,11 @@ class Graph{
     }
 }
 
-
+/**
+ * Class that contains matches for two Types being Unified. Contains the two types, and 
+ * hashmaps for variables to the most-general-unifier for each type. 
+ * @author Raef Khan
+ */
 public class MatchPair
 {
     private Type left;
@@ -141,27 +202,21 @@ public class MatchPair
 	this.g = graph;
     }
 
-    //Returns the left half of the two matching functions
-
     /**
-     * Gets the left Type
+     * Gets the function, or left, Type
      * @return the left Type
      */
     public Type getLeft(){
 	return this.left;
     }
-    
-    //Returns the right half of the two matching functions 
 
     /**
-     * Gets the right Type
+     * Gets the argument, or right, Type
      * @return the right Type
      */
     public Type getRight(){
 	return this.right;
     }
-
-    //Returns the mapping of variables for a given Type side
 
     /**
      * Gets the match pairings of the given Type
@@ -174,11 +229,20 @@ public class MatchPair
 	return this.rightMatches;
     }
     
+    /**
+     * Returns the graph for variable to variable mappings. 
+     * @return The graph containing the variable mappings.
+     */
     //returns the graph of variable mappings. 
     public Graph getGraph(){
 	return this.g;
     }
     
+    /**
+     * Merges a graph from a subType to a parentType. This is used for compositeType and productType after mapping each of their
+     * subparts, to then add those mappings into the parent graph.
+     * @param g The graph of the subType to be merged.
+     */
     //merges subgraph into current parent graph
     public void mergeGraphs(Graph g){
 	for(Node key: g.getGraph().get(0)){
@@ -209,6 +273,16 @@ public class MatchPair
 	}
     }
     
+    /**
+     * Overriding Map.containsKey(key). Returns whether a key is within a hashmap using reference rather than equality. 
+     * This is due to the allowance of multiple variables of the same name to exist in both Types attempting to unify, and checking
+     * for variable mappings within one half using equality could cause issues. Currently, all variables for each Type are re-referenced
+     * to the first occurance of the variable name, so that this method can function properly. A future fix is to rename 
+     * the variables for each Type to some internal, fully different, variable names, and then rename them back at the end before returning. 
+     * @param map The hashmap to be checked.
+     * @param key The variable key.
+     * @return True if the key is the same reference as the keyset within the hashmap, false otherwise. 
+     */
     //checks for a key in a hashmap via reference instead of .equals (as all instances of a variable in a Complex Type are the same)
     private boolean isKey(HashMap<Type, Type> map, Type key){
 	for(Type keys : map.keySet()){
@@ -218,7 +292,12 @@ public class MatchPair
 	return false;
     }
     
-    //Given a final concrete, sets the key to map to that final Type
+    /**
+     * Helper Method for DFSSetter. Adds the mapping of a variable to a final Most-General-Unifier found from DFSConcrete to the proper hashmap.
+     * @param key The variable from the graph to get the final mapping.
+     * @param t The MGU for the variable.
+     * @return True if there is no conflict of variable to multiple concretes (no one to many mappings), false otherwise. 
+     */
     private boolean setMapping(Node key, Type t){
 	boolean passing = true;
 	if(key.getNode() != t){
@@ -236,7 +315,7 @@ public class MatchPair
 		if(this.getMatches(this.getRight()).get(key.getNode()) instanceof VarType)
 		    this.getMatches(this.getRight()).replace(key.getNode(), t);
 		else 
-		    passing = this.getMatches(this.getRight()).get(key.getNode()).equals(t);;
+		    passing = this.getMatches(this.getRight()).get(key.getNode()).equals(t);
 	    }
 	    
 	    //If the key is not in left or right, add it to the right hashmap based on the side it is from
@@ -250,6 +329,14 @@ public class MatchPair
 	return passing;
     }
     
+    /**
+     * Helper Method for DFSSetter. Continues DFS for each neighbor of a starting variable, to map to the final MGU.
+     * @param graph The overall graph of variables
+     * @param g The arrayList of neighbors for a given variable from DFSSetter
+     * @param t The final MGU
+     * @param isVisited The arrayList checking if a variable has already had DFS done on it. 
+     * @return True if there are no conflicts in mapping variables to their MGU, false otherwise. 
+     */
     //set all vars to concrete type, if exists. 
     private boolean DFSSetterHelper(Graph graph, ArrayList<Node> g, Type t, ArrayList<Type> isVisited){
 	boolean passing = true;
@@ -266,6 +353,14 @@ public class MatchPair
 	return passing;
     }
     
+    /**
+     * DFS Method that sets variables to their final Most-General-Unifier (MGU). Takes a list of mappings from DFSConcrete and begins DFS again in
+     * the same order to preserve the correct final mappings. One way to make this more secure is to use another HashMap from
+     * variables to their final MGU and then merge that into the overall hashmaps. 
+     * @param g The overall graph of variables
+     * @param finalMappings The list of MGU's for each variable, based on index for each component of the graph
+     * @return True if there are no conflicts for variable final mappings, false otherwise. 
+     */
     //Sets the graph variables to the given concrete types in finalMappings, assuming graph is DFS'd the same 
     private boolean DFSSetter(Graph g, ArrayList<Type> finalMappings){
 	ArrayList<Type> isVisited = new ArrayList<Type>();
@@ -284,6 +379,14 @@ public class MatchPair
 	return passing;
     }
     
+    /**
+     * Helper method for DFSConcrete. Continues DFS on each neighbor of a given variable, checking for an MGU.
+     * @param graph The overall graph.
+     * @param g The list of neighbors for a variable from DFSConcrete.
+     * @param concrete The final MGU, starts as null (no MGU found)
+     * @param isVisited List of nodes that have been visited for DFS
+     * @return Concrete, either a final MGU, or null if none are found (and thus the variable is the final MGU). 
+     */
     //create DFS to set all nodes to concrete item. 
     private Type DFSConcreteHelper(Graph graph, ArrayList<Node> g, Type concrete, ArrayList<Type> isVisited){
 	for(Node key : g){
@@ -301,6 +404,13 @@ public class MatchPair
 	return concrete;
     }
     
+    /**
+     * DFS Method that finds the final MGU for each component of a graph. Runs DFS on the graph, 
+     * and for every component (as the graph may be disconnected), chooses a final MGU to map every variable to. 
+     * DFSSetter will check if there conflicts with variables mapping to multiple concrete types. 
+     * @param g The graph of variables.
+     * @return A list of MGU's for each component of the graph. 
+     */
     //Returns a list of concrete types for every component of a graph. 
     private ArrayList<Type> DFSConcrete(Graph g){
 	ArrayList<Type> isVisited = new ArrayList<Type>();
@@ -323,6 +433,12 @@ public class MatchPair
 	return concretes;
     }
  
+    
+    /**
+     * Sets variables to their final Most-General-Unifier. Calls DFSConcrete and DFSSetter.
+     * Ex. <a, e> mapping to <b, b> will return a -> e and b -> e. 
+     * @return True if no variable conflict occurs, false otherwise. 
+     */
     //Calls DFS on the graph to find the final concrete types and then maps it, assuming all mappings pass. 
     private boolean finalAlignments(){
 	ArrayList<Type> finalConcretes = DFSConcrete(this.getGraph());
@@ -395,7 +511,6 @@ public class MatchPair
 	return test;
     }
         
-    //Returns the new Type based upon the mapping for a given type T
     /**
      * Helper method for GetAlignedTypeHelper. Sets the new compositeType side to the correct match.
      * @param oldTypeParent The parent CompositeType
@@ -422,6 +537,7 @@ public class MatchPair
 	
 	return newSide;
         }
+    
     /**
      * Helper function for getAlignedType. Keeps track of the parent compositeType so that it can set alignments properly
      * @param oldtype the old compositeType to be worked on
@@ -462,10 +578,6 @@ public class MatchPair
 	return getAlignedTypeHelper(oldtype, oldtype);
     }
 
-
-    //Flips a matchPair to make the first function the second, and second first
-    //This was needed for doing RtoL, as the matchPair will do the logic correctly but
-    //reverse the ordering, so we have to fix the ordering to what we originally did
 
     /**
      * Flips the matchPair class. Sets the left Type and left matches as right, and right Type and right matches as left.

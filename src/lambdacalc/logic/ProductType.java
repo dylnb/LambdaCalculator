@@ -86,7 +86,15 @@ public class ProductType extends Type {
 	return false;
     }
     
-    //sets all instances of a variable for a given ProductType to the same reference. Uses getAlignedType in Matchpair logic
+    /**
+     * sets all instances of a variable for a given ProductType to the same reference. For all variables
+     * in a given ProductType, we set the reference of that variable to be the same. The logic here is similar
+     * to the logic used in MatchPair.getAlignedType(). This is done because of MatchPair logic, 
+     * as each Type in unification can have the same variable name, for instance <a, b> mapping to <g, a>. 
+     * Refer to MatchPair.isKey() for further notes. 
+     * @param varList an empty ArrayList that will contain all variables for the current ProductType.
+     * @return a new ProductType with all references of a variable being the same. 
+     */
     public ProductType renameVariables(ArrayList<Type> varList){
 	Type[] newParts = this.getSubTypes();
 	for(Type part : newParts){
@@ -122,6 +130,8 @@ public class ProductType extends Type {
 	 * Helper method for matches. Only two ProductTypes can be unified.
 	 * For each sub-type of the ProductType, unify them. If successful, insert the pairing 
          * into the parent ProductType. If not successful, try the unification procedure from right to left.
+	 * Trying right to left now is possibly redundant due to the 
+	 * new implementation of matchpair creating graphs for variable to variable mappings. 
 	 * @param t the ProductType to be unified with
 	 * @param RtoL whether the pass is right to left
 	 * @return A MatchPair class containing the mappings for each productType, 
@@ -136,13 +146,17 @@ public class ProductType extends Type {
 			pair = new MatchPair(t, this);
 		    else
 			pair = new MatchPair(this, t);
+		    //for each type within the productType
 		    for(int i = 0; i < this.getSubTypes().length; i++){
+			//call matches on these subTypes
 			MatchPair parts = this.getSubTypes()[i].matches(((ProductType) t).getSubTypes()[i]);
 			if(parts != null){
 			    
 			    boolean pass;
+			    //insert the match of the subType 
 			    pass = pair.insertMatch(parts.getMatches(parts.getLeft()), parts.getMatches(parts.getRight()), parts.getGraph());
 			  
+			    //if it fails, try going right to Left
 			    if(!(pass)){
 				if(RtoL)
 				    return null;
@@ -152,6 +166,7 @@ public class ProductType extends Type {
 			    }
 			}
 		    }
+		    //if all is successful, return the matchPair
 		    if(RtoL)
 			return pair.flip();
 		    return pair;

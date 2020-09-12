@@ -34,8 +34,8 @@ import java.util.*;
  * Represents a composite (function) type, like &lt;et&gt;.
  */
 public class CompositeType extends Type {
-    public final static char LEFT_BRACKET = '<'; // '\u27E8'; // '\u2329'; '\u3008';
-    public final static char RIGHT_BRACKET = '>'; // '\u232A';
+    public final static char LEFT_BRACKET = '\u3008'; // '\u27E8'; // '\u2329'; '\u3008';
+    public final static char RIGHT_BRACKET = '\u3009'; // '\u232A';
     public final static char SEPARATOR = ',';
     
     private Type left;
@@ -94,7 +94,15 @@ public class CompositeType extends Type {
 	return false;
     }
     
-    //sets all instances of a variable for a given CompositeType to the same reference. Uses getAlignedType in Matchpair logic
+    /**
+     * sets all instances of a variable for a given CompositeType to the same reference. For all variables
+     * in a given compositeType, we set the reference of that variable to be the same. The logic here is similar
+     * to the logic used in MatchPair.getAlignedType(). This is done because of MatchPair logic, 
+     * as each Type in unification can have the same variable name, for instance <a, b> mapping to <g, a>. 
+     * Refer to MatchPair.isKey() for further notes. 
+     * @param varList an empty ArrayList that will contain all variables for the current CompositeType.
+     * @return a new CompositeType with all references of a variable being the same. 
+     */
     public CompositeType renameVariables(ArrayList<Type> varList){
 	Type oldLeft = this.getLeft();
 	    Type oldRight = this.getRight();
@@ -167,6 +175,7 @@ public class CompositeType extends Type {
 	    Type expLeft = newT.getLeft();
 	    Type expRight = newT.getRight();
 	    
+	    //match the left and right half of the two compositeTypes
 	    MatchPair leftHalf = thisLeft.matches(expLeft);
 	    MatchPair rightHalf = thisRight.matches(expRight);
 	   
@@ -176,10 +185,9 @@ public class CompositeType extends Type {
 		boolean leftHalfPass;
 		boolean rightHalfPass;
 		
-
-		    leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft), leftHalf.getGraph());
-
-		    rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight), rightHalf.getGraph());
+		//add the two half pairings to their respective parentType
+		leftHalfPass = pair.insertMatch(leftHalf.getMatches(thisLeft), leftHalf.getMatches(expLeft), leftHalf.getGraph());
+		rightHalfPass = pair.insertMatch(rightHalf.getMatches(thisRight), rightHalf.getMatches(expRight), rightHalf.getGraph());
 		
 		if(!(leftHalfPass && rightHalfPass)){
 		    if(RtoL)
@@ -187,6 +195,7 @@ public class CompositeType extends Type {
 		    else
 			return ((CompositeType) t).matches2(this, true);
 		}
+		//return the MatchPair if successful, null otherwise 
 		if(RtoL)
 		    return pair.flip();
 		return pair;
