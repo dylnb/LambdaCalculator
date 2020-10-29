@@ -76,7 +76,8 @@ public class ProductType extends Type {
             for (int i = 0; i < a1.length; i++) {
                 Type l = a1[i];
                 Type r = a2[i];
-                boolean guard = a1[i].equals(a2[i]);
+                boolean wildTypePresent = l.equals(Type.WILD) || r.equals(Type.WILD);
+                boolean guard = a1[i].equals(a2[i]) || wildTypePresent;
                 if (!guard)
                     return false;
             }
