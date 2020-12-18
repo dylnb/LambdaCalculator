@@ -223,7 +223,16 @@ public class MatchPair
 
 		return false;
     }
-    
+
+    private boolean isKeyContained(HashMap<Type, Type> map, Type key){
+    	for(Type keys : map.keySet()){
+    		if(((ProductType)key).containsType(keys))
+    			return true;
+		}
+
+    	return false;
+	}
+
     //Given a final concrete, sets the key to map to that final Type
     private boolean setMapping(Node key, Type t){
 		boolean passing = true;
@@ -419,6 +428,7 @@ public class MatchPair
      */
     private Type setAlignments(Type oldTypeParent, Type oldTypeSide){
 		Type newSide = oldTypeSide;
+
 		if(isKey(this.getMatches(oldTypeParent), oldTypeSide)) {
 			Type isVarType = this.getMatches(oldTypeParent).get(oldTypeSide);
 
@@ -438,6 +448,16 @@ public class MatchPair
 		return newSide;
     }
 
+    private Type setProductAlignments(Type oldTypeParent, Type oldTypeSide){
+    	Type newSide = oldTypeSide;
+
+    	if(true){
+
+		}
+
+    	return newSide;
+	}
+
     /**
      * Helper function for getAlignedType. Keeps track of the parent compositeType so that it can set alignments properly
      * @param oldtype the old compositeType to be worked on
@@ -445,29 +465,65 @@ public class MatchPair
      * @return a new compositeType with the most concrete mappings. 
      */
     private Type getAlignedTypeHelper(Type oldtype, Type oldTypeParent){
-		if(oldtype instanceof CompositeType){
-			oldtype = ((CompositeType)oldtype).renameVariables(new ArrayList<Type>());
+    	if(oldtype instanceof CompositeType){
+			oldtype = ((CompositeType)oldtype).renameVariables(new ArrayList<Type>()); // <(e x (_)), t>
 
-			Type oldLeft = ((CompositeType) oldtype).getLeft();
-			Type oldRight = ((CompositeType) oldtype).getRight();
+			Type oldLeft = ((CompositeType) oldtype).getLeft();  // <e x (_)>
+			Type oldRight = ((CompositeType) oldtype).getRight(); // t
 			Type newLeft;
 			Type newRight;
 
 			if (oldLeft instanceof CompositeType) {
 				newLeft = getAlignedTypeHelper(((CompositeType)oldLeft), oldTypeParent);
-			} else {
+			}
+			else if(oldLeft instanceof ProductType){
+				newLeft = getAlignedTypeHelper(((ProductType)oldLeft), oldTypeParent);
+			}
+			else {
 				newLeft = setAlignments(oldTypeParent, oldLeft);
 			}
+
 			if (oldRight instanceof CompositeType) {
 				newRight = getAlignedTypeHelper(((CompositeType)oldRight), oldTypeParent);
+			}
+			else if(oldRight instanceof ProductType){
+				newRight = getAlignedTypeHelper(((ProductType)oldRight), oldTypeParent);
 			}
 			else {
 				newRight = setAlignments(oldTypeParent, oldRight);
 			}
+
 			return new CompositeType(newLeft, newRight);
 		}
 
-		// TODO add instance for ProductType
+    	else if(oldtype instanceof ProductType){
+    		// perform recursive calls to each of the inner types
+			oldtype = ((ProductType)oldtype).renameVariables(new ArrayList<Type>());
+
+			Type[] oldTypes = ((ProductType) oldtype).getSubTypes();
+			Type[] newTypes = new Type[((ProductType) oldtype).getArity()];
+
+			// iterate through oldTypes calling getAlignedTypeHelper on each type recursively.
+			for(int i = 0; i < ((ProductType) oldtype).getArity(); i++){
+				if(oldTypes[i] instanceof ProductType){
+					newTypes[i] = getAlignedTypeHelper((ProductType)oldTypes[i], oldTypeParent);
+				}
+				else if(oldTypes[i] instanceof CompositeType){
+					newTypes[i] = getAlignedTypeHelper((CompositeType)oldTypes[i], oldTypeParent);
+				}
+				else{
+					newTypes[i] = setAlignments(oldTypeParent, oldTypes[i]);
+				}
+			}
+
+			// finally, create new product type and return it.
+			return new ProductType(newTypes);
+		}
+
+    	else if(oldtype instanceof VarType){
+    		Type newType = setAlignments(oldTypeParent, oldtype);
+    		return newType;
+		}
 
 		return oldtype;
     }
@@ -481,7 +537,6 @@ public class MatchPair
     public Type getAlignedType(Type oldtype) {
     	return getAlignedTypeHelper(oldtype, oldtype);
     }
-
 
     //Flips a matchPair to make the first function the second, and second first
     //This was needed for doing RtoL, as the matchPair will do the logic correctly but

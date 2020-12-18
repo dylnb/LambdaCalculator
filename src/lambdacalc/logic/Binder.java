@@ -72,13 +72,14 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
         this.hasPeriod = hasPeriod;
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Binder) {
-            return this.equals((Binder) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            boolean equalsTrue = this.equals((Binder) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
+            return equalsTrue;
         } else {
             return false;           
         }
@@ -89,7 +90,7 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
         return this.getVariable().hashCode() ^ super.hashCode();
     }    
     
-    private boolean equals(Binder b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, Map freeVarMap) {
+    private boolean equals(Binder b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, Map freeVarMap, boolean matching) {
         if (useMaps) {
             thisMap = (thisMap == null) ? new HashMap() : new HashMap(thisMap);
             otherMap = (otherMap == null) ? new HashMap() :  new HashMap(otherMap);
@@ -106,10 +107,17 @@ public abstract class Binder extends Expr implements VariableBindingExpr {
         return (this.getClass() == b.getClass()) // same type of binder; lambda, exists, all...
              && (useMaps || this.getVariable().equals(b.getVariable())) // if not using maps, then variables must match
              && this.getInnerExpr().equals(b.getInnerExpr(),
-                    useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+                    useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
     }
 
-    
+    protected boolean matches(Expr e) {
+        return false;
+    }
+
+    private boolean matches(Binder b) {
+        return false;
+    }
+
     /**
      * Gets the unicode symbol associated with the binder.
      */

@@ -61,7 +61,7 @@ public class Var extends Identifier {
     }
 
     //never called, just in case
-    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap) {
+    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap, boolean matching) {
         // we use the map here...
         if (i instanceof Var) {
             if (!this.getType().equals(i.getType())) {

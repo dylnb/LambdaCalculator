@@ -107,7 +107,7 @@ public class GApp extends Expr {
      */
     protected boolean equals
             (Expr e, boolean collapseBoundVars, Map thisMap, 
-            Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+            Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         e = e.stripOutermostParens();
         boolean sameGApp =
             e instanceof GApp &&

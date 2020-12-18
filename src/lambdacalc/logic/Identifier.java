@@ -73,14 +73,14 @@ public abstract class Identifier extends Expr {
         return 1;
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
  
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Identifier) {
             if (collapseAllVars) return true;
-            return this.equals((Identifier) e, useMaps, thisMap, otherMap, freeVarMap);
+            return this.equals((Identifier) e, useMaps, thisMap, otherMap, freeVarMap, matching);
         } else {
             return false;           
         }
@@ -90,7 +90,7 @@ public abstract class Identifier extends Expr {
         return this.symbol.hashCode()^super.hashCode();
     }
     
-    protected abstract boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap);
+    protected abstract boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap, boolean matching);
     
     protected Expr performLambdaConversion1(Set accidentalBinders) throws TypeEvaluationException {
         // We're looking for a lambda. None here.

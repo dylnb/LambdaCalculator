@@ -56,21 +56,21 @@ public abstract class Unary extends Expr {
      */
     protected abstract Unary create(Expr innerExpr);
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Unary) {
-            return this.equals((Unary) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            return this.equals((Unary) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
         } else {
             return false;
         }
     }
     
-    private boolean equals(Unary u, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, Map freeVarMap) {
+    private boolean equals(Unary u, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, Map freeVarMap, boolean matching) {
         return this.getClass() == u.getClass() 
-            && this.getInnerExpr().equals(u.getInnerExpr(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            && this.getInnerExpr().equals(u.getInnerExpr(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false);
     }
     
     public Expr getInnerExpr() {

@@ -72,23 +72,23 @@ public class Or extends LogicalBinary {
         return new Or(left, right);
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
 
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Or) {
-            return this.equals((Or) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            return this.equals((Or) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
         } else {
             return false;
         }
     }
     
-    private boolean equals(Or b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    private boolean equals(Or b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         if (this.getClass() != b.getClass()) {
             return false;
-        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
-                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)
+                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)
                   ) {
             return true;
         } else {
@@ -102,7 +102,7 @@ public class Or extends LogicalBinary {
             // So we flatten the expression as much as we can (until we hit a
             // descendent with a different class), and then compare the flat arrays of juncts
                 for (int i = 0; i < junctsA.length; i++) {
-                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)) {
+                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)) {
                         return false;
                     }
                 }

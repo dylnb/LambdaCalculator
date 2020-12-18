@@ -134,11 +134,11 @@ public abstract class Expr {
         if (obj instanceof Expr)
             // call equals and specify not to collapse bound variables
             // (useMap=false)
-            return equals((Expr)obj, false, null, null, false, null); // null maps
+            return equals((Expr)obj, false, null, null, false, null, false); // null maps
         else
             return false;
     }
-    
+
     /**
      * Tests if two expressions are equal, modulo parens and the consistent
      * renaming of bound variables.
@@ -150,7 +150,10 @@ public abstract class Expr {
     public final boolean alphaEquivalent(Expr obj) {
         // call equals and specify to collapse bound variables
         // (useMap=true)
-        return equals(obj, true, null, null, false, null); // null maps
+//        MatchPair pair = this.getType().matches(i.getType());
+        //boolean matchesTrue = matches(obj);
+        boolean equalsTrue = equals(obj, true, null, null, false, null, true);
+        return equalsTrue; // null maps
     }
 
     /**
@@ -168,7 +171,7 @@ public abstract class Expr {
      * @return true iff the expressions are equivalent modulo parens and identifiers
      */
     public final boolean operatorEquivalent(Expr obj) {
-        return equals(obj, false, null, null, true, null);
+        return equals(obj, false, null, null, true, null, false);
     }
 
     /**
@@ -183,7 +186,7 @@ public abstract class Expr {
      */
     public final Map getConsistentFreeVariableRenaming(Expr obj) {
         Map m = new HashMap();
-        if (equals(obj, true, null, null, false, m))
+        if (equals(obj, true, null, null, false, m, false))
             return m;
         return null;
     }
@@ -268,7 +271,7 @@ public abstract class Expr {
      * abstracting over bound variables (depending on the parameters)
      */
     
-    protected abstract boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap);
+    protected abstract boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching);
     // IMPLEMENTATION NOTES -- TODO cleanup
     /*    
      * , where variables in this and the other expression
@@ -288,7 +291,7 @@ public abstract class Expr {
      * the mapping to make sure that the variables on both sides map to the
      * same Object marker -- although the variables themselves may be different.
      */
-    
+
     public int hashCode() {
         Iterator iter = this.getSubExpressions().iterator();
         int result = this.getClass().hashCode();
