@@ -1,4 +1,4 @@
-# **Launch4j Instructions**
+# **Executables Instructions**
 
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
 
