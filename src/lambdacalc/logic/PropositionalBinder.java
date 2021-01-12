@@ -55,7 +55,7 @@ public abstract class PropositionalBinder extends Binder {
     
     public Type getType() throws TypeEvaluationException {
         checkVariable();
-        if (!getInnerExpr().getType().equals(Type.T))
+        if (getInnerExpr().getType().matches(Type.T) == null)
             throw new TypeEvaluationException("The inside of the propositional binder in " + toString() + " must be of type t.");
         return Type.T;
     }

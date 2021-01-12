@@ -60,7 +60,8 @@ public class Const extends Identifier {
         // ignore maps in all cases, since it only applies to variables
         if (i instanceof Const) {
             // Possibly replace this.getType().equals(...) with this.getType().matches(...)
-            boolean typeEquals = this.getType().equals(i.getType());
+            //this.type.matches(((Var)e).getType()) != null;
+            boolean typeEquals = this.getType().matches(((Const)i).getType()) != null;
             boolean symbolEquals = this.getSymbol().equals(i.getSymbol());
             return typeEquals && symbolEquals;
         }

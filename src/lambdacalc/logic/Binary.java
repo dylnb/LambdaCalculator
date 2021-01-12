@@ -87,37 +87,15 @@ public abstract class Binary extends Expr {
     }
     
     private boolean equals(Binary b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) throws TypeEvaluationException {
-        if (matching){
-            return matches(b);
-        }
-        else{
-            boolean leftEquals = this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false);
-            boolean rightEquals = this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false);
-            return equalsHelper(b)
-                    && leftEquals
-                    && rightEquals;
-        }
+        boolean leftEquals = this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false);
+        boolean rightEquals = this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false);
+        return equalsHelper(b)
+                && leftEquals
+                && rightEquals;
     }
     
     protected boolean equalsHelper(Binary b) {
         return this.getClass() == b.getClass();
-    }
-
-    private boolean matches(Binary b) throws TypeEvaluationException {
-        Type inputSymbolTypeLeft = b.getLeft().getType();
-        Type thisSymbolTypeLeft = this.getLeft().getType();
-        MatchPair symbolTypeMatchesLeft = inputSymbolTypeLeft.matches(thisSymbolTypeLeft);
-        Type commonArgTypeLeft = symbolTypeMatchesLeft.getAlignedType(inputSymbolTypeLeft);
-
-        Type inputSymbolTypeRight = b.getRight().getType();
-        Type thisSymbolTypeRight = this.getRight().getType();
-        MatchPair symbolTypeMatchesRight = inputSymbolTypeRight.matches(thisSymbolTypeRight);
-        Type commonArgTypeRight = symbolTypeMatchesRight.getAlignedType(inputSymbolTypeRight);
-
-        boolean leftMatches = commonArgTypeLeft.equals(this.getLeft().getType());
-        boolean rightMatches = commonArgTypeRight.equals(this.getRight().getType());
-
-        return leftMatches && rightMatches;
     }
 
     protected Set getVars(boolean unboundOnly) {

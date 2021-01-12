@@ -70,7 +70,7 @@ public class SetWithGenerator extends Binary implements VariableBindingExpr {
     }
 
     public Type getType() throws TypeEvaluationException {
-        if (!getFilter().getType().equals(Type.T))
+        if (getFilter().getType().matches(Type.T) == null)
             throw new TypeMismatchException("The right-hand part of the set " + toString() + " must have type t.");
         return new CompositeType(getTemplate().getType(), Type.T);
     }

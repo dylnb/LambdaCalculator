@@ -61,6 +61,9 @@ public abstract class Unary extends Expr {
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
+        // TODO Possible fix: Add a method similar to Binary.java named "matches" which is called if
+        //  the boolean "matching" is set to true.
+
         if (e instanceof Unary) {
             return this.equals((Unary) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
         } else {

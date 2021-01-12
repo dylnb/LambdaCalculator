@@ -152,7 +152,7 @@ public abstract class Expr {
         // (useMap=true)
 //        MatchPair pair = this.getType().matches(i.getType());
         //boolean matchesTrue = matches(obj);
-        boolean matchesTrue = equals(obj, true, null, null, false, null, true);
+        boolean matchesTrue = equals(obj, true, null, null, false, null, false);
         return matchesTrue; // null maps
     }
 

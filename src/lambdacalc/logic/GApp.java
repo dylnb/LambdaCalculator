@@ -118,7 +118,7 @@ public class GApp extends Expr {
             sameVar =
                 e instanceof Var &&
                 this.getIndex() == Integer.parseInt(((Var)e).getSymbol().substring(1)) &&
-                this.type.equals(((Var)e).getType());
+                this.type.matches(((Var)e).getType()) != null;
         } catch (NumberFormatException exp) {
         }
         return sameGApp || sameVar;

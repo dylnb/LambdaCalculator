@@ -48,8 +48,8 @@ public abstract class SetRelation extends LogicalBinary {
     public Type getType() throws TypeEvaluationException {
         Type lefttype = getLeft().getType();
         Type righttype = getRight().getType();
-        if ((!(lefttype instanceof CompositeType) || !((CompositeType)lefttype).getRight().equals(Type.T))
-            || (!(righttype instanceof CompositeType) || !((CompositeType)righttype).getRight().equals(Type.T)))
+        if ((!(lefttype instanceof CompositeType) || (((CompositeType)lefttype).getRight().matches(Type.T)) == null)
+            || (!(righttype instanceof CompositeType) || (((CompositeType)righttype).getRight().matches(Type.T)) == null))
             throw new TypeMismatchException("The types of the expressions on the left and right of a set connective like '" + getSymbol() + "' must be a set type, i.e. the type of the characteristic function of a set, such as " + Type.ET + ", but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
         if (((CompositeType)lefttype).getLeft().matches(((CompositeType)righttype).getLeft()) == null)
             throw new TypeMismatchException("The sets on the left and right of a set connective like '" + getSymbol() + "' must be sets over the same kind of element, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");

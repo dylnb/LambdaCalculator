@@ -54,7 +54,7 @@ public class SetWithElements extends NAry {
     
     /**
      * Constructs an empty set for elements of a particular type.
-     * @param innerExpressions an array of two or more expressions
+     * @param elementType type of the elements
      */
     public SetWithElements(Type elementType) {
         super(new Expr[0]);
@@ -74,7 +74,7 @@ public class SetWithElements extends NAry {
             Expr[] elems = getElements();
             t = elems[0].getType();
             for (int i = 1; i < elems.length; i++)
-                if (!elems[i].getType().equals(t))
+                if (elems[i].getType().matches(t) == null)
                     throw new TypeEvaluationException("The elements of a set must all have the same type. The type of '" + elems[0] + "' is not the same as the type of '" + elems[i] + "'.");
         }
         return new CompositeType(t, Type.T); // the type of the characteristic function
