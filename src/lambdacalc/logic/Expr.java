@@ -266,6 +266,7 @@ public abstract class Expr {
      * @param otherMap A map from variables to fresh variables, to be applied on the other expression
      * iff the boolean parameter is set to false.
      *
+     * @param matching ...
      *
      * @return true iff both expressions are equal, abstracting over parens, and possibly
      * abstracting over bound variables (depending on the parameters)
