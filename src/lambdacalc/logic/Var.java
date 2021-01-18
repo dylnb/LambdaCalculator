@@ -60,17 +60,16 @@ public class Var extends Identifier {
         return ret;
     }
 
-    //never called, just in case
     protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap, boolean matching) {
         // we use the map here...
         if (i instanceof Var) {
-            if (!this.getType().equals(i.getType())) {
+            if (this.getType().matches(i.getType()) == null) {
                 return false;
             } // else...
-            
+
             Object thisside = (thisMap == null) ? null : thisMap.get(this);
             Object otherside = (otherMap == null) ? null : otherMap.get(i);
-                    
+
             if (thisside == null && otherside == null) {
                 if (freeVarMap == null) {
                     // This variable is free on both sides. If we are not allowing for free variable
@@ -85,7 +84,7 @@ public class Var extends Identifier {
                         // consistent 1:1 renaming.
                         if (freeVarMap.values().contains(i))
                             return false;
-                        
+
                         // Add this renaming and return true to indicating that
                         // the consistent renaming is OK so far.
                         freeVarMap.put(this, i);
@@ -97,15 +96,15 @@ public class Var extends Identifier {
                     }
                 }
             }
-            
+
             // one side is bound but the other is not
             if (thisside == null || otherside == null)
                 return false;
-            
+
             // are they bound by the same binder, i.e. do they
             // map to the same fresh variable
             return thisside == otherside;
-                
+
          } else // i is not Var
             return false;
     }
