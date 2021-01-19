@@ -65,9 +65,9 @@ public class Not extends Unary {
         }
         // As a special case, we don't need to put parens around binders since it's unambiguous.
         if (getInnerExpr() instanceof Binder)
-            return prefix + getInnerExpr().toString(mode);
+            return prefix + " " + getInnerExpr().toString(mode);
         else
-            return prefix + nestedToString(getInnerExpr(), mode);
+            return prefix + " " + nestedToString(getInnerExpr(), mode);
     }
     
     public Type getType() throws TypeEvaluationException {
