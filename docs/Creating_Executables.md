@@ -25,7 +25,7 @@ This update provides a new windows runnable application using the launch4j exe w
 20. Delete these extra files using `rm -r filename`. 
 21. Cd back into `launch4j` and create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. 
 22. The zip file is now ready to distribute.
-23. In Main.java, set GOD_MODE to the other boolean and repeats steps 11-21. 
+23. In Main.java, set GOD_MODE to the other boolean and repeats steps 12-22. 
 24. Test whether the version number was set correctly by installing the TE and SE versions and looking at the About window in Mac. 
 25. When you are ready to release the new version, click on `Releases`, located on the righthand side of the repository in github, then click on `Draft a new release`.
 26. Once you've published the new release, go to the `gh-pages` branch in github and open `index.html`. Under `<!-- Download -->`, replace the hyperlinks to link to the newly released versions of the Lambda Calculator.
