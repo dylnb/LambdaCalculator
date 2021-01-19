@@ -1,6 +1,6 @@
 # **GUI Instructions**
 
-These are instructions on how to edit the GUI in the LambdaCalculator.
+The Lambda Calculator GUI cannot be edited using NetBeans, so make sure you are using a different IDE such as Eclipse or IntelliJ. The following are instructions for editing the GUI in Eclipse:
 
 1.  Download `WindowsBuilder` for Eclipse [here](https://www.eclipse.org/windowbuilder/download.php)
 2. Follow the instructions from [this YouTube video](https://www.youtube.com/watch?v=oeswfZz4IW0)
