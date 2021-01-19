@@ -5,7 +5,7 @@ This update provides a new windows runnable application using the launch4j exe w
 1. Add a new entry to the change log in `LambdaCalculator/docs/change-log.md` summarizing changes in the new version.
 2. Make sure the $JAVA_HOME variable on your machine is set to JDK version 1.8.0. Building the application using a later release can lead to issues (see Note 2).
 3. Make sure the version number and year are updated in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java` on github.
-4. Download the zip file of the Lambda Calculator project from github.
+4. Push these changes and the final version code to github. Then download the zip file of the now updated Lambda Calculator project from github.
 5. Unzip the file.
 6. Open the Java project from the unzipped folder with your favorite IDE.
 7. Check whether GOD_MODE is set to true or false on Main.java.
