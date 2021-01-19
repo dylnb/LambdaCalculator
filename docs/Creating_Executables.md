@@ -9,7 +9,7 @@ This update provides a new windows runnable application using the launch4j exe w
 5. Check that the newly merged `master` branch functions as expected by building and running both the student and teacher editions (Change the `GOD_MODE` variable in `LambdaCalculator/src/lambdacalc/Main.java` to `false` for the student edition and `true` for the teacher edition). Once you've completed this check, download the zip file of the `master` branch from github.
 5. Unzip the file.
 6. Open the Java project from the unzipped folder with your favorite IDE.
-7. Check whether the `GOD_MODE` variable is set to true or false on `LambdaCalculator/src/lambdacalc/Main.java`.
+7. Check whether the `GOD_MODE` variable is set to true or false in `LambdaCalculator/src/lambdacalc/Main.java`.
 8. If true, proceed using the `TE` version, otherwise use the `SE`. 
 9. Clean and build the project.
 10. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
