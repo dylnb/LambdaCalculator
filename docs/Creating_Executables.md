@@ -2,6 +2,7 @@
 
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
 
+1. Add a new entry to the change log in `LambdaCalculator/docs/change-log.md` summarizing changes in the new version.
 1. Make sure the $JAVA_HOME variable on your machine is set to JDK version 1.8.0. Building the application using a later release can lead to issues (see Note 2).
 2. Make sure the version number and year are updated in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java` on github.
 3. Download the zip file of the Lambda Calculator project from github.
@@ -12,7 +13,7 @@ This update provides a new windows runnable application using the launch4j exe w
 8. Clean and build the project.
 9. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
 10. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
-11. Press open on the top left, and open the `LC_SE.xml` OR `LC_TE.xml` file in the launch4j directory to edit the configurations.
+11. Press open on the top left, and open the `LC_SE.xml` OR `LC_TE.xml` file in the launch4j directory. Edit the configurations, updating the year and version number.
 12. On a Mac, open terminal and cd into the unzipped folder from Step 2.
 13. Run `sh build-package.sh student` OR `sh build-package.sh teacher` on terminal.
 14. This will create an exe file in the launch4j folder of the project, as well as a dmg file for Mac in apps/osx-student. Note: As of 2020 in Mac OSX Catalina, the dmg file is created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
