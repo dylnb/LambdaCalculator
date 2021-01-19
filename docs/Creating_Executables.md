@@ -6,10 +6,10 @@ This update provides a new windows runnable application using the launch4j exe w
 2. Make sure the `$JAVA_HOME` variable on your machine is set to JDK version 1.8.0. An example of a proper path for `$JAVA_HOME` on Mac is `/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home`. Building the application using a later release can lead to issues (see Note 2).
 3. Update the version number, year, and author names in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java`.
 4. Push these changes and the final version code to the Github `build` branch, and create a pull request to merge the `build` branch into the `master` branch.
-5. Once you've checked that the newly merged `master` branch functions correctly, download the zip file of the `master` branch from github.
+5. Check that the newly merged `master` branch functions as expected by building and running both the student and teacher editions (Change the `GOD_MODE` variable in `LambdaCalculator/src/lambdacalc/Main.java` to `false` for the student edition and `true` for the teacher edition). Once you've completed this check, download the zip file of the `master` branch from github.
 5. Unzip the file.
 6. Open the Java project from the unzipped folder with your favorite IDE.
-7. Check whether GOD_MODE is set to true or false on Main.java.
+7. Check whether the `GOD_MODE` variable is set to true or false on `LambdaCalculator/src/lambdacalc/Main.java`.
 8. If true, proceed using the `TE` version, otherwise use the `SE`. 
 9. Clean and build the project.
 10. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
