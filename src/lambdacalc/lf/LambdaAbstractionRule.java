@@ -48,7 +48,7 @@ public class LambdaAbstractionRule extends CompositionRule {
             = new LambdaAbstractionRule();
     
     private LambdaAbstractionRule() {
-        super("Lambda abstraction");
+        super("Predicate abstraction");
     }
     
     /**
@@ -71,7 +71,7 @@ public class LambdaAbstractionRule extends CompositionRule {
      
         if (!this.isApplicableTo(node)) {
             throw new MeaningEvaluationException
-                    ("The lambda abstraction rule is only " +
+                    ("The predicate abstraction rule is only " +
                     "applicable on a nonterminal that has exactly " +
                     "two children of which one is a bare index or a " +
                     "word like \"which\" or \"such\".");
@@ -110,7 +110,7 @@ public class LambdaAbstractionRule extends CompositionRule {
 //            var = new Var("x", Type.E, false);
 //        }
         
-//        System.out.println("creating LA var of type " + type + ": " + index.getIndex());
+//        System.out.println("creating PA var of type " + type + ": " + index.getIndex());
         
         if (type == null) {
             type = Type.E;

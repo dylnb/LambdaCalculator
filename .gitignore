@@ -1,6 +1,7 @@
 /nbproject/private/
 /build/
 /apps/
+/dist/
 launch4j/module_launch4j.xml
 launch4j/module_launch4j_Thu_Aug_16_10-50-26_EDT_2018.xml
 launch4j/demo/ConsoleApp/module_consoleapp.xml
@@ -50,3 +51,4 @@ out/production/launch4j/net/sf/launch4j/form/SplashForm.jfrm
 out/production/launch4j/net/sf/launch4j/form/VersionInfoForm.jfrm
 out/production/launch4j/net/sf/launch4j/formimpl/messages.properties
 out/production/launch4j/net/sf/launch4j/formimpl/messages_es.properties
+out/artifacts/LambdaCalculator_jar/LambdaCalculator.jar

@@ -194,7 +194,7 @@ public class ExerciseFileParser {
                 } else if (rule.equals("predicate modification")) {
                     file.getRules().add(
                             lambdacalc.lf.PredicateModificationRule.INSTANCE);
-                } else if (rule.equals("lambda abstraction")) {
+                } else if (rule.equals("lambda abstraction") || rule.equals("predicate abstraction")) {
                     file.getRules().add(
                             lambdacalc.lf.LambdaAbstractionRule.INSTANCE);
                 } else if (rule.equals("intensional function application")) {
@@ -207,7 +207,8 @@ public class ExerciseFileParser {
                     throw new ExerciseFileFormatException(
                        "'use rule' must be followed by 'function application' " +
                             "'non-branching nodes', 'predicate modification'," +
-                            "'lambda abstraction','intensional function application,'" +
+                            "'lambda abstraction', 'predicate abstraction', " +
+                            "'intensional function application,'" +
                             "or 'function composition'",
                             
                             linectr, line);

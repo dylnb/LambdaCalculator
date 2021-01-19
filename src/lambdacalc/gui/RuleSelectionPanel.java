@@ -393,7 +393,7 @@ implements PropertyChangeListener, SelectionListener {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         jPanel1.add(jLabelPM, gridBagConstraints);
 
-        jLabelLA.setText("Lambda Abstraction");
+        jLabelLA.setText("Predicate Abstraction"); // Modified by Hand on Jan 19, 2021 from "Lambda Abstraction"
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;

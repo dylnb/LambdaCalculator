@@ -92,12 +92,12 @@ public class IntensionalFunctionApplicationRule extends CompositionRule {
         
         if (onlyIfApplicable && left instanceof BareIndex) {
             throw new MeaningEvaluationException("The left child of this node is" +
-                    " an index for lambda abstraction. Intensional function application is " +
+                    " an index for predicate abstraction. Intensional function application is " +
                     "undefined on such a node.");
         }
         if (onlyIfApplicable && right instanceof BareIndex) {
             throw new MeaningEvaluationException("The right child of this node is" +
-                    " an index for lambda abstraction. Intensnional function application is " +
+                    " an index for predicate abstraction. Intensional function application is " +
                     "undefined on such a node.");
         }
         
