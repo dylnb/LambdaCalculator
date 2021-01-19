@@ -3,8 +3,8 @@
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
 
 1. Add a new entry to the change log in `LambdaCalculator/docs/change-log.md` summarizing changes in the new version.
-2. Make sure the $JAVA_HOME variable on your machine is set to JDK version 1.8.0. Building the application using a later release can lead to issues (see Note 2).
-3. Make sure the version number and year are updated in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java` on github.
+2. Make sure the `$JAVA_HOME` variable on your machine is set to JDK version 1.8.0. An example of a proper path for `$JAVA_HOME` on Mac is `/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home`. Building the application using a later release can lead to issues (see Note 2).
+3. Update the version number and year in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java`.
 4. Push these changes and the final version code to github. Then download the zip file of the now updated Lambda Calculator project from github.
 5. Unzip the file.
 6. Open the Java project from the unzipped folder with your favorite IDE.
