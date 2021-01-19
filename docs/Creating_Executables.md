@@ -2,7 +2,7 @@
 
 This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j is as follows: 
 
-1. Make sure the version number and year are updated in `LambdaCalculator/build.sh` on github.
+1. Make sure the version number and year are updated in `LambdaCalculator/build-package.sh` on github.
 2. Download the zip file of the Lambda Calculator project from github.
 3. Unzip the file.
 4. Open the Java project from the unzipped folder with your favorite IDE.
