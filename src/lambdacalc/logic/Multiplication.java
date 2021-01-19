@@ -65,10 +65,10 @@ public class Multiplication extends Binary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.N) ||
-            !getRight().getType().equals(Type.N)) {
+        if (getLeft().getType().matches(Type.N) == null||
+            getRight().getType().matches(Type.N) == null) {
             String msg = "The types of the expressions on the left and right " +
-                         "of the mulitiplication operator must be type <n>, " +
+                         "of the multiplication operator must be type n, " +
                          "but " + getLeft() + " is of type " + getLeft().getType() +
                          " and " + getRight() + " is of type " + getRight().getType() + ".";
             throw new TypeMismatchException(msg);

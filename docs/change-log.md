@@ -1,5 +1,17 @@
 # Lambda Calculator Change Log
 
+## 9/2020 - 1/2021 (update to version 2.5.0)
+### Authors: Anna Alsop, Raef Khan and Nigel Flower
+
+1. Renamed "Lambda Abstraction" to "Predicate Abstraction"
+* This was done to facilitate clarity with the textbook.
+
+2. Fixed bug #23
+* Implemented matching with variable types and constant types in student exercises.
+
+3. Removed Save Dialogue on Reload
+* In the teacher edition, when reloading a file, the GUI no longer asks the user to save unsaved work.
+
 ## 7/2020 - 8/2020 (update to version 2.4.0)
 ### Authors: Anna Alsop and Raef Khan
 

@@ -71,7 +71,7 @@ public class Not extends Unary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getInnerExpr().getType().equals(Type.T))
+        if (getInnerExpr().getType().matches(Type.T) == null)
             throw new TypeMismatchException("Negation can only be applied to something of type t, but " + getInnerExpr() + " is of type " + getInnerExpr().getType() + ".");
         return Type.T;
     }

@@ -1150,7 +1150,7 @@ public class TrainingWindow extends JFrame {
         jPanelBareIndex.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("This node is an index for lambda abstraction. It is not necessary to assign it a lexical entry.");
+        jLabel2.setText("This node is an index for predicate abstraction. It is not necessary to assign it a lexical entry."); // Modified by Hand on Jan 19, 2021 from "Lambda Abstraction"
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanelBareIndex.add(jLabel2);
 
@@ -1730,29 +1730,30 @@ public class TrainingWindow extends JFrame {
     }
 
     private boolean saveWork(){
-	if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
+        if (this.getCurrentExFile() != null && this.getCurrentExFile().hasBeenStarted() && hasUnsavedWork) {
             int n = JOptionPane.showOptionDialog(this,
-                "Some of your answers are not yet saved.  Should I save your work before opening another file?",
-                "Lambda Calculator",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, null, null);
-           
-           switch (n) {
-            case JOptionPane.YES_OPTION:
-                 if (hasUserSaved)
-                    this.onSave();
-                 else
-                    this.onSaveAs();
-                 break;
-             case JOptionPane.NO_OPTION:
-                 break;
-             case JOptionPane.CANCEL_OPTION:
-             case JOptionPane.CLOSED_OPTION:
-                 return false;
-            }
+                    "Some of your answers are not yet saved.  Should I save your work before opening another file?",
+                    "Lambda Calculator",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, null, null);
+
+            switch (n) {
+                case JOptionPane.YES_OPTION:
+                     if (hasUserSaved)
+                        this.onSave();
+                     else
+                        this.onSaveAs();
+                     break;
+                 case JOptionPane.NO_OPTION:
+                     break;
+                 case JOptionPane.CANCEL_OPTION:
+                 case JOptionPane.CLOSED_OPTION:
+                     return false;
+             }
         }
-	return true;
+
+        return true;
     }
     private void menuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenActionPerformed
         if(!saveWork())
@@ -1817,10 +1818,16 @@ public class TrainingWindow extends JFrame {
 
 //        int formerGroup = this.currentGroup;
 //        int formerEx = this.currentEx;
-	if(!saveWork())
-	    return;
+
+
+          // Removed on Jan 19, 2021. No longer asks to save work when reloading work in teacher edition.
+         if (!lambdacalc.Main.GOD_MODE){
+             if(!saveWork())
+                 return;
+         }
+
         loadExerciseFile(this.currentFile);
-	showExercise();
+	    showExercise();
 //        this.currentGroup = formerGroup;
 //        this.currentEx = formerEx;
 //
@@ -1831,6 +1838,7 @@ public class TrainingWindow extends JFrame {
     public static void setCurrentTypingConventions(IdentifierTyper typer) {
         currentTypingConventions = typer;
     }
+
     public static IdentifierTyper getCurrentTypingConventions() {
         return currentTypingConventions;
     }

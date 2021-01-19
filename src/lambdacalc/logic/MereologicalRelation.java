@@ -45,10 +45,10 @@ public abstract class MereologicalRelation extends LogicalBinary {
     protected abstract Type getResultingType() throws TypeEvaluationException;
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.E) ||
-            !getRight().getType().equals(Type.E)) {
+        if (getLeft().getType().matches(Type.E) == null||
+            getRight().getType().matches(Type.E) == null) {
             String msg = "The types of the expressions on the left and right " +
-                         "of the mulitiplication operator must be type <e>, " +
+                         "of the multiplication operator must be type e, " +
                          "but " + getLeft() + " is of type " + getLeft().getType() +
                          " and " + getRight() + " is of type " + getRight().getType() + ".";
             throw new TypeMismatchException(msg);

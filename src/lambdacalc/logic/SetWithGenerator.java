@@ -70,7 +70,7 @@ public class SetWithGenerator extends Binary implements VariableBindingExpr {
     }
 
     public Type getType() throws TypeEvaluationException {
-        if (!getFilter().getType().equals(Type.T))
+        if (getFilter().getType().matches(Type.T) == null)
             throw new TypeMismatchException("The right-hand part of the set " + toString() + " must have type t.");
         return new CompositeType(getTemplate().getType(), Type.T);
     }
@@ -90,8 +90,8 @@ public class SetWithGenerator extends Binary implements VariableBindingExpr {
         // If we're testing for exact equivalence, then each of the left and right hand sides
         // must be equivalent. Or if collapseAllVars is true, then we just keep recursing.
         if (!useMaps)
-            return getLeft().equals(b.getLeft(), false, null, null, collapseAllVars, null)
-                && getRight().equals(b.getRight(), false, null, null, collapseAllVars, null);
+            return getLeft().equals(b.getLeft(), false, null, null, collapseAllVars, null, false)
+                && getRight().equals(b.getRight(), false, null, null, collapseAllVars, null, false);
         
         // If we're allowing for alphabetical variants, then we must recognize 
         // that the free variables on the left side bind their occurrences on the
@@ -136,7 +136,7 @@ public class SetWithGenerator extends Binary implements VariableBindingExpr {
         
         // We've already checked that the left side is equivalent. Just check
         // the right side given the bound variable mapping.
-        return getRight().equals(b.getRight(), true, thisMap, otherMap, false, freeVarMap);
+        return getRight().equals(b.getRight(), true, thisMap, otherMap, false, freeVarMap, false);
     }
 
     protected Binary create(Expr left, Expr right) {

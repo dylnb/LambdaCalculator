@@ -69,10 +69,10 @@ public class Fusion extends Binary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.E) ||
-            !getRight().getType().equals(Type.E)) {
+        if (getLeft().getType().matches(Type.E) == null ||
+            getRight().getType().matches(Type.E) == null) {
             String msg = "The types of the expressions on the left and right " +
-                         "of the mulitiplication operator must be type <e>, " +
+                         "of the multiplication operator must be type e, " +
                          "but " + getLeft() + " is of type " + getLeft().getType() +
                          " and " + getRight() + " is of type " + getRight().getType() + ".";
             throw new TypeMismatchException(msg);
@@ -81,24 +81,24 @@ public class Fusion extends Binary {
     }
     
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
 
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e instanceof Fusion) {
-            return this.equals((Fusion) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            return this.equals((Fusion) e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
         } else {
             return false;
         }
     }
     
-    private boolean equals(Fusion b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    private boolean equals(Fusion b, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         // If the immediate daughters are equal, then this node is equal
         if (this.getClass() != b.getClass()) {
             return false;
-        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
-                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)
+        } else if (this.getLeft().equals(b.getLeft(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)
+                   && this.getRight().equals(b.getRight(), useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)
                   ) {
             return true;
         } else {
@@ -112,7 +112,7 @@ public class Fusion extends Binary {
                 return false;
             } else {
                 for (int i = 0; i < junctsA.length; i++) {
-                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap)) {
+                    if (!junctsA[i].equals(junctsB[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching)) {
                         return false;
                     }
                 }

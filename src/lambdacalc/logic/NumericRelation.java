@@ -43,7 +43,7 @@ public abstract class NumericRelation extends LogicalBinary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!getLeft().getType().equals(Type.N) || !getRight().getType().equals(Type.N))
+        if (getLeft().getType().matches(Type.N) == null || getRight().getType().matches(Type.N) == null)
             throw new TypeMismatchException("The types of the expressions on the left and right of a numeric relation connective like '" + getSymbol() + "' must be type i, but " + getLeft() + " is of type " + getLeft().getType() + " and " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }

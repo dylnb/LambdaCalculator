@@ -88,24 +88,24 @@ public class ProductType extends Type {
     
     //sets all instances of a variable for a given ProductType to the same reference. Uses getAlignedType in Matchpair logic
     public ProductType renameVariables(ArrayList<Type> varList){
-	Type[] newParts = this.getSubTypes();
-	for(Type part : newParts){
-	    if (part instanceof ProductType) {
-		part = ((ProductType) part).renameVariables(varList);
-	    } 
-	    else if(part instanceof CompositeType){
-		part = ((CompositeType) part).renameVariables(varList);
-	    }
-	    else if(part instanceof VarType){
-		    if(varList.contains(part))
-			part = varList.get(varList.indexOf(part));
-		    
-		    else{
-			varList.add(part);
-		    }
-	    }
-	}
-	return new ProductType(newParts);
+        Type[] newParts = this.getSubTypes();
+        for(Type part : newParts){
+            if (part instanceof ProductType) {
+            part = ((ProductType) part).renameVariables(varList);
+            }
+            else if(part instanceof CompositeType){
+            part = ((CompositeType) part).renameVariables(varList);
+            }
+            else if(part instanceof VarType){
+                if(varList.contains(part))
+                part = varList.get(varList.indexOf(part));
+
+                else{
+                varList.add(part);
+                }
+            }
+        }
+        return new ProductType(newParts);
     }
     
 	/**
@@ -166,6 +166,15 @@ public class ProductType extends Type {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean containsType(Type key) {
+        for(Type subtype : subtypes){
+            if(key == subtype)
+                return true;
+        }
+
         return false;
     }
     

@@ -61,7 +61,7 @@ public class Cardinality extends Unary {
     }
     
     public Type getType() throws TypeEvaluationException {
-        if (!(getInnerExpr().getType() instanceof CompositeType) || !((CompositeType)getInnerExpr().getType()).getRight().equals(Type.T))
+        if (!(getInnerExpr().getType() instanceof CompositeType) || (((CompositeType)getInnerExpr().getType()).getRight().matches(Type.T) == null))
             throw new TypeMismatchException("The cardinality operator can only be applied to something that has the type of a set, i.e. the type of the characteristic function of a set, such as " + Type.ET + ", but " + getInnerExpr() + " is of type " + getInnerExpr().getType() + ".");
         return Type.N;
     }

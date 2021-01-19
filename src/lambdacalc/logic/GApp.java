@@ -107,7 +107,7 @@ public class GApp extends Expr {
      */
     protected boolean equals
             (Expr e, boolean collapseBoundVars, Map thisMap, 
-            Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+            Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         e = e.stripOutermostParens();
         boolean sameGApp =
             e instanceof GApp &&
@@ -118,7 +118,7 @@ public class GApp extends Expr {
             sameVar =
                 e instanceof Var &&
                 this.getIndex() == Integer.parseInt(((Var)e).getSymbol().substring(1)) &&
-                this.type.equals(((Var)e).getType());
+                this.type.matches(((Var)e).getType()) != null;
         } catch (NumberFormatException exp) {
         }
         return sameGApp || sameVar;

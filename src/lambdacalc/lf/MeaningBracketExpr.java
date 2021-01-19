@@ -180,7 +180,7 @@ public class MeaningBracketExpr extends Expr {
         }
     }
     
-    protected boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean collapseBoundVars, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         return (e instanceof MeaningBracketExpr) && (node == ((MeaningBracketExpr)e).node);
     }
     

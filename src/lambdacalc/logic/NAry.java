@@ -99,21 +99,21 @@ public abstract class NAry extends Expr {
     }
 
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         // ignore parentheses for equality test
         e = e.stripOutermostParens();
 
         if (e.getClass() == getClass())
-            return equals((NAry)e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+            return equals((NAry)e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
         else
             return false;
     }
     
-    private boolean equals(NAry a, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    private boolean equals(NAry a, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         if (a.exprs.length != exprs.length)
             return false;
         for (int i = 0; i < exprs.length; i++)
-            if (!exprs[i].equals(a.exprs[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap))
+            if (!exprs [i].equals(a.exprs[i], useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, false))
                 return false;
         return true;
     }

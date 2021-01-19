@@ -176,4 +176,5 @@ public abstract class Type implements Comparable {
         
         throw new java.io.IOException("Invalid data.");
     }
+
 }

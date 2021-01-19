@@ -79,13 +79,13 @@ public class Parens extends Unary {
         this.shape = SQUARE;
     }
     
-    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap) {
+    protected boolean equals(Expr e, boolean useMaps, Map thisMap, Map otherMap, boolean collapseAllVars, java.util.Map freeVarMap, boolean matching) {
         
         // ignore parentheses for equality test
         // this line needs to be added to every equals method in every subclass of Expr
         e = e.stripOutermostParens();
 
-        return this.stripOutermostParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap);
+        return this.stripOutermostParens().equals(e, useMaps, thisMap, otherMap, collapseAllVars, freeVarMap, matching);
     }
         
     protected Unary create(Expr inner) {

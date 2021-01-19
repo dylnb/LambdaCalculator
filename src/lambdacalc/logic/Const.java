@@ -56,11 +56,15 @@ public class Const extends Identifier {
         return ret;
     }
 
-    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap) {
+    protected boolean equals(Identifier i, boolean useMaps, Map thisMap, Map otherMap, Map freeVarMap, boolean matching) {
         // ignore maps in all cases, since it only applies to variables
-        if (i instanceof Const)
-            return this.getType().equals(i.getType()) 
-                && this.getSymbol().equals(i.getSymbol());
+        if (i instanceof Const) {
+            // Possibly replace this.getType().equals(...) with this.getType().matches(...)
+            //this.type.matches(((Var)e).getType()) != null;
+            boolean typeEquals = this.getType().matches(((Const)i).getType()) != null;
+            boolean symbolEquals = this.getSymbol().equals(i.getSymbol());
+            return typeEquals && symbolEquals;
+        }
         else
             return false;
     }

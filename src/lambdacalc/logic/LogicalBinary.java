@@ -95,9 +95,9 @@ public abstract class LogicalBinary extends Binary {
         // Our default implementation checks that the operands are of type t,
         // but this is overridden in Equality which only checks that the
         // types of the operands are the same.
-        if (!getLeft().getType().equals(getOperandType()))
+        if (getLeft().getType().matches(getOperandType()) == null)
             throw new TypeMismatchException("The parts of the logical connective " + getSymbol() + " must be of type " + getOperandType() + ", but " + getLeft() + " is of type " + getLeft().getType() + ".");
-        if (!getRight().getType().equals(getOperandType()))
+        if (getRight().getType().matches(getOperandType()) == null)
             throw new TypeMismatchException("The parts of the logical connective " + getSymbol() + " must be of type " + getOperandType() + ", but " + getRight() + " is of type " + getRight().getType() + ".");
         return Type.T;
     }    
