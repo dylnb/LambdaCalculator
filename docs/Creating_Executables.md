@@ -7,8 +7,8 @@ This update provides a new windows runnable application using the launch4j exe w
 3. Update the version number, year, and author names in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java`.
 4. To open the launch4j executable, open the Lambda Calculator folder and go to the launch4j folder.
 5. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
-6. Press open on the top left, and open the `LC_SE.xml` file in the launch4j directory. Edit the configurations in the Version Info tab, updating the year, version number, and authors, and save the file.
-7. Next, open the `LC_TE.xml` file in the launch4j directory. As you did above for the student edition xml file, edit the configurations in the Version Info tab, updating the year, version number, and authors, and save the file.
+6. Press open on the top left, and open the `LC_SE.xml` file in the launch4j directory. Edit the configurations in the Version Info tab, updating the year, version number, and authors. Make sure to scroll to the beginning of the Copyright text to change the year as well. Save the file.
+7. Next, open the `LC_TE.xml` file in the launch4j directory. As you did above for the student edition xml file, edit the configurations in the Version Info tab, updating the year, version number, and authors. Make sure to scroll to the beginning of the Copyright text to change the year as well. Save the file.
 7. Push these changes and the final version code to the Github `build` branch, and create a pull request to merge the `build` branch into the `master` branch.
 8. Check that the newly merged `master` branch functions as expected by building and running both the student and teacher editions (Change the `GOD_MODE` variable in `LambdaCalculator/src/lambdacalc/Main.java` to `false` for the student edition and `true` for the teacher edition). Once you've completed this check, download the zip file of the `master` branch from github.
 9. Unzip the file.
