@@ -38,7 +38,7 @@ public class Not extends Unary {
     
     public static final char INPUT_SYMBOL = '~';
 
-    public static final String LATEX_REPR = "\\lnot";
+    public static final String LATEX_REPR = "\\lnot ";
     
     /**
      * Constructs negation around the given expression.
