@@ -24,9 +24,10 @@ This update provides a new windows runnable application using the launch4j exe w
 17. Delete these extra files using `rm -r filename`. 
 18. Cd back into `launch4j` and create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. The zip file is now ready to distribute for Windows.
 19. In `Main.java`, set `GOD_MODE` to the other boolean, then make sure to clean and build so that the compiler recognizes the change. Repeats steps 10-18 for the other version. 
-20. Test whether the version number was set correctly by installing the TE and SE versions and looking at the About window in Mac. 
-21. When you are ready to release the new version, click on `Releases`, located on the righthand side of the repository in github, then click on `Draft a new release`.
-22. Once you've published the new release, go to the `gh-pages` branch in github and open `index.html`. Under `<!-- Download -->`, replace the hyperlinks to link to the newly released versions of the Lambda Calculator.
+20. Test both the student and teacher editions on Windows (using the .zip file from Step 18), Mac (using the .dmg file from Step 13), and Linux (using the .jar file from Step 13).
+21. Test whether the version number was set correctly by installing the TE and SE versions and looking at the About window in Mac. 
+22. When you are ready to release the new version, click on `Releases`, located on the righthand side of the repository in github, then click on `Draft a new release`.
+23. Once you've published the new release, go to the `gh-pages` branch in github and open `index.html`. Under `<!-- Download -->`, replace the hyperlinks to link to the newly released versions of the Lambda Calculator.
 
 NOTE 1: The `sh` command will not run if the file is being imported from a zip to Netbeans and possibly other IDEs as they remove the executable permissions from all files necessary to run the launch4j module. 
 
