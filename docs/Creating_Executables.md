@@ -5,7 +5,7 @@ This update provides a new windows runnable application using the launch4j exe w
 1. Add a new entry to the change log in `LambdaCalculator/docs/change-log.md` summarizing changes in the new version.
 2. Make sure the `$JAVA_HOME` variable on your machine is set to JDK version 1.8.0. An example of a proper path for `$JAVA_HOME` on Mac is `/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home`. Building the application using a later release can lead to issues (see Note 2).
 3. Open your local Lambda Calculator project (we assume you are working on a `build` branch, not `master`) in your favorite IDE. Update the version number, year, and author names in `LambdaCalculator/build-package.sh` and `LambdaCalculator/src/lambdacalc/Main.java`. 
-4. Clean and build the project, and make sure the resulting .jar file is stored in `LambdaCalculator/dist` (the `build-package.sh` file run in Step 14 expects the .jar file in this directory).
+4. Clean and build the project, and make sure the resulting .jar file is stored in `LambdaCalculator/dist` (the `build-package.sh` file run in Step 14 expects the .jar file in this directory). Double check that the .jar file in `dist` is the one you just built.
 5. To open the launch4j executable, open the Lambda Calculator folder in Finder and go to the launch4j folder.
 6. Find the executable file named **Launch4j** and double click it. A GUI will open for launch4j.
 7. Press open on the top left, and open the `LC_SE.xml` file in the launch4j directory. Edit the configurations in the Version Info tab, updating the year, version number, and authors. Make sure to scroll to the beginning of the Copyright text to change the year as well. Save the file.
