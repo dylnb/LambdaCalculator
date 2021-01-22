@@ -17,7 +17,7 @@ This update provides a new windows runnable application using the launch4j exe w
 13. Once Step 12 is successfully completed, it will create:
 * an .exe file in the `launch4j` folder, 
 * a .jar file for Linux in `apps/osx-student` OR `apps/osx-teacher` (which should be renamed to include `SE` or `TE` and the version number), 
-* a dmg file for Mac in `apps/osx-student/bundles` OR `apps/osx-teacher/bundles` (some error messages are expected, see Note 3). Note: As of 2020 in Mac OSX Catalina, the dmg file is sometimes created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
+* a .dmg file for Mac in `apps/osx-student/bundles` OR `apps/osx-teacher/bundles` (some error messages are expected, see Note 3). Note: As of 2020 in Mac OSX Catalina, the dmg file is sometimes created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
 14. Create a new folder in `launch4j` and name it `LCSE` OR `LCTE`.
 15. Copy `jre1.8.0_221.jre` (located in the `launch4j` folder) and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
 16. Make sure you don't have finder open pointing to the `launch4j/LCSE` or `launch4j/LCTE` folder. Then cd into that folder from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
