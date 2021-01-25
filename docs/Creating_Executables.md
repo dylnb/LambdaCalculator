@@ -1,6 +1,8 @@
 # **Packaging instructions for new releases**
 
-This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE 1.8 with the application so as to let windows users not need to download Java. The way to use launch4j to bundle the application on a Mac is as follows: 
+This update provides a new windows runnable application using the launch4j exe wrapper. We have configured the wrapper to also bundle JRE version 8 with the application so as to let windows users not need to download Java. You can use launch4j to bundle the application on a Mac. We've had success using OSX Catalina in 2019-2021, and found that applications packaged on Big Sur are not backwards compatible.
+
+The instructions are as follows:
 
 1. Add a new entry to the change log in `LambdaCalculator/docs/change-log.md` summarizing changes in the new version.
 2. Make sure the `$JAVA_HOME` variable on your machine is set to JDK version 1.8.0. An example of a proper path for `$JAVA_HOME` on Mac is `/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home`. Building the application using a later release can lead to issues (see Note 2).
