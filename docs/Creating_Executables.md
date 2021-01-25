@@ -21,7 +21,7 @@ The instructions are as follows:
 * a .jar file for Linux in `apps/osx-student` OR `apps/osx-teacher` (which should be renamed to include `SE` or `TE` and the version number), 
 * a .dmg file for Mac in `apps/osx-student/bundles` OR `apps/osx-teacher/bundles` (some error messages are expected, see Note 3). Note: As of 2020 in Mac OSX Catalina, the dmg file is sometimes created within a temporary directory and docked. To get the location of the temporary directory, right click on the application, click Get Info, and see the filepath under Disk Image.
 14. Create a new folder in `launch4j` and name it `LCSE` OR `LCTE`.
-15. Copy `jre1.8.0_221.jre` (located in the `launch4j` folder) and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
+15. Copy `jre180` (located in the `launch4j` folder) and `Lambda Calculator SE.exe` OR `Lambda Calculator TE.exe` into the folder.
 16. Make sure you don't have finder open pointing to the `launch4j/LCSE` or `launch4j/LCTE` folder. Then cd into that folder from terminal then type `ls -la` to see if there are any extra files besides `.` and `..`, such as `.DS_Store`.
 17. Delete these extra files using `rm -r filename`. 
 18. Cd back into `launch4j` and create a zip file using `zip -r LCSE.zip LCSE` OR `zip -r LCTE.zip LCTE`. The zip file is now ready to distribute for Windows.
