@@ -15,19 +15,19 @@
   <manifest></manifest>
   <icon>../images/hat-logo-teacher.ico</icon>
   <jre>
-    <path>jre1.8.0_221.jre</path>
-    <bundledJre64Bit>false</bundledJre64Bit>
+    <path>jre180</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <jdkPreference>jdkOnly</jdkPreference>
     <runtimeBits>64/32</runtimeBits>
   </jre>
   <versionInfo>
     <fileVersion>2.5.0.0</fileVersion>
     <txtFileVersion>2.5.0</txtFileVersion>
     <fileDescription>Lambda Calculator: The Semantics Tool</fileDescription>
-    <copyright>Copyright (2021) Lucas Champollion, Joshua Tauberer, Maribel Romero, Dylan Bumford, Alex Warstadt, Anna Alsop, Raef Khan, and Nigel Flower</copyright> 
+    <copyright>Copyright (2021) Lucas Champollion, Joshua Tauberer, Maribel Romero, Dylan Bumford, Alex Warstadt, Anna Alsop, Raef Khan, and Nigel Flower</copyright>
     <productVersion>2.5.0.0</productVersion>
     <txtProductVersion>2.5.0</txtProductVersion>
     <productName>Lambda Calculator: The Semantics Tool</productName>
